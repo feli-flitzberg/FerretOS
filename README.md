@@ -115,12 +115,11 @@ this file isn't needed by a spec-compliant bootloader to find root
 - `/etc/machine-id` is edited to change the string to `uninitialized\n` before finalizing
 image
   - ***If you work in a chroot and reinstall dbus via BLFS instructions, `$LFS/dev` will no
-longer unmount, and the host system will require a reboot. If working in a chroot prior to
-creating an image or USB installation, re-initialize the machine id.***
-  - ***If you work in a chroot and reinstall dbus via BLFS instructions, dbus will warn
-about an invalid user account/ID. This may cause problems in the host system, and you may
-have to reboot the host system. It is advised to only reinstall dbus in a chroot if you
-won't need the chroot environment after exiting that instance.***
+longer unmount, and the host system will require a reboot. dbus will also warn about an
+invalid user account/ID. If working in a chroot prior to creating an image or USB
+installation, re-initialize the machine id. It is also advised to only reinstall dbus in
+the chroot if you are sure you won't need the chroot environment after exiting that
+instance.***
 
 <!---  - For efibootmgr, the executable name is `systemd-bootx64.efi`
 -- root password set
