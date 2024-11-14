@@ -2,8 +2,6 @@
 
 ## LFS-Based LiveCD Image
 
-***
-
 Welcome to FerretOS! This operating system project is currently a proof-of-concept
 build/release of [Linux From Scratch](https://www.linuxfromscratch.org) with some key
 differences:
@@ -21,8 +19,6 @@ on the machine or VM. It can also be used as a basic rescue disk for a nonrespon
 system.
 
 ### History
-
-***
 
 FerretOS was ultimately inspired by the now-defunct LFS LiveCD project! The last
 update of its homepage can be found here: <https://www.linuxfromscratch.org/livecd/>.
