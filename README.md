@@ -1,69 +1,137 @@
-CHANGES FROM LFS 12.2
--- packages normally installed in LFS are in sources/base
--- packages not normally installed are in sources/extra
--- unpacked kernel source is left in sources
--- $LFS points to an unmounted directory in /opt
--- no extra drives or partitions are mounted for building
--- set up git and make commits while building
--- update expat to 2.6.4 (security)
--- update openssl to 3.3.2 (security)
--- update python3 to 3.12.7 (security)
--- update linux to 6.11.7 (move from EOL line)
--- link /usr/lib64 to /usr/lib to avoid lib displacement issues
---- ln -sfv lib $LFS/usr/lib64
--- easy ownership: chown -vfR root:root $LFS
--- config files are created outside chroot until editor is installed
--- no timezone set up by default (should default to hwclock output)
--- add --with-arch=x86-64 to gcc configure
--- add --with-tune=generic to gcc configure
--- use --disable-assembly for gmp
+# FerretOS
+
+## LFS-Based LiveCD Image
+
+***
+
+Welcome to FerretOS! This operating system project is currently a proof-of-concept
+build/release of [Linux From Scratch](https://www.linuxfromscratch.org) with some key
+differences:
+
+- GRUB has been replaced with systemd-boot
+- System configuration and some package build configurations are modified to allow
+as much hardware compatibility as possible
+- The bootloader is configured to not pass any partition to the kernel during boot
+
+The resulting image (should) be fully capable of booting from a DVD or USB, with no
+notion of what hardware it has available or where it's booting from, and still mount
+the root partition and the remaining system with no issue. Once fully booted, FerretOS
+has all the tools and packages needed to build a fresh copy of Linux From Scratch (LFS)
+on the machine or VM. It can also be used as a basic rescue disk for a nonresponsive
+system.
+
+### History
+
+***
+
+FerretOS was ultimately inspired by the now-defunct LFS LiveCD project! The last
+update of its homepage can be found here: <https://www.linuxfromscratch.org/livecd/>.
+Part of the proof-of-concept stage is simply to show that LFS can still produce a
+LiveCD variant, provided there are people able to maintain it.
+
+## Changes
+
+#### Packages
+
+- Update expat to 2.6.4
+- Update kernel to 6.11.7
+- Update openssl to 3.3.2
+- Update python to 3.12.7
+- Build gmp with `--disable-assembly`
+- Build gcc with `--with-arch=x86-64 --with-tune=generic`
+- Build libffi with `--with-gcc-arch=x86-64`
+- Install all of elfutils, then clean up all installed static libraries
+- Install pyelftools to enable systemd-boot during configuration
+  - Build instructions:
+```
+pip3 wheel -w dist --no-cache-dir --no-build-isolation --no-deps $PWD
+pip3 install --no-index --no-user --find-links dist pyelftools
+```
+- Add libidn2 before configuring systemd
+  - Add libunistring as dependency requirement
+- Skip installing GRUB (source package is available in image)
+- Personal preference: skip installing vim (source package is available in image)
+- Personal preference: install nano as editor
+- Add [linux-firmware](https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/)
+  - Add rdfind as dependency requirement
+
+#### Configuration
+
+***Configuration files are made in a text editor (potentially outside chroot by
+root) until a text editor is available.***
+
+- Source packages installed in LFS are in `/sources/base`
+- Source packages installed in BLFS or beyond are in `/sources/extra`
+- `/usr/lib64` is a symlink to `/usr/lib` to deter problems
+- `LANG` is set to `en_US`
+- timezone not configured to avoid assumptions
+- `PAGE` is set to `letter`
+- `/etc/os-release` is required before configuring systemd for bootloader
+  - `/usr/lib/os-release` points to `/etc/os-release`
+```
+NAME="FerretOS"
+ID="ferretos"
+ID_LIKE="lfs"
+PRETTY_NAME="FerretOS 1 (Solver)"
+VERSION="1"
+VERSION_ID="1"
+VERSION_CODENAME="Solver"
+HOME_URL="https://feli-flitzberg.github.io/ferretos.html"
+DOCUMENTATION_URL="https://feli-flitzberg.github.io/ferretos.html"
+SUPPORT_URL="https://github.com/feli-flitzberg/FerretOS/discussions"
+BUG_REPORT_URL="https://github.com/feli-flitzberg/FerretOS/issues"
+PRIVACY_POLICY_URL="https://feli-flitzberg.github.io/ferretos.html"
+DEFAULT_HOSTNAME="solver"
+ARCHITECTURE="x86-64"
+```
+- Single network file that should match any network card found by systemd
+```
+# 10-base.network
+[Match]
+Name=*
+
+[Network]
+DHCP=yes
+UseDomains=true
+```
+
+#### Build/Configure process
+
+- `$LFS` is any directory accessible to both root and a regular user
+  - Included `chroot*.sh` scripts use `/opt/lfs`
+  - No drives or partitions were mounted during the build stages
+- git repo was set up during first build chapters
+  - This has the advantage of reducing the final upload size to Github
+  - This has the disadvantage of creating multiple files in Github LFS that have to be
+manually pruned
+- When changing ownership between users:
+  - To user lfs: `chown -vR lfs:lfs $LFS`
+  - To user root: `chown -vR root:root $LFS`
+- To have internet access in chroot on systemd-based host systems:
+  - Remove `mount -vt tmpfs tmpfs $LFS/run`
+  - Use `mount -v --bind /run $LFS/run`
+- Ownership of gcc build directory is changed before installation
+  - `chown -vR root:root $PWD`
+- `noclear.conf` is added
+- `/etc/fstab` is not created
+  - As part of the [Bootloader Specification](https://uapi-group.org/specifications/specs/boot_loader_specification/)
+this file isn't needed by a spec-compliant bootloader to find root
+- `/etc/machine-id` is edited to change the string to `uninitialized\n` before finalizing
+image
+  - ***If you work in a chroot and reinstall dbus via BLFS instructions, `$LFS/dev` will no
+longer unmount, and the host system will require a reboot. If working in a chroot prior to
+creating an image or USB installation, re-initialize the machine id.***
+  - ***If you work in a chroot and reinstall dbus via BLFS instructions, dbus will warn
+about an invalid user account/ID. This may cause problems in the host system, and you may
+have to reboot the host system. It is advised to only reinstall dbus in a chroot if you
+won't need the chroot environment after exiting that instance.***
+
+<!---  - For efibootmgr, the executable name is `systemd-bootx64.efi`
 -- root password set
--- change ownership of gcc build directory before installation
--- install all of elfutils to ensure systemd-boot can build
---- remove /usr/lib/libelf.a
---- remove /usr/lib/libdw.a
---- remove /usr/lib/libasm.a
--- use --with-gcc-arch=x86-64 for libffi
--- set PAGE to letter for groff
--- grub not installed, still available for LFS building
--- replace vim with nano, still available for LFS building
---- create /etc/nanorc from sample.nanorc
--- add libunistring-1.2 as depencency for libidn2
--- add libidn2-2.3.7 as dependency for glibc & systemd
--- add pyelftools-0.31 to enable systemd-boot
---- pip3 wheel -w dist --no-cache-dir --no-build-isolation --no-deps $PWD
---- pip3 install --no-index --no-user --find-links dist pyelftools
--- add /etc/os-release for bootloader (configure fails otherwise)
---- symlink /usr/lib/os-release points to /etc/os-release
---- name=FerretOS
---- id=ferretos
---- id_like=lfs
---- pretty_name=FerretOS 1 (Solver)
---- version=1
---- version_id=1
---- version_codename=Solver
---- home_url=https://feli-flitzberg.github.io/ferretos.html
---- documentation_url=''
---- support_url='https://github.com/feli-flitzberg/FerretOS/discussions'
---- bug_report_url='https://github.com/feli-flitzberg/FerretOS/issues'
---- privacy_policy_url=''
---- default_hostname=solver
---- architecture=x86-64
--- systemd-boot is systemd-bootx64.efi
--- use 10-base.network for internet config
---- match: name=*
---- network: dhcp=yes
---- network: usedomains=true
--- set hostname to ferretos
--- set lang to en_us
--- add noclear.conf
--- skip creating fstab
 -- add strip-all.sh
 -- add remove-la-files.sh
 -- add rpm2cpio script
 -- add initramfs scripts
--- to have internet connection with systemd on a systemd OS:
---- mount -v --bind /run $LFS/run
 -- set up /etc/skel before adding user
 -- include starting scripts and LFS books in /etc/skel
 -- include license files in /etc/skel
@@ -71,8 +139,3 @@ CHANGES FROM LFS 12.2
 --- ferretos
 --- ferretos
 -- add packages listed below before setting up boot
--- add rdfind package to source directory, not installed
--- install linux-firmware repository, save copy to source directory
-NOTES:
-delete /etc/machine-id or set to uninitialized
---- this breaks exiting the chroot cleanly after reinstalling dbus, host system needs reboot
