@@ -44,13 +44,12 @@ CHANGES FROM LFS 12.2
 --- version_codename=Solver
 --- home_url=https://feli-flitzberg.github.io/ferretos.html
 --- documentation_url=''
---- support_url=''
---- bug_report_url=''
+--- support_url='https://github.com/feli-flitzberg/FerretOS/discussions'
+--- bug_report_url='https://github.com/feli-flitzberg/FerretOS/issues'
 --- privacy_policy_url=''
 --- default_hostname=solver
 --- architecture=x86-64
 -- systemd-boot is systemd-bootx64.efi
---- this breaks exiting the chroot cleanly, host system needs reboot
 -- use 10-base.network for internet config
 --- match: name=*
 --- network: dhcp=yes
@@ -74,3 +73,6 @@ CHANGES FROM LFS 12.2
 -- add packages listed below before setting up boot
 -- add rdfind package to source directory, not installed
 -- install linux-firmware repository, save copy to source directory
+NOTES:
+delete /etc/machine-id or set to uninitialized
+--- this breaks exiting the chroot cleanly after reinstalling dbus, host system needs reboot
