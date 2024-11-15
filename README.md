@@ -37,19 +37,19 @@ LiveCD variant, provided there are people able to maintain it.
 - Build gcc with `--with-arch=x86-64 --with-tune=generic`
 - Build libffi with `--with-gcc-arch=x86-64`
 - Install all of elfutils, then clean up all installed static libraries
-- Install pyelftools to enable systemd-boot during configuration
+- Install (external) pyelftools to enable systemd-boot during configuration
   - Build instructions:
 ```
 pip3 wheel -w dist --no-cache-dir --no-build-isolation --no-deps $PWD
 pip3 install --no-index --no-user --find-links dist pyelftools
 ```
-- Add libidn2 before configuring systemd
-  - Add libunistring as dependency requirement
+- Add (blfs) libidn2 before configuring systemd
+  - Add (blfs) libunistring as dependency requirement
 - Skip installing GRUB (source package is available in image)
 - Personal preference: skip installing vim (source package is available in image)
-- Personal preference: install nano as editor
-- Add [linux-firmware](https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/)
-  - Add rdfind as dependency requirement
+- Personal preference: install (blfs) nano as editor
+- Add (external) [linux-firmware](https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/)
+  - Add (external) rdfind as dependency requirement
 
 #### Configuration
 
@@ -59,7 +59,7 @@ root) until a text editor is available.***
 - Source packages installed in LFS are in `/sources/base`
 - Source packages installed in BLFS or beyond are in `/sources/extra`
 - `/usr/lib64` is a symlink to `/usr/lib` to deter problems
-- `LANG` is set to `en_US`
+- `LANG` is set to `en_US.UTF-8`
 - timezone not configured to avoid assumptions
 - `PAGE` is set to `letter`
 - `/etc/os-release` is required before configuring systemd for bootloader
@@ -94,7 +94,7 @@ UseDomains=true
 #### Build/Configure process
 
 - `$LFS` is any directory accessible to both root and a regular user
-  - Included `chroot*.sh` scripts use `/opt/lfs`
+  - Included convenience scripts use `/opt/lfs`
   - No drives or partitions were mounted during the build stages
 - git repo was set up during first build chapters
   - This has the advantage of reducing the final upload size to Github
@@ -106,6 +106,7 @@ manually pruned
 - To have internet access in chroot on systemd-based host systems:
   - Remove `mount -vt tmpfs tmpfs $LFS/run`
   - Use `mount -v --bind /run $LFS/run`
+    - `chroot-net.sh` is already set up for this purpose
 - Ownership of gcc build directory is changed before installation
   - `chown -vR root:root $PWD`
 - `noclear.conf` is added
