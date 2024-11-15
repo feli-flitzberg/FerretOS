@@ -1,8 +1,8 @@
-dev/
-! dev/gitkeep
-proc/
-! proc/gitkeep
-sys/
-! sys/gitkeep
-run/
-! run/gitkeep
+dev/*
+!dev/gitkeep
+proc/*
+!proc/gitkeep
+sys/*
+!sys/gitkeep
+run/*
+!run/gitkeep
