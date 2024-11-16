@@ -302,3 +302,87 @@ rm -rfv binutils-2.43.1
 mv -v binutils-2.43.1.tar.xz base
 ls
 exit
+cd sources
+ls
+tar -vxf gmp-6.3.0.tar.xz 
+cd gmp-6.3.0
+./configure --prefix=/usr --enable-cxx --disable-static --docdir=/usr/share/doc/gmp-6.3.0 --disable-assembly
+./configure --prefix=/usr --enable-cxx --disable-static --docdir=/usr/share/doc/gmp-6.3.0 --disable-assembly --host=amd64-pc-linux-gnu
+make && make check 2>&1 | tee gmp-check-log
+awk '/# PASS:/{total+=$3} ; END{print total}' gmp-check-log 
+make install
+cd ..
+rm -rfv gmp-6.3.0
+mv -v gmp-6.3.0.tar.xz base
+ls
+tar -vxf mpfr-4.2.1.tar.xz 
+cd mpfr-4.2.1
+./configure --prefix=/usr --disable-static --enable-thread-safe --docdir=/usr/share/doc/mpfr-4.2.1 && make && make check
+cat INSTALL
+cd ..
+rm -rfv mpfr-4.2.1
+tar -vxf mpfr-4.2.1.tar.xz 
+cd mpfr-4.2.1
+./configure --prefix=/usr --disable-static --enable-thread-safe --enable-decimal-float=generic --docdir=/usr/share/doc/mpfr-4.2.1 && make && make check
+make install
+cd ..
+rm -rfv mpfr-4.2.1
+mv -v mpfr-4.2.1.tar.xz base
+ls
+tar -vxf mpc-1.3.1.tar.gz 
+cd mpc-1.3.1
+./configure --prefix=/usr --disable-static --docdir=/usr/share/doc/mpc-1.3.1
+make && make install
+cd ..
+rm -rfv mpc-1.3.1
+mv -v mpc-1.3.1.tar.gz base
+ls
+tar -vxf attr-2.5.2.tar.gz 
+cd attr-2.5.2
+./configure --prefix=/usr --disable-static --sysconfdir=/etc --docdir=/usr/share/doc/attr-2.5.2 && make && make install
+cd ..
+rm -rfv attr-2.5.2
+mv -v attr-2.5.2.tar.gz base
+ls
+tar -vxf acl-2.3.2.tar.xz 
+cd acl-2.3.2
+./configure --prefix=/usr --disable-static --docdir=/usr/share/doc/acl-2.3.2 && make && make install
+cd ..
+rm -rfv acl-2.3.2
+mv -v acl-2.3.2.tar.xz base
+ls
+tar -vxf libcap-2.70.tar.xz 
+cd libcap-2.70
+sed -i '/install -m.*STA/d' libcap/Makefile
+make prefix=/usr lib=lib && make prefix=/usr lib=lib install
+cd ..
+rm -rfv libcap-2.70
+mv -v libcap-2.70.tar.xz base
+ls
+tar -vxf libxcrypt-4.4.36.tar.xz 
+cd libxcrypt-4.4.36
+./configure --prefix=/usr --enable-hashes=strong,glibc --enable-obsolete-api=no --disable-static --disable-failure-tokens && make && make install
+cd ..
+rm -rfv libxcrypt-4.4.36
+mv -v libxcrypt-4.4.36.tar.xz base
+ls
+tar -vxf shadow-4.16.0.tar.xz 
+cd shadow-4.16.0
+sed -i 's/groups$(EXEEXT) //' src/Makefile.in
+find man -name Makefile.in -exec sed -i 's/groups\.1 / /'   {} \;
+find man -name Makefile.in -exec sed -i 's/getspnam\.3 / /' {} \;
+find man -name Makefile.in -exec sed -i 's/passwd\.5 / /'   {} \;
+sed -e 's:#ENCRYPT_METHOD DES:ENCRYPT_METHOD YESCRYPT:'     -e 's:/var/spool/mail:/var/mail:'                       -e '/PATH=/{s@/sbin:@@;s@/bin:@@}'                      -i etc/login.defs
+touch /usr/bin/passwd
+./configure --sysconfdir=/etc --disable-static --with-{b,yes}crypt --without-libbsd --with-group-name-max-length=32 && make && make exec_prefix=/usr install && make -C man install-man
+pwconv
+grpconv
+mkdir -pv /etc/default
+useradd -D --gid 999
+sed -i '/MAIL/s/yes/no/' /etc/default/useradd
+passwd root
+cd ..
+rm -rfv shadow-4.16.0
+mv -v shadow-4.16.0.tar.xz base
+ls
+exit

@@ -35,7 +35,8 @@ LiveCD variant, provided there are people able to maintain it.
 - Update python to 3.12.7
 - Add (blfs) libidn2 2.3.7
   - Add (blfs) libunistring 1.2 as recommended dependency
-- Build gmp with `--disable-assembly`
+- Build gmp with `--disable-assembly --host=amd64-pc-linux-gnu`
+- Build mpfr with `--enable-decimal-float=generic`
 - Build gcc with `--with-arch=x86-64 --with-tune=generic`
 - Build libffi with `--with-gcc-arch=x86-64`
 - Install all of elfutils, then clean up all installed static libraries
@@ -60,7 +61,9 @@ root) until a text editor is available.***
 - Source packages installed in BLFS or beyond are in `/sources/extra`
 - `/usr/lib64` is a symlink to `/usr/lib` to deter problems
 - `LANG` is set to `en_US.UTF-8`
-- timezone not configured to avoid assumptions
+- Timezone not configured to avoid assumptions
+- Mailboxes disabled for `useradd`
+- Root password set
 - `PAGE` is set to `letter`
 - `/etc/os-release` is required before configuring systemd for bootloader
   - `/usr/lib/os-release` points to `/etc/os-release`
