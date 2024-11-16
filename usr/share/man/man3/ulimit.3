@@ -1,0 +1,87 @@
+'\" t
+.\" Copyright (C) 1996 Andries Brouwer (aeb@cwi.nl)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" Moved to man3, aeb, 980612
+.\"
+.TH ulimit 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+ulimit \- get and set user limits
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <ulimit.h>
+.P
+.BI "[[deprecated]] long ulimit(int " cmd ", long " newlimit );
+.fi
+.SH DESCRIPTION
+Warning: this routine is obsolete.
+Use
+.BR getrlimit (2),
+.BR setrlimit (2),
+and
+.BR sysconf (3)
+instead.
+For the shell command
+.BR ulimit ,
+see
+.BR bash (1).
+.P
+The
+.BR ulimit ()
+call will get or set some limit for the calling process.
+The
+.I cmd
+argument can have one of the following values.
+.TP
+.B UL_GETFSIZE
+Return the limit on the size of a file, in units of 512 bytes.
+.TP
+.B UL_SETFSIZE
+Set the limit on the size of a file.
+.TP
+.B 3
+(Not implemented for Linux.)
+Return the maximum possible address of the data segment.
+.TP
+.B 4
+(Implemented but no symbolic constant provided.)
+Return the maximum number of files that the calling process can open.
+.SH RETURN VALUE
+On success,
+.BR ulimit ()
+returns a nonnegative value.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EPERM
+An unprivileged process tried to increase a limit.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR ulimit ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+SVr4, POSIX.1-2001.
+POSIX.1-2008 marks it as obsolete.
+.SH SEE ALSO
+.BR bash (1),
+.BR getrlimit (2),
+.BR setrlimit (2),
+.BR sysconf (3)

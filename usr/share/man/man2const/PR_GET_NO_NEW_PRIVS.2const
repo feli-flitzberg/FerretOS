@@ -1,0 +1,55 @@
+.\" Copyright 2012, Kees Cook <keescook@chromium.org>
+.\" Copyright 2012, 2013, 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_GET_NO_NEW_PRIVS 2const 2024-06-01 "Linux man-pages 6.9.1"
+.SH NAME
+PR_GET_NO_NEW_PRIVS
+\-
+get the calling thread's no_new_privs attribute
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.B int prctl(PR_GET_NO_NEW_PRIVS, 0L, 0L, 0L, 0L);
+.fi
+.SH DESCRIPTION
+Return the value of the
+.I no_new_privs
+attribute for the calling thread.
+A value of 0 indicates the regular
+.BR execve (2)
+behavior.
+A value of 1 indicates
+.BR execve (2)
+will operate in the privilege-restricting mode described in
+.BR PR_SET_NO_NEW_PRIVS (2const).
+.SH RETURN VALUE
+On success,
+.B PR_GET_NO_NEW_PRIVS
+returns the boolean value described above.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH FILES
+.TP
+.IR /proc/ pid /status
+Since Linux 4.10,
+the value of a thread's
+.I no_new_privs
+attribute can be viewed via the
+.I NoNewPrivs
+field in this file.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 3.5.
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_SET_NO_NEW_PRIVS (2const)

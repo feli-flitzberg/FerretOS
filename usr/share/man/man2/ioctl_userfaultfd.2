@@ -1,0 +1,112 @@
+.\" Copyright 2016, IBM Corporation.
+.\" Written by Mike Rapoport <rppt@linux.vnet.ibm.com>
+.\" Copyright 2016, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH ioctl_userfaultfd 2 2024-06-14 "Linux man-pages 6.9.1"
+.SH NAME
+ioctl_userfaultfd \- create a file descriptor for handling page faults in user
+space
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/userfaultfd.h>" "  /* Definition of " UFFD* " constants */"
+.B #include <sys/ioctl.h>
+.P
+.BI "int ioctl(int " fd ", int " op ", ...);"
+.fi
+.SH DESCRIPTION
+Various
+.BR ioctl (2)
+operations can be performed on a userfaultfd object (created by a call to
+.BR userfaultfd (2))
+using calls of the form:
+.P
+.in +4n
+.EX
+ioctl(fd, op, argp);
+.EE
+.in
+.P
+In the above,
+.I fd
+is a file descriptor referring to a userfaultfd object,
+.I op
+is one of the operations listed below, and
+.I argp
+is a pointer to a data structure that is specific to
+.IR op .
+.P
+The various
+.BR ioctl (2)
+operations are described below.
+The
+.BR UFFDIO_API ,
+.BR UFFDIO_REGISTER ,
+and
+.B UFFDIO_UNREGISTER
+operations are used to
+.I configure
+userfaultfd behavior.
+These operations allow the caller to choose what features will be enabled and
+what kinds of events will be delivered to the application.
+The remaining operations are
+.I range
+operations.
+These operations enable the calling application to resolve page-fault
+events.
+.\"
+.TP
+.BR UFFDIO_API (2const)
+.TQ
+.BR UFFDIO_REGISTER (2const)
+.TQ
+.BR UFFDIO_UNREGISTER (2const)
+.TQ
+.BR UFFDIO_COPY (2const)
+.TQ
+.BR UFFDIO_ZEROPAGE (2const)
+.TQ
+.BR UFFDIO_WAKE (2const)
+.TQ
+.BR UFFDIO_WRITEPROTECT (2const)
+.TQ
+.BR UFFDIO_CONTINUE (2const)
+.TQ
+.BR UFFDIO_POISON (2const)
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error,
+\-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+The following general errors can occur for all of the
+operations described above:
+.TP
+.B EFAULT
+.I argp
+does not point to a valid memory address.
+.TP
+.B EINVAL
+(For all operations except
+.BR UFFDIO_API .)
+The userfaultfd object has not yet been enabled (via the
+.B UFFDIO_API
+operation).
+.SH STANDARDS
+Linux.
+.SH EXAMPLES
+See
+.BR userfaultfd (2).
+.SH SEE ALSO
+.BR ioctl (2),
+.BR mmap (2),
+.BR userfaultfd (2)
+.P
+.I linux.git/\:Documentation/\:admin\-guide/\:mm/\:userfaultfd.rst

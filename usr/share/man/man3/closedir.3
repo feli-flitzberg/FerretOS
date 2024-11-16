@@ -1,0 +1,75 @@
+'\" t
+.\" Copyright (C) 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 21:25:52 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified 11 June 1995 by Andries Brouwer (aeb@cwi.nl)
+.TH closedir 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+closedir \- close a directory
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <sys/types.h>
+.B #include <dirent.h>
+.P
+.BI "int closedir(DIR *" dirp );
+.fi
+.SH DESCRIPTION
+The
+.BR closedir ()
+function closes the directory stream associated with
+.IR dirp .
+A successful call to
+.BR closedir ()
+also closes the underlying file descriptor associated with
+.IR dirp .
+The directory stream descriptor
+.I dirp
+is not available
+after this call.
+.SH RETURN VALUE
+The
+.BR closedir ()
+function returns 0 on success.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EBADF
+Invalid directory stream descriptor
+.IR dirp .
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR closedir ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, SVr4, 4.3BSD.
+.SH SEE ALSO
+.BR close (2),
+.BR opendir (3),
+.BR readdir (3),
+.BR rewinddir (3),
+.BR scandir (3),
+.BR seekdir (3),
+.BR telldir (3)

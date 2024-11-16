@@ -1,0 +1,55 @@
+.\" Copyright (c) 1993 Michael Haardt (michael@moria.de),
+.\"     Fri Apr  2 11:32:09 MET DST 1993
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" Modified Sat Jul 24 17:06:03 1993 by Rik Faith (faith@cs.unc.edu)
+.TH group 5 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+group \- user group file
+.SH DESCRIPTION
+The
+.I /etc/group
+file is a text file that defines the groups on the system.
+There is one entry per line, with the following format:
+.P
+.in +4n
+.EX
+group_name:password:GID:user_list
+.EE
+.in
+.P
+The fields are as follows:
+.TP
+.I group_name
+the name of the group.
+.TP
+.I password
+the (encrypted) group password.
+If this field is empty, no password is needed.
+.TP
+.I GID
+the numeric group ID.
+.TP
+.I user_list
+a list of the usernames that are members of this group, separated by commas.
+.SH FILES
+.I /etc/group
+.SH BUGS
+As the 4.2BSD
+.BR initgroups (3)
+man page says: no one seems to keep
+.I /etc/group
+up-to-date.
+.SH SEE ALSO
+.BR chgrp (1),
+.BR gpasswd (1),
+.BR groups (1),
+.BR login (1),
+.BR newgrp (1),
+.BR sg (1),
+.BR getgrent (3),
+.BR getgrnam (3),
+.BR gshadow (5),
+.BR passwd (5),
+.BR vigr (8)

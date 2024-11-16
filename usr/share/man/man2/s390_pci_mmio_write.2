@@ -1,0 +1,94 @@
+.\" Copyright (c) IBM Corp. 2015
+.\" Author: Alexey Ishchuk <aishchuk@linux.vnet.ibm.com>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.TH s390_pci_mmio_write 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+s390_pci_mmio_write, s390_pci_mmio_read \- transfer data to/from PCI
+MMIO memory page
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <sys/syscall.h>" "      /* Definition of " SYS_* " constants */"
+.B #include <unistd.h>
+.P
+.BI "int syscall(SYS_s390_pci_mmio_write, unsigned long " mmio_addr ,
+.BI "                       const void " user_buffer [. length "], \
+size_t " length );
+.BI "int syscall(SYS_s390_pci_mmio_read, unsigned long " mmio_addr ,
+.BI "                       void " user_buffer [. length "], size_t " length );
+.fi
+.P
+.IR Note :
+glibc provides no wrappers for these system calls,
+necessitating the use of
+.BR syscall (2).
+.SH DESCRIPTION
+The
+.BR s390_pci_mmio_write ()
+system call writes
+.I length
+bytes of data from the user-space buffer
+.I user_buffer
+to the PCI MMIO memory location specified by
+.IR mmio_addr .
+The
+.BR s390_pci_mmio_read ()
+system call reads
+.I length
+bytes of
+data from the PCI MMIO memory location specified by
+.I mmio_addr
+to the user-space buffer
+.IR user_buffer .
+.P
+These system calls must be used instead of the simple assignment
+or data-transfer operations that are used to access the PCI MMIO
+memory areas mapped to user space on the Linux System z platform.
+The address specified by
+.I mmio_addr
+must belong to a PCI MMIO memory page mapping in the caller's address space,
+and the data being written or read must not cross a page boundary.
+The
+.I length
+value cannot be greater than the system page size.
+.SH RETURN VALUE
+On success,
+.BR s390_pci_mmio_write ()
+and
+.BR s390_pci_mmio_read ()
+return 0.
+On failure, \-1 is returned and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EFAULT
+The address in
+.I mmio_addr
+is invalid.
+.TP
+.B EFAULT
+.I user_buffer
+does not point to a valid location in the caller's address space.
+.TP
+.B EINVAL
+Invalid
+.I length
+argument.
+.TP
+.B ENODEV
+PCI support is not enabled.
+.TP
+.B ENOMEM
+Insufficient memory.
+.SH STANDARDS
+Linux on s390.
+.SH HISTORY
+Linux 3.19.
+System z EC12.
+.SH SEE ALSO
+.BR syscall (2)

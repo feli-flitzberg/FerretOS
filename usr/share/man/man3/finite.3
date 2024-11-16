@@ -1,0 +1,143 @@
+'\" t
+.\" Copyright 2004 Andries Brouwer <aeb@cwi.nl>.
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH finite 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+finite, finitef, finitel, isinf, isinff, isinfl, isnan, isnanf, isnanl \-
+BSD floating-point classification functions
+.SH LIBRARY
+Math library
+.RI ( libm ", " \-lm )
+.SH SYNOPSIS
+.nf
+.B #include <math.h>
+.P
+.BI "int finite(double " x );
+.BI "int finitef(float " x );
+.BI "int finitel(long double " x );
+.P
+.BI "int isinf(double " x );
+.BI "int isinff(float " x );
+.BI "int isinfl(long double " x );
+.P
+.BI "int isnan(double " x );
+.BI "int isnanf(float " x );
+.BI "int isnanl(long double " x );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR finite (),
+.BR finitef (),
+.BR finitel ():
+.nf
+    /* glibc >= 2.19: */ _DEFAULT_SOURCE
+        || /* glibc <= 2.19: */ _BSD_SOURCE || _SVID_SOURCE
+.P
+.BR isinf ():
+    _XOPEN_SOURCE >= 600 || _ISOC99_SOURCE
+        || /* glibc >= 2.19: */ _DEFAULT_SOURCE
+        || /* glibc <= 2.19: */ _BSD_SOURCE || _SVID_SOURCE
+.fi
+.P
+.BR isinff (),
+.BR isinfl ():
+.nf
+    /* glibc >= 2.19: */ _DEFAULT_SOURCE
+        || /* glibc <= 2.19: */ _BSD_SOURCE || _SVID_SOURCE
+.fi
+.P
+.BR isnan ():
+.nf
+    _XOPEN_SOURCE || _ISOC99_SOURCE
+        || /* glibc >= 2.19: */ _DEFAULT_SOURCE
+        || /* glibc <= 2.19: */ _BSD_SOURCE || _SVID_SOURCE
+.fi
+.P
+.BR isnanf (),
+.BR isnanl ():
+.nf
+    _XOPEN_SOURCE >= 600
+        || /* glibc >= 2.19: */ _DEFAULT_SOURCE
+        || /* glibc <= 2.19: */ _BSD_SOURCE || _SVID_SOURCE
+.fi
+.SH DESCRIPTION
+The
+.BR finite (),
+.BR finitef (),
+and
+.BR finitel ()
+functions return a nonzero value if
+.I x
+is neither infinite
+nor a "not-a-number" (NaN) value, and 0 otherwise.
+.P
+The
+.BR isnan (),
+.BR isnanf (),
+and
+.BR isnanl ()
+functions return a nonzero value if
+.I x
+is a NaN value,
+and 0 otherwise.
+.P
+The
+.BR isinf (),
+.BR isinff (),
+and
+.BR isinfl ()
+functions return 1 if
+.I x
+is positive infinity, \-1 if
+.I x
+is negative infinity, and 0 otherwise.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR finite (),
+.BR finitef (),
+.BR finitel (),
+.BR isinf (),
+.BR isinff (),
+.BR isinfl (),
+.BR isnan (),
+.BR isnanf (),
+.BR isnanl ()
+T}	Thread safety	MT-Safe
+.TE
+.SH NOTES
+Note that these functions are obsolete.
+C99 defines macros
+.BR isfinite (),
+.BR isinf (),
+and
+.BR isnan ()
+(for all types) replacing them.
+Further note that the C99
+.BR isinf ()
+has weaker guarantees on the return value.
+See
+.BR fpclassify (3).
+.\"
+.\" finite* not on HP-UX; they exist on Tru64.
+.\" .SH HISTORY
+.\" The
+.\" .BR finite ()
+.\" function occurs in 4.3BSD.
+.\" see IEEE.3 in the 4.3BSD manual
+.SH SEE ALSO
+.BR fpclassify (3)

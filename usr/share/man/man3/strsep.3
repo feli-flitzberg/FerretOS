@@ -1,0 +1,162 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 18:00:10 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Mon Jan 20 12:04:18 1997 by Andries Brouwer (aeb@cwi.nl)
+.\" Modified Tue Jan 23 20:23:07 2001 by Andries Brouwer (aeb@cwi.nl)
+.\"
+.TH strsep 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+strsep \- extract token from string
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <string.h>
+.P
+.BI "char *strsep(char **restrict " stringp ", const char *restrict " delim );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR strsep ():
+.nf
+    Since glibc 2.19:
+        _DEFAULT_SOURCE
+    glibc 2.19 and earlier:
+        _BSD_SOURCE
+.fi
+.SH DESCRIPTION
+If
+.I *stringp
+is NULL, the
+.BR strsep ()
+function returns NULL
+and does nothing else.
+Otherwise, this function finds the first token
+in the string
+.I *stringp
+that is delimited by one of the bytes in the string
+.IR delim .
+This token is terminated by overwriting the delimiter
+with a null byte (\[aq]\[rs]0\[aq]),
+and
+.I *stringp
+is updated to point past the token.
+In case no delimiter was found, the token is taken to be
+the entire string
+.IR *stringp ,
+and
+.I *stringp
+is made NULL.
+.SH RETURN VALUE
+The
+.BR strsep ()
+function returns a pointer to the token,
+that is, it returns the original value of
+.IR *stringp .
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR strsep ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+None.
+.SH HISTORY
+4.4BSD.
+.P
+The
+.BR strsep ()
+function was introduced as a replacement for
+.BR strtok (3),
+since the latter cannot handle empty fields.
+However,
+.BR strtok (3)
+conforms to C89/C99 and hence is more portable.
+.SH BUGS
+Be cautious when using this function.
+If you do use it, note that:
+.IP \[bu] 3
+This function modifies its first argument.
+.IP \[bu]
+This function cannot be used on constant strings.
+.IP \[bu]
+The identity of the delimiting character is lost.
+.SH EXAMPLES
+The program below is a port of the one found in
+.BR strtok (3),
+which, however, doesn't discard multiple delimiters or empty tokens:
+.P
+.in +4n
+.EX
+.RB "$" " ./a.out \[aq]a/bbb///cc;xxx:yyy:\[aq] \[aq]:;\[aq] \[aq]/\[aq]"
+1: a/bbb///cc
+         \-\-> a
+         \-\-> bbb
+         \-\->
+         \-\->
+         \-\-> cc
+2: xxx
+         \-\-> xxx
+3: yyy
+         \-\-> yyy
+4:
+         \-\->
+.EE
+.in
+.SS Program source
+\&
+.\" SRC BEGIN (strsep.c)
+.EX
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+\&
+int
+main(int argc, char *argv[])
+{
+    char *token, *subtoken;
+\&
+    if (argc != 4) {
+        fprintf(stderr, "Usage: %s string delim subdelim\[rs]n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+\&
+    for (unsigned int j = 1; (token = strsep(&argv[1], argv[2])); j++) {
+        printf("%u: %s\[rs]n", j, token);
+\&
+        while ((subtoken = strsep(&token, argv[3])))
+            printf("\[rs]t \-\-> %s\[rs]n", subtoken);
+    }
+\&
+    exit(EXIT_SUCCESS);
+}
+.EE
+.\" SRC END
+.SH SEE ALSO
+.BR memchr (3),
+.BR strchr (3),
+.BR string (3),
+.BR strpbrk (3),
+.BR strspn (3),
+.BR strstr (3),
+.BR strtok (3)

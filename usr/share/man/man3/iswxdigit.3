@@ -1,0 +1,87 @@
+'\" t
+.\" Copyright (c) Bruno Haible <haible@clisp.cons.org>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" References consulted:
+.\"   GNU glibc-2 source code and manual
+.\"   Dinkumware C library reference http://www.dinkumware.com/
+.\"   OpenGroup's Single UNIX specification http://www.UNIX-systems.org/online.html
+.\"   ISO/IEC 9899:1999
+.\"
+.TH iswxdigit 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+iswxdigit \- test for hexadecimal digit wide character
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <wctype.h>
+.P
+.BI "int iswxdigit(wint_t " wc );
+.fi
+.SH DESCRIPTION
+The
+.BR iswxdigit ()
+function is the wide-character equivalent of the
+.BR isxdigit (3)
+function.
+It tests whether
+.I wc
+is a wide character
+belonging to the wide-character class "xdigit".
+.P
+The wide-character class "xdigit" is a subclass of the wide-character class
+"alnum", and therefore also a subclass of the wide-character class "graph" and
+of the wide-character class "print".
+.P
+Being a subclass of the wide-character class "print", the wide-character class
+"xdigit" is disjoint from the wide-character class "cntrl".
+.P
+Being a subclass of the wide-character class "graph", the wide-character class
+"xdigit" is disjoint from the wide-character class "space" and its subclass
+"blank".
+.P
+Being a subclass of the wide-character class "alnum", the wide-character class
+"xdigit" is disjoint from the wide-character class "punct".
+.P
+The wide-character class "xdigit" always contains at least the
+letters \[aq]A\[aq] to \[aq]F\[aq], \[aq]a\[aq] to \[aq]f\[aq]
+and the digits \[aq]0\[aq] to \[aq]9\[aq].
+.SH RETURN VALUE
+The
+.BR iswxdigit ()
+function returns nonzero if
+.I wc
+is a wide character
+belonging to the wide-character class "xdigit".
+Otherwise, it returns zero.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR iswxdigit ()
+T}	Thread safety	MT-Safe locale
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, C99.
+.SH NOTES
+The behavior of
+.BR iswxdigit ()
+depends on the
+.B LC_CTYPE
+category of the
+current locale.
+.SH SEE ALSO
+.BR iswctype (3),
+.BR isxdigit (3)

@@ -1,0 +1,102 @@
+'\" t
+.\" Copyright (c) Bruno Haible <haible@clisp.cons.org>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" References consulted:
+.\"   GNU glibc-2 source code and manual
+.\"   Dinkumware C library reference http://www.dinkumware.com/
+.\"   OpenGroup's Single UNIX specification http://www.UNIX-systems.org/online.html
+.\"   ISO/IEC 9899:1999
+.\"
+.TH ungetwc 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+ungetwc \- push back a wide character onto a FILE stream
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <wchar.h>
+.P
+.BI "wint_t ungetwc(wint_t " wc ", FILE *" stream );
+.fi
+.SH DESCRIPTION
+The
+.BR ungetwc ()
+function is the wide-character equivalent of the
+.BR ungetc (3)
+function.
+It pushes back a wide character onto
+.I stream
+and returns it.
+.P
+If
+.I wc
+is
+.BR WEOF ,
+it returns
+.BR WEOF .
+If
+.I wc
+is an invalid wide character,
+it sets
+.I errno
+to
+.B EILSEQ
+and returns
+.BR WEOF .
+.P
+If
+.I wc
+is a valid wide character, it is pushed back onto the stream
+and thus becomes available for future wide-character read operations.
+The file-position indicator is decremented by one or more.
+The end-of-file
+indicator is cleared.
+The backing storage of the file is not affected.
+.P
+Note:
+.I wc
+need not be the last wide-character read from the stream;
+it can be any other valid wide character.
+.P
+If the implementation supports multiple push-back operations in a row, the
+pushed-back wide characters will be read in reverse order; however, only one
+level of push-back is guaranteed.
+.SH RETURN VALUE
+The
+.BR ungetwc ()
+function returns
+.I wc
+when successful, or
+.B WEOF
+upon
+failure.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR ungetwc ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, C99.
+.SH NOTES
+The behavior of
+.BR ungetwc ()
+depends on the
+.B LC_CTYPE
+category of the
+current locale.
+.SH SEE ALSO
+.BR fgetwc (3)

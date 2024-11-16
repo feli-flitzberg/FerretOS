@@ -1,0 +1,60 @@
+'\" t
+.\" Copyright (c) 2012 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH malloc_usable_size 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+malloc_usable_size \- obtain size of block of memory allocated from heap
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <malloc.h>
+.P
+.BI "size_t malloc_usable_size(void *_Nullable " ptr );
+.fi
+.SH DESCRIPTION
+This function can be used for
+diagnostics or statistics about allocations from
+.BR malloc (3)
+or a related function.
+.SH RETURN VALUE
+.BR malloc_usable_size ()
+returns a value no less than
+the size of the block of allocated memory pointed to by
+.IR ptr .
+If
+.I ptr
+is NULL, 0 is returned.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR malloc_usable_size ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+GNU.
+.SH CAVEATS
+The value returned by
+.BR malloc_usable_size ()
+may be greater than the requested size of the allocation
+because of various internal implementation details,
+none of which the programmer should rely on.
+This function is intended to only be used
+for diagnostics and statistics;
+writing to the excess memory without first calling
+.BR realloc (3)
+to resize the allocation is not supported.
+The returned value is only valid at the time of the call.
+.SH SEE ALSO
+.BR malloc (3)

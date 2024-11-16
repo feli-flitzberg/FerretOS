@@ -1,0 +1,142 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\" and Copyright (c) 2008 Linux Foundation, written by Michael Kerrisk
+.\"     <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" Modified Mon Apr 12 12:49:57 1993, David Metcalfe
+.\" Modified Sat Jul 24 18:56:22 1993, Rik Faith (faith@cs.unc.edu)
+.\" Modified Wed Feb 20 21:09:36 2002, Ian Redfern (redferni@logica.com)
+.\" 2008-07-09, mtk, add rawmemchr()
+.\"
+.TH memchr 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+memchr, memrchr, rawmemchr \- scan memory for a character
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <string.h>
+.P
+.BI "void *memchr(const void " s [. n "], int " c ", size_t " n );
+.BI "void *memrchr(const void " s [. n "], int " c ", size_t " n );
+.P
+.BI "[[deprecated]] void *rawmemchr(const void *" s ", int " c );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR memrchr (),
+.BR rawmemchr ():
+.nf
+    _GNU_SOURCE
+.fi
+.SH DESCRIPTION
+The
+.BR memchr ()
+function scans the initial
+.I n
+bytes of the memory
+area pointed to by
+.I s
+for the first instance of
+.IR c .
+Both
+.I c
+and the bytes of the memory area pointed to by
+.I s
+are interpreted as
+.IR "unsigned char" .
+.P
+The
+.BR memrchr ()
+function is like the
+.BR memchr ()
+function,
+except that it searches backward from the end of the
+.I n
+bytes pointed to by
+.I s
+instead of forward from the beginning.
+.P
+The
+.BR rawmemchr ()
+function is similar to
+.BR memchr (),
+but it assumes
+(i.e., the programmer knows for certain)
+that an instance of
+.I c
+lies somewhere in the memory area starting at the location pointed to by
+.IR s .
+If an instance of
+.I c
+is not found, the behavior is undefined.
+Use either
+.BR strlen (3)
+or
+.BR memchr (3)
+instead.
+.SH RETURN VALUE
+The
+.BR memchr ()
+and
+.BR memrchr ()
+functions return a pointer
+to the matching byte or NULL if the character does not occur in
+the given memory area.
+.P
+The
+.BR rawmemchr ()
+function returns a pointer to the matching byte.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR memchr (),
+.BR memrchr (),
+.BR rawmemchr ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+.TP
+.BR memchr ()
+C11, POSIX.1-2008.
+.TP
+.BR memrchr ()
+.TQ
+.BR rawmemchr ()
+GNU.
+.SH HISTORY
+.TP
+.BR memchr ()
+POSIX.1-2001, C89, SVr4, 4.3BSD.
+.TP
+.BR memrchr ()
+glibc 2.2.
+.TP
+.BR rawmemchr ()
+glibc 2.1.
+.SH SEE ALSO
+.BR bstring (3),
+.BR ffs (3),
+.BR memmem (3),
+.BR strchr (3),
+.BR strpbrk (3),
+.BR strrchr (3),
+.BR strsep (3),
+.BR strspn (3),
+.BR strstr (3),
+.BR wmemchr (3)

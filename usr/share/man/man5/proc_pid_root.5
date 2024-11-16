@@ -1,0 +1,75 @@
+.\" Copyright (C) 1994, 1995, Daniel Quinlan <quinlan@yggdrasil.com>
+.\" Copyright (C) 2002-2008, 2017, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright (C) 2023, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-3.0-or-later
+.\"
+.TH proc_pid_root 5 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+/proc/pid/root/ \- symbolic link to root directory
+.SH DESCRIPTION
+.TP
+.IR /proc/ pid /root/
+UNIX and Linux support the idea of a per-process root of the
+filesystem, set by the
+.BR chroot (2)
+system call.
+This file is a symbolic link that points to the process's
+root directory, and behaves in the same way as
+.IR exe ,
+and
+.IR fd/* .
+.IP
+Note however that this file is not merely a symbolic link.
+It provides the same view of the filesystem (including namespaces and the
+set of per-process mounts) as the process itself.
+An example illustrates this point.
+In one terminal, we start a shell in new user and mount namespaces,
+and in that shell we create some new mounts:
+.IP
+.in +4n
+.EX
+$ \fBPS1=\[aq]sh1# \[aq] unshare \-Urnm\fP
+sh1# \fBmount \-t tmpfs tmpfs /etc\fP  # Mount empty tmpfs at /etc
+sh1# \fBmount \-\-bind /usr /dev\fP     # Mount /usr at /dev
+sh1# \fBecho $$\fP
+27123
+.EE
+.in
+.IP
+In a second terminal window, in the initial mount namespace,
+we look at the contents of the corresponding mounts in
+the initial and new namespaces:
+.IP
+.in +4n
+.EX
+$ \fBPS1=\[aq]sh2# \[aq] sudo sh\fP
+sh2# \fBls /etc | wc \-l\fP                  # In initial NS
+309
+sh2# \fBls /proc/27123/root/etc | wc \-l\fP  # /etc in other NS
+0                                     # The empty tmpfs dir
+sh2# \fBls /dev | wc \-l\fP                  # In initial NS
+205
+sh2# \fBls /proc/27123/root/dev | wc \-l\fP  # /dev in other NS
+11                                    # Actually bind
+                                      # mounted to /usr
+sh2# \fBls /usr | wc \-l\fP                  # /usr in initial NS
+11
+.EE
+.in
+.IP
+.\" The following was still true as at kernel 2.6.13
+In a multithreaded process, the contents of the
+.IR /proc/ pid /root
+symbolic link are not available if the main thread has already terminated
+(typically by calling
+.BR pthread_exit (3)).
+.IP
+Permission to dereference or read
+.RB ( readlink (2))
+this symbolic link is governed by a ptrace access mode
+.B PTRACE_MODE_READ_FSCREDS
+check; see
+.BR ptrace (2).
+.SH SEE ALSO
+.BR proc (5)

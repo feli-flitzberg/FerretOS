@@ -1,0 +1,85 @@
+.\" Copyright 2004 Andries Brouwer <aeb@cwi.nl>.
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH INFINITY 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+INFINITY, NAN, HUGE_VAL, HUGE_VALF, HUGE_VALL \- floating-point constants
+.SH LIBRARY
+Math library
+.RI ( libm )
+.SH SYNOPSIS
+.nf
+.BR "#define _ISOC99_SOURCE" "      /* See feature_test_macros(7) */"
+.B #include <math.h>
+.P
+.B INFINITY
+.P
+.B NAN
+.P
+.B HUGE_VAL
+.B HUGE_VALF
+.B HUGE_VALL
+.fi
+.SH DESCRIPTION
+The macro
+.B INFINITY
+expands to a
+.I float
+constant representing positive infinity.
+.P
+The macro
+.B NAN
+expands to a
+.I float
+constant representing a quiet NaN
+(when supported).
+A
+.I quiet
+NaN is a NaN ("not-a-number") that does not raise exceptions
+when it is used in arithmetic.
+The opposite is a
+.I signaling
+NaN.
+See IEC 60559:1989.
+.P
+The macros
+.BR HUGE_VAL ,
+.BR HUGE_VALF ,
+.B HUGE_VALL
+expand to constants of types
+.IR double ,
+.IR float ,
+and
+.IR "long double" ,
+respectively,
+that represent a large positive value, possibly positive infinity.
+.SH STANDARDS
+C11.
+.SH HISTORY
+C99.
+.P
+On a glibc system, the macro
+.B HUGE_VAL
+is always available.
+Availability of the
+.B NAN
+macro can be tested using
+.BR "#ifdef NAN" ,
+and similarly for
+.BR INFINITY ,
+.BR HUGE_VALF ,
+.BR HUGE_VALL .
+They will be defined by
+.I <math.h>
+if
+.B _ISOC99_SOURCE
+or
+.B _GNU_SOURCE
+is defined, or
+.B __STDC_VERSION__
+is defined
+and has a value not less than 199901L.
+.SH SEE ALSO
+.BR fpclassify (3),
+.BR math_error (7)

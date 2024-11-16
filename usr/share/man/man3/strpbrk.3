@@ -1,0 +1,66 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 18:01:24 1993 by Rik Faith (faith@cs.unc.edu)
+.TH strpbrk 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+strpbrk \- search a string for any of a set of bytes
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <string.h>
+.P
+.BI "char *strpbrk(const char *" s ", const char *" accept );
+.fi
+.SH DESCRIPTION
+The
+.BR strpbrk ()
+function locates the first occurrence in the
+string
+.I s
+of any of the bytes in the string
+.IR accept .
+.SH RETURN VALUE
+The
+.BR strpbrk ()
+function returns a pointer to the byte in
+.I s
+that matches one of the bytes in
+.IR accept ,
+or NULL
+if no such byte is found.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR strpbrk ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, C89, SVr4, 4.3BSD.
+.SH SEE ALSO
+.BR memchr (3),
+.BR strchr (3),
+.BR string (3),
+.BR strsep (3),
+.BR strspn (3),
+.BR strstr (3),
+.BR strtok (3),
+.BR wcspbrk (3)

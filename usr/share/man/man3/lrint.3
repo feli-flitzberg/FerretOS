@@ -1,0 +1,110 @@
+'\" t
+.\" Copyright 2001 Andries Brouwer <aeb@cwi.nl>.
+.\" and Copyright 2008, Linux Foundation, written by Michael Kerrisk
+.\"     <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH lrint 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+lrint, lrintf, lrintl, llrint, llrintf, llrintl \- round to nearest integer
+.SH LIBRARY
+Math library
+.RI ( libm ", " \-lm )
+.SH SYNOPSIS
+.nf
+.B #include <math.h>
+.P
+.BI "long lrint(double " x );
+.BI "long lrintf(float " x );
+.BI "long lrintl(long double " x );
+.P
+.BI "long long llrint(double " x );
+.BI "long long llrintf(float " x );
+.BI "long long llrintl(long double " x );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+All functions shown above:
+.nf
+    _ISOC99_SOURCE || _POSIX_C_SOURCE >= 200112L
+.fi
+.SH DESCRIPTION
+These functions round their argument to the nearest integer value,
+using the current rounding direction (see
+.BR fesetround (3)).
+.P
+Note that unlike the
+.BR rint (3)
+family of functions,
+the return type of these functions differs from
+that of their arguments.
+.SH RETURN VALUE
+These functions return the rounded integer value.
+.P
+If
+.I x
+is a NaN or an infinity,
+or the rounded value is too large to be stored in a
+.I long
+.RI ( "long long"
+in the case of the
+.B ll*
+functions),
+then a domain error occurs, and the return value is unspecified.
+.\" The return value is -(LONG_MAX - 1) or -(LLONG_MAX -1)
+.SH ERRORS
+See
+.BR math_error (7)
+for information on how to determine whether an error has occurred
+when calling these functions.
+.P
+The following errors can occur:
+.TP
+Domain error: \fIx\fP is a NaN or infinite, or the rounded value is too large
+.\" .I errno
+.\" is set to
+.\" .BR EDOM .
+An invalid floating-point exception
+.RB ( FE_INVALID )
+is raised.
+.P
+These functions do not set
+.IR errno .
+.\" FIXME . Is it intentional that these functions do not set errno?
+.\" Bug raised: https://www.sourceware.org/bugzilla/show_bug.cgi?id=6798
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR lrint (),
+.BR lrintf (),
+.BR lrintl (),
+.BR llrint (),
+.BR llrintf (),
+.BR llrintl ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+glibc 2.1.
+C99, POSIX.1-2001.
+.SH SEE ALSO
+.BR ceil (3),
+.BR floor (3),
+.BR lround (3),
+.BR nearbyint (3),
+.BR rint (3),
+.BR round (3)

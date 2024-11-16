@@ -1,0 +1,76 @@
+.\" Copyright (c) 2018, Red Hat, Inc.  All rights reserved.
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.TH FS_IOC_SETFSLABEL 2const 2024-06-13 "Linux man-pages 6.9.1"
+.SH NAME
+FS_IOC_GETFSLABEL,
+FS_IOC_SETFSLABEL
+\-
+get or set a filesystem label
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/fs.h>" "  /* Definition of " *FSLABEL* " constants */"
+.B #include <sys/ioctl.h>
+.P
+.BI "int ioctl(int " fd ", FS_IOC_GETFSLABEL, char " label [FSLABEL_MAX]);
+.BI "int ioctl(int " fd ", FS_IOC_SETFSLABEL, char " label [FSLABEL_MAX]);
+.fi
+.SH DESCRIPTION
+If a filesystem supports online label manipulation, these
+.BR ioctl (2)
+operations can be used to get or set the filesystem label for the filesystem
+on which
+.I fd
+resides.
+The
+.B FS_IOC_SETFSLABEL
+operation requires privilege
+.RB ( CAP_SYS_ADMIN ).
+.SH RETURN VALUE
+On success zero is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+Possible errors include (but are not limited to) the following:
+.TP
+.B EFAULT
+.I label
+references an inaccessible memory area.
+.TP
+.B EINVAL
+The specified label exceeds the maximum label length for the filesystem.
+.TP
+.B ENOTTY
+This can appear if the filesystem does not support online label manipulation.
+.TP
+.B EPERM
+The calling process does not have sufficient permissions to set the label.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 4.18.
+.P
+They were previously known as
+.B BTRFS_IOC_GET_FSLABEL
+and
+.B BTRFS_IOC_SET_FSLABEL
+and were private to Btrfs.
+.SH NOTES
+The maximum string length for this interface is
+.BR FSLABEL_MAX ,
+including the terminating null byte (\[aq]\\0\[aq]).
+Filesystems have differing maximum label lengths, which may or
+may not include the terminating null.
+The string provided to
+.B FS_IOC_SETFSLABEL
+must always be null-terminated, and the string returned by
+.B FS_IOC_GETFSLABEL
+will always be null-terminated.
+.SH SEE ALSO
+.BR ioctl (2),
+.BR blkid (8)

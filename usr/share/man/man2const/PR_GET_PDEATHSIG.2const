@@ -1,0 +1,43 @@
+.\" Copyright 1998, 1999, Andries Brouwer (aeb@cwi.nl)
+.\" Copyright 2002, 2006, 2008, 2012, 2013, 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_GET_PDEATHSIG 2const 2024-06-02 "Linux man-pages 6.9.1"
+.SH NAME
+PR_GET_PDEATHSIG
+\-
+get the parent-death signal number of the calling process
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.BI "int prctl(PR_GET_PDEATHSIG, int *" sig );
+.fi
+.SH DESCRIPTION
+Return the parent-death signal number of the calling process,
+in the location pointed to by
+.IR sig .
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EFAULT
+.I sig
+is an invalid address.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 2.3.15.
+.SH SEE ALSO
+.BR signal (2),
+.BR PR_SET_PDEATHSIG (2const)

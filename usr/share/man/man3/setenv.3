@@ -1,0 +1,150 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\" and Copyright (C) 2004, 2007 Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 18:20:58 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Fri Feb 14 21:47:50 1997 by Andries Brouwer (aeb@cwi.nl)
+.\" Modified 9 Jun 2004, Michael Kerrisk <mtk.manpages@gmail.com>
+.\"     Changed unsetenv() prototype; added EINVAL error
+.\"     Noted nonstandard behavior of setenv() if name contains '='
+.\" 2005-08-12, mtk, glibc 2.3.4 fixed the "name contains '='" bug
+.\"
+.TH setenv 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+setenv \- change or add an environment variable
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdlib.h>
+.P
+.BI "int setenv(const char *" name ", const char *" value ", int " overwrite );
+.BI "int unsetenv(const char *" name );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR setenv (),
+.BR unsetenv ():
+.nf
+    _POSIX_C_SOURCE >= 200112L
+        || /* glibc <= 2.19: */ _BSD_SOURCE
+.fi
+.SH DESCRIPTION
+The
+.BR setenv ()
+function adds the variable
+.I name
+to the
+environment with the value
+.IR value ,
+if
+.I name
+does not
+already exist.
+If
+.I name
+does exist in the environment, then
+its value is changed to
+.I value
+if
+.I overwrite
+is nonzero;
+if
+.I overwrite
+is zero, then the value of
+.I name
+is not changed (and
+.BR setenv ()
+returns a success status).
+This function makes copies of the strings pointed to by
+.I name
+and
+.I value
+(by contrast with
+.BR putenv (3)).
+.P
+The
+.BR unsetenv ()
+function deletes the variable
+.I name
+from
+the environment.
+If
+.I name
+does not exist in the environment,
+then the function succeeds, and the environment is unchanged.
+.SH RETURN VALUE
+.BR setenv ()
+and
+.BR unsetenv ()
+functions return zero on success,
+or \-1 on error, with
+.I errno
+set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+.I name
+is NULL, points to a string of length 0,
+or contains an \[aq]=\[aq] character.
+.TP
+.B ENOMEM
+Insufficient memory to add a new variable to the environment.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR setenv (),
+.BR unsetenv ()
+T}	Thread safety	MT-Unsafe const:env
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, 4.3BSD.
+.P
+Prior to glibc 2.2.2,
+.BR unsetenv ()
+was prototyped
+as returning
+.IR void ;
+more recent glibc versions follow the
+POSIX.1-compliant prototype shown in the SYNOPSIS.
+.SH CAVEATS
+POSIX.1 does not require
+.BR setenv ()
+or
+.BR unsetenv ()
+to be reentrant.
+.SH BUGS
+POSIX.1 specifies that if
+.I name
+contains an \[aq]=\[aq] character, then
+.BR setenv ()
+should fail with the error
+.BR EINVAL ;
+however, versions of glibc before glibc 2.3.4 allowed an \[aq]=\[aq] sign in
+.IR name .
+.SH SEE ALSO
+.BR clearenv (3),
+.BR getenv (3),
+.BR putenv (3),
+.BR environ (7)

@@ -1,0 +1,150 @@
+'\" t
+.\" Copyright 2008, Linux Foundation, written by Michael Kerrisk
+.\"	<mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH getnetent_r 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+getnetent_r, getnetbyname_r, getnetbyaddr_r \- get
+network entry (reentrant)
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <netdb.h>
+.P
+.BI "int getnetent_r(struct netent *restrict " result_buf ,
+.BI "                char " buf "[restrict ." buflen "], size_t " buflen ,
+.BI "                struct netent **restrict " result ,
+.BI "                int *restrict " h_errnop );
+.BI "int getnetbyname_r(const char *restrict " name ,
+.BI "                struct netent *restrict " result_buf ,
+.BI "                char " buf "[restrict ." buflen "], size_t " buflen ,
+.BI "                struct netent **restrict " result ,
+.BI "                int *restrict " h_errnop );
+.BI "int getnetbyaddr_r(uint32_t " net ", int " type ,
+.BI "                struct netent *restrict " result_buf ,
+.BI "                char " buf "[restrict ." buflen "], size_t " buflen ,
+.BI "                struct netent **restrict " result ,
+.BI "                int *restrict " h_errnop );
+.P
+.fi
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR getnetent_r (),
+.BR getnetbyname_r (),
+.BR getnetbyaddr_r ():
+.nf
+    Since glibc 2.19:
+        _DEFAULT_SOURCE
+    glibc 2.19 and earlier:
+        _BSD_SOURCE || _SVID_SOURCE
+.fi
+.SH DESCRIPTION
+The
+.BR getnetent_r (),
+.BR getnetbyname_r (),
+and
+.BR getnetbyaddr_r ()
+functions are the reentrant equivalents of, respectively,
+.BR getnetent (3),
+.BR getnetbyname (3),
+and
+.BR getnetbynumber (3).
+They differ in the way that the
+.I netent
+structure is returned,
+and in the function calling signature and return value.
+This manual page describes just the differences from
+the nonreentrant functions.
+.P
+Instead of returning a pointer to a statically allocated
+.I netent
+structure as the function result,
+these functions copy the structure into the location pointed to by
+.IR result_buf .
+.P
+The
+.I buf
+array is used to store the string fields pointed to by the returned
+.I netent
+structure.
+(The nonreentrant functions allocate these strings in static storage.)
+The size of this array is specified in
+.IR buflen .
+If
+.I buf
+is too small, the call fails with the error
+.BR ERANGE ,
+and the caller must try again with a larger buffer.
+(A buffer of length 1024 bytes should be sufficient for most applications.)
+.\" I can find no information on the required/recommended buffer size;
+.\" the nonreentrant functions use a 1024 byte buffer -- mtk.
+.P
+If the function call successfully obtains a network record, then
+.I *result
+is set pointing to
+.IR result_buf ;
+otherwise,
+.I *result
+is set to NULL.
+.P
+The buffer pointed to by
+.I h_errnop
+is used to return the value that would be stored in the global variable
+.I h_errno
+by the nonreentrant versions of these functions.
+.\" getnetent.3 doesn't document any use of h_errno, but nevertheless
+.\" the nonreentrant functions no seem to set h_errno.
+.SH RETURN VALUE
+On success, these functions return 0.
+On error, they return one of the positive error numbers listed in ERRORS.
+.P
+On error, record not found
+.RB ( getnetbyname_r (),
+.BR getnetbyaddr_r ()),
+or end of input
+.RB ( getnetent_r ())
+.I result
+is set to NULL.
+.SH ERRORS
+.TP
+.B ENOENT
+.RB ( getnetent_r ())
+No more records in database.
+.TP
+.B ERANGE
+.I buf
+is too small.
+Try again with a larger buffer
+(and increased
+.IR buflen ).
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR getnetent_r (),
+.BR getnetbyname_r (),
+.BR getnetbyaddr_r ()
+T}	Thread safety	MT-Safe locale
+.TE
+.SH VERSIONS
+Functions with similar names exist on some other systems,
+though typically with different calling signatures.
+.SH STANDARDS
+GNU.
+.SH SEE ALSO
+.BR getnetent (3),
+.BR networks (5)

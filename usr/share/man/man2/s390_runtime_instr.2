@@ -1,0 +1,104 @@
+.\" Copyright (c) IBM Corp. 2012
+.\" Author: Jan Glauber <jang@linux.vnet.ibm.com>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.TH s390_runtime_instr 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+s390_runtime_instr \- enable/disable s390 CPU run-time instrumentation
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <asm/runtime_instr.h>" " /* Definition of " S390_* " constants */"
+.BR "#include <sys/syscall.h>" "       /* Definition of " SYS_* " constants */"
+.B #include <unistd.h>
+.P
+.BI "int syscall(SYS_s390_runtime_instr, int " command ", int " signum );
+.fi
+.P
+.IR Note :
+glibc provides no wrapper for
+.BR s390_runtime_instr (),
+necessitating the use of
+.BR syscall (2).
+.SH DESCRIPTION
+The
+.BR s390_runtime_instr ()
+system call starts or stops CPU run-time instrumentation for the
+calling thread.
+.P
+The
+.I command
+argument controls whether run-time instrumentation is started
+.RB ( S390_RUNTIME_INSTR_START ,
+1) or stopped
+.RB ( S390_RUNTIME_INSTR_STOP ,
+2) for the calling thread.
+.P
+The
+.I signum
+argument specifies the number of a real-time signal.
+This argument was used to specify a signal number that should be delivered
+to the thread if the run-time instrumentation buffer was full or if
+the run-time-instrumentation-halted interrupt had occurred.
+This feature was never used,
+and in Linux 4.4 support for this feature was removed;
+.\" commit b38feccd663b55ab07116208b68e1ffc7c3c7e78
+thus, in current kernels, this argument is ignored.
+.SH RETURN VALUE
+On success,
+.BR s390_runtime_instr ()
+returns 0 and enables the thread for
+run-time instrumentation by assigning the thread a default run-time
+instrumentation control block.
+The caller can then read and modify the control block and start the run-time
+instrumentation.
+On error, \-1 is returned and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+The value specified in
+.I command
+is not a valid command.
+.TP
+.B EINVAL
+The value specified in
+.I signum
+is not a real-time signal number.
+From Linux 4.4 onwards, the
+.I signum
+argument has no effect,
+so that an invalid signal number will not result in an error.
+.TP
+.B ENOMEM
+Allocating memory for the run-time instrumentation control block failed.
+.TP
+.B EOPNOTSUPP
+The run-time instrumentation facility is not available.
+.SH STANDARDS
+Linux on s390.
+.SH HISTORY
+Linux 3.7.
+System z EC12.
+.SH NOTES
+The
+.I asm/runtime_instr.h
+header file is available
+.\" commit df2f815a7df7edb5335a3bdeee6a8f9f6f9c35c4
+since Linux 4.16.
+.P
+Starting with Linux 4.4,
+support for signalling was removed, as was the check whether
+.I signum
+is a valid real-time signal.
+For backwards compatibility with older kernels, it is recommended to pass
+a valid real-time signal number in
+.I signum
+and install a handler for that signal.
+.SH SEE ALSO
+.BR syscall (2),
+.BR signal (7)

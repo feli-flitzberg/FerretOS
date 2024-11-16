@@ -1,0 +1,35 @@
+.\" Copyright (C) 1994, 1995, Daniel Quinlan <quinlan@yggdrasil.com>
+.\" Copyright (C) 2002-2008, 2017, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright (C) 2023, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-3.0-or-later
+.\"
+.TH proc_bus 5 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+/proc/bus/ \- installed buses
+.SH DESCRIPTION
+.TP
+.I /proc/bus/
+Contains subdirectories for installed buses.
+.TP
+.I /proc/bus/pccard/
+Subdirectory for PCMCIA devices when
+.B CONFIG_PCMCIA
+is set at kernel compilation time.
+.TP
+.I /proc/bus/pccard/drivers
+.TP
+.I /proc/bus/pci/
+Contains various bus subdirectories and pseudo-files containing
+information about PCI buses, installed devices, and device
+drivers.
+Some of these files are not ASCII.
+.TP
+.I /proc/bus/pci/devices
+Information about PCI devices.
+They may be accessed through
+.BR lspci (8)
+and
+.BR setpci (8).
+.SH SEE ALSO
+.BR proc (5)

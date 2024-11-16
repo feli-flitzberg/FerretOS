@@ -33,6 +33,8 @@ LiveCD variant, provided there are people able to maintain it.
 - Update kernel to 6.11.7
 - Update openssl to 3.3.2
 - Update python to 3.12.7
+- Add (blfs) libidn2 2.3.7
+  - Add (blfs) libunistring 1.2 as recommended dependency
 - Build gmp with `--disable-assembly`
 - Build gcc with `--with-arch=x86-64 --with-tune=generic`
 - Build libffi with `--with-gcc-arch=x86-64`
@@ -43,8 +45,6 @@ LiveCD variant, provided there are people able to maintain it.
 pip3 wheel -w dist --no-cache-dir --no-build-isolation --no-deps $PWD
 pip3 install --no-index --no-user --find-links dist pyelftools
 ```
-- Add (blfs) libidn2 before configuring systemd
-  - Add (blfs) libunistring as dependency requirement
 - Skip installing GRUB (source package is available in image)
 - Personal preference: skip installing vim (source package is available in image)
 - Personal preference: install (blfs) nano as editor

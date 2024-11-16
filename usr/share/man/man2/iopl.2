@@ -1,0 +1,92 @@
+.\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" Portions extracted from linux/kernel/ioport.c (no copyright notice).
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" Modified Tue Aug  1 16:47    1995 by Jochen Karrer
+.\"                              <cip307@cip.physik.uni-wuerzburg.de>
+.\" Modified Tue Oct 22 08:11:14 EDT 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified Fri Nov 27 14:50:36 CET 1998 by Andries Brouwer <aeb@cwi.nl>
+.\" Modified, 27 May 2004, Michael Kerrisk <mtk.manpages@gmail.com>
+.\"     Added notes on capability requirements
+.\"
+.TH iopl 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+iopl \- change I/O privilege level
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <sys/io.h>
+.P
+.BI "[[deprecated]] int iopl(int " level );
+.fi
+.SH DESCRIPTION
+.BR iopl ()
+changes the I/O privilege level of the calling thread,
+as specified by the two least significant bits in
+.IR level .
+.P
+The I/O privilege level for a normal thread is 0.
+Permissions are inherited from parents to children.
+.P
+This call is deprecated, is significantly slower than
+.BR ioperm (2),
+and is only provided for older X servers which require
+access to all 65536 I/O ports.
+It is mostly for the i386 architecture.
+On many other architectures it does not exist or will always
+return an error.
+.SH RETURN VALUE
+On success, zero is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+.I level
+is greater than 3.
+.TP
+.B ENOSYS
+This call is unimplemented.
+.TP
+.B EPERM
+The calling thread has insufficient privilege to call
+.BR iopl ();
+the
+.B CAP_SYS_RAWIO
+capability is required to raise the I/O privilege level
+above its current value.
+.SH VERSIONS
+.\" Libc5 treats it as a system call and has a prototype in
+.\" .IR <unistd.h> .
+.\" glibc1 does not have a prototype.
+glibc2 has a prototype both in
+.I <sys/io.h>
+and in
+.IR <sys/perm.h> .
+Avoid the latter, it is available on i386 only.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Prior to Linux 5.5
+.BR iopl ()
+allowed the thread to disable interrupts while running
+at a higher I/O privilege level.
+This will probably crash the system, and is not recommended.
+.P
+Prior to Linux 3.7,
+on some architectures (such as i386), permissions
+.I were
+inherited by the child produced by
+.BR fork (2)
+and were preserved across
+.BR execve (2).
+This behavior was inadvertently changed in Linux 3.7,
+and won't be reinstated.
+.SH SEE ALSO
+.BR ioperm (2),
+.BR outb (2),
+.BR capabilities (7)

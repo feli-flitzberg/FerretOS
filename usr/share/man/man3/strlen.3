@@ -1,0 +1,61 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 18:02:26 1993 by Rik Faith (faith@cs.unc.edu)
+.TH strlen 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+strlen \- calculate the length of a string
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <string.h>
+.P
+.BI "size_t strlen(const char *" s );
+.fi
+.SH DESCRIPTION
+The
+.BR strlen ()
+function calculates the length of the string pointed to by
+.IR s ,
+excluding the terminating null byte (\[aq]\[rs]0\[aq]).
+.SH RETURN VALUE
+The
+.BR strlen ()
+function returns the number of bytes in the string pointed to by
+.IR s .
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR strlen ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, C89, SVr4, 4.3BSD.
+.SH NOTES
+In cases where the input buffer may not contain
+a terminating null byte,
+.BR strnlen (3)
+should be used instead.
+.SH SEE ALSO
+.BR string (3),
+.BR strnlen (3),
+.BR wcslen (3),
+.BR wcsnlen (3)

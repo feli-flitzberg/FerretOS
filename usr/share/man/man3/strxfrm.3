@@ -1,0 +1,86 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sun Jul 25 10:41:28 1993 by Rik Faith (faith@cs.unc.edu)
+.TH strxfrm 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+strxfrm \- string transformation
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <string.h>
+.P
+.BI "size_t strxfrm(char " dest "[restrict ." n "], \
+const char " src "[restrict ." n ],
+.BI "               size_t " n );
+.fi
+.SH DESCRIPTION
+The
+.BR strxfrm ()
+function transforms the
+.I src
+string into a
+form such that the result of
+.BR strcmp (3)
+on two strings that have
+been transformed with
+.BR strxfrm ()
+is the same as the result of
+.BR strcoll (3)
+on the two strings before their transformation.
+The first
+.I n
+bytes of the transformed string are placed in
+.IR dest .
+The transformation is based on the program's current
+locale for category
+.BR LC_COLLATE .
+(See
+.BR setlocale (3)).
+.SH RETURN VALUE
+The
+.BR strxfrm ()
+function returns the number of bytes required to
+store the transformed string in
+.I dest
+excluding the
+terminating null byte (\[aq]\[rs]0\[aq]).
+If the value returned is
+.I n
+or more, the
+contents of
+.I dest
+are indeterminate.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR strxfrm ()
+T}	Thread safety	MT-Safe locale
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, C89, SVr4, 4.3BSD.
+.SH SEE ALSO
+.BR memcmp (3),
+.BR setlocale (3),
+.BR strcasecmp (3),
+.BR strcmp (3),
+.BR strcoll (3),
+.BR string (3)

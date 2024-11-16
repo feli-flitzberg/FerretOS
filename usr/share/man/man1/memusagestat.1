@@ -1,0 +1,73 @@
+.\" Copyright (c) 2013, Peter Schiffer <pschiffe@redhat.com>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.TH memusagestat 1 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+memusagestat \- generate graphic from memory profiling data
+.SH SYNOPSIS
+.nf
+.BR memusagestat " [\fIoption\fR]... \fIdatafile\fR [\fIoutfile\fR]"
+.fi
+.SH DESCRIPTION
+.B memusagestat
+creates a PNG file containing a graphical representation of the
+memory profiling data in the file
+.IR datafile ;
+that file is generated via the
+.I \-d
+(or
+.IR \-\-data )
+option of
+.BR memusage (1).
+.P
+The red line in the graph shows the heap usage (allocated memory)
+and the green line shows the stack usage.
+The x-scale is either the number of memory-handling function calls or
+(if the
+.I \-t
+option is specified)
+time.
+.SH OPTIONS
+.TP
+.BI \-o\  file \fR,\ \fB\-\-output= file
+Name of the output file.
+.TP
+.BI \-s\  string \fR,\ \fB\-\-string= string
+Use
+.I string
+as the title inside the output graph.
+.TP
+.B \-t\fR,\ \fB\-\-time
+Use time (rather than number of function calls) as the scale for the X axis.
+.TP
+.B \-T\fR,\ \fB\-\-total
+Also draw a graph of total memory consumption.
+.TP
+.BI \-x\  size \fR,\ \fB\-\-x\-size= size
+Make the output graph
+.I size
+pixels wide.
+.TP
+.BI \-y\  size \fR,\ \fB\-\-y\-size= size
+Make the output graph
+.I size
+pixels high.
+.TP
+.B \-?\fR,\ \fB\-\-help
+Print a help message and exit.
+.TP
+.B \-\-usage
+Print a short usage message and exit.
+.TP
+.B \-V\fR,\ \fB\-\-version
+Print version information and exit.
+.SH BUGS
+To report bugs, see
+.UR http://www.gnu.org/software/libc/bugs.html
+.UE
+.SH EXAMPLES
+See
+.BR memusage (1).
+.SH SEE ALSO
+.BR memusage (1),
+.BR mtrace (1)

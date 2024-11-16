@@ -1,0 +1,164 @@
+'\" t
+.\" Copyright (c) 2008 Linux Foundation, written by Michael Kerrisk
+.\"     <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH pthread_attr_setstack 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+pthread_attr_setstack, pthread_attr_getstack \- set/get stack
+attributes in thread attributes object
+.SH LIBRARY
+POSIX threads library
+.RI ( libpthread ", " \-lpthread )
+.SH SYNOPSIS
+.nf
+.B #include <pthread.h>
+.P
+.BI "int pthread_attr_setstack(pthread_attr_t *" attr ,
+.BI "                          void " stackaddr [. stacksize ],
+.BI "                          size_t " stacksize );
+.BI "int pthread_attr_getstack(const pthread_attr_t *restrict " attr ,
+.BI "                          void **restrict " stackaddr ,
+.BI "                          size_t *restrict " stacksize );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR pthread_attr_getstack (),
+.BR pthread_attr_setstack ():
+.nf
+    _POSIX_C_SOURCE >= 200112L
+.fi
+.SH DESCRIPTION
+The
+.BR pthread_attr_setstack ()
+function sets the stack address and stack size attributes of the
+thread attributes object referred to by
+.I attr
+to the values specified in
+.I stackaddr
+and
+.IR stacksize ,
+respectively.
+These attributes specify the location and size of the stack that should
+be used by a thread that is created using the thread attributes object
+.IR attr .
+.P
+.I stackaddr
+should point to the lowest addressable byte of a buffer of
+.I stacksize
+bytes that was allocated by the caller.
+The pages of the allocated buffer should be both readable and writable.
+.P
+The
+.BR pthread_attr_getstack ()
+function returns the stack address and stack size attributes of the
+thread attributes object referred to by
+.I attr
+in the buffers pointed to by
+.I stackaddr
+and
+.IR stacksize ,
+respectively.
+.SH RETURN VALUE
+On success, these functions return 0;
+on error, they return a nonzero error number.
+.SH ERRORS
+.BR pthread_attr_setstack ()
+can fail with the following error:
+.TP
+.B EINVAL
+.I stacksize
+is less than
+.B PTHREAD_STACK_MIN
+(16384) bytes.
+On some systems, this error may also occur if
+.I stackaddr
+or
+.I stackaddr\~+\~stacksize
+is not suitably aligned.
+.P
+POSIX.1 also documents an
+.B EACCES
+error if the stack area described by
+.I stackaddr
+and
+.I stacksize
+is not both readable and writable by the caller.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR pthread_attr_setstack (),
+.BR pthread_attr_getstack ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+glibc 2.2.
+POSIX.1-2001.
+.SH NOTES
+These functions are provided for applications that must ensure that
+a thread's stack is placed in a particular location.
+For most applications, this is not necessary,
+and the use of these functions should be avoided.
+(Use
+.BR pthread_attr_setstacksize (3)
+if an application simply requires a stack size other than the default.)
+.P
+When an application employs
+.BR pthread_attr_setstack (),
+it takes over the responsibility of allocating the stack.
+Any guard size value that was set using
+.BR pthread_attr_setguardsize (3)
+is ignored.
+If deemed necessary,
+it is the application's responsibility to allocate a guard area
+(one or more pages protected against reading and writing)
+to handle the possibility of stack overflow.
+.P
+The address specified in
+.I stackaddr
+should be suitably aligned:
+for full portability, align it on a page boundary
+.RI ( sysconf(_SC_PAGESIZE) ).
+.BR posix_memalign (3)
+may be useful for allocation.
+Probably,
+.I stacksize
+should also be a multiple of the system page size.
+.P
+If
+.I attr
+is used to create multiple threads, then the caller must change the
+stack address attribute between calls to
+.BR pthread_create (3);
+otherwise, the threads will attempt to use the same memory area
+for their stacks, and chaos will ensue.
+.SH EXAMPLES
+See
+.BR pthread_attr_init (3).
+.SH SEE ALSO
+.ad l
+.nh
+.BR mmap (2),
+.BR mprotect (2),
+.BR posix_memalign (3),
+.BR pthread_attr_init (3),
+.BR pthread_attr_setguardsize (3),
+.BR pthread_attr_setstackaddr (3),
+.BR pthread_attr_setstacksize (3),
+.BR pthread_create (3),
+.BR pthreads (7)

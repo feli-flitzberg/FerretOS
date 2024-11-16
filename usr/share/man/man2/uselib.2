@@ -1,0 +1,106 @@
+.\" Copyright (c) 1992 Drew Eckhardt (drew@cs.colorado.edu), March 28, 1992
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" Modified by Michael Haardt <michael@moria.de>
+.\" Modified 1993-07-24 by Rik Faith <faith@cs.unc.edu>
+.\" Modified 1996-10-22 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified 2004-06-23 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Modified 2005-01-09 by aeb
+.\"
+.TH uselib 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+uselib \- load shared library
+.SH SYNOPSIS
+.nf
+.B #include <unistd.h>
+.P
+.BI "[[deprecated]] int uselib(const char *" library );
+.fi
+.SH DESCRIPTION
+The system call
+.BR uselib ()
+serves to load
+a shared library to be used by the calling process.
+It is given a pathname.
+The address where to load is found
+in the library itself.
+The library can have any recognized
+binary format.
+.SH RETURN VALUE
+On success, zero is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+In addition to all of the error codes returned by
+.BR open (2)
+and
+.BR mmap (2),
+the following may also be returned:
+.TP
+.B EACCES
+The library specified by
+.I library
+does not have read or execute permission, or the caller does not have
+search permission for one of the directories in the path prefix.
+(See also
+.BR path_resolution (7).)
+.TP
+.B ENFILE
+The system-wide limit on the total number of open files has been reached.
+.TP
+.B ENOEXEC
+The file specified by
+.I library
+is not an executable of a known type;
+for example, it does not have the correct magic numbers.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+This obsolete system call is not supported by glibc.
+No declaration is provided in glibc headers, but, through a quirk of history,
+glibc before glibc 2.23 did export an ABI for this system call.
+Therefore, in order to employ this system call,
+it was sufficient to manually declare the interface in your code;
+alternatively, you could invoke the system call using
+.BR syscall (2).
+.P
+In ancient libc versions (before glibc 2.0),
+.BR uselib ()
+was used to load
+the shared libraries with names found in an array of names
+in the binary.
+.\" .P
+.\" .\" libc 4.3.1f - changelog 1993-03-02
+.\" Since libc 4.3.2, startup code tries to prefix these names
+.\" with "/usr/lib", "/lib" and "" before giving up.
+.\" .\" libc 4.3.4 - changelog 1993-04-21
+.\" In libc 4.3.4 and later these names are looked for in the directories
+.\" found in
+.\" .BR LD_LIBRARY_PATH ,
+.\" and if not found there,
+.\" prefixes "/usr/lib", "/lib" and "/" are tried.
+.\" .P
+.\" From libc 4.4.4 on only the library "/lib/ld.so" is loaded,
+.\" so that this dynamic library can load the remaining libraries needed
+.\" (again using this call).
+.\" This is also the state of affairs in libc5.
+.\" .P
+.\" glibc2 does not use this call.
+.P
+Since Linux 3.15,
+.\" commit 69369a7003735d0d8ef22097e27a55a8bad9557a
+this system call is available only when the kernel is configured with the
+.B CONFIG_USELIB
+option.
+.SH SEE ALSO
+.BR ar (1),
+.BR gcc (1),
+.BR ld (1),
+.BR ldd (1),
+.BR mmap (2),
+.BR open (2),
+.BR dlopen (3),
+.BR capabilities (7),
+.BR ld.so (8)

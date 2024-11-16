@@ -1,0 +1,99 @@
+.\" Copyright (c) 2012, IBM Corporation.
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH __ppc_get_timebase 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+__ppc_get_timebase, __ppc_get_timebase_freq \- get the current value
+of the Time Base Register on Power architecture and its frequency.
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <sys/platform/ppc.h>
+.P
+.B uint64_t __ppc_get_timebase(void);
+.B uint64_t __ppc_get_timebase_freq(void);
+.fi
+.SH DESCRIPTION
+.BR __ppc_get_timebase ()
+reads the current value of the Time Base Register and returns its
+value, while
+.BR __ppc_get_timebase_freq ()
+returns the frequency in which the Time Base Register is updated.
+.P
+The Time Base Register is a 64-bit register provided by Power Architecture
+processors.
+It stores a monotonically incremented value that is updated at a
+system-dependent frequency that may be different from the processor
+frequency.
+.SH RETURN VALUE
+.BR __ppc_get_timebase ()
+returns a 64-bit unsigned integer that represents the current value of the
+Time Base Register.
+.P
+.BR __ppc_get_timebase_freq ()
+returns a 64-bit unsigned integer that represents the frequency at
+which the Time Base Register is updated.
+.SH STANDARDS
+GNU.
+.SH HISTORY
+.TP
+.BR __ppc_get_timebase ()
+.\" commit d9dc34cd569bcfe714fe8c708e58c028106e8b2e
+glibc 2.16.
+.TP
+.BR __ppc_get_timebase_freq ()
+.\" commit 8ad11b9a9cf1de82bd7771306b42070b91417c11
+glibc 2.17.
+.SH EXAMPLES
+The following program will calculate the time, in microseconds, spent
+between two calls to
+.BR __ppc_get_timebase ().
+.SS Program source
+\&
+.\" SRC BEGIN (__ppc_get_timebase.c)
+.EX
+#include <inttypes.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/platform/ppc.h>
+\&
+/* Maximum value of the Time Base Register: 2\[ha]60 \- 1.
+   Source: POWER ISA.  */
+#define MAX_TB 0xFFFFFFFFFFFFFFF
+\&
+int
+main(void)
+{
+    uint64_t tb1, tb2, diff;
+    uint64_t freq;
+\&
+    freq = __ppc_get_timebase_freq();
+    printf("Time Base frequency = %"PRIu64" Hz\[rs]n", freq);
+\&
+    tb1 = __ppc_get_timebase();
+\&
+    // Do some stuff...
+\&
+    tb2 = __ppc_get_timebase();
+\&
+    if (tb2 > tb1) {
+        diff = tb2 \- tb1;
+    } else {
+        /* Treat Time Base Register overflow.  */
+        diff = (MAX_TB \- tb2) + tb1;
+    }
+\&
+    printf("Elapsed time  = %1.2f usecs\[rs]n",
+           (double) diff * 1000000 / freq);
+\&
+    exit(EXIT_SUCCESS);
+}
+.EE
+.\" SRC END
+.SH SEE ALSO
+.BR time (2),
+.BR usleep (3)

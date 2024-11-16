@@ -1,0 +1,73 @@
+.\" Copyright (c) 1992 Drew Eckhardt (drew@cs.colorado.edu), March 28, 1992
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" Modified by Michael Haardt <michael@moria.de>
+.\" Modified 1993-07-24 by Rik Faith <faith@cs.unc.edu>
+.\" Modified 2001-03-16 by Andries Brouwer <aeb@cwi.nl>
+.\" Modified 2004-05-27 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.TH stime 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+stime \- set time
+.SH SYNOPSIS
+.nf
+.B #include <time.h>
+.P
+.BI "[[deprecated]] int stime(const time_t *" t );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR stime ():
+.nf
+    Since glibc 2.19:
+        _DEFAULT_SOURCE
+    glibc 2.19 and earlier:
+        _SVID_SOURCE
+.fi
+.SH DESCRIPTION
+.BR NOTE :
+This function is deprecated;
+use
+.BR clock_settime (2)
+instead.
+.P
+.BR stime ()
+sets the system's idea of the time and date.
+The time, pointed
+to by \fIt\fP, is measured in seconds since the
+Epoch, 1970-01-01 00:00:00 +0000 (UTC).
+.BR stime ()
+may be executed only by the superuser.
+.SH RETURN VALUE
+On success, zero is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EFAULT
+Error in getting information from user space.
+.TP
+.B EPERM
+The calling process has insufficient privilege.
+Under Linux, the
+.B CAP_SYS_TIME
+privilege is required.
+.SH STANDARDS
+None.
+.SH HISTORY
+SVr4.
+.P
+Starting with glibc 2.31,
+this function is no longer available to newly linked applications
+and is no longer declared in
+.IR <time.h> .
+.SH SEE ALSO
+.BR date (1),
+.BR settimeofday (2),
+.BR capabilities (7)

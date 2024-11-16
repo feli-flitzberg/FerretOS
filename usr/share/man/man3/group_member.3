@@ -1,0 +1,48 @@
+.\" Copyright (C) 2014, Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH group_member 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+group_member \- test whether a process is in a group
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <unistd.h>
+.P
+.BI "int group_member(gid_t " gid );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR group_member ():
+.nf
+    _GNU_SOURCE
+.fi
+.SH DESCRIPTION
+The
+.BR group_member ()
+function tests whether any of the caller's supplementary group IDs
+(as returned by
+.BR getgroups (2))
+matches
+.IR gid .
+.SH RETURN VALUE
+The
+.BR group_member ()
+function returns nonzero if any of the caller's
+supplementary group IDs matches
+.IR gid ,
+and zero otherwise.
+.SH STANDARDS
+GNU.
+.SH SEE ALSO
+.BR getgid (2),
+.BR getgroups (2),
+.BR getgrouplist (3),
+.BR group (5)

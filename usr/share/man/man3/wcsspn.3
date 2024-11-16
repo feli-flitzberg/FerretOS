@@ -1,0 +1,78 @@
+'\" t
+.\" Copyright (c) Bruno Haible <haible@clisp.cons.org>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" References consulted:
+.\"   GNU glibc-2 source code and manual
+.\"   Dinkumware C library reference http://www.dinkumware.com/
+.\"   OpenGroup's Single UNIX specification http://www.UNIX-systems.org/online.html
+.\"   ISO/IEC 9899:1999
+.\"
+.TH wcsspn 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+wcsspn \- get length of a prefix wide-character substring
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <wchar.h>
+.P
+.BI "size_t wcsspn(const wchar_t *" wcs ", const wchar_t *" accept );
+.fi
+.SH DESCRIPTION
+The
+.BR wcsspn ()
+function is the wide-character equivalent of the
+.BR strspn (3)
+function.
+It determines the length of the longest initial segment of
+.I wcs
+which consists entirely of wide-characters listed in
+.IR accept .
+In other
+words, it searches for the first occurrence in the wide-character string
+.I wcs
+of a wide-character not contained in the wide-character string
+.IR accept .
+.SH RETURN VALUE
+The
+.BR wcsspn ()
+function returns the number of
+wide characters in the longest
+initial segment of
+.I wcs
+which consists entirely of wide-characters listed
+in
+.IR accept .
+In other words, it returns the position of the first
+occurrence in the wide-character string
+.I wcs
+of a wide-character not
+contained in the wide-character string
+.IR accept ,
+or
+.I wcslen(wcs)
+if there is none.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR wcsspn ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, C99.
+.SH SEE ALSO
+.BR strspn (3),
+.BR wcscspn (3)

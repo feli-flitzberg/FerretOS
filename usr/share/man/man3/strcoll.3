@@ -1,0 +1,86 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sun Jul 25 10:40:44 1993 by Rik Faith (faith@cs.unc.edu)
+.TH strcoll 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+strcoll \- compare two strings using the current locale
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <string.h>
+.P
+.BI "int strcoll(const char *" s1 ", const char *" s2 );
+.fi
+.SH DESCRIPTION
+The
+.BR strcoll ()
+function compares the two strings
+.I s1
+and
+.IR s2 .
+It returns an integer less than, equal to, or greater
+than zero if
+.I s1
+is found, respectively, to be less than,
+to match, or be greater than
+.IR s2 .
+The comparison is based on
+strings interpreted as appropriate for the program's current locale
+for category
+.BR LC_COLLATE .
+(See
+.BR setlocale (3).)
+.SH RETURN VALUE
+The
+.BR strcoll ()
+function returns an integer less than, equal to,
+or greater than zero if
+.I s1
+is found, respectively, to be less
+than, to match, or be greater than
+.IR s2 ,
+when both are interpreted
+as appropriate for the current locale.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR strcoll ()
+T}	Thread safety	MT-Safe locale
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, C89, SVr4, 4.3BSD.
+.SH NOTES
+In the
+.I "POSIX"
+or
+.I "C"
+locales
+.BR strcoll ()
+is equivalent to
+.BR strcmp (3).
+.SH SEE ALSO
+.BR memcmp (3),
+.BR setlocale (3),
+.BR strcasecmp (3),
+.BR strcmp (3),
+.BR string (3),
+.BR strxfrm (3)

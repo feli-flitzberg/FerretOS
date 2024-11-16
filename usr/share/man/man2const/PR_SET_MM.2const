@@ -1,0 +1,109 @@
+.\" Copyright 2012, Cyrill Gorcunov <gorcunov@openvz.org>
+.\" Copyright 2012, 2013, 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_SET_MM 2const 2024-06-01 "Linux man-pages 6.9.1"
+.SH NAME
+PR_SET_MM
+\-
+modify kernel memory map descriptor fields
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.BI "int prctl(PR_SET_MM, long " op ", ...);"
+.fi
+.SH DESCRIPTION
+Modify certain kernel memory map descriptor fields
+of the calling process.
+Usually these fields are set by the kernel and dynamic loader (see
+.BR ld.so (8)
+for more information) and a regular application should not use this feature.
+However, there are cases, such as self-modifying programs,
+where a program might find it useful to change its own memory map.
+.P
+The calling process must have the
+.B CAP_SYS_RESOURCE
+capability.
+The value in
+.I op
+is one of the options below.
+.TP
+.B PR_SET_MM_START_CODE
+.TQ
+.B PR_SET_MM_END_CODE
+.TQ
+.B PR_SET_MM_START_DATA
+.TQ
+.B PR_SET_MM_END_DATA
+.TQ
+.B PR_SET_MM_START_STACK
+.TQ
+.B PR_SET_MM_START_BRK
+.TQ
+.B PR_SET_MM_BRK
+.TQ
+.B PR_SET_MM_ARG_START
+.TQ
+.B PR_SET_MM_ARG_END
+.TQ
+.B PR_SET_MM_ENV_START
+.TQ
+.B PR_SET_MM_ENV_END
+.TQ
+.B PR_SET_MM_AUXV
+.TQ
+.B PR_SET_MM_EXE_FILE
+.TQ
+.B PR_SET_MM_MAP
+.TQ
+.B PR_SET_MM_MAP_SIZE
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+.I op
+is not a valid value.
+.TP
+.B EPERM
+The caller does not have the
+.B CAP_SYS_RESOURCE
+capability.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 3.3.
+.\" commit 028ee4be34a09a6d48bdf30ab991ae933a7bc036
+.P
+Before Linux 3.10,
+.\" commit 52b3694157e3aa6df871e283115652ec6f2d31e0
+this feature is available only if the kernel is built with the
+.B CONFIG_CHECKPOINT_RESTORE
+option enabled.
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_SET_MM_START_CODE (2const),
+.BR PR_SET_MM_END_CODE (2const),
+.BR PR_SET_MM_START_DATA (2const),
+.BR PR_SET_MM_END_DATA (2const),
+.BR PR_SET_MM_START_STACK (2const),
+.BR PR_SET_MM_START_BRK (2const),
+.BR PR_SET_MM_BRK (2const),
+.BR PR_SET_MM_ARG_START (2const),
+.BR PR_SET_MM_ARG_END (2const),
+.BR PR_SET_MM_ENV_START (2const),
+.BR PR_SET_MM_ENV_END (2const),
+.BR PR_SET_MM_EXE_FILE (2const),
+.BR PR_SET_MM_MAP (2const),
+.BR PR_SET_MM_MAP_SIZE (2const)

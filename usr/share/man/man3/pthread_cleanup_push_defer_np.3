@@ -1,0 +1,100 @@
+.\" Copyright (c) 2008 Linux Foundation, written by Michael Kerrisk
+.\"     <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH pthread_cleanup_push_defer_np 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+pthread_cleanup_push_defer_np, pthread_cleanup_pop_restore_np \- push and pop
+thread cancelation clean-up handlers while saving cancelability type
+.SH LIBRARY
+POSIX threads library
+.RI ( libpthread ", " \-lpthread )
+.SH SYNOPSIS
+.nf
+.B #include <pthread.h>
+.P
+.BI "void pthread_cleanup_push_defer_np(void (*" routine ")(void *), void *" arg );
+.BI "void pthread_cleanup_pop_restore_np(int " execute );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR pthread_cleanup_push_defer_np (),
+.BR pthread_cleanup_pop_defer_np ():
+.nf
+    _GNU_SOURCE
+.fi
+.SH DESCRIPTION
+These functions are the same as
+.BR pthread_cleanup_push (3)
+and
+.BR pthread_cleanup_pop (3),
+except for the differences noted on this page.
+.P
+Like
+.BR pthread_cleanup_push (3),
+.BR pthread_cleanup_push_defer_np ()
+pushes
+.I routine
+onto the thread's stack of cancelation clean-up handlers.
+In addition, it also saves the thread's current cancelability type,
+and sets the cancelability type to "deferred" (see
+.BR pthread_setcanceltype (3));
+this ensures that cancelation clean-up will occur
+even if the thread's cancelability type was "asynchronous"
+before the call.
+.P
+Like
+.BR pthread_cleanup_pop (3),
+.BR pthread_cleanup_pop_restore_np ()
+pops the top-most clean-up handler from the thread's
+stack of cancelation clean-up handlers.
+In addition, it restores the thread's cancelability
+type to its value at the time of the matching
+.BR pthread_cleanup_push_defer_np ().
+.P
+The caller must ensure that calls to these
+functions are paired within the same function,
+and at the same lexical nesting level.
+Other restrictions apply, as described in
+.BR pthread_cleanup_push (3).
+.P
+This sequence of calls:
+.P
+.in +4n
+.EX
+pthread_cleanup_push_defer_np(routine, arg);
+pthread_cleanup_pop_restore_np(execute);
+.EE
+.in
+.P
+is equivalent to (but shorter and more efficient than):
+.P
+.\" As far as I can see, LinuxThreads reverses the two substeps
+.\" in the push and pop below.
+.in +4n
+.EX
+int oldtype;
+\&
+pthread_cleanup_push(routine, arg);
+pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, &oldtype);
+\&...
+pthread_setcanceltype(oldtype, NULL);
+pthread_cleanup_pop(execute);
+.EE
+.in
+.SH STANDARDS
+GNU;
+hence the suffix "_np" (nonportable) in the names.
+.SH HISTORY
+glibc 2.0
+.SH SEE ALSO
+.BR pthread_cancel (3),
+.BR pthread_cleanup_push (3),
+.BR pthread_setcancelstate (3),
+.BR pthread_testcancel (3),
+.BR pthreads (7)

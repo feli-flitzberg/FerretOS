@@ -1,0 +1,142 @@
+'\" t
+.\" Copyright (c) 1994 Michael Haardt (michael@moria.de), 1994-06-04
+.\" Copyright (c) 1995 Michael Haardt
+.\"      (michael@cantor.informatik.rwth-aachen.de), 1995-03-16
+.\" Copyright (c) 1996 Andries Brouwer (aeb@cwi.nl), 1996-01-13
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" 1996-01-13 aeb: merged in some text contributed by Melvin Smith
+.\"   (msmith@falcon.mercer.peachnet.edu) and various other changes.
+.\" Modified 1996-05-16 by Martin Schulze (joey@infodrom.north.de)
+.\"
+.TH perror 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+perror \- print a system error message
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdio.h>
+.P
+.BI "void perror(const char *" s );
+.P
+.B #include <errno.h>
+.P
+.BI "int " errno ";       \fR/* Not really declared this way; see errno(3) */"
+.P
+.BI "[[deprecated]] const char *const " sys_errlist [];
+.BI "[[deprecated]] int " sys_nerr ;
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.IR sys_errlist ,
+.IR sys_nerr :
+.nf
+    From glibc 2.19 to glibc 2.31:
+        _DEFAULT_SOURCE
+    glibc 2.19 and earlier:
+        _BSD_SOURCE
+.fi
+.SH DESCRIPTION
+The
+.BR perror ()
+function produces a message on standard error describing the last
+error encountered during a call to a system or library function.
+.P
+First (if
+.I s
+is not NULL and
+.I *s
+is not a null byte (\[aq]\[rs]0\[aq])), the argument string
+.I s
+is printed, followed by a colon and a blank.
+Then an error message corresponding to the current value of
+.I errno
+and a new-line.
+.P
+To be of most use, the argument string should include the name
+of the function that incurred the error.
+.P
+The global error list
+.IR sys_errlist "[],"
+which can be indexed by
+.IR errno ,
+can be used to obtain the error message without the newline.
+The largest message number provided in the table is
+.IR sys_nerr "\-1."
+Be careful when directly accessing this list, because new error values
+may not have been added to
+.IR sys_errlist "[]."
+The use of
+.IR sys_errlist "[]"
+is nowadays deprecated; use
+.BR strerror (3)
+instead.
+.P
+When a system call fails, it usually returns \-1 and sets the
+variable
+.I errno
+to a value describing what went wrong.
+(These values can be found in
+.IR <errno.h> .)
+Many library functions do likewise.
+The function
+.BR perror ()
+serves to translate this error code into human-readable form.
+Note that
+.I errno
+is undefined after a successful system call or library function call:
+this call may well change this variable, even though it succeeds,
+for example because it internally used some other library function that failed.
+Thus, if a failing call is not immediately followed by a call to
+.BR perror (),
+the value of
+.I errno
+should be saved.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR perror ()
+T}	Thread safety	MT-Safe race:stderr
+.TE
+.SH STANDARDS
+.TP
+.I errno
+.TQ
+.BR perror ()
+C11, POSIX.1-2008.
+.TP
+.I sys_nerr
+.TQ
+.I sys_errlist
+BSD.
+.SH HISTORY
+.TP
+.I errno
+.TQ
+.BR perror ()
+POSIX.1-2001, C89, 4.3BSD.
+.TP
+.I sys_nerr
+.TQ
+.I sys_errlist
+Removed in glibc 2.32.
+.SH SEE ALSO
+.BR err (3),
+.BR errno (3),
+.BR error (3),
+.BR strerror (3)

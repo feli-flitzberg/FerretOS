@@ -1,0 +1,138 @@
+'\" t
+.\" Copyright (c) 1980, 1991 Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" SPDX-License-Identifier: BSD-4-Clause-UC
+.\"
+.\"     @(#)alloca.3	5.1 (Berkeley) 5/2/91
+.\"
+.\" Converted Mon Nov 29 11:05:55 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Tue Oct 22 23:41:56 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified 2002-07-17, aeb
+.\" 2008-01-24, mtk:
+.\"     Various rewrites and additions (notes on longjmp() and SIGSEGV).
+.\"     Weaken warning against use of alloca() (as per Debian bug 461100).
+.\"
+.TH alloca 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+alloca \- allocate memory that is automatically freed
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <alloca.h>
+.P
+.BI "void *alloca(size_t " size );
+.fi
+.SH DESCRIPTION
+The
+.BR alloca ()
+function allocates
+.I size
+bytes of space in the stack frame of the caller.
+This temporary space is
+automatically freed when the function that called
+.BR alloca ()
+returns to its caller.
+.SH RETURN VALUE
+The
+.BR alloca ()
+function returns a pointer to the beginning of the allocated space.
+If the allocation causes stack overflow, program behavior is undefined.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR alloca ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+None.
+.SH HISTORY
+PWB, 32V.
+.SH NOTES
+The
+.BR alloca ()
+function is machine- and compiler-dependent.
+Because it allocates from the stack, it's faster than
+.BR malloc (3)
+and
+.BR free (3).
+In certain cases,
+it can also simplify memory deallocation in applications that use
+.BR longjmp (3)
+or
+.BR siglongjmp (3).
+Otherwise, its use is discouraged.
+.P
+Because the space allocated by
+.BR alloca ()
+is allocated within the stack frame,
+that space is automatically freed if the function return
+is jumped over by a call to
+.BR longjmp (3)
+or
+.BR siglongjmp (3).
+.P
+The space allocated by
+.BR alloca ()
+is
+.I not
+automatically deallocated if the pointer that refers to it
+simply goes out of scope.
+.P
+Do not attempt to
+.BR free (3)
+space allocated by
+.BR alloca ()!
+.P
+By necessity,
+.BR alloca ()
+is a compiler built-in, also known as
+.BR __builtin_alloca ().
+By default, modern compilers automatically translate all uses of
+.BR alloca ()
+into the built-in, but this is forbidden if standards conformance is requested
+.RI ( "\-ansi" ,
+.IR "\-std=c*" ),
+in which case
+.I <alloca.h>
+is required, lest a symbol dependency be emitted.
+.P
+The fact that
+.BR alloca ()
+is a built-in means it is impossible to take its address
+or to change its behavior by linking with a different library.
+.P
+Variable length arrays (VLAs) are part of the C99 standard,
+optional since C11, and can be used for a similar purpose.
+However, they do not port to standard C++, and, being variables,
+live in their block scope and don't have an allocator-like interface,
+making them unfit for implementing functionality like
+.BR strdupa (3).
+.SH BUGS
+Due to the nature of the stack, it is impossible to check if the allocation
+would overflow the space available, and, hence, neither is indicating an error.
+(However, the program is likely to receive a
+.B SIGSEGV
+signal if it attempts to access unavailable space.)
+.P
+On many systems
+.BR alloca ()
+cannot be used inside the list of arguments of a function call, because
+the stack space reserved by
+.BR alloca ()
+would appear on the stack in the middle of the space for the
+function arguments.
+.SH SEE ALSO
+.BR brk (2),
+.BR longjmp (3),
+.BR malloc (3)

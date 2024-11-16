@@ -1,0 +1,110 @@
+'\" t
+.\" Copyright 2001 Andries Brouwer <aeb@cwi.nl>.
+.\" and Copyright 2008, Linux Foundation, written by Michael Kerrisk
+.\"     <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH round 3 2024-06-16 "Linux man-pages 6.9.1"
+.SH NAME
+round, roundf, roundl \- round to nearest integer, away from zero
+.SH LIBRARY
+Math library
+.RI ( libm ", " \-lm )
+.SH SYNOPSIS
+.nf
+.B #include <math.h>
+.P
+.BI "double round(double " x );
+.BI "float roundf(float " x );
+.BI "long double roundl(long double " x );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR round (),
+.BR roundf (),
+.BR roundl ():
+.nf
+    _ISOC99_SOURCE || _POSIX_C_SOURCE >= 200112L
+.fi
+.SH DESCRIPTION
+These functions round
+.I x
+to the nearest integer, but
+round halfway cases away from zero (regardless of the current rounding
+direction, see
+.BR fenv (3)),
+instead of to the nearest even integer like
+.BR rint (3).
+.P
+For example,
+.I round(0.5)
+is 1.0, and
+.I round(\-0.5)
+is \-1.0.
+.SH RETURN VALUE
+These functions return the rounded integer value.
+.P
+If
+.I x
+is integral, +0, \-0, NaN, or infinite,
+.I x
+itself is returned.
+.SH ERRORS
+No errors occur.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR round (),
+.BR roundf (),
+.BR roundl ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+glibc 2.1.
+C99, POSIX.1-2001.
+.P
+POSIX.1-2001 contains text about overflow (which might set
+.I errno
+to
+.BR ERANGE ,
+or raise an
+.B FE_OVERFLOW
+exception).
+In practice, the result cannot overflow on any current machine,
+so this error-handling stuff was just nonsense.
+.\" The POSIX.1-2001 APPLICATION USAGE SECTION discusses this point.
+(More precisely, overflow can happen only when the maximum value
+of the exponent is smaller than the number of mantissa bits.
+For the IEEE-754 standard 32-bit and 64-bit floating-point numbers
+the maximum value of the exponent is 127 (respectively, 1023),
+and the number of mantissa bits
+including the implicit bit
+is 24 (respectively, 53).)
+This was removed in POSIX.1-2008.
+.P
+If you want to store the rounded value in an integer type,
+you probably want to use one of the functions described in
+.BR lround (3)
+instead.
+.SH SEE ALSO
+.BR ceil (3),
+.BR floor (3),
+.BR lround (3),
+.BR nearbyint (3),
+.BR rint (3),
+.BR trunc (3)

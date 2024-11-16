@@ -1,0 +1,89 @@
+'\" t
+.\" Copyright (c) Bruno Haible <haible@clisp.cons.org>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" References consulted:
+.\"   GNU glibc-2 source code and manual
+.\"   Dinkumware C library reference http://www.dinkumware.com/
+.\"   OpenGroup's Single UNIX specification http://www.UNIX-systems.org/online.html
+.\"   ISO/IEC 9899:1999
+.\"
+.TH wcsncpy 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+wcsncpy \- copy a fixed-size string of wide characters
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <wchar.h>
+.P
+.BI "wchar_t *wcsncpy(wchar_t " dest "[restrict ." n ],
+.BI "                 const wchar_t " src "[restrict ." n ],
+.BI "                 size_t " n );
+.fi
+.SH DESCRIPTION
+The
+.BR wcsncpy ()
+function is the wide-character equivalent of the
+.BR strncpy (3)
+function.
+It copies at most
+.I n
+wide characters from the wide-character
+string pointed to by
+.IR src ,
+including the terminating null wide character (L\[aq]\[rs]0\[aq]),
+to the array pointed to by
+.IR dest .
+Exactly
+.I n
+wide characters are
+written at
+.IR dest .
+If the length \fIwcslen(src)\fP is smaller than
+.IR n ,
+the remaining wide characters in the array
+pointed to by
+.I dest
+are filled
+with null wide characters.
+If the length \fIwcslen(src)\fP is greater than or equal
+to
+.IR n ,
+the string pointed to by
+.I dest
+will not be terminated by a null wide character.
+.P
+The strings may not overlap.
+.P
+The programmer must ensure that there is room for at least
+.I n
+wide
+characters at
+.IR dest .
+.SH RETURN VALUE
+.BR wcsncpy ()
+returns
+.IR dest .
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR wcsncpy ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, C99.
+.SH SEE ALSO
+.BR strncpy (3)

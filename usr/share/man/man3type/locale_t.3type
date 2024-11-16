@@ -1,0 +1,43 @@
+.\" Copyright (c) 2024 by Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH locale_t 3type 2024-05-03 "Linux man-pages 6.9.1"
+.SH NAME
+locale_t
+\-
+locale object
+.SH LIBRARY
+Standard C library
+.RI ( libc )
+.SH SYNOPSIS
+.nf
+.B #include <locale.h>
+.P
+.BR typedef " /* ... */  " locale_t;
+.fi
+.SH DESCRIPTION
+.I locale_t
+is a type used for storing a locale object.
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2008.
+.SH NOTES
+The following headers also provide this type:
+.IR <ctype.h> ,
+.IR <langinfo.h> ,
+.IR <monetary.h> ,
+.IR <string.h> ,
+.IR <strings.h> ,
+.IR <time.h> ,
+.IR <wchar.h> ,
+.IR <wctype.h> .
+.SH SEE ALSO
+.BR duplocale (3),
+.BR freelocale (3),
+.BR newlocale (3),
+.BR setlocale (3),
+.BR uselocale (3),
+.BR locale (5),
+.BR locale (7)

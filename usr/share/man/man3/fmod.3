@@ -1,0 +1,183 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\" and Copyright 2008, Linux Foundation, written by Michael Kerrisk
+.\"     <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified 1993-07-24 by Rik Faith (faith@cs.unc.edu)
+.\" Modified 2002-07-27 by Walter Harms
+.\" 	(walter.harms@informatik.uni-oldenburg.de)
+.\"
+.TH fmod 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+fmod, fmodf, fmodl \- floating-point remainder function
+.SH LIBRARY
+Math library
+.RI ( libm ", " \-lm )
+.SH SYNOPSIS
+.nf
+.B #include <math.h>
+.P
+.BI "double fmod(double " x ", double " y );
+.BI "float fmodf(float " x ", float " y );
+.BI "long double fmodl(long double " x ", long double " y );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR fmodf (),
+.BR fmodl ():
+.nf
+    _ISOC99_SOURCE || _POSIX_C_SOURCE >= 200112L
+        || /* Since glibc 2.19: */ _DEFAULT_SOURCE
+        || /* glibc <= 2.19: */ _BSD_SOURCE || _SVID_SOURCE
+.fi
+.SH DESCRIPTION
+These functions compute the floating-point remainder of dividing
+.I x
+by
+.IR y .
+The return value is
+.I x
+\-
+.I n
+*
+.IR y ,
+where
+.I n
+is the quotient of
+.I x
+/
+.IR y ,
+rounded toward zero to an integer.
+.P
+To obtain the modulus, more specifically, the Least Positive Residue,
+you will need to adjust the result from fmod like so:
+.P
+.in +4n
+.nf
+z = fmod(x, y);
+if (z < 0)
+	z += y;
+.fi
+.in
+.P
+An alternate way to express this is with
+.IR "fmod(fmod(x, y) + y, y)" ,
+but the second
+.BR fmod ()
+usually costs way more than the one branch.
+.SH RETURN VALUE
+On success, these
+functions return the value \fIx\fP\ \-\ \fIn\fP*\fIy\fP,
+for some integer
+.IR n ,
+such that the returned value has the same sign as
+.I x
+and a magnitude less than the magnitude of
+.IR y .
+.P
+If
+.I x
+or
+.I y
+is a NaN, a NaN is returned.
+.P
+If
+.I x
+is an infinity,
+a domain error occurs, and
+a NaN is returned.
+.P
+If
+.I y
+is zero,
+a domain error occurs, and
+a NaN is returned.
+.P
+If
+.I x
+is +0 (\-0), and
+.I y
+is not zero, +0 (\-0) is returned.
+.SH ERRORS
+See
+.BR math_error (7)
+for information on how to determine whether an error has occurred
+when calling these functions.
+.P
+The following errors can occur:
+.TP
+Domain error: \fIx\fP is an infinity
+.I errno
+is set to
+.B EDOM
+(but see BUGS).
+An invalid floating-point exception
+.RB ( FE_INVALID )
+is raised.
+.TP
+Domain error: \fIy\fP is zero
+.I errno
+is set to
+.BR EDOM .
+An invalid floating-point exception
+.RB ( FE_INVALID )
+is raised.
+.\" POSIX.1 documents an optional underflow error, but AFAICT it doesn't
+.\" (can't?) occur -- mtk, Jul 2008
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR fmod (),
+.BR fmodf (),
+.BR fmodl ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+C99, POSIX.1-2001.
+.P
+The variant returning
+.I double
+also conforms to
+SVr4, 4.3BSD, C89.
+.SH BUGS
+Before glibc 2.10, the glibc implementation did not set
+.\" https://www.sourceware.org/bugzilla/show_bug.cgi?id=6784
+.I errno
+to
+.B EDOM
+when a domain error occurred for an infinite
+.IR x .
+.SH EXAMPLES
+The call
+.I fmod(372, 360)
+returns 348.
+.P
+The call
+.I fmod(-372, 360)
+returns -12.
+.P
+The call
+.I fmod(-372, -360)
+also returns -12.
+.SH SEE ALSO
+.BR remainder (3)

@@ -1,0 +1,355 @@
+'\" t
+.\" Copyright 1995 Mark D. Roth (roth@uiuc.edu)
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Solaris manpages
+.\"
+.\" Modified Thu Jul 25 14:43:46 MET DST 1996 by Michael Haardt
+.\"     <michael@cantor.informatik.rwth-aachen.de>
+.\"
+.TH getutent 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+getutent, getutid, getutline, pututline, setutent, endutent,
+utmpname \- access utmp file entries
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <utmp.h>
+.P
+.B struct utmp *getutent(void);
+.BI "struct utmp *getutid(const struct utmp *" ut );
+.BI "struct utmp *getutline(const struct utmp *" ut );
+.P
+.BI "struct utmp *pututline(const struct utmp *" ut );
+.P
+.B void setutent(void);
+.B void endutent(void);
+.P
+.BI "int utmpname(const char *" file );
+.fi
+.SH DESCRIPTION
+New applications should use the POSIX.1-specified "utmpx" versions of
+these functions; see STANDARDS.
+.P
+.BR utmpname ()
+sets the name of the utmp-format file for the other utmp
+functions to access.
+If
+.BR utmpname ()
+is not used to set the filename
+before the other functions are used, they assume \fB_PATH_UTMP\fP, as
+defined in \fI<paths.h>\fP.
+.P
+.BR setutent ()
+rewinds the file pointer to the beginning of the utmp file.
+It is generally a good idea to call it before any of the other
+functions.
+.P
+.BR endutent ()
+closes the utmp file.
+It should be called when the user
+code is done accessing the file with the other functions.
+.P
+.BR getutent ()
+reads a line from the current file position in the utmp file.
+It returns a pointer to a structure containing the fields of
+the line.
+The definition of this structure is shown in
+.BR utmp (5).
+.P
+.BR getutid ()
+searches forward from the current file position in the utmp
+file based upon \fIut\fP.
+If \fIut\->ut_type\fP is one of \fBRUN_LVL\fP,
+\fBBOOT_TIME\fP, \fBNEW_TIME\fP, or \fBOLD_TIME\fP,
+.BR getutid ()
+will
+find the first entry whose \fIut_type\fP field matches \fIut\->ut_type\fP.
+If \fIut\->ut_type\fP is one of \fBINIT_PROCESS\fP, \fBLOGIN_PROCESS\fP,
+\fBUSER_PROCESS\fP, or \fBDEAD_PROCESS\fP,
+.BR getutid ()
+will find the
+first entry whose
+.I ut_id
+field matches \fIut\->ut_id\fP.
+.P
+.BR getutline ()
+searches forward from the current file position in the utmp file.
+It scans entries whose
+.I ut_type
+is \fBUSER_PROCESS\fP
+or \fBLOGIN_PROCESS\fP and returns the first one whose
+.I ut_line
+field
+matches \fIut\->ut_line\fP.
+.P
+.BR pututline ()
+writes the
+.I utmp
+structure \fIut\fP into the utmp file.
+It uses
+.BR getutid ()
+to search for the proper place in the file to insert
+the new entry.
+If it cannot find an appropriate slot for \fIut\fP,
+.BR pututline ()
+will append the new entry to the end of the file.
+.SH RETURN VALUE
+.BR getutent (),
+.BR getutid (),
+and
+.BR getutline ()
+return a pointer to a \fIstruct utmp\fP on success,
+and NULL on failure (which includes the "record not found" case).
+This \fIstruct utmp\fP is allocated in static storage, and may be
+overwritten by subsequent calls.
+.P
+On success
+.BR pututline ()
+returns
+.IR ut ;
+on failure, it returns NULL.
+.P
+.BR utmpname ()
+returns 0 if the new name was successfully stored, or \-1 on failure.
+.P
+On failure, these functions
+.I errno
+set to indicate the error.
+.SH ERRORS
+.TP
+.B ENOMEM
+Out of memory.
+.TP
+.B ESRCH
+Record not found.
+.P
+.BR setutent (),
+.BR pututline (),
+and the
+.BR getut* ()
+functions can also fail for the reasons described in
+.BR open (2).
+.SH FILES
+.TP
+.I /var/run/utmp
+database of currently logged-in users
+.TP
+.I /var/log/wtmp
+database of past user logins
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lb lb lbx
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR getutent ()
+T}	Thread safety	T{
+.na
+.nh
+MT-Unsafe init race:utent
+race:utentbuf sig:ALRM timer
+T}
+T{
+.na
+.nh
+.BR getutid (),
+.BR getutline ()
+T}	Thread safety	T{
+.na
+.nh
+MT-Unsafe init race:utent
+sig:ALRM timer
+T}
+T{
+.na
+.nh
+.BR pututline ()
+T}	Thread safety	T{
+.na
+.nh
+MT-Unsafe race:utent
+sig:ALRM timer
+T}
+T{
+.na
+.nh
+.BR setutent (),
+.BR endutent (),
+.BR utmpname ()
+T}	Thread safety	MT-Unsafe race:utent
+.TE
+.P
+In the above table,
+.I utent
+in
+.I race:utent
+signifies that if any of the functions
+.BR setutent (),
+.BR getutent (),
+.BR getutid (),
+.BR getutline (),
+.BR pututline (),
+.BR utmpname (),
+or
+.BR endutent ()
+are used in parallel in different threads of a program,
+then data races could occur.
+.SH STANDARDS
+None.
+.SH HISTORY
+XPG2, SVr4.
+.P
+In XPG2 and SVID 2 the function
+.BR pututline ()
+is documented to return void, and that is what it does on many systems
+(AIX, HP-UX).
+HP-UX introduces a new function
+.BR _pututline ()
+with the prototype given above for
+.BR pututline ().
+.P
+All these functions are obsolete now on non-Linux systems.
+POSIX.1-2001 and POSIX.1-2008, following SUSv1,
+does not have any of these functions, but instead uses
+.P
+.RS 4
+.EX
+.B #include <utmpx.h>
+.P
+.B struct utmpx *getutxent(void);
+.B struct utmpx *getutxid(const struct utmpx *);
+.B struct utmpx *getutxline(const struct utmpx *);
+.B struct utmpx *pututxline(const struct utmpx *);
+.B void setutxent(void);
+.B void endutxent(void);
+.EE
+.RE
+.P
+These functions are provided by glibc,
+and perform the same task as their equivalents without the "x", but use
+.IR "struct utmpx" ,
+defined on Linux to be the same as
+.IR "struct utmp" .
+For completeness, glibc also provides
+.BR utmpxname (),
+although this function is not specified by POSIX.1.
+.P
+On some other systems,
+the \fIutmpx\fP structure is a superset of the \fIutmp\fP structure,
+with additional fields, and larger versions of the existing fields,
+and parallel files are maintained, often
+.I /var/*/utmpx
+and
+.IR /var/*/wtmpx .
+.P
+Linux glibc on the other hand does not use a parallel \fIutmpx\fP file
+since its \fIutmp\fP structure is already large enough.
+The "x" functions listed above are just aliases for
+their counterparts without the "x" (e.g.,
+.BR getutxent ()
+is an alias for
+.BR getutent ()).
+.SH NOTES
+.SS glibc notes
+The above functions are not thread-safe.
+glibc adds reentrant versions
+.P
+.nf
+.B #include <utmp.h>
+.P
+.BI "int getutent_r(struct utmp *" ubuf ", struct utmp **" ubufp );
+.BI "int getutid_r(struct utmp *" ut ,
+.BI "              struct utmp *" ubuf ", struct utmp **" ubufp );
+.BI "int getutline_r(struct utmp *" ut ,
+.BI "                struct utmp *" ubuf ", struct utmp **" ubufp );
+.fi
+.P
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.P
+.BR getutent_r (),
+.BR getutid_r (),
+.BR getutline_r ():
+.nf
+    _GNU_SOURCE
+        || /* Since glibc 2.19: */ _DEFAULT_SOURCE
+        || /* glibc <= 2.19: */    _SVID_SOURCE || _BSD_SOURCE
+.fi
+.P
+These functions are GNU extensions, analogs of the functions of the
+same name without the _r suffix.
+The
+.I ubuf
+argument gives these functions a place to store their result.
+On success, they return 0, and a pointer to the result is written in
+.IR *ubufp .
+On error, these functions return \-1.
+There are no utmpx equivalents of the above functions.
+(POSIX.1 does not specify such functions.)
+.SH EXAMPLES
+The following example adds and removes a utmp record, assuming it is run
+from within a pseudo terminal.
+For usage in a real application, you
+should check the return values of
+.BR getpwuid (3)
+and
+.BR ttyname (3).
+.P
+.\" SRC BEGIN (getutent.c)
+.EX
+#include <pwd.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h>
+#include <utmp.h>
+\&
+int
+main(void)
+{
+    struct utmp entry;
+\&
+    system("echo before adding entry:;who");
+\&
+    entry.ut_type = USER_PROCESS;
+    entry.ut_pid = getpid();
+    strcpy(entry.ut_line, ttyname(STDIN_FILENO) + strlen("/dev/"));
+    /* only correct for ptys named /dev/tty[pqr][0\-9a\-z] */
+    strcpy(entry.ut_id, ttyname(STDIN_FILENO) + strlen("/dev/tty"));
+    entry.ut_time = time(NULL);
+    strcpy(entry.ut_user, getpwuid(getuid())\->pw_name);
+    memset(entry.ut_host, 0, UT_HOSTSIZE);
+    entry.ut_addr = 0;
+    setutent();
+    pututline(&entry);
+\&
+    system("echo after adding entry:;who");
+\&
+    entry.ut_type = DEAD_PROCESS;
+    memset(entry.ut_line, 0, UT_LINESIZE);
+    entry.ut_time = 0;
+    memset(entry.ut_user, 0, UT_NAMESIZE);
+    setutent();
+    pututline(&entry);
+\&
+    system("echo after removing entry:;who");
+\&
+    endutent();
+    exit(EXIT_SUCCESS);
+}
+.EE
+.\" SRC END
+.SH SEE ALSO
+.BR getutmp (3),
+.BR utmp (5)

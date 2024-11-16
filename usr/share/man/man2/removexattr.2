@@ -1,0 +1,100 @@
+.\" Copyright (C) Andreas Gruenbacher, February 2001
+.\" Copyright (C) Silicon Graphics Inc, September 2001
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.TH removexattr 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+removexattr, lremovexattr, fremovexattr \- remove an extended attribute
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <sys/xattr.h>
+.P
+.BI "int removexattr(const char *" path ", const char *" name );
+.BI "int lremovexattr(const char *" path ", const char *" name );
+.BI "int fremovexattr(int " fd ", const char *" name );
+.fi
+.SH DESCRIPTION
+Extended attributes are
+.IR name : value
+pairs associated with inodes (files, directories, symbolic links, etc.).
+They are extensions to the normal attributes which are associated
+with all inodes in the system (i.e., the
+.BR stat (2)
+data).
+A complete overview of extended attributes concepts can be found in
+.BR xattr (7).
+.P
+.BR removexattr ()
+removes the extended attribute identified by
+.I name
+and associated with the given
+.I path
+in the filesystem.
+.P
+.BR lremovexattr ()
+is identical to
+.BR removexattr (),
+except in the case of a symbolic link, where the extended attribute is
+removed from the link itself, not the file that it refers to.
+.P
+.BR fremovexattr ()
+is identical to
+.BR removexattr (),
+only the extended attribute is removed from the open file referred to by
+.I fd
+(as returned by
+.BR open (2))
+in place of
+.IR path .
+.P
+An extended attribute name is a null-terminated string.
+The
+.I name
+includes a namespace prefix; there may be several, disjoint
+namespaces associated with an individual inode.
+.SH RETURN VALUE
+On success, zero is returned.
+On failure, \-1 is returned and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B ENODATA
+The named attribute does not exist.
+.\" .RB ( ENOATTR
+.\" is defined to be a synonym for
+.\" .BR ENODATA
+.\" in
+.\" .IR <attr/attributes.h> .)
+.TP
+.B ENOTSUP
+Extended attributes are not supported by the filesystem, or are disabled.
+.P
+In addition, the errors documented in
+.BR stat (2)
+can also occur.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 2.4,
+glibc 2.3.
+.\" .SH AUTHORS
+.\" Andreas Gruenbacher,
+.\" .RI < a.gruenbacher@computer.org >
+.\" and the SGI XFS development team,
+.\" .RI < linux-xfs@oss.sgi.com >.
+.\" Please send any bug reports or comments to these addresses.
+.SH SEE ALSO
+.BR getfattr (1),
+.BR setfattr (1),
+.BR getxattr (2),
+.BR listxattr (2),
+.BR open (2),
+.BR setxattr (2),
+.BR stat (2),
+.BR symlink (7),
+.BR xattr (7)

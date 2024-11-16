@@ -1,0 +1,35 @@
+.\" Copyright (c) 2020-2022 by Alejandro Colomar <alx@kernel.org>
+.\" and Copyright (c) 2020 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\"
+.TH fenv_t 3type 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+fenv_t, fexcept_t \- floating-point environment
+.SH LIBRARY
+Standard C library
+.RI ( libc )
+.SH SYNOPSIS
+.nf
+.B #include <fenv.h>
+.P
+.BR typedef " /* ... */ " fenv_t;
+.BR typedef " /* ... */ " fexcept_t;
+.fi
+.SH DESCRIPTION
+.I fenv_t
+represents the entire floating-point environment,
+including control modes and status flags.
+.P
+.I fexcept_t
+represents the floating-point status flags collectively.
+.P
+For further details see
+.BR fenv (3).
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+C99, POSIX.1-2001.
+.SH SEE ALSO
+.BR fenv (3)

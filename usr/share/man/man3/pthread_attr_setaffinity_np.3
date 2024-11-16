@@ -1,0 +1,120 @@
+'\" t
+.\" Copyright (c) 2008 Linux Foundation, written by Michael Kerrisk
+.\"     <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH pthread_attr_setaffinity_np 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+pthread_attr_setaffinity_np, pthread_attr_getaffinity_np \- set/get
+CPU affinity attribute in thread attributes object
+.SH LIBRARY
+POSIX threads library
+.RI ( libpthread ", " \-lpthread )
+.SH SYNOPSIS
+.nf
+.BR "#define _GNU_SOURCE" "             /* See feature_test_macros(7) */"
+.B #include <pthread.h>
+.P
+.BI "int pthread_attr_setaffinity_np(pthread_attr_t *" attr ,
+.BI "                   size_t " cpusetsize ", const cpu_set_t *" cpuset );
+.BI "int pthread_attr_getaffinity_np(const pthread_attr_t *" attr ,
+.BI "                   size_t " cpusetsize ", cpu_set_t *" cpuset );
+.fi
+.SH DESCRIPTION
+The
+.BR pthread_attr_setaffinity_np ()
+function
+sets the CPU affinity mask attribute of the
+thread attributes object referred to by
+.I attr
+to the value specified in
+.IR cpuset .
+This attribute determines the CPU affinity mask
+of a thread created using the thread attributes object
+.IR attr .
+.P
+The
+.BR pthread_attr_getaffinity_np ()
+function
+returns the CPU affinity mask attribute of the thread attributes object
+referred to by
+.I attr
+in the buffer pointed to by
+.IR cpuset .
+.P
+The argument
+.I cpusetsize
+is the length (in bytes) of the buffer pointed to by
+.IR cpuset .
+Typically, this argument would be specified as
+.IR sizeof(cpu_set_t) .
+.P
+For more details on CPU affinity masks, see
+.BR sched_setaffinity (2).
+For a description of a set of macros
+that can be used to manipulate and inspect CPU sets, see
+.BR CPU_SET (3).
+.SH RETURN VALUE
+On success, these functions return 0;
+on error, they return a nonzero error number.
+.SH ERRORS
+.TP
+.B EINVAL
+.RB ( pthread_attr_setaffinity_np ())
+.I cpuset
+specified a CPU that was outside the set supported by the kernel.
+(The kernel configuration option
+.B CONFIG_NR_CPUS
+defines the range of the set supported by the kernel data type
+.\" cpumask_t
+used to represent CPU sets.)
+.\" The raw sched_getaffinity() system call returns the size (in bytes)
+.\" of the cpumask_t type.
+.TP
+.B EINVAL
+.RB ( pthread_attr_getaffinity_np ())
+A CPU in the affinity mask of the thread attributes object referred to by
+.I attr
+lies outside the range specified by
+.I cpusetsize
+(i.e.,
+.IR cpuset / cpusetsize
+is too small).
+.TP
+.B ENOMEM
+.RB ( pthread_attr_setaffinity_np ())
+Could not allocate memory.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR pthread_attr_setaffinity_np (),
+.BR pthread_attr_getaffinity_np ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+GNU;
+hence the suffix "_np" (nonportable) in the names.
+.SH HISTORY
+glibc 2.3.4.
+.SH NOTES
+In glibc 2.3.3 only,
+versions of these functions were provided that did not have a
+.I cpusetsize
+argument.
+Instead the CPU set size given to the underlying system calls was always
+.IR sizeof(cpu_set_t) .
+.SH SEE ALSO
+.BR sched_setaffinity (2),
+.BR pthread_attr_init (3),
+.BR pthread_setaffinity_np (3),
+.BR cpuset (7),
+.BR pthreads (7)

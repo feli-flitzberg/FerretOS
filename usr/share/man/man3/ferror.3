@@ -1,0 +1,118 @@
+'\" t
+.\" Copyright (c) 1990, 1991 The Regents of the University of California.
+.\" and Copyright (C) 2021 Michael Kerrisk <mtk.manpages@gmail.com>
+.\" All rights reserved.
+.\"
+.\" This code is derived from software contributed to Berkeley by
+.\" Chris Torek and the American National Standards Committee X3,
+.\" on Information Processing Systems.
+.\"
+.\" SPDX-License-Identifier: BSD-4-Clause-UC
+.\"
+.\"     @(#)ferror.3	6.8 (Berkeley) 6/29/91
+.\"
+.\"
+.\" Converted for Linux, Mon Nov 29 14:24:40 1993, faith@cs.unc.edu
+.\"
+.TH ferror 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+clearerr, feof, ferror \- check and reset stream status
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdio.h>
+.P
+.BI "void clearerr(FILE *" stream );
+.BI "int feof(FILE *" stream );
+.BI "int ferror(FILE *" stream );
+.fi
+.SH DESCRIPTION
+The function
+.BR clearerr ()
+clears the end-of-file and error indicators for the stream pointed to by
+.IR stream .
+.P
+The function
+.BR feof ()
+tests the end-of-file indicator for the stream pointed to by
+.IR stream ,
+returning nonzero if it is set.
+The end-of-file indicator can be cleared only by the function
+.BR clearerr ().
+.P
+The function
+.BR ferror ()
+tests the error indicator for the stream pointed to by
+.IR stream ,
+returning nonzero if it is set.
+The error indicator can be reset only by the
+.BR clearerr ()
+function.
+.P
+For nonlocking counterparts, see
+.BR unlocked_stdio (3).
+.SH RETURN VALUE
+The
+.BR feof ()
+function returns nonzero if the end-of-file indicator is set for
+.IR stream ;
+otherwise, it returns zero.
+.P
+The
+.BR ferror ()
+function returns nonzero if the error indicator is set for
+.IR stream ;
+otherwise, it returns zero.
+.SH ERRORS
+These functions should not fail and do not set
+.IR errno .
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR clearerr (),
+.BR feof (),
+.BR ferror ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+C89, POSIX.1-2001.
+.SH NOTES
+POSIX.1-2008 specifies
+.\"https://www.austingroupbugs.net/view.php?id=401
+that these functions shall not change the value of
+.I errno
+if
+.I stream
+is valid.
+.SH CAVEATS
+Normally,
+programs should read the return value of an input function,
+such as
+.BR fgetc (3),
+before using functions of the
+.BR feof (3)
+family.
+Only when the function returned the sentinel value
+.B EOF
+it makes sense to distinguish between the end of a file or an error with
+.BR feof (3)
+or
+.BR ferror (3).
+.SH SEE ALSO
+.BR open (2),
+.BR fdopen (3),
+.BR fileno (3),
+.BR stdio (3),
+.BR unlocked_stdio (3)

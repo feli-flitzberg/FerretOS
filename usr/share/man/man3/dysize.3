@@ -1,0 +1,69 @@
+'\" t
+.\"  Copyright 2001 Walter Harms (walter.harms@informatik.uni-oldenburg.de)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" aeb: some corrections
+.TH dysize 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+dysize \- get number of days for a given year
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B "#include <time.h>"
+.P
+.BI "int dysize(int " year );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR dysize ():
+.nf
+    Since glibc 2.19:
+        _DEFAULT_SOURCE
+    glibc 2.19 and earlier:
+        _BSD_SOURCE || _SVID_SOURCE
+.fi
+.SH DESCRIPTION
+The function returns 365 for a normal year and 366 for a leap year.
+The calculation for leap year is based on:
+.P
+.in +4n
+.EX
+(year) %4 == 0 && ((year) %100 != 0 || (year) %400 == 0)
+.EE
+.in
+.P
+The formula is defined in the macro
+.I __isleap(year)
+also found in
+.IR <time.h> .
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR dysize ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+None.
+.SH HISTORY
+SunOS 4.x.
+.P
+This is a compatibility function only.
+Don't use it in new programs.
+.\" The SCO version of this function had a year-2000 problem.
+.SH SEE ALSO
+.BR strftime (3)

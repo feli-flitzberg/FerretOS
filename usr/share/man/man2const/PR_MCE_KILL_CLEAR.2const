@@ -1,0 +1,42 @@
+.\" Copyright 2010, Andi Kleen <andi@firstfloor.org>
+.\" Copyright 2012, 2013, 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_MCE_KILL_CLEAR 2const 2024-06-01 "Linux man-pages 6.9.1"
+.SH NAME
+PR_MCE_KILL_CLEAR
+\-
+clear the machine check memory corruption kill policy
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.B int prctl(PR_MCE_KILL, PR_MCE_KILL_CLEAR, 0L, 0L, 0L);
+.fi
+.SH DESCRIPTION
+Clear the thread memory corruption kill policy and
+use the system-wide default.
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH FILES
+.TP
+.I /proc/sys/vm/\:memory_failure_early_kill
+This file defines the system-wide default.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 2.6.32.
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_MCE_KILL (2const),
+.BR proc_sys_vm (5)

@@ -1,0 +1,52 @@
+.\" Copyright 2017, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH NS_GET_OWNER_UID 2const 2024-06-13 "Linux man-pages 6.9.1"
+.SH NAME
+NS_GET_OWNER_UID
+\-
+discovering the owner of a user namespace
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/nsfs.h>" "  /* Definition of " NS_GET_OWNER_UID " */"
+.B #include <sys/ioctl.h>
+.P
+.BI "int ioctl(int " fd ", NS_GET_OWNER_UID, uid_t *" uid );
+.fi
+.SH DESCRIPTION
+The
+.B NS_GET_OWNER_UID
+operation can be used to discover
+the owner user ID of a user namespace (i.e., the effective user ID
+of the process that created the user namespace).
+.P
+.I fd
+refers to a
+.IR /proc/ pid /ns/user
+file.
+.P
+The owner user ID is returned in the
+.I uid_t
+pointed to by the third argument.
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error,
+\-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+.I fd
+does not refer to a user namespace.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 4.11.
+.\" linux.git 015bb305b8ebe8d601a238ab70ebdc394c7a19ba
+.SH SEE ALSO
+.BR ioctl (2),
+.BR ioctl_nsfs (2)

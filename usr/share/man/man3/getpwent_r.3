@@ -1,0 +1,227 @@
+'\" t
+.\" Copyright (c) 2003 Andries Brouwer (aeb@cwi.nl)
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.TH getpwent_r 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+getpwent_r, fgetpwent_r \- get passwd file entry reentrantly
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <pwd.h>
+.P
+.BI "int getpwent_r(struct passwd *restrict " pwbuf ,
+.BI "               char " buf "[restrict ." buflen "], size_t " buflen ,
+.BI "               struct passwd **restrict " pwbufp );
+.BI "int fgetpwent_r(FILE *restrict " stream \
+", struct passwd *restrict " pwbuf ,
+.BI "               char " buf "[restrict ." buflen "], size_t " buflen ,
+.BI "               struct passwd **restrict " pwbufp );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR getpwent_r (),
+.nf
+    Since glibc 2.19:
+        _DEFAULT_SOURCE
+    glibc 2.19 and earlier:
+        _BSD_SOURCE || _SVID_SOURCE
+.fi
+.P
+.BR fgetpwent_r ():
+.nf
+    Since glibc 2.19:
+        _DEFAULT_SOURCE
+    glibc 2.19 and earlier:
+        _SVID_SOURCE
+.fi
+.SH DESCRIPTION
+The functions
+.BR getpwent_r ()
+and
+.BR fgetpwent_r ()
+are the reentrant versions of
+.BR getpwent (3)
+and
+.BR fgetpwent (3).
+The former reads the next passwd entry from the stream initialized by
+.BR setpwent (3).
+The latter reads the next passwd entry from
+.IR stream .
+.P
+The \fIpasswd\fP structure is defined in
+.I <pwd.h>
+as follows:
+.P
+.in +4n
+.EX
+struct passwd {
+    char    *pw_name;      /* username */
+    char    *pw_passwd;    /* user password */
+    uid_t    pw_uid;       /* user ID */
+    gid_t    pw_gid;       /* group ID */
+    char    *pw_gecos;     /* user information */
+    char    *pw_dir;       /* home directory */
+    char    *pw_shell;     /* shell program */
+};
+.EE
+.in
+.P
+For more information about the fields of this structure, see
+.BR passwd (5).
+.P
+The nonreentrant functions return a pointer to static storage,
+where this static storage contains further pointers to user
+name, password, gecos field, home directory and shell.
+The reentrant functions described here return all of that in
+caller-provided buffers.
+First of all there is the buffer
+.I pwbuf
+that can hold a \fIstruct passwd\fP.
+And next the buffer
+.I buf
+of size
+.I buflen
+that can hold additional strings.
+The result of these functions, the \fIstruct passwd\fP read from the stream,
+is stored in the provided buffer
+.IR *pwbuf ,
+and a pointer to this \fIstruct passwd\fP is returned in
+.IR *pwbufp .
+.SH RETURN VALUE
+On success, these functions return 0 and
+.I *pwbufp
+is a pointer to the \fIstruct passwd\fP.
+On error, these functions return an error value and
+.I *pwbufp
+is NULL.
+.SH ERRORS
+.TP
+.B ENOENT
+No more entries.
+.TP
+.B ERANGE
+Insufficient buffer space supplied.
+Try again with larger buffer.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lb lb lbx
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR getpwent_r ()
+T}	Thread safety	T{
+.na
+.nh
+MT-Unsafe race:pwent locale
+T}
+T{
+.na
+.nh
+.BR fgetpwent_r ()
+T}	Thread safety	MT-Safe
+.TE
+.P
+In the above table,
+.I pwent
+in
+.I race:pwent
+signifies that if any of the functions
+.BR setpwent (),
+.BR getpwent (),
+.BR endpwent (),
+or
+.BR getpwent_r ()
+are used in parallel in different threads of a program,
+then data races could occur.
+.SH VERSIONS
+Other systems use the prototype
+.P
+.in +4n
+.EX
+struct passwd *
+getpwent_r(struct passwd *pwd, char *buf, int buflen);
+.EE
+.in
+.P
+or, better,
+.P
+.in +4n
+.EX
+int
+getpwent_r(struct passwd *pwd, char *buf, int buflen,
+           FILE **pw_fp);
+.EE
+.in
+.SH STANDARDS
+None.
+.SH HISTORY
+These functions are done in a style resembling
+the POSIX version of functions like
+.BR getpwnam_r (3).
+.SH NOTES
+The function
+.BR getpwent_r ()
+is not really reentrant since it shares the reading position
+in the stream with all other threads.
+.SH EXAMPLES
+.\" SRC BEGIN (getpwent_r.c)
+.EX
+#define _GNU_SOURCE
+#include <pwd.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+\&
+#define BUFLEN 4096
+\&
+int
+main(void)
+{
+    struct passwd pw;
+    struct passwd *pwp;
+    char buf[BUFLEN];
+    int i;
+\&
+    setpwent();
+    while (1) {
+        i = getpwent_r(&pw, buf, sizeof(buf), &pwp);
+        if (i)
+            break;
+        printf("%s (%jd)\[rs]tHOME %s\[rs]tSHELL %s\[rs]n", pwp\->pw_name,
+               (intmax_t) pwp\->pw_uid, pwp\->pw_dir, pwp\->pw_shell);
+    }
+    endpwent();
+    exit(EXIT_SUCCESS);
+}
+.EE
+.\" perhaps add error checking - should use strerror_r
+.\" #include <errno.h>
+.\" #include <stdlib.h>
+.\"         if (i) {
+.\"               if (i == ENOENT)
+.\"                     break;
+.\"               printf("getpwent_r: %s", strerror(i));
+.\"               exit(EXIT_SUCCESS);
+.\"         }
+.\" SRC END
+.SH SEE ALSO
+.BR fgetpwent (3),
+.BR getpw (3),
+.BR getpwent (3),
+.BR getpwnam (3),
+.BR getpwuid (3),
+.BR putpwent (3),
+.BR passwd (5)

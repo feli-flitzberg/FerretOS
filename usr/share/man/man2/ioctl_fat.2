@@ -1,0 +1,54 @@
+.\" Copyright 2014, Heinrich Schuchardt <xypron.glpk@gmx.de>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH ioctl_fat 2 2024-06-14 "Linux man-pages 6.9.1"
+.SH NAME
+ioctl_fat \- manipulating the FAT filesystem
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <sys/ioctl.h>
+.P
+.BI "int ioctl(int " fd ", unsigned long " op ", ...);"
+.fi
+.SH DESCRIPTION
+The
+.BR ioctl (2)
+system call can be used to read and write metadata of FAT filesystems that
+are not accessible using other system calls.
+The following
+.I op
+values are available.
+.SS Reading and setting file attributes
+.TP
+.BR FAT_IOCTL_GET_ATTRIBUTES (2const)
+.TQ
+.BR FAT_IOCTL_SET_ATTRIBUTES (2const)
+.SS Reading the volume ID
+.TP
+.BR FAT_IOCTL_GET_VOLUME_ID (2const)
+.SS Reading short filenames of a directory
+.TP
+.BR VFAT_IOCTL_READDIR_BOTH (2const)
+.TQ
+.BR VFAT_IOCTL_READDIR_SHORT (2const)
+.SH RETURN VALUE
+On success,
+a nonnegative value is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B ENOTTY
+The file descriptor
+.I fd
+does not refer to an object in a FAT filesystem.
+.SH STANDARDS
+Linux.
+.SH SEE ALSO
+.BR ioctl (2)

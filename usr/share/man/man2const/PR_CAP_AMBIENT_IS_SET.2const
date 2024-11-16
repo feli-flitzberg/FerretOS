@@ -1,0 +1,49 @@
+.\" Copyright 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_CAP_AMBIENT_IS_SET 2const 2024-06-01 "Linux man-pages 6.9.1"
+.SH NAME
+PR_CAP_AMBIENT_IS_SET
+\-
+read the ambient capability set of the calling thread
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.BI "int prctl(PR_CAP_AMBIENT, PR_CAP_AMBIENT_IS_SET, long " cap ", 0L, 0L);"
+.fi
+.SH DESCRIPTION
+This call
+returns 1 if the capability in
+.I cap
+is in the ambient capability set and 0 if it is not.
+.SH RETURN VALUE
+On success,
+this call
+returns the boolean value described above.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+.I cap
+does not specify a valid capability.
+.SH VERSIONS
+See
+.BR PR_CAP_AMBIENT (2const).
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 4.3.
+.\" commit 58319057b7847667f0c9585b9de0e8932b0fdb08
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_CAP_AMBIENT (2const),
+.BR libcap (3)

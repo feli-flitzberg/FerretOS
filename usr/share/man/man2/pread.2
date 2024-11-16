@@ -1,0 +1,146 @@
+.\" Copyright (C) 1999 Joseph Samuel Myers.
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH pread 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+pread, pwrite \- read from or write to a file descriptor at a given offset
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <unistd.h>
+.P
+.BI "ssize_t pread(int " fd ", void " buf [. count "], size_t " count ,
+.BI "              off_t " offset );
+.BI "ssize_t pwrite(int " fd ", const void " buf [. count "], size_t " count ,
+.BI "              off_t " offset );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR pread (),
+.BR pwrite ():
+.nf
+    _XOPEN_SOURCE >= 500
+        || /* Since glibc 2.12: */ _POSIX_C_SOURCE >= 200809L
+.fi
+.SH DESCRIPTION
+.BR pread ()
+reads up to
+.I count
+bytes from file descriptor
+.I fd
+at offset
+.I offset
+(from the start of the file) into the buffer starting at
+.IR buf .
+The file offset is not changed.
+.P
+.BR pwrite ()
+writes up to
+.I count
+bytes from the buffer starting at
+.I buf
+to the file descriptor
+.I fd
+at offset
+.IR offset .
+The file offset is not changed.
+.P
+The file referenced by
+.I fd
+must be capable of seeking.
+.SH RETURN VALUE
+On success,
+.BR pread ()
+returns the number of bytes read
+(a return of zero indicates end of file)
+and
+.BR pwrite ()
+returns the number of bytes written.
+.P
+Note that it is not an error for a successful call to transfer fewer bytes
+than requested (see
+.BR read (2)
+and
+.BR write (2)).
+.P
+On error, \-1 is returned and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.BR pread ()
+can fail and set
+.I errno
+to any error specified for
+.BR read (2)
+or
+.BR lseek (2).
+.BR pwrite ()
+can fail and set
+.I errno
+to any error specified for
+.BR write (2)
+or
+.BR lseek (2).
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001.
+.P
+Added in Linux 2.1.60;
+the entries in the i386 system call table were added in Linux 2.1.69.
+C library support (including emulation using
+.BR lseek (2)
+on older kernels without the system calls) was added in glibc 2.1.
+.SS C library/kernel differences
+On Linux, the underlying system calls were renamed
+in Linux 2.6:
+.BR pread ()
+became
+.BR pread64 (),
+and
+.BR pwrite ()
+became
+.BR pwrite64 ().
+The system call numbers remained the same.
+The glibc
+.BR pread ()
+and
+.BR pwrite ()
+wrapper functions transparently deal with the change.
+.P
+On some 32-bit architectures,
+the calling signature for these system calls differ,
+for the reasons described in
+.BR syscall (2).
+.SH NOTES
+The
+.BR pread ()
+and
+.BR pwrite ()
+system calls are especially useful in multithreaded applications.
+They allow multiple threads to perform I/O on the same file descriptor
+without being affected by changes to the file offset by other threads.
+.SH BUGS
+POSIX requires that opening a file with the
+.B O_APPEND
+flag should have no effect on the location at which
+.BR pwrite ()
+writes data.
+However, on Linux, if a file is opened with
+.\" FIXME . https://bugzilla.kernel.org/show_bug.cgi?id=43178
+.BR O_APPEND ,
+.BR pwrite ()
+appends data to the end of the file, regardless of the value of
+.IR offset .
+.SH SEE ALSO
+.BR lseek (2),
+.BR read (2),
+.BR readv (2),
+.BR write (2)

@@ -1,0 +1,170 @@
+.\" Copyright 2021, Gabriel Krisman Bertazi <krisman@collabora.com>
+.\" Copyright 2021, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_SET_SYSCALL_USER_DISPATCH 2const 2024-06-01 "Linux man-pages 6.9.1"
+.SH NAME
+PR_SET_SYSCALL_USER_DISPATCH
+\-
+set the system-call user dispatch mechanism for the calling thread
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.BI "int prctl(PR_SET_SYSCALL_USER_DISPATCH, long " op ", ...);"
+.P
+.B int prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON,
+.BI "          unsigned long " off ", unsigned long " size ", int8_t *" switch );
+.B int prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_OFF, 0L, 0L, 0L);
+.fi
+.SH DESCRIPTION
+Configure the Syscall User Dispatch mechanism
+for the calling thread.
+This mechanism allows an application
+to selectively intercept system calls
+so that they can be handled within the application itself.
+Interception takes the form of a thread-directed
+.B SIGSYS
+signal that is delivered to the thread
+when it makes a system call.
+If intercepted,
+the system call is not executed by the kernel.
+.TP
+.B PR_SYS_DISPATCH_ON
+Enable this mechanism.
+.IP
+Once enabled, further system calls will be selectively intercepted,
+depending on a control variable provided by user space.
+In this case,
+.I off
+and
+.I size
+respectively identify the
+offset
+and
+size
+of a single contiguous memory region in the process address space
+from where system calls are always allowed to be executed,
+regardless of the control variable.
+(Typically, this area would include the area of memory
+containing the C library.)
+.IP
+.I switch
+points to a variable
+that is a fast switch to allow/block system call execution
+without the overhead of doing another system call
+to re-configure Syscall User Dispatch.
+This control variable can either be set to
+.B SYSCALL_DISPATCH_FILTER_BLOCK
+to block system calls from executing
+or to
+.B SYSCALL_DISPATCH_FILTER_ALLOW
+to temporarily allow them to be executed.
+This value is checked by the kernel
+on every system call entry,
+and any unexpected value will raise
+an uncatchable
+.B SIGSYS
+at that time,
+killing the application.
+.IP
+When a system call is intercepted,
+the kernel sends a thread-directed
+.B SIGSYS
+signal to the triggering thread.
+Various fields will be set in the
+.I siginfo_t
+structure (see
+.BR sigaction (2))
+associated with the signal:
+.RS
+.IP \[bu] 3
+.I si_signo
+will contain
+.BR SIGSYS .
+.IP \[bu]
+.I si_call_addr
+will show the address of the system call instruction.
+.IP \[bu]
+.I si_syscall
+and
+.I si_arch
+will indicate which system call was attempted.
+.IP \[bu]
+.I si_code
+will contain
+.BR SYS_USER_DISPATCH .
+.IP \[bu]
+.I si_errno
+will be set to 0.
+.RE
+.IP
+The program counter will be as though the system call happened
+(i.e., the program counter will not point to the system call instruction).
+.IP
+When the signal handler returns to the kernel,
+the system call completes immediately
+and returns to the calling thread,
+without actually being executed.
+If necessary
+(i.e., when emulating the system call on user space.),
+the signal handler should set the system call return value
+to a sane value,
+by modifying the register context stored in the
+.I ucontext
+argument of the signal handler.
+See
+.BR sigaction (2),
+.BR sigreturn (2),
+and
+.BR getcontext (3)
+for more information.
+.TP
+.B PR_SYS_DISPATCH_OFF
+Syscall User Dispatch is disabled for that thread.
+.P
+The setting is not preserved across
+.BR fork (2),
+.BR clone (2),
+or
+.BR execve (2).
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EFAULT
+.I switch
+is an invalid address.
+.TP
+.B EINVAL
+.I op
+is
+.B PR_SYS_DISPATCH_ON
+and the memory range specified is outside the
+address space of the process.
+.TP
+.B EINVAL
+.I op
+is invalid.
+.SH STANDARDS
+Linux.
+x86 only.
+.SH HISTORY
+.\" commit 1446e1df9eb183fdf81c3f0715402f1d7595d4
+Linux 5.11 (x86).
+.SH SEE ALSO
+.BR prctl (2)
+.P
+For more information,
+see the kernel source file
+.I Documentation/\:admin\-guide/\:syscall\-user\-dispatch.rst

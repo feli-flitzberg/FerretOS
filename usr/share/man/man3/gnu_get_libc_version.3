@@ -1,0 +1,79 @@
+'\" t
+.\" Copyright (c) 2008, Linux Foundation, written by Michael Kerrisk
+.\"     <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH gnu_get_libc_version 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+gnu_get_libc_version, gnu_get_libc_release \- get glibc version and release
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <gnu/libc\-version.h>
+.P
+.B const char *gnu_get_libc_version(void);
+.B const char *gnu_get_libc_release(void);
+.fi
+.SH DESCRIPTION
+The function
+.BR gnu_get_libc_version ()
+returns a string that identifies the glibc version available on the system.
+.P
+The function
+.BR gnu_get_libc_release ()
+returns a string indicates the release status of the glibc version
+available on the system.
+This will be a string such as
+.IR "stable" .
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR gnu_get_libc_version (),
+.BR gnu_get_libc_release ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+GNU.
+.SH HISTORY
+glibc 2.1.
+.SH EXAMPLES
+When run, the program below will produce output such as the following:
+.P
+.in +4n
+.EX
+.RB "$" " ./a.out"
+GNU libc version: 2.8
+GNU libc release: stable
+.EE
+.in
+.SS Program source
+\&
+.\" SRC BEGIN (gnu_get_libc_version.c)
+.EX
+#include <stdio.h>
+#include <stdlib.h>
+\&
+#include <gnu/libc\-version.h>
+\&
+int
+main(void)
+{
+    printf("GNU libc version: %s\[rs]n", gnu_get_libc_version());
+    printf("GNU libc release: %s\[rs]n", gnu_get_libc_release());
+    exit(EXIT_SUCCESS);
+}
+.EE
+.\" SRC END
+.SH SEE ALSO
+.BR confstr (3)

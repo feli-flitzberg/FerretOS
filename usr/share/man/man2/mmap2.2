@@ -1,0 +1,85 @@
+.\" Copyright (C) 2002, Michael Kerrisk
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" Modified 31 Jan 2002, Michael Kerrisk <mtk.manpages@gmail.com>
+.\"	Added description of mmap2
+.\" Modified, 2004-11-25, mtk -- removed stray #endif in prototype
+.\"
+.TH mmap2 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+mmap2 \- map files or devices into memory
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <sys/mman.h>" "    /* Definition of " MAP_* " and " PROT_* " constants */"
+.BR "#include <sys/syscall.h>" " /* Definition of " SYS_* " constants */"
+.B #include <unistd.h>
+.P
+.BI "void *syscall(SYS_mmap2, unsigned long " addr ", unsigned long " length ,
+.BI "              unsigned long " prot ", unsigned long " flags ,
+.BI "              unsigned long " fd ", unsigned long " pgoffset );
+.fi
+.SH DESCRIPTION
+This is probably not the system call that you are interested in; instead, see
+.BR mmap (2),
+which describes the glibc wrapper function that invokes this system call.
+.P
+The
+.BR mmap2 ()
+system call provides the same interface as
+.BR mmap (2),
+except that the final argument specifies the offset into the
+file in 4096-byte units (instead of bytes, as is done by
+.BR mmap (2)).
+This enables applications that use a 32-bit
+.I off_t
+to map large files (up to 2\[ha]44 bytes).
+.SH RETURN VALUE
+On success,
+.BR mmap2 ()
+returns a pointer to the mapped area.
+On error, \-1 is returned and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EFAULT
+Problem with getting the data from user space.
+.TP
+.B EINVAL
+(Various platforms where the page size is not 4096 bytes.)
+.I "offset\ *\ 4096"
+is not a multiple of the system page size.
+.P
+.BR mmap2 ()
+can also return any of the errors described in
+.BR mmap (2).
+.SH VERSIONS
+On architectures where this system call is present,
+the glibc
+.BR mmap ()
+wrapper function invokes this system call rather than the
+.BR mmap (2)
+system call.
+.P
+This system call does not exist on x86-64.
+.P
+On ia64, the unit for
+.I offset
+is actually the system page size, rather than 4096 bytes.
+.\" ia64 can have page sizes ranging from 4 kB to 64 kB.
+.\" On cris, it looks like the unit might also be the page size,
+.\" which is 8192 bytes. -- mtk, June 2007
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 2.3.31.
+.SH SEE ALSO
+.BR getpagesize (2),
+.BR mmap (2),
+.BR mremap (2),
+.BR msync (2),
+.BR shm_open (3)

@@ -1,0 +1,99 @@
+.\" This manpage is Copyright (C) 2004, Michael Kerrisk
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" 2004-05-40 Created by Michael Kerrisk <mtk.manpages@gmail.com>
+.\" 2004-10-05 aeb, minor correction
+.\"
+.TH readahead 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+readahead \- initiate file readahead into page cache
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#define _GNU_SOURCE" "             /* See feature_test_macros(7) */"
+.B #define _FILE_OFFSET_BITS 64
+.B #include <fcntl.h>
+.P
+.BI "ssize_t readahead(int " fd ", off_t " offset ", size_t " count );
+.fi
+.SH DESCRIPTION
+.BR readahead ()
+initiates readahead on a file so that subsequent reads from that file will
+be satisfied from the cache, and not block on disk I/O
+(assuming the readahead was initiated early enough and that other activity
+on the system did not in the meantime flush pages from the cache).
+.P
+The
+.I fd
+argument is a file descriptor identifying the file which is
+to be read.
+The
+.I offset
+argument specifies the starting point from which data is to be read
+and
+.I count
+specifies the number of bytes to be read.
+I/O is performed in whole pages, so that
+.I offset
+is effectively rounded down to a page boundary
+and bytes are read up to the next page boundary greater than or
+equal to
+.IR "(offset+count)" .
+.BR readahead ()
+does not read beyond the end of the file.
+The file offset of the open file description referred to by the file descriptor
+.I fd
+is left unchanged.
+.SH RETURN VALUE
+On success,
+.BR readahead ()
+returns 0; on failure, \-1 is returned, with
+.I errno
+set to indicate the error.
+.SH ERRORS
+.TP
+.B EBADF
+.I fd
+is not a valid file descriptor or is not open for reading.
+.TP
+.B EINVAL
+.I fd
+does not refer to a file type to which
+.BR readahead ()
+can be applied.
+.SH VERSIONS
+On some 32-bit architectures,
+the calling signature for this system call differs,
+for the reasons described in
+.BR syscall (2).
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 2.4.13,
+glibc 2.3.
+.SH NOTES
+.B _FILE_OFFSET_BITS
+should be defined to be 64 in code that uses a pointer to
+.BR readahead ,
+if the code is intended to be portable
+to traditional 32-bit x86 and ARM platforms where
+.BR off_t 's
+width defaults to 32 bits.
+.SH BUGS
+.BR readahead ()
+attempts to schedule the reads in the background and return immediately.
+However, it may block while it reads the filesystem metadata needed
+to locate the requested blocks.
+This occurs frequently with ext[234] on large files
+using indirect blocks instead of extents,
+giving the appearance that the call blocks until the requested data has
+been read.
+.SH SEE ALSO
+.BR lseek (2),
+.BR madvise (2),
+.BR mmap (2),
+.BR posix_fadvise (2),
+.BR read (2)

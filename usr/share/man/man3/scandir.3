@@ -1,0 +1,310 @@
+'\" t
+.\" Copyright (C) 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 18:26:16 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Thu Apr 11 17:11:33 1996 by Andries Brouwer (aeb@cwi.nl):
+.\"     Corrected type of compar routines, as suggested by
+.\"     Miguel Barreiro (enano@avalon.yaix.es).  Added example.
+.\" Modified Sun Sep 24 20:15:46 2000 by aeb, following Petter Reinholdtsen.
+.\" Modified 2001-12-26 by aeb, following Joey. Added versionsort.
+.\"
+.\" The pieces on scandirat(3) were copyright and licensed as follows.
+.\"
+.\" Copyright (c) 2012, Mark R. Bannister <cambridge@users.sourceforge.net>
+.\"        based on text in mkfifoat.3 Copyright (c) 2006, Michael Kerrisk
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.TH scandir 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+scandir, scandirat, alphasort, versionsort \- scan
+a directory for matching entries
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <dirent.h>
+.P
+.BI "int scandir(const char *restrict " dirp ,
+.BI "            struct dirent ***restrict " namelist ,
+.BI "            int (*" filter ")(const struct dirent *),"
+.BI "            int (*" compar ")(const struct dirent **,"
+.B "                          const struct dirent **));"
+.P
+.BI "int alphasort(const struct dirent **" a ", const struct dirent **" b );
+.BI "int versionsort(const struct dirent **" a ", const struct dirent **" b );
+.P
+.BR "#include <fcntl.h>" "          /* Definition of AT_* constants */"
+.B #include <dirent.h>
+.P
+.BI "int scandirat(int " dirfd ", const char *restrict " dirp ,
+.BI "            struct dirent ***restrict " namelist ,
+.BI "            int (*" filter ")(const struct dirent *),"
+.BI "            int (*" compar ")(const struct dirent **,"
+.B "                          const struct dirent **));"
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR scandir (),
+.BR alphasort ():
+.nf
+    /* Since glibc 2.10: */ _POSIX_C_SOURCE >= 200809L
+        || /* glibc <= 2.19: */ _BSD_SOURCE || _SVID_SOURCE
+.fi
+.P
+.BR versionsort ():
+.nf
+    _GNU_SOURCE
+.fi
+.P
+.BR scandirat ():
+.nf
+    _GNU_SOURCE
+.fi
+.SH DESCRIPTION
+The
+.BR scandir ()
+function scans the directory \fIdirp\fP, calling
+\fIfilter\fP() on each directory entry.
+Entries for which
+\fIfilter\fP() returns nonzero are stored in strings allocated via
+.BR malloc (3),
+sorted using
+.BR qsort (3)
+with the comparison
+function \fIcompar\fP(), and collected in array \fInamelist\fP
+which is allocated via
+.BR malloc (3).
+If \fIfilter\fP is NULL, all entries are selected.
+.P
+The
+.BR alphasort ()
+and
+.BR versionsort ()
+functions can be used as the comparison function
+.IR compar ().
+The former sorts directory entries using
+.BR strcoll (3),
+the latter using
+.BR strverscmp (3)
+on the strings \fI(*a)\->d_name\fP and \fI(*b)\->d_name\fP.
+.SS scandirat()
+The
+.BR scandirat ()
+function operates in exactly the same way as
+.BR scandir (),
+except for the differences described here.
+.P
+If the pathname given in
+.I dirp
+is relative, then it is interpreted relative to the directory
+referred to by the file descriptor
+.I dirfd
+(rather than relative to the current working directory of
+the calling process, as is done by
+.BR scandir ()
+for a relative pathname).
+.P
+If
+.I dirp
+is relative and
+.I dirfd
+is the special value
+.BR AT_FDCWD ,
+then
+.I dirp
+is interpreted relative to the current working
+directory of the calling process (like
+.BR scandir ()).
+.P
+If
+.I dirp
+is absolute, then
+.I dirfd
+is ignored.
+.P
+See
+.BR openat (2)
+for an explanation of the need for
+.BR scandirat ().
+.SH RETURN VALUE
+The
+.BR scandir ()
+function returns the number of directory entries
+selected.
+On error, \-1 is returned, with
+.I errno
+set to indicate the error.
+.P
+The
+.BR alphasort ()
+and
+.BR versionsort ()
+functions return an integer less than, equal to,
+or greater than zero if the first argument is considered to be
+respectively less than, equal to, or greater than the second.
+.SH ERRORS
+.TP
+.B EBADF
+.RB ( scandirat ())
+.I dirp
+is relative but
+.I dirfd
+is neither
+.B AT_FDCWD
+nor a valid file descriptor.
+.TP
+.B ENOENT
+The path in \fIdirp\fR does not exist.
+.TP
+.B ENOMEM
+Insufficient memory to complete the operation.
+.TP
+.B ENOTDIR
+The path in \fIdirp\fR is not a directory.
+.TP
+.B ENOTDIR
+.RB ( scandirat ())
+.I dirp
+is a relative pathname and
+.I dirfd
+is a file descriptor referring to a file other than a directory.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR scandir (),
+.BR scandirat ()
+T}	Thread safety	MT-Safe
+T{
+.na
+.nh
+.BR alphasort (),
+.BR versionsort ()
+T}	Thread safety	MT-Safe locale
+.TE
+.SH STANDARDS
+.TP
+.BR alphasort ()
+.TQ
+.BR scandir ()
+POSIX.1-2008.
+.TP
+.BR versionsort ()
+.TQ
+.BR scandirat ()
+GNU.
+.SH HISTORY
+.TP
+.BR alphasort ()
+.TQ
+.BR scandir ()
+4.3BSD, POSIX.1-2008.
+.TP
+.BR versionsort ()
+glibc 2.1.
+.TP
+.BR scandirat ()
+glibc 2.15.
+.\" .P
+.\" The functions
+.\" .BR scandir ()
+.\" and
+.\" .BR alphasort ()
+.\" are from 4.3BSD, and have been available under Linux since libc4.
+.\" Libc4 and libc5 use the more precise prototype
+.\" .sp
+.\" .nf
+.\"    int alphasort(const struct dirent ** a,
+.\"                  const struct dirent **b);
+.\" .fi
+.\" .sp
+.\" but glibc 2.0 returns to the imprecise BSD prototype.
+.SH NOTES
+Since glibc 2.1,
+.BR alphasort ()
+calls
+.BR strcoll (3);
+earlier it used
+.BR strcmp (3).
+.P
+Before glibc 2.10, the two arguments of
+.BR alphasort ()
+and
+.BR versionsort ()
+were typed as
+.IR "const void\ *" .
+When
+.BR alphasort ()
+was standardized in POSIX.1-2008,
+the argument type was specified as the type-safe
+.IR "const struct dirent\ **",
+and glibc 2.10 changed the definition of
+.BR alphasort ()
+(and the nonstandard
+.BR versionsort ())
+to match the standard.
+.SH EXAMPLES
+The program below prints a list of the files in the current directory
+in reverse order.
+.\"
+.SS Program source
+\&
+.\" SRC BEGIN (scandir.c)
+.EX
+#define _DEFAULT_SOURCE
+#include <dirent.h>
+#include <stdio.h>
+#include <stdlib.h>
+\&
+int
+main(void)
+{
+    struct dirent **namelist;
+    int n;
+\&
+    n = scandir(".", &namelist, NULL, alphasort);
+    if (n == \-1) {
+        perror("scandir");
+        exit(EXIT_FAILURE);
+    }
+\&
+    while (n\-\-) {
+        printf("%s\[rs]n", namelist[n]\->d_name);
+        free(namelist[n]);
+    }
+    free(namelist);
+\&
+    exit(EXIT_SUCCESS);
+}
+.EE
+.\" SRC END
+.SH SEE ALSO
+.BR closedir (3),
+.BR fnmatch (3),
+.BR opendir (3),
+.BR readdir (3),
+.BR rewinddir (3),
+.BR seekdir (3),
+.BR strcmp (3),
+.BR strcoll (3),
+.BR strverscmp (3),
+.BR telldir (3)

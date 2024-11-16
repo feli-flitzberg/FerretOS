@@ -1,0 +1,24 @@
+.\" Copyright (C) 1994, 1995, Daniel Quinlan <quinlan@yggdrasil.com>
+.\" Copyright (C) 2002-2008, 2017, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright (C) 2023, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-3.0-or-later
+.\"
+.TH proc_profile 5 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+/proc/profile \- kernel profiling
+.SH DESCRIPTION
+.TP
+.IR /proc/profile " (since Linux 2.4)"
+This file is present only if the kernel was booted with the
+.I profile=1
+command-line option.
+It exposes kernel profiling information in a binary format for use by
+.BR readprofile (1).
+Writing (e.g., an empty string) to this file resets the profiling counters;
+on some architectures,
+writing a binary integer "profiling multiplier" of size
+.I sizeof(int)
+sets the profiling interrupt frequency.
+.SH SEE ALSO
+.BR proc (5)

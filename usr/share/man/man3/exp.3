@@ -1,0 +1,133 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\" and Copyright 2008, Linux Foundation, written by Michael Kerrisk
+.\"     <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified 1993-07-24 by Rik Faith (faith@cs.unc.edu)
+.\" Modified 1995-08-14 by Arnt Gulbrandsen <agulbra@troll.no>
+.\" Modified 2002-07-27 by Walter Harms
+.\" 	(walter.harms@informatik.uni-oldenburg.de)
+.\"
+.TH exp 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+exp, expf, expl \- base-e exponential function
+.SH LIBRARY
+Math library
+.RI ( libm ", " \-lm )
+.SH SYNOPSIS
+.nf
+.B #include <math.h>
+.P
+.BI "double exp(double " x );
+.BI "float expf(float " x );
+.BI "long double expl(long double " x );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR expf (),
+.BR expl ():
+.nf
+    _ISOC99_SOURCE || _POSIX_C_SOURCE >= 200112L
+        || /* Since glibc 2.19: */ _DEFAULT_SOURCE
+        || /* glibc <= 2.19: */ _BSD_SOURCE || _SVID_SOURCE
+.fi
+.SH DESCRIPTION
+These functions return the value of e (the base of natural
+logarithms) raised to the power of
+.IR x .
+.SH RETURN VALUE
+On success, these functions return the exponential value of
+.IR x .
+.P
+If
+.I x
+is a NaN,
+a NaN is returned.
+.P
+If
+.I x
+is positive infinity,
+positive infinity is returned.
+.P
+If
+.I x
+is negative infinity,
++0 is returned.
+.P
+If the result underflows,
+a range error occurs,
+and zero is returned.
+.P
+If the result overflows,
+a range error occurs,
+and the functions return
+.RB + HUGE_VAL ,
+.RB + HUGE_VALF ,
+or
+.RB + HUGE_VALL ,
+respectively.
+.SH ERRORS
+See
+.BR math_error (7)
+for information on how to determine whether an error has occurred
+when calling these functions.
+.P
+The following errors can occur:
+.TP
+Range error, overflow
+.I errno
+is set to
+.BR ERANGE .
+An overflow floating-point exception
+.RB ( FE_OVERFLOW )
+is raised.
+.TP
+Range error, underflow
+.I errno
+is set to
+.BR ERANGE .
+An underflow floating-point exception
+.RB ( FE_UNDERFLOW )
+is raised.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR exp (),
+.BR expf (),
+.BR expl ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+C99, POSIX.1-2001.
+.P
+The variant returning
+.I double
+also conforms to
+SVr4, 4.3BSD, C89.
+.SH SEE ALSO
+.BR cbrt (3),
+.BR cexp (3),
+.BR exp10 (3),
+.BR exp2 (3),
+.BR expm1 (3),
+.BR sqrt (3)

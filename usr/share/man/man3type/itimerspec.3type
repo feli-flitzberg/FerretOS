@@ -1,0 +1,32 @@
+.\" Copyright (c) 2022 by Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\"
+.TH itimerspec 3type 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+itimerspec \- interval for a timer with nanosecond precision
+.SH LIBRARY
+Standard C library
+.RI ( libc )
+.SH SYNOPSIS
+.EX
+.B #include <time.h>
+.P
+.B struct itimerspec {
+.BR "    struct timespec  it_interval;" "  /* Interval for periodic timer */"
+.BR "    struct timespec  it_value;" "     /* Initial expiration */"
+.B };
+.EE
+.SH DESCRIPTION
+Describes the initial expiration of a timer,
+and its interval,
+in seconds and nanoseconds.
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001.
+.SH SEE ALSO
+.BR timerfd_create (2),
+.BR timer_settime (2),
+.BR timespec (3type)

@@ -1,0 +1,81 @@
+'\" t
+.\" Copyright (c) 2012 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH malloc_trim 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+malloc_trim \- release free memory from the heap
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <malloc.h>
+.P
+.BI "int malloc_trim(size_t "  pad );
+.fi
+.SH DESCRIPTION
+The
+.BR malloc_trim ()
+function attempts to release free memory from the heap
+(by calling
+.BR sbrk (2)
+or
+.BR madvise (2)
+with suitable arguments).
+.P
+The
+.I pad
+argument specifies the amount of free space to leave untrimmed
+at the top of the heap.
+If this argument is 0, only the minimum amount of memory is maintained
+at the top of the heap (i.e., one page or less).
+A nonzero argument can be used to maintain some trailing space
+at the top of the heap in order to allow future allocations
+to be made without having to extend the heap with
+.BR sbrk (2).
+.SH RETURN VALUE
+The
+.BR malloc_trim ()
+function returns 1 if memory was actually released back to the system,
+or 0 if it was not possible to release any memory.
+.SH ERRORS
+No errors are defined.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR malloc_trim ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+GNU.
+.SH VERSIONS
+glibc 2.0.
+.SH NOTES
+Only the main heap (using
+.BR sbrk (2))
+honors the
+.I pad
+argument; thread heaps do not.
+.P
+Since glibc 2.8 this function frees memory in all arenas and in all
+chunks with whole free pages.
+.\" See commit 68631c8eb92ff38d9da1ae34f6aa048539b199cc
+.\" (dated 2007-12-16) which adds iteration over all
+.\" arenas and frees all pages in chunks which are free.
+.P
+Before glibc 2.8 this function only freed memory at the
+top of the heap in the main arena.
+.SH SEE ALSO
+.BR sbrk (2),
+.BR malloc (3),
+.BR mallopt (3)

@@ -1,0 +1,73 @@
+'\" t
+.\" Copyright (C) 2006 Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH sem_post 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+sem_post \- unlock a semaphore
+.SH LIBRARY
+POSIX threads library
+.RI ( libpthread ", " \-lpthread )
+.SH SYNOPSIS
+.nf
+.B #include <semaphore.h>
+.P
+.BI "int sem_post(sem_t *" sem );
+.fi
+.SH DESCRIPTION
+.BR sem_post ()
+increments (unlocks) the semaphore pointed to by
+.IR sem .
+If the semaphore's value consequently becomes greater than zero,
+then another process or thread blocked in a
+.BR sem_wait (3)
+call will be woken up and proceed to lock the semaphore.
+.SH RETURN VALUE
+.BR sem_post ()
+returns 0 on success;
+on error, the value of the semaphore is left unchanged,
+\-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+.I sem
+is not a valid semaphore.
+.TP
+.B EOVERFLOW
+.\" Added in POSIX.1-2008 TC1 (Austin Interpretation 213)
+The maximum allowable value for a semaphore would be exceeded.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR sem_post ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001.
+.SH NOTES
+.BR sem_post ()
+is async-signal-safe:
+it may be safely called within a signal handler.
+.SH EXAMPLES
+See
+.BR sem_wait (3)
+and
+.BR shm_open (3).
+.SH SEE ALSO
+.BR sem_getvalue (3),
+.BR sem_wait (3),
+.BR sem_overview (7),
+.BR signal\-safety (7)

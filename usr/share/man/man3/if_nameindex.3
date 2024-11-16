@@ -1,0 +1,154 @@
+'\" t
+.\" Copyright (c) 2012 YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>
+.\" and Copyright (c) 2012 Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH if_nameindex 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+if_nameindex, if_freenameindex \- get network interface names and indexes
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <net/if.h>
+.P
+.BI "struct if_nameindex *if_nameindex(" void );
+.BI "void if_freenameindex(struct if_nameindex *" "ptr" );
+.fi
+.SH DESCRIPTION
+The
+.BR if_nameindex ()
+function returns an array of
+.I if_nameindex
+structures, each containing information
+about one of the network interfaces on the local system.
+The
+.I if_nameindex
+structure contains at least the following entries:
+.P
+.in +4n
+.EX
+unsigned int if_index; /* Index of interface (1, 2, ...) */
+char        *if_name;  /* Null\-terminated name ("eth0", etc.) */
+.EE
+.in
+.P
+The
+.I if_index
+field contains the interface index.
+The
+.I if_name
+field points to the null-terminated interface name.
+The end of the array is indicated by entry with
+.I if_index
+set to zero and
+.I if_name
+set to NULL.
+.P
+The data structure returned by
+.BR if_nameindex ()
+is dynamically allocated and should be freed using
+.BR if_freenameindex ()
+when no longer needed.
+.SH RETURN VALUE
+On success,
+.BR if_nameindex ()
+returns pointer to the array;
+on error, NULL is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.BR if_nameindex ()
+may fail and set
+.I errno
+if:
+.TP
+.B ENOBUFS
+Insufficient resources available.
+.P
+.BR if_nameindex ()
+may also fail for any of the errors specified for
+.BR socket (2),
+.BR bind (2),
+.BR ioctl (2),
+.BR getsockname (2),
+.BR recvmsg (2),
+.BR sendto (2),
+or
+.BR malloc (3).
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR if_nameindex (),
+.BR if_freenameindex ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008, RFC\ 3493.
+.SH HISTORY
+glibc 2.1.
+POSIX.1-2001.
+BSDi.
+.P
+Before glibc 2.3.4,
+the implementation supported only interfaces with IPv4 addresses.
+Support of interfaces that don't have IPv4 addresses is available only
+on kernels that support netlink.
+.SH EXAMPLES
+The program below demonstrates the use of the functions described
+on this page.
+An example of the output this program might produce is the following:
+.P
+.in +4n
+.EX
+$ \fB./a.out\fI
+1: lo
+2: wlan0
+3: em1
+.EE
+.in
+.SS Program source
+.\" SRC BEGIN (if_nameindex.c)
+.EX
+#include <net/if.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+\&
+int
+main(void)
+{
+    struct if_nameindex *if_ni, *i;
+\&
+    if_ni = if_nameindex();
+    if (if_ni == NULL) {
+        perror("if_nameindex");
+        exit(EXIT_FAILURE);
+    }
+\&
+    for (i = if_ni; !(i\->if_index == 0 && i\->if_name == NULL); i++)
+        printf("%u: %s\[rs]n", i\->if_index, i\->if_name);
+\&
+    if_freenameindex(if_ni);
+\&
+    exit(EXIT_SUCCESS);
+}
+.EE
+.\" SRC END
+.SH SEE ALSO
+.BR getsockopt (2),
+.BR setsockopt (2),
+.BR getifaddrs (3),
+.BR if_indextoname (3),
+.BR if_nametoindex (3),
+.BR ifconfig (8)

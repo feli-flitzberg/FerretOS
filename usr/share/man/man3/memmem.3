@@ -1,0 +1,89 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 18:50:48 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Interchanged 'needle' and 'haystack'; added history, aeb, 980113.
+.TH memmem 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+memmem \- locate a substring
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#define _GNU_SOURCE" "         /* See feature_test_macros(7) */"
+.B #include <string.h>
+.P
+.BI "void *memmem(const void " haystack [. haystacklen "], size_t " haystacklen ,
+.BI "             const void " needle [. needlelen "], size_t " needlelen  );
+.fi
+.SH DESCRIPTION
+The
+.BR memmem ()
+function finds the start of the first occurrence
+of the substring
+.I needle
+of length
+.I needlelen
+in the memory
+area
+.I haystack
+of length
+.IR haystacklen .
+.SH RETURN VALUE
+The
+.BR memmem ()
+function returns a pointer to the beginning of the
+substring, or NULL if the substring is not found.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR memmem ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+None.
+.SH HISTORY
+musl libc 0.9.7;
+FreeBSD 6.0, OpenBSD 5.4, NetBSD, Illumos.
+.SH BUGS
+.\" This function was broken in Linux libraries up to and including libc 5.0.9;
+.\" there the
+.\" .IR needle
+.\" and
+.\" .I haystack
+.\" arguments were interchanged,
+.\" and a pointer to the end of the first occurrence of
+.\" .I needle
+.\" was returned.
+.\"
+.\" Both old and new libc's have the bug that if
+.\" .I needle
+.\" is empty,
+.\" .I haystack\-1
+.\" (instead of
+.\" .IR haystack )
+.\" is returned.
+In glibc 2.0, if
+.I needle
+is empty,
+.BR memmem ()
+returns a pointer to the last byte of
+.IR haystack .
+This is fixed in glibc 2.1.
+.SH SEE ALSO
+.BR bstring (3),
+.BR strstr (3)

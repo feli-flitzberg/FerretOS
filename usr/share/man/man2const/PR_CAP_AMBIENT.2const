@@ -1,0 +1,68 @@
+.\" Copyright 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_CAP_AMBIENT 2const 2024-06-01 "Linux man-pages 6.9.1"
+.SH NAME
+PR_CAP_AMBIENT
+\-
+read or change the ambient capability set of the calling thread
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.BI "int prctl(PR_CAP_AMBIENT, long " op ", ...);"
+.fi
+.SH DESCRIPTION
+Reads or changes the ambient capability set of the calling thread,
+according to the value of
+.IR op ,
+which must be one of the following:
+.TP
+.B PR_CAP_AMBIENT_RAISE
+.TQ
+.B PR_CAP_AMBIENT_LOWER
+.TQ
+.B PR_CAP_AMBIENT_IS_SET
+.TQ
+.B PR_CAP_AMBIENT_CLEAR_ALL
+.SH RETURN VALUE
+On success,
+a nonnegative value is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+.I op
+is not a valid value.
+.SH VERSIONS
+Higher-level interfaces layered on top of the above operations are
+provided in the
+.BR libcap (3)
+library in the form of
+.BR cap_get_ambient (3),
+.BR cap_set_ambient (3),
+and
+.BR cap_reset_ambient (3).
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 4.3.
+.\" commit 58319057b7847667f0c9585b9de0e8932b0fdb08
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_CAP_AMBIENT_RAISE (2const),
+.BR PR_CAP_AMBIENT_LOWER (2const),
+.BR PR_CAP_AMBIENT_IS_SET (2const),
+.BR PR_CAP_AMBIENT_CLEAR_ALL (2const),
+.BR libcap (3),
+.BR cap_get_ambient (3),
+.BR cap_set_ambient (3),
+.BR cap_reset_ambient (3)

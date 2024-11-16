@@ -1,0 +1,75 @@
+.\" Copyright (C) 1996 Andries Brouwer (aeb@cwi.nl)
+.\" and Copyright (C) 2016 Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" Modified Thu Oct 31 14:18:40 1996 by Eric S. Raymond <esr@y\thyrsus.com>
+.\" Modified 2001-12-17, aeb
+.TH getsid 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+getsid \- get session ID
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <unistd.h>
+.P
+.BI "pid_t getsid(pid_t" " pid" );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR getsid ():
+.nf
+    _XOPEN_SOURCE >= 500
+.\"    || _XOPEN_SOURCE && _XOPEN_SOURCE_EXTENDED
+        || /* Since glibc 2.12: */ _POSIX_C_SOURCE >= 200809L
+.fi
+.SH DESCRIPTION
+.BR getsid ()
+returns the session ID of the process with process ID
+.IR pid .
+If
+.I pid
+is 0,
+.BR getsid ()
+returns the session ID of the calling process.
+.SH RETURN VALUE
+On success, a session ID is returned.
+On error, \fI(pid_t)\ \-1\fP is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EPERM
+A process with process ID
+.I pid
+exists, but it is not in the same session as the calling process,
+and the implementation considers this an error.
+.TP
+.B ESRCH
+No process with process ID
+.I pid
+was found.
+.SH VERSIONS
+Linux does not return
+.BR EPERM .
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, SVr4.
+Linux 2.0.
+.\" Linux has this system call since Linux 1.3.44.
+.\" There is libc support since libc 5.2.19.
+.SH NOTES
+See
+.BR credentials (7)
+for a description of sessions and session IDs.
+.SH SEE ALSO
+.BR getpgid (2),
+.BR setsid (2),
+.BR credentials (7)

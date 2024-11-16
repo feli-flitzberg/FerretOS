@@ -1,0 +1,96 @@
+'\" t
+.\" Copyright 2003 Walter Harms, Andries Brouwer
+.\" and Copyright 2008, Linux Foundation, written by Michael Kerrisk
+.\"     <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: GPL-1.0-or-later
+.\"
+.TH fdim 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+fdim, fdimf, fdiml \- positive difference
+.SH LIBRARY
+Math library
+.RI ( libm ", " \-lm )
+.SH SYNOPSIS
+.nf
+.B #include <math.h>
+.P
+.BI "double fdim(double " x ", double " y );
+.BI "float fdimf(float " x ", float " y );
+.BI "long double fdiml(long double " x ", long double " y );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR fdimf (),
+.BR fdiml ():
+.nf
+    _ISOC99_SOURCE || _POSIX_C_SOURCE >= 200112L
+.fi
+.SH DESCRIPTION
+These functions return the positive difference, max(\fIx\fP-\fIy\fP,0),
+between their arguments.
+.SH RETURN VALUE
+On success, these functions return the positive difference.
+.P
+If
+.I x
+or
+.I y
+is a NaN, a NaN is returned.
+.P
+If the result overflows,
+a range error occurs,
+and the functions return
+.BR HUGE_VAL ,
+.BR HUGE_VALF ,
+or
+.BR HUGE_VALL ,
+respectively.
+.SH ERRORS
+See
+.BR math_error (7)
+for information on how to determine whether an error has occurred
+when calling these functions.
+.P
+The following errors can occur:
+.TP
+Range error: result overflow
+.I errno
+is set to
+.BR ERANGE .
+An overflow floating-point exception
+.RB ( FE_OVERFLOW )
+is raised.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR fdim (),
+.BR fdimf (),
+.BR fdiml ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+glibc 2.1.
+C99, POSIX.1-2001.
+.SH BUGS
+Before glibc 2.24
+.\" https://www.sourceware.org/bugzilla/show_bug.cgi?id=6796
+on certain architectures (e.g., x86, but not x86_64)
+these functions did not set
+.IR errno .
+.SH SEE ALSO
+.BR fmax (3)

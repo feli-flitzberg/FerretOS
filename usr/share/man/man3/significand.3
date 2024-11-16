@@ -1,0 +1,78 @@
+'\" t
+.\" Copyright 2002 Walter Harms (walter.harms@informatik.uni-oldenburg.de)
+.\"
+.\" SPDX-License-Identifier: GPL-1.0-or-later
+.\"
+.\" heavily based on glibc infopages, copyright Free Software Foundation
+.\"
+.TH significand 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+significand, significandf, significandl \-
+get mantissa of floating-point number
+.SH LIBRARY
+Math library
+.RI ( libm ", " \-lm )
+.SH SYNOPSIS
+.nf
+.B #include <math.h>
+.P
+.BI "double significand(double " x );
+.BI "float significandf(float " x );
+.BI "long double significandl(long double " x );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR significand (),
+.BR significandf (),
+.BR significandl ():
+.nf
+    /* Since glibc 2.19: */ _DEFAULT_SOURCE
+        || /* glibc <= 2.19: */ _BSD_SOURCE || _SVID_SOURCE
+.fi
+.SH DESCRIPTION
+These functions return the mantissa of
+.I x
+scaled to the range
+.RB [ 1 ,\~ FLT_RADIX ).
+They are equivalent to
+.P
+.in +4n
+.EX
+scalb(x, (double) \-ilogb(x))
+.EE
+.in
+.P
+This function exists mainly for use in certain standardized tests
+for IEEE 754 conformance.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR significand (),
+.BR significandf (),
+.BR significandl ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+None.
+.TP
+.BR significand ()
+BSD.
+.SH HISTORY
+.TP
+.BR significand ()
+BSD.
+.SH SEE ALSO
+.BR ilogb (3),
+.BR scalb (3)

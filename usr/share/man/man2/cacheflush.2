@@ -1,0 +1,143 @@
+.\" Written by Ralf Baechle (ralf@waldorf-gmbh.de),
+.\" Copyright (c) 1994, 1995 Waldorf GMBH
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.TH cacheflush 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+cacheflush \- flush contents of instruction and/or data cache
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <sys/cachectl.h>
+.P
+.BI "int cacheflush(void " addr [. nbytes "], int "nbytes ", int "cache );
+.fi
+.P
+.IR Note :
+On some architectures,
+there is no glibc wrapper for this system call; see NOTES.
+.SH DESCRIPTION
+.BR cacheflush ()
+flushes the contents of the indicated cache(s) for the
+user addresses in the range
+.I addr
+to
+.IR (addr+nbytes\-1) .
+.I cache
+may be one of:
+.TP
+.B ICACHE
+Flush the instruction cache.
+.TP
+.B DCACHE
+Write back to memory and invalidate the affected valid cache lines.
+.TP
+.B BCACHE
+Same as
+.BR (ICACHE|DCACHE) .
+.SH RETURN VALUE
+.BR cacheflush ()
+returns 0 on success.
+On error, it returns \-1 and sets
+.I errno
+to indicate the error.
+.SH ERRORS
+.TP
+.B EFAULT
+Some or all of the address range
+.I addr
+to
+.I (addr+nbytes\-1)
+is not accessible.
+.TP
+.B EINVAL
+.I cache
+is not one of
+.BR ICACHE ,
+.BR DCACHE ,
+or
+.B BCACHE
+(but see BUGS).
+.SH VERSIONS
+.BR cacheflush ()
+should not be used in programs intended to be portable.
+On Linux, this call first appeared on the MIPS architecture,
+but nowadays, Linux provides a
+.BR cacheflush ()
+system call on some other architectures, but with different arguments.
+.SS Architecture-specific variants
+glibc provides a wrapper for this system call,
+with the prototype shown in SYNOPSIS,
+for the following architectures:
+ARC, CSKY, MIPS, and NIOS2.
+.P
+On some other architectures,
+Linux provides this system call, with different arguments:
+.TP
+M68K:
+.nf
+.BI "int cacheflush(unsigned long " addr ", int " scope ", int " cache ,
+.BI "               unsigned long " len );
+.fi
+.TP
+SH:
+.nf
+.BI "int cacheflush(unsigned long " addr ", unsigned long " len ", int " op );
+.fi
+.TP
+NDS32:
+.nf
+.BI "int cacheflush(unsigned int " start ", unsigned int " end ", int " cache );
+.fi
+.P
+On the above architectures,
+glibc does not provide a wrapper for this system call; call it using
+.BR syscall (2).
+.SS GCC alternative
+Unless you need the finer grained control that this system call provides,
+you probably want to use the GCC built-in function
+.BR __builtin___clear_cache (),
+which provides a portable interface
+across platforms supported by GCC and compatible compilers:
+.P
+.in +4n
+.EX
+.BI "void __builtin___clear_cache(void *" begin ", void *" end );
+.EE
+.in
+.P
+On platforms that don't require instruction cache flushes,
+.BR __builtin___clear_cache ()
+has no effect.
+.P
+.IR Note :
+On some GCC-compatible compilers,
+the prototype for this built-in function uses
+.I char *
+instead of
+.I void *
+for the parameters.
+.SH STANDARDS
+Historically, this system call was available on all MIPS UNIX variants
+including RISC/os, IRIX, Ultrix, NetBSD, OpenBSD, and FreeBSD
+(and also on some non-UNIX MIPS operating systems), so that
+the existence of this call in MIPS operating systems is a de-facto
+standard.
+.SH BUGS
+Linux kernels older than Linux 2.6.11 ignore the
+.I addr
+and
+.I nbytes
+arguments, making this function fairly expensive.
+Therefore, the whole cache is always flushed.
+.P
+This function always behaves as if
+.B BCACHE
+has been passed for the
+.I cache
+argument and does not do any error checking on the
+.I cache
+argument.

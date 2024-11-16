@@ -1,0 +1,146 @@
+'\" t
+.\" Copyright (C) 2001 Andries Brouwer <aeb@cwi.nl>
+.\" and Copyright (C) 2016 Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH strverscmp 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+strverscmp \- compare two version strings
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#define _GNU_SOURCE" "         /* See feature_test_macros(7) */"
+.B #include <string.h>
+.P
+.BI "int strverscmp(const char *" s1 ", const char *" s2 );
+.fi
+.SH DESCRIPTION
+Often one has files
+.IR jan1 ", " jan2 ", ..., " jan9 ", " jan10 ", ..."
+and it feels wrong when
+.BR ls (1)
+orders them
+.IR jan1 ", " jan10 ", ..., " jan2 ", ..., " jan9 .
+.\" classical solution: "rename jan jan0 jan?"
+In order to rectify this, GNU introduced the
+.I \-v
+option to
+.BR ls (1),
+which is implemented using
+.BR versionsort (3),
+which again uses
+.BR strverscmp ().
+.P
+Thus, the task of
+.BR strverscmp ()
+is to compare two strings and find the "right" order, while
+.BR strcmp (3)
+finds only the lexicographic order.
+This function does not use
+the locale category
+.BR LC_COLLATE ,
+so is meant mostly for situations
+where the strings are expected to be in ASCII.
+.P
+What this function does is the following.
+If both strings are equal, return 0.
+Otherwise, find the position
+between two bytes with the property that before it both strings are equal,
+while directly after it there is a difference.
+Find the largest consecutive digit strings containing (or starting at,
+or ending at) this position.
+If one or both of these is empty,
+then return what
+.BR strcmp (3)
+would have returned (numerical ordering of byte values).
+Otherwise, compare both digit strings numerically, where digit strings with
+one or more leading zeros are interpreted as if they have a decimal point
+in front (so that in particular digit strings with more leading zeros
+come before digit strings with fewer leading zeros).
+Thus, the ordering is
+.IR 000 ", " 00 ", " 01 ", " 010 ", " 09 ", " 0 ", " 1 ", " 9 ", " 10 .
+.SH RETURN VALUE
+The
+.BR strverscmp ()
+function returns an integer
+less than, equal to, or greater than zero if
+.I s1
+is found, respectively, to be earlier than, equal to,
+or later than
+.IR s2 .
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR strverscmp ()
+T}	Thread safety	MT-Safe
+.TE
+.\" FIXME: The marking is different from that in the glibc manual,
+.\" which has:
+.\"
+.\"     strverscmp: MT-Safe locale
+.\"
+.\" glibc manual says strverscmp should have marking locale because it calls
+.\" isdigit() multiple times and isdigit() uses locale variable.
+.\" But isdigit() has two implementations. With different compiling conditions,
+.\" we may call isdigit() in macro, then strverscmp() should not have locale
+.\" problem.
+.SH STANDARDS
+GNU.
+.SH EXAMPLES
+The program below can be used to demonstrate the behavior of
+.BR strverscmp ().
+It uses
+.BR strverscmp ()
+to compare the two strings given as its command-line arguments.
+An example of its use is the following:
+.P
+.in +4n
+.EX
+$ \fB./a.out jan1 jan10\fP
+jan1 < jan10
+.EE
+.in
+.SS Program source
+\&
+.\" SRC BEGIN (strverscmp.c)
+.EX
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+\&
+int
+main(int argc, char *argv[])
+{
+    int res;
+\&
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <string1> <string2>\[rs]n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+\&
+    res = strverscmp(argv[1], argv[2]);
+\&
+    printf("%s %s %s\[rs]n", argv[1],
+           (res < 0) ? "<" : (res == 0) ? "==" : ">", argv[2]);
+\&
+    exit(EXIT_SUCCESS);
+}
+.EE
+.\" SRC END
+.SH SEE ALSO
+.BR rename (1),
+.BR strcasecmp (3),
+.BR strcmp (3),
+.BR strcoll (3)

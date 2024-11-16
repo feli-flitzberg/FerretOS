@@ -1,0 +1,59 @@
+.\" Copyright 2012, 2013, 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_TASK_PERF_EVENTS_DISABLE 2 2024-06-02 "Linux man-pages 6.9.1"
+.SH NAME
+PR_TASK_PERF_EVENTS_DISABLE,
+PR_TASK_PERF_EVENTS_ENABLE
+\-
+disable or enable performance counters attached to the calling process
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.B int prctl(PR_TASK_PERF_EVENTS_DISABLE);
+.B int prctl(PR_TASK_PERF_EVENTS_ENABLE);
+.fi
+.SH DESCRIPTION
+.TP
+.B PR_TASK_PERF_EVENTS_DISABLE
+Disable all performance counters attached to the calling process,
+regardless of whether the counters were created by
+this process or another process.
+Performance counters created by the calling process for other
+processes are unaffected.
+.TP
+.B PR_TASK_PERF_EVENTS_ENABLE
+The converse of
+.BR PR_TASK_PERF_EVENTS_DISABLE ;
+enable performance counters attached to the calling process.
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 2.6.31.
+.P
+Originally called
+.B PR_TASK_PERF_COUNTERS_DISABLE
+and
+.BR PR_TASK_PERF_COUNTERS_ENABLE ;
+.\" commit 1d1c7ddbfab358445a542715551301b7fc363e28
+renamed (retaining the same numerical value)
+.\" commit cdd6c482c9ff9c55475ee7392ec8f672eddb7be6
+in Linux 2.6.32.
+.SH SEE ALSO
+.BR prctl (2)
+.P
+For more information on performance counters, see the Linux kernel source file
+.IR tools/\:perf/\:design.txt .

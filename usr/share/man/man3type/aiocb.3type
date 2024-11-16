@@ -1,0 +1,42 @@
+.\" Copyright (c) 2020-2022 by Alejandro Colomar <alx@kernel.org>
+.\" and Copyright (c) 2020 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\"
+.TH aiocb 3type 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+aiocb \- asynchronous I/O control block
+.SH LIBRARY
+Standard C library
+.RI ( libc )
+.SH SYNOPSIS
+.EX
+.B #include <aio.h>
+.P
+.B struct aiocb {
+.BR "    int             aio_fildes;" "     /* File descriptor */"
+.BR "    off_t           aio_offset;" "     /* File offset */"
+.BR "    volatile void  *aio_buf;" "        /* Location of buffer */"
+.BR "    size_t          aio_nbytes;" "     /* Length of transfer */"
+.BR "    int             aio_reqprio;" "    /* Request priority offset */"
+.BR "    struct sigevent aio_sigevent;" "   /* Signal number and value */"
+.BR "    int             aio_lio_opcode;" " /* Operation to be performed */"
+.B };
+.EE
+.SH DESCRIPTION
+For further information about this structure, see
+.BR aio (7).
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001.
+.SH SEE ALSO
+.BR aio_cancel (3),
+.BR aio_error (3),
+.BR aio_fsync (3),
+.BR aio_read (3),
+.BR aio_return (3),
+.BR aio_suspend (3),
+.BR aio_write (3),
+.BR lio_listio (3)

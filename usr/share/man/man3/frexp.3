@@ -1,0 +1,141 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified 1993-07-24 by Rik Faith (faith@cs.unc.edu)
+.\" Modified 2002-07-27 by Walter Harms
+.\" 	(walter.harms@informatik.uni-oldenburg.de)
+.\"
+.TH frexp 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+frexp, frexpf, frexpl \- convert floating-point number to fractional
+and integral components
+.SH LIBRARY
+Math library
+.RI ( libm ", " \-lm )
+.SH SYNOPSIS
+.nf
+.B #include <math.h>
+.P
+.BI "double frexp(double " x ", int *" exp );
+.BI "float frexpf(float " x ", int *" exp );
+.BI "long double frexpl(long double " x ", int *" exp );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR frexpf (),
+.BR frexpl ():
+.nf
+    _ISOC99_SOURCE || _POSIX_C_SOURCE >= 200112L
+        || /* Since glibc 2.19: */ _DEFAULT_SOURCE
+        || /* glibc <= 2.19: */ _BSD_SOURCE || _SVID_SOURCE
+.fi
+.SH DESCRIPTION
+These functions are used to split the number
+.I x
+into a
+normalized fraction and an exponent which is stored in
+.IR exp .
+.SH RETURN VALUE
+These functions return the normalized fraction.
+If the argument
+.I x
+is not zero,
+the normalized fraction is
+.I x
+times a power of two,
+and its absolute value is always in the range 1/2 (inclusive) to
+1 (exclusive), that is, [0.5,1).
+.P
+If
+.I x
+is zero, then the normalized fraction is
+zero and zero is stored in
+.IR exp .
+.P
+If
+.I x
+is a NaN,
+a NaN is returned, and the value of
+.I *exp
+is unspecified.
+.P
+If
+.I x
+is positive infinity (negative infinity),
+positive infinity (negative infinity) is returned, and the value of
+.I *exp
+is unspecified.
+.SH ERRORS
+No errors occur.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR frexp (),
+.BR frexpf (),
+.BR frexpl ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+C99, POSIX.1-2001.
+.P
+The variant returning
+.I double
+also conforms to
+SVr4, 4.3BSD, C89.
+.SH EXAMPLES
+The program below produces results such as the following:
+.P
+.in +4n
+.EX
+.RB "$" " ./a.out 2560"
+frexp(2560, &e) = 0.625: 0.625 * 2\[ha]12 = 2560
+.RB "$" " ./a.out \-4"
+frexp(\-4, &e) = \-0.5: \-0.5 * 2\[ha]3 = \-4
+.EE
+.in
+.SS Program source
+\&
+.\" SRC BEGIN (frexp.c)
+.EX
+#include <float.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+\&
+int
+main(int argc, char *argv[])
+{
+    double x, r;
+    int exp;
+\&
+    x = strtod(argv[1], NULL);
+    r = frexp(x, &exp);
+\&
+    printf("frexp(%g, &e) = %g: %g * %d\[ha]%d = %g\[rs]n", x, r, r, 2, exp, x);
+    exit(EXIT_SUCCESS);
+}
+.EE
+.\" SRC END
+.SH SEE ALSO
+.BR ldexp (3),
+.BR modf (3)

@@ -1,0 +1,135 @@
+'\" t
+.\" Copyright (c) 2016 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH ntp_gettime 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+ntp_gettime, ntp_gettimex  \- get time parameters (NTP daemon interface)
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <sys/timex.h>
+.P
+.BI "int ntp_gettime(struct ntptimeval *" ntv );
+.BI "int ntp_gettimex(struct ntptimeval *" ntv );
+.fi
+.SH DESCRIPTION
+Both of these APIs return information to the caller via the
+.I ntv
+argument, a structure of the following type:
+.P
+.in +4n
+.EX
+struct ntptimeval {
+    struct timeval time;    /* Current time */
+    long maxerror;          /* Maximum error */
+    long esterror;          /* Estimated error */
+    long tai;               /* TAI offset */
+\&
+    /* Further padding bytes allowing for future expansion */
+};
+.EE
+.in
+.P
+The fields of this structure are as follows:
+.TP
+.I time
+The current time, expressed as a
+.I timeval
+structure:
+.IP
+.in +4n
+.EX
+struct timeval {
+    time_t      tv_sec;   /* Seconds since the Epoch */
+    suseconds_t tv_usec;  /* Microseconds */
+};
+.EE
+.in
+.TP
+.I maxerror
+Maximum error, in microseconds.
+This value can be initialized by
+.BR ntp_adjtime (3),
+and is increased periodically (on Linux: each second),
+but is clamped to an upper limit (the kernel constant
+.BR NTP_PHASE_MAX ,
+with a value of 16,000).
+.TP
+.I esterror
+Estimated error, in microseconds.
+This value can be set via
+.BR ntp_adjtime (3)
+to contain an estimate of the difference between the system clock
+and the true time.
+This value is not used inside the kernel.
+.TP
+.I tai
+TAI (Atomic International Time) offset.
+.P
+.BR ntp_gettime ()
+returns an
+.I ntptimeval
+structure in which the
+.IR time ,
+.IR maxerror ,
+and
+.I esterror
+fields are filled in.
+.P
+.BR ntp_gettimex ()
+performs the same task as
+.BR ntp_gettime (),
+but also returns information in the
+.I tai
+field.
+.SH RETURN VALUE
+The return values for
+.BR ntp_gettime ()
+and
+.BR ntp_gettimex ()
+are as for
+.BR adjtimex (2).
+Given a correct pointer argument, these functions always succeed.
+.\" FIXME . the info page incorrectly describes the return values.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR ntp_gettime (),
+.BR ntp_gettimex ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+.TP
+.BR ntp_gettime ()
+NTP Kernel Application Program Interface.
+.TP
+.BR ntp_gettimex ()
+GNU.
+.SH HISTORY
+.TP
+.BR ntp_gettime ()
+glibc 2.1.
+.TP
+.BR ntp_gettimex ()
+glibc 2.12.
+.SH SEE ALSO
+.BR adjtimex (2),
+.BR ntp_adjtime (3),
+.BR time (7)
+.P
+.ad l
+.UR http://www.slac.stanford.edu/comp/unix/\:package/\:rtems/\:src/\:ssrlApps/\:ntpNanoclock/\:api.htm
+NTP "Kernel Application Program Interface"
+.UE

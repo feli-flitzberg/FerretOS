@@ -1,0 +1,111 @@
+.\" Copyright (c) 2020-2022 by Alejandro Colomar <alx@kernel.org>
+.\" and Copyright (c) 2020 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\"
+.TH time_t 3type 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+time_t, suseconds_t, useconds_t \- integer time
+.SH LIBRARY
+Standard C library
+.RI ( libc )
+.SH SYNOPSIS
+.nf
+.B #include <time.h>
+.P
+.BR typedef " /* ... */  " time_t;
+.P
+.B #include <sys/types.h>
+.P
+.BR typedef " /* ... */  " suseconds_t;
+.BR typedef " /* ... */  " useconds_t;
+.fi
+.SH DESCRIPTION
+.TP
+.I time_t
+Used for time in seconds.
+According to POSIX,
+it is an integer type.
+.\" In POSIX.1-2001, the type was specified as being either an integer
+.\" type or a real-floating type. However, existing implementations
+.\" used an integer type, and POSIX.1-2008 tightened the specification
+.\" to reflect this.
+.TP
+.I suseconds_t
+Used for time in microseconds.
+It is a signed integer type
+capable of storing values at least in the range
+.RB [ \-1 ,
+.BR 1000000 ].
+.TP
+.I useconds_t
+Used for time in microseconds.
+It is an unsigned integer type
+capable of storing values at least in the range
+.RB [ 0 ,
+.BR 1000000 ].
+.SH STANDARDS
+.TP
+.I time_t
+C11, POSIX.1-2008.
+.TP
+.I suseconds_t
+.TQ
+.I useconds_t
+POSIX.1-2008.
+.PD
+.SH HISTORY
+.TP
+.I time_t
+C89, POSIX.1-2001.
+.TP
+.I suseconds_t
+.TQ
+.I useconds_t
+POSIX.1-2001.
+.P
+.I <sched.h>
+defines
+.I time_t
+since POSIX.1-2008.
+.P
+POSIX.1-2001 defined
+.I useconds_t
+in
+.I <unistd.h>
+too.
+.SH NOTES
+On some architectures,
+the width of
+.I time_t
+can be controlled with the feature test macro
+.BR _TIME_BITS .
+See
+.BR feature_test_macros (7).
+.P
+The following headers also provide
+.IR time_t :
+.IR <sched.h> ,
+.IR <sys/msg.h> ,
+.IR <sys/select.h> ,
+.IR <sys/sem.h> ,
+.IR <sys/shm.h> ,
+.IR <sys/stat.h> ,
+.IR <sys/time.h> ,
+.IR <sys/types.h> ,
+and
+.IR <utime.h> .
+.P
+The following headers also provide
+.IR suseconds_t :
+.I <sys/select.h>
+and
+.IR <sys/time.h> .
+.SH SEE ALSO
+.BR stime (2),
+.BR time (2),
+.BR ctime (3),
+.BR difftime (3),
+.BR usleep (3),
+.BR timeval (3type)

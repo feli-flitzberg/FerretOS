@@ -1,0 +1,66 @@
+.\" Copyright 2020, Mike Christie <mchristi@redhat.com>
+.\" Copyright 2020, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_SET_IO_FLUSHER 2const 2024-06-01 "Linux man-pages 6.9.1"
+.SH NAME
+PR_SET_IO_FLUSHER
+\-
+change the IO_FLUSHER state
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.BI "int prctl(PR_SET_IO_FLUSHER, long " state ", 0L, 0L, 0L);"
+.fi
+.SH DESCRIPTION
+If a user process is involved in the block layer or filesystem I/O path,
+and can allocate memory while processing I/O requests it must set
+.I state
+to 1.
+This will put the process in the IO_FLUSHER state,
+which allows it special treatment to make progress when allocating memory.
+If
+.I state
+is 0,
+the process will clear the IO_FLUSHER state,
+and the default behavior will be used.
+.P
+The calling process must have the
+.B CAP_SYS_RESOURCE
+capability.
+.P
+The IO_FLUSHER state is inherited by a child process created via
+.BR fork (2)
+and is preserved across
+.BR execve (2).
+.P
+Examples of IO_FLUSHER applications are
+FUSE daemons,
+SCSI device emulation daemons,
+and daemons that perform error handling
+like multipath path recovery applications.
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+.I state
+is not a valid value.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 5.6.
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_GET_IO_FLUSHER (2const)

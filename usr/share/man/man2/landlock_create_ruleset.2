@@ -1,0 +1,124 @@
+.\" Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
+.\" Copyright © 2019-2020 ANSSI
+.\" Copyright © 2021 Microsoft Corporation
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH landlock_create_ruleset 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+landlock_create_ruleset \- create a new Landlock ruleset
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/landlock.h>" "  /* Definition of " LANDLOCK_* " constants */"
+.BR "#include <sys/syscall.h>" "     /* Definition of " SYS_* " constants */"
+.P
+.B int syscall(SYS_landlock_create_ruleset,
+.BI "            const struct landlock_ruleset_attr *" attr ,
+.BI "            size_t " size " , uint32_t " flags );
+.fi
+.SH DESCRIPTION
+A Landlock ruleset identifies a set of rules (i.e., actions on objects).
+This
+.BR landlock_create_ruleset ()
+system call enables creating a new file descriptor identifying a ruleset.
+This file descriptor can then be used by
+.BR landlock_add_rule (2)
+and
+.BR landlock_restrict_self (2).
+See
+.BR landlock (7)
+for a global overview.
+.P
+.I attr
+specifies the properties of the new ruleset.
+It points to the following structure:
+.IP
+.in +4n
+.EX
+struct landlock_ruleset_attr {
+    __u64 handled_access_fs;
+};
+.EE
+.in
+.IP
+.I handled_access_fs
+is a bitmask of actions that is handled by this ruleset and
+should then be forbidden if no rule explicitly allows them
+(see
+.B Filesystem actions
+in
+.BR landlock (7)).
+This enables simply restricting ambient rights
+(e.g., global filesystem access) and is needed for compatibility reasons.
+.P
+.I size
+must be specified as
+.I sizeof(struct landlock_ruleset_attr)
+for compatibility reasons.
+.P
+.I flags
+must be 0 if
+.I attr
+is used.
+Otherwise,
+.I flags
+can be set to:
+.TP
+.B LANDLOCK_CREATE_RULESET_VERSION
+If
+.I attr
+is NULL and
+.I size
+is 0, then the returned value is the highest supported Landlock ABI version
+(starting at 1).
+This version can be used for a best-effort security approach,
+which is encouraged when user space is not pinned to a specific kernel
+version.
+All features documented in these man pages are available with the version
+1.
+.SH RETURN VALUE
+On success,
+.BR landlock_create_ruleset ()
+returns a new Landlock ruleset file descriptor,
+or a Landlock ABI version,
+according to
+.IR flags .
+.SH ERRORS
+.BR landlock_create_ruleset ()
+can fail for the following reasons:
+.TP
+.B EOPNOTSUPP
+Landlock is supported by the kernel but disabled at boot time.
+.TP
+.B EINVAL
+Unknown
+.IR flags ,
+or unknown access, or too small
+.IR size .
+.TP
+.B E2BIG
+.I size
+is too big.
+.TP
+.B EFAULT
+.I attr
+was not a valid address.
+.TP
+.B ENOMSG
+Empty accesses (i.e.,
+.I attr\->handled_access_fs
+is 0).
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 5.13.
+.SH EXAMPLES
+See
+.BR landlock (7).
+.SH SEE ALSO
+.BR landlock_add_rule (2),
+.BR landlock_restrict_self (2),
+.BR landlock (7)

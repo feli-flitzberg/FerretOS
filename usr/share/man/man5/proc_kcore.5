@@ -1,0 +1,24 @@
+.\" Copyright (C) 1994, 1995, Daniel Quinlan <quinlan@yggdrasil.com>
+.\" Copyright (C) 2002-2008, 2017, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright (C) 2023, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-3.0-or-later
+.\"
+.TH proc_kcore 5 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+/proc/kcore \- physical memory
+.SH DESCRIPTION
+.TP
+.I /proc/kcore
+This file represents the physical memory of the system and is stored
+in the ELF core file format.
+With this pseudo-file, and an unstripped
+kernel
+.RI ( /usr/src/linux/vmlinux )
+binary, GDB can be used to
+examine the current state of any kernel data structures.
+.IP
+The total length of the file is the size of physical memory (RAM) plus
+4\ KiB.
+.SH SEE ALSO
+.BR proc (5)

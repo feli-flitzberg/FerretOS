@@ -1,0 +1,178 @@
+'\" t
+.\" Copyright 2022 Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH stpncpy 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+stpncpy, strncpy
+\-
+fill a fixed-size buffer with non-null bytes from a string,
+padding with null bytes as needed
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <string.h>
+.P
+.BI "char *strncpy(char " dst "[restrict ." dsize "], \
+const char *restrict " src ,
+.BI "              size_t " dsize );
+.BI "char *stpncpy(char " dst "[restrict ." dsize "], \
+const char *restrict " src ,
+.BI "              size_t " dsize );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR stpncpy ():
+.nf
+    Since glibc 2.10:
+        _POSIX_C_SOURCE >= 200809L
+    Before glibc 2.10:
+        _GNU_SOURCE
+.fi
+.SH DESCRIPTION
+These functions copy non-null bytes from the string pointed to by
+.I src
+into the array pointed to by
+.IR dst .
+If the source has too few non-null bytes to fill the destination,
+the functions pad the destination with trailing null bytes.
+If the destination buffer,
+limited by its size,
+isn't large enough to hold the copy,
+the resulting character sequence is truncated.
+For the difference between the two functions, see RETURN VALUE.
+.P
+An implementation of these functions might be:
+.P
+.in +4n
+.EX
+char *
+strncpy(char *restrict dst, const char *restrict src, size_t dsize)
+{
+    stpncpy(dst, src, dsize);
+    return dst;
+}
+\&
+char *
+stpncpy(char *restrict dst, const char *restrict src, size_t dsize)
+{
+    size_t  dlen;
+\&
+    dlen = strnlen(src, dsize);
+    return memset(mempcpy(dst, src, dlen), 0, dsize \- dlen);
+}
+.EE
+.in
+.SH RETURN VALUE
+.TP
+.BR strncpy ()
+returns
+.IR dst .
+.TP
+.BR stpncpy ()
+returns a pointer to
+one after the last character in the destination character sequence.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR stpncpy (),
+.BR strncpy ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+.TP
+.BR strncpy ()
+C11, POSIX.1-2008.
+.TP
+.BR stpncpy ()
+POSIX.1-2008.
+.SH HISTORY
+.TP
+.BR strncpy ()
+C89, POSIX.1-2001, SVr4, 4.3BSD.
+.TP
+.BR stpncpy ()
+glibc 1.07.
+POSIX.1-2008.
+.SH CAVEATS
+The name of these functions is confusing.
+These functions produce a null-padded character sequence,
+not a string (see
+.BR string_copying (7)).
+For example:
+.P
+.in +4n
+.EX
+strncpy(buf, "1", 5);       // { \[aq]1\[aq],   0,   0,   0,   0 }
+strncpy(buf, "1234", 5);    // { \[aq]1\[aq], \[aq]2\[aq], \[aq]3\[aq], \[aq]4\[aq],   0 }
+strncpy(buf, "12345", 5);   // { \[aq]1\[aq], \[aq]2\[aq], \[aq]3\[aq], \[aq]4\[aq], \[aq]5\[aq] }
+strncpy(buf, "123456", 5);  // { \[aq]1\[aq], \[aq]2\[aq], \[aq]3\[aq], \[aq]4\[aq], \[aq]5\[aq] }
+.EE
+.in
+.P
+It's impossible to distinguish truncation by the result of the call,
+from a character sequence that just fits the destination buffer;
+truncation should be detected by
+comparing the length of the input string
+with the size of the destination buffer.
+.P
+If you're going to use this function in chained calls,
+it would be useful to develop a similar function that accepts
+a pointer to the end (one after the last element) of the destination buffer
+instead of its size.
+.SH EXAMPLES
+.\" SRC BEGIN (stpncpy.c)
+.EX
+#include <err.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+\&
+int
+main(void)
+{
+    char    *p;
+    char    buf1[20];
+    char    buf2[20];
+    size_t  len;
+\&
+    if (sizeof(buf2) < strlen("Hello world!"))
+        errx("strncpy: truncating character sequence");
+    strncpy(buf2, "Hello world!", sizeof(buf2));
+    len = strnlen(buf2, sizeof(buf2));
+\&
+    printf("[len = %zu]: ", len);
+    fwrite(buf2, 1, len, stdout);
+    putchar(\[aq]\[rs]n\[aq]);
+\&
+    if (sizeof(buf1) < strlen("Hello world!"))
+        errx("stpncpy: truncating character sequence");
+    p = stpncpy(buf1, "Hello world!", sizeof(buf1));
+    len = p \- buf1;
+\&
+    printf("[len = %zu]: ", len);
+    fwrite(buf1, 1, len, stdout);
+    putchar(\[aq]\[rs]n\[aq]);
+\&
+    exit(EXIT_SUCCESS);
+}
+.EE
+.\" SRC END
+.SH SEE ALSO
+.BR wcpncpy (3),
+.BR string_copying (7)

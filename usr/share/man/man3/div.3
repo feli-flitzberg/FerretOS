@@ -1,0 +1,105 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\"
+.\" Modified 1993-03-29, David Metcalfe
+.\" Modified 1993-07-24, Rik Faith (faith@cs.unc.edu)
+.\" Modified 2002-08-10, 2003-11-01 Walter Harms, aeb
+.\"
+.TH div 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+div, ldiv, lldiv, imaxdiv \- compute quotient and remainder of
+an integer division
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdlib.h>
+.P
+.BI "div_t div(int " numerator ", int " denominator );
+.BI "ldiv_t ldiv(long " numerator ", long " denominator );
+.BI "lldiv_t lldiv(long long " numerator ", long long " denominator );
+.P
+.B #include <inttypes.h>
+.P
+.BI "imaxdiv_t imaxdiv(intmax_t " numerator ", intmax_t " denominator );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR lldiv ():
+.nf
+    _ISOC99_SOURCE || _POSIX_C_SOURCE >= 200112L
+.fi
+.SH DESCRIPTION
+The
+.BR div ()
+function computes the value
+\fInumerator\fP/\fIdenominator\fP and
+returns the quotient and remainder in a structure
+named \fIdiv_t\fP that contains
+two integer members (in unspecified order) named \fIquot\fP and \fIrem\fP.
+The quotient is rounded toward zero.
+The result satisfies \fIquot\fP*\fIdenominator\fP+\fIrem\fP = \fInumerator\fP.
+.P
+The
+.BR ldiv (),
+.BR lldiv (),
+and
+.BR imaxdiv ()
+functions do the same,
+dividing numbers of the indicated type and
+returning the result in a structure
+of the indicated name, in all cases with fields \fIquot\fP and \fIrem\fP
+of the same type as the function arguments.
+.SH RETURN VALUE
+The \fIdiv_t\fP (etc.) structure.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR div (),
+.BR ldiv (),
+.BR lldiv (),
+.BR imaxdiv ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, C89, C99, SVr4, 4.3BSD.
+.P
+.BR lldiv ()
+and
+.BR imaxdiv ()
+were added in C99.
+.SH EXAMPLES
+After
+.P
+.in +4n
+.EX
+div_t q = div(\-5, 3);
+.EE
+.in
+.P
+the values \fIq.quot\fP and \fIq.rem\fP are \-1 and \-2, respectively.
+.SH SEE ALSO
+.BR abs (3),
+.BR remainder (3)

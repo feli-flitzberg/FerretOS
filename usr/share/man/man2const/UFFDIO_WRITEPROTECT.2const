@@ -1,0 +1,97 @@
+.\" Copyright 2016, IBM Corporation.
+.\" Written by Mike Rapoport <rppt@linux.vnet.ibm.com>
+.\" Copyright 2016, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH UFFDIO_WRITEPROTECT 2const 2024-06-17 "Linux man-pages 6.9.1"
+.SH NAME
+UFFDIO_WRITEPROTECT
+\-
+write-protect or write-unprotect a userfaultfd-registered memory range
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/userfaultfd.h>" "  /* Definition of " UFFD* " constants */"
+.B #include <sys/ioctl.h>
+.P
+.BI "int ioctl(int " fd ", UFFDIO_WRITEPROTECT, ...);"
+.P
+.B #include <linux/userfaultfd.h>
+.P
+.fi
+.EX
+.B struct uffdio_writeprotect {
+.BR "    struct uffdio_range  range;" "  /* Range to change write permission*/"
+.BR "    __u64                mode;" "   /* Mode to change write permission */"
+.B };
+.EE
+.SH DESCRIPTION
+Write-protect or write-unprotect a userfaultfd-registered memory range
+registered with mode
+.BR UFFDIO_REGISTER_MODE_WP .
+.P
+There are two mode bits that are supported in this structure:
+.TP
+.B UFFDIO_WRITEPROTECT_MODE_WP
+When this mode bit is set,
+the ioctl will be a write-protect operation upon the memory range specified by
+.IR range .
+Otherwise it will be a write-unprotect operation upon the specified range,
+which can be used to resolve a userfaultfd write-protect page fault.
+.TP
+.B UFFDIO_WRITEPROTECT_MODE_DONTWAKE
+When this mode bit is set,
+do not wake up any thread that waits for
+page-fault resolution after the operation.
+This can be specified only if
+.B UFFDIO_WRITEPROTECT_MODE_WP
+is not specified.
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+The
+.I start
+or the
+.I len
+field of the
+.I ufdio_range
+structure was not a multiple of the system page size; or
+.I len
+was zero; or the specified range was otherwise invalid.
+.TP
+.B EAGAIN
+The process was interrupted; retry this call.
+.TP
+.B ENOENT
+The range specified in
+.I range
+is not valid.
+For example, the virtual address does not exist,
+or not registered with userfaultfd write-protect mode.
+.TP
+.B EFAULT
+Encountered a generic fault during processing.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 5.7.
+.SH EXAMPLES
+See
+.BR userfaultfd (2).
+.SH SEE ALSO
+.BR ioctl (2),
+.BR ioctl_userfaultfd (2),
+.BR userfaultfd (2)
+.P
+.I Documentation/admin\-guide/mm/userfaultfd.rst
+in the Linux kernel source tree

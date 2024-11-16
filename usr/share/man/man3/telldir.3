@@ -1,0 +1,100 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 17:48:42 1993 by Rik Faith (faith@cs.unc.edu)
+.TH telldir 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+telldir \- return current location in directory stream
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <dirent.h>
+.P
+.BI "long telldir(DIR *" dirp );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR telldir ():
+.nf
+    _XOPEN_SOURCE
+       || /* glibc >= 2.19: */ _DEFAULT_SOURCE
+       || /* glibc <= 2.19: */ _BSD_SOURCE || _SVID_SOURCE
+.fi
+.SH DESCRIPTION
+The
+.BR telldir ()
+function returns the current location associated with
+the directory stream \fIdirp\fP.
+.SH RETURN VALUE
+On success, the
+.BR telldir ()
+function returns the current location
+in the directory stream.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EBADF
+Invalid directory stream descriptor \fIdirp\fP.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR telldir ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, 4.3BSD.
+.P
+Up to glibc 2.1.1, the return type of
+.BR telldir ()
+was
+.IR off_t .
+POSIX.1-2001 specifies
+.IR long ,
+and this is the type used since glibc 2.1.2.
+.P
+In early filesystems, the value returned by
+.BR telldir ()
+was a simple file offset within a directory.
+Modern filesystems use tree or hash structures, rather than flat tables,
+to represent directories.
+On such filesystems, the value returned by
+.BR telldir ()
+(and used internally by
+.BR readdir (3))
+is a "cookie" that is used by the implementation
+to derive a position within a directory.
+.\" https://lwn.net/Articles/544298/
+Application programs should treat this strictly as an opaque value, making
+.I no
+assumptions about its contents.
+.SH SEE ALSO
+.BR closedir (3),
+.BR opendir (3),
+.BR readdir (3),
+.BR rewinddir (3),
+.BR scandir (3),
+.BR seekdir (3)

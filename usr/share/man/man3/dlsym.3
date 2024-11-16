@@ -1,0 +1,171 @@
+'\" t
+.\" Copyright 1995 Yggdrasil Computing, Incorporated.
+.\" and Copyright 2003, 2015 Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.TH dlsym 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+dlsym, dlvsym \- obtain address of a symbol in a shared object or executable
+.SH LIBRARY
+Dynamic linking library
+.RI ( libdl ", " \-ldl )
+.SH SYNOPSIS
+.nf
+.B #include <dlfcn.h>
+.P
+.BI "void *dlsym(void *restrict " handle ", const char *restrict " symbol );
+.P
+.B #define _GNU_SOURCE
+.B #include <dlfcn.h>
+.P
+.BI "void *dlvsym(void *restrict " handle ", const char *restrict " symbol ,
+.BI "             const char *restrict " version );
+.fi
+.SH DESCRIPTION
+The function
+.BR dlsym ()
+takes a "handle" of a dynamic loaded shared object returned by
+.BR dlopen (3)
+along with a null-terminated symbol name,
+and returns the address where that symbol is
+loaded into memory.
+If the symbol is not found, in the specified
+object or any of the shared objects that were automatically loaded by
+.BR dlopen (3)
+when that object was loaded,
+.BR dlsym ()
+returns NULL.
+(The search performed by
+.BR dlsym ()
+is breadth first through the dependency tree of these shared objects.)
+.P
+In unusual cases (see NOTES) the value of the symbol could actually be NULL.
+Therefore, a NULL return from
+.BR dlsym ()
+need not indicate an error.
+The correct way to distinguish an error from a symbol whose value is NULL
+is to call
+.BR dlerror (3)
+to clear any old error conditions, then call
+.BR dlsym (),
+and then call
+.BR dlerror (3)
+again, saving its return value into a variable, and check whether
+this saved value is not NULL.
+.P
+There are two special pseudo-handles that may be specified in
+.IR handle :
+.TP
+.B RTLD_DEFAULT
+Find the first occurrence of the desired symbol
+using the default shared object search order.
+The search will include global symbols in the executable
+and its dependencies,
+as well as symbols in shared objects that were dynamically loaded with the
+.B RTLD_GLOBAL
+flag.
+.TP
+.B RTLD_NEXT
+Find the next occurrence of the desired symbol in the search order
+after the current object.
+This allows one to provide a wrapper
+around a function in another shared object, so that, for example,
+the definition of a function in a preloaded shared object
+(see
+.B LD_PRELOAD
+in
+.BR ld.so (8))
+can find and invoke the "real" function provided in another shared object
+(or for that matter, the "next" definition of the function in cases
+where there are multiple layers of preloading).
+.P
+The
+.B _GNU_SOURCE
+feature test macro must be defined in order to obtain the
+definitions of
+.B RTLD_DEFAULT
+and
+.B RTLD_NEXT
+from
+.IR <dlfcn.h> .
+.P
+The function
+.BR dlvsym ()
+does the same as
+.BR dlsym ()
+but takes a version string as an additional argument.
+.SH RETURN VALUE
+On success,
+these functions return the address associated with
+.IR symbol .
+On failure, they return NULL;
+the cause of the error can be diagnosed using
+.BR dlerror (3).
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR dlsym (),
+.BR dlvsym ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+.TP
+.BR dlsym ()
+POSIX.1-2008.
+.TP
+.BR dlvsym ()
+GNU.
+.SH HISTORY
+.TP
+.BR dlsym ()
+glibc 2.0.
+POSIX.1-2001.
+.TP
+.BR dlvsym ()
+glibc 2.1.
+.SH NOTES
+There are several scenarios when the address of a global symbol is NULL.
+For example, a symbol can be placed at zero address by the linker, via
+a linker script or with
+.I \-\-defsym
+command-line option.
+Undefined weak symbols also have NULL value.
+Finally, the symbol value may be the result of
+a GNU indirect function (IFUNC) resolver function that returns
+NULL as the resolved value.
+In the latter case,
+.BR dlsym ()
+also returns NULL without error.
+However, in the former two cases, the
+behavior of GNU dynamic linker is inconsistent: relocation processing
+succeeds and the symbol can be observed to have NULL value, but
+.BR dlsym ()
+fails and
+.BR dlerror ()
+indicates a lookup error.
+.\"
+.SS History
+The
+.BR dlsym ()
+function is part of the dlopen API, derived from SunOS.
+That system does not have
+.BR dlvsym ().
+.SH EXAMPLES
+See
+.BR dlopen (3).
+.SH SEE ALSO
+.BR dl_iterate_phdr (3),
+.BR dladdr (3),
+.BR dlerror (3),
+.BR dlinfo (3),
+.BR dlopen (3),
+.BR ld.so (8)

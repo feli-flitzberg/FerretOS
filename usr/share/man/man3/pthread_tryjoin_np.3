@@ -1,0 +1,154 @@
+'\" t
+.\" Copyright (c) 2008 Linux Foundation, written by Michael Kerrisk
+.\"     <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH pthread_tryjoin_np 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+pthread_tryjoin_np, pthread_timedjoin_np \- try to join with a
+terminated thread
+.SH LIBRARY
+POSIX threads library
+.RI ( libpthread ", " \-lpthread )
+.SH SYNOPSIS
+.nf
+.BR "#define _GNU_SOURCE" "             /* See feature_test_macros(7) */"
+.B #include <pthread.h>
+.P
+.BI "int pthread_tryjoin_np(pthread_t " thread ", void **" retval );
+.BI "int pthread_timedjoin_np(pthread_t " thread ", void **" retval ,
+.BI "                         const struct timespec *" abstime );
+.fi
+.SH DESCRIPTION
+These functions operate in the same way as
+.BR pthread_join (3),
+except for the differences described on this page.
+.P
+The
+.BR pthread_tryjoin_np ()
+function performs a nonblocking join with the thread
+.IR thread ,
+returning the exit status of the thread in
+.IR *retval .
+If
+.I thread
+has not yet terminated, then instead of blocking, as is done by
+.BR pthread_join (3),
+the call returns an error.
+.P
+The
+.BR pthread_timedjoin_np ()
+function performs a join-with-timeout.
+If
+.I thread
+has not yet terminated,
+then the call blocks until a maximum time, specified in
+.IR abstime ,
+measured against the
+.B CLOCK_REALTIME
+clock.
+If the timeout expires before
+.I thread
+terminates,
+the call returns an error.
+The
+.I abstime
+argument is a
+.BR timespec (3)
+structure,
+specifying an absolute time measured since the Epoch (see
+.BR time (2)).
+.SH RETURN VALUE
+On success,
+these functions return 0;
+on error, they return an error number.
+.SH ERRORS
+These functions can fail with the same errors as
+.BR pthread_join (3).
+.BR pthread_tryjoin_np ()
+can in addition fail with the following error:
+.TP
+.B EBUSY
+.I thread
+had not yet terminated at the time of the call.
+.P
+.BR pthread_timedjoin_np ()
+can in addition fail with the following errors:
+.TP
+.B EINVAL
+.I abstime
+value is invalid
+.RI ( tv_sec
+is less than 0 or
+.I tv_nsec
+is greater than 1e9).
+.TP
+.B ETIMEDOUT
+The call timed out before
+.I thread
+terminated.
+.P
+.BR pthread_timedjoin_np ()
+never returns the error
+.BR EINTR .
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR pthread_tryjoin_np (),
+.BR pthread_timedjoin_np ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+GNU;
+hence the suffix "_np" (nonportable) in the names.
+.SH HISTORY
+glibc 2.3.3.
+.SH BUGS
+The
+.BR pthread_timedjoin_np ()
+function measures time by internally calculating a relative sleep interval
+that is then measured against the
+.B CLOCK_MONOTONIC
+clock instead of the
+.B CLOCK_REALTIME
+clock.
+Consequently, the timeout is unaffected by discontinuous changes to the
+.B CLOCK_REALTIME
+clock.
+.SH EXAMPLES
+The following code waits to join for up to 5 seconds:
+.P
+.in +4n
+.EX
+struct timespec ts;
+int s;
+\&
+\&...
+\&
+if (clock_gettime(CLOCK_REALTIME, &ts) == \-1) {
+    /* Handle error */
+}
+\&
+ts.tv_sec += 5;
+\&
+s = pthread_timedjoin_np(thread, NULL, &ts);
+if (s != 0) {
+    /* Handle error */
+}
+.EE
+.in
+.SH SEE ALSO
+.BR clock_gettime (2),
+.BR pthread_exit (3),
+.BR pthread_join (3),
+.BR timespec (3),
+.BR pthreads (7)

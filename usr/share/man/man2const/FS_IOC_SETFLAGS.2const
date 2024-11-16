@@ -1,0 +1,205 @@
+.\" Copyright 2017, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH FS_IOC_SETFLAGS 2const 2024-06-13 "Linux man-pages 6.9.1"
+.SH NAME
+FS_IOC_GETFLAGS,
+FS_IOC_SETFLAGS
+\-
+ioctl() operations for inode flags
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/fs.h>" "  /* Definition of " FS_* " constants */"
+.B #include <sys/ioctl.h>
+.P
+.BI "int ioctl(int " fd ", FS_IOC_GETFLAGS, int *" attr );
+.BI "int ioctl(int " fd ", FS_IOC_SETFLAGS, const int *" attr );
+.fi
+.SH DESCRIPTION
+Various Linux filesystems support the notion of
+.IR "inode flags" \[em]attributes
+that modify the semantics of files and directories.
+These flags can be retrieved and modified using two
+.BR ioctl (2)
+operations:
+.P
+.in +4n
+.EX
+int attr;
+fd = open("pathname", ...);
+\&
+ioctl(fd, FS_IOC_GETFLAGS, &attr);  /* Place current flags
+                                       in \[aq]attr\[aq] */
+attr |= FS_NOATIME_FL;              /* Tweak returned bit mask */
+ioctl(fd, FS_IOC_SETFLAGS, &attr);  /* Update flags for inode
+                                       referred to by \[aq]fd\[aq] */
+.EE
+.in
+.P
+The
+.BR lsattr (1)
+and
+.BR chattr (1)
+shell commands provide interfaces to these two operations,
+allowing a user to view and modify the inode flags associated with a file.
+.P
+The following flags are supported
+(shown along with the corresponding letter used to indicate the flag by
+.BR lsattr (1)
+and
+.BR chattr (1)):
+.TP
+.BR FS_APPEND_FL " \[aq]a\[aq]"
+The file can be opened only with the
+.B O_APPEND
+flag.
+If applied to a directory, forbids removing files from the directory
+.RB "(via " unlink "(), " rename "(), and the like)."
+(This restriction applies even to the superuser.)
+Only a privileged process
+.RB ( CAP_LINUX_IMMUTABLE )
+can set or clear this attribute.
+.TP
+.BR FS_COMPR_FL " \[aq]c\[aq]"
+Store the file in a compressed format on disk.
+This flag is
+.I not
+supported by most of the mainstream filesystem implementations;
+one exception is
+.BR btrfs (5).
+.TP
+.BR FS_DIRSYNC_FL " \[aq]D\[aq] (since Linux 2.6.0)"
+Write directory changes synchronously to disk.
+This flag provides semantics equivalent to the
+.BR mount  (2)
+.B MS_DIRSYNC
+option, but on a per-directory basis.
+This flag can be applied only to directories.
+.\" .TP
+.\" .BR FS_EXTENT_FL " \[aq]e\[aq]"
+.\" FIXME Some support on ext4? (EXT4_EXTENTS_FL)
+.TP
+.BR FS_IMMUTABLE_FL " \[aq]i\[aq]"
+The file is immutable:
+no changes are permitted to the file contents or metadata
+(permissions, timestamps, ownership, link count, and so on).
+(This restriction applies even to the superuser.)
+Only a privileged process
+.RB ( CAP_LINUX_IMMUTABLE )
+can set or clear this attribute.
+.TP
+.BR FS_JOURNAL_DATA_FL " \[aq]j\[aq]"
+Enable journaling of file data on
+.BR ext3 (5)
+and
+.BR ext4 (5)
+filesystems.
+On a filesystem that is journaling in
+.I ordered
+or
+.I writeback
+mode, a privileged
+.RB ( CAP_SYS_RESOURCE )
+process can set this flag to enable journaling of data updates on
+a per-file basis.
+.TP
+.BR FS_NOATIME_FL " \[aq]A\[aq]"
+Don't update the file last access time when the file is accessed.
+This can provide I/O performance benefits for applications that do not care
+about the accuracy of this timestamp.
+This flag provides functionality similar to the
+.BR mount (2)
+.B MS_NOATIME
+flag, but on a per-file basis.
+.\" .TP
+.\" .BR FS_NOCOMP_FL " \[aq]\[aq]"
+.\" FIXME Support for FS_NOCOMP_FL on Btrfs?
+.TP
+.BR FS_NOCOW_FL " \[aq]C\[aq] (since Linux 2.6.39)"
+The file will not be subject to copy-on-write updates.
+This flag has an effect only on filesystems that support copy-on-write
+semantics, such as Btrfs.
+See
+.BR chattr (1)
+and
+.BR btrfs (5).
+.TP
+.BR FS_NODUMP_FL " \[aq]d\[aq]"
+Don't include this file in backups made using
+.BR dump (8).
+.TP
+.BR FS_NOTAIL_FL " \[aq]t\[aq]"
+This flag is supported only on Reiserfs.
+It disables the Reiserfs tail-packing feature,
+which tries to pack small files (and the final fragment of larger files)
+into the same disk block as the file metadata.
+.TP
+.BR FS_PROJINHERIT_FL " \[aq]P\[aq] (since Linux 4.5)"
+.\" commit 040cb3786d9b25293b8b0b05b90da0f871e1eb9b
+.\" Flag name was added in Linux 4.4
+.\" FIXME Not currently supported because not in FS_FL_USER_MODIFIABLE?
+Inherit the quota project ID.
+Files and subdirectories will inherit the project ID of the directory.
+This flag can be applied only to directories.
+.TP
+.BR FS_SECRM_FL " \[aq]s\[aq]"
+Mark the file for secure deletion.
+This feature is not implemented by any filesystem,
+since the task of securely erasing a file from a recording medium
+is surprisingly difficult.
+.TP
+.BR FS_SYNC_FL " \[aq]S\[aq]"
+Make file updates synchronous.
+For files, this makes all writes synchronous
+(as though all opens of the file were with the
+.B O_SYNC
+flag).
+For directories, this has the same effect as the
+.B FS_DIRSYNC_FL
+flag.
+.TP
+.BR FS_TOPDIR_FL " \[aq]T\[aq]"
+Mark a directory for special treatment under the Orlov block-allocation
+strategy.
+See
+.BR chattr (1)
+for details.
+This flag can be applied only to directories and
+has an effect only for ext2, ext3, and ext4.
+.TP
+.BR FS_UNRM_FL " \[aq]u\[aq]"
+Allow the file to be undeleted if it is deleted.
+This feature is not implemented by any filesystem,
+since it is possible to implement file-recovery mechanisms outside the kernel.
+.P
+In most cases,
+when any of the above flags is set on a directory,
+the flag is inherited by files and subdirectories
+created inside that directory.
+Exceptions include
+.BR FS_TOPDIR_FL ,
+which is not inheritable, and
+.BR FS_DIRSYNC_FL ,
+which is inherited only by subdirectories.
+.SH STANDARDS
+Linux.
+.SH NOTES
+In order to change the inode flags of a file using the
+.B FS_IOC_SETFLAGS
+operation,
+the effective user ID of the caller must match the owner of the file,
+or the caller must have the
+.B CAP_FOWNER
+capability.
+.SH SEE ALSO
+.BR ioctl (2),
+.BR chattr (1),
+.BR lsattr (1),
+.BR mount (2),
+.BR btrfs (5),
+.BR ext4 (5),
+.BR xfs (5),
+.BR xattr (7),
+.BR mount (8)

@@ -1,0 +1,43 @@
+.\" Copyright (c) 2022 by Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\"
+.TH EOF 3const 2024-05-26 "Linux man-pages 6.9.1"
+.SH NAME
+EOF \- end of file or error indicator
+.SH LIBRARY
+Standard C library
+.RI ( libc )
+.SH SYNOPSIS
+.nf
+.B #include <stdio.h>
+.P
+.BR "#define EOF  " "/* ... */"
+.fi
+.SH DESCRIPTION
+.B EOF
+represents the end of an input file, or an error indication.
+It is a negative value, of type
+.IR int .
+.P
+.B EOF
+is not a character
+(it can't be represented by
+.IR "unsigned char" ).
+It is instead a sentinel value outside of the valid range for valid characters.
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+C89, POSIX.1-2001.
+.SH CAVEATS
+Programs can't pass this value to an output function
+to "write" the end of a file.
+That would likely result in undefined behavior.
+Instead,
+closing the writing stream or file descriptor
+that refers to such file
+is the way to signal the end of that file.
+.SH SEE ALSO
+.BR feof (3),
+.BR fgetc (3)

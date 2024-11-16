@@ -1,0 +1,54 @@
+'\" t
+.\" Copyright 2002 Walter Harms (walter.harms@informatik.uni-oldenburg.de)
+.\"
+.\" SPDX-License-Identifier: GPL-1.0-or-later
+.\"
+.TH cabs 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+cabs, cabsf, cabsl \- absolute value of a complex number
+.SH LIBRARY
+Math library
+.RI ( libm ", " \-lm )
+.SH SYNOPSIS
+.nf
+.B #include <complex.h>
+.P
+.BI "double cabs(double complex " z );
+.BI "float cabsf(float complex " z );
+.BI "long double cabsl(long double complex " z );
+.fi
+.SH DESCRIPTION
+These functions return the absolute value of the complex number
+.IR z .
+The result is a real number.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR cabs (),
+.BR cabsf (),
+.BR cabsl ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+glibc 2.1.
+C99, POSIX.1-2001.
+.SH NOTES
+The function is actually an alias for
+.I "hypot(a,\ b)"
+(or, equivalently,
+.IR "sqrt(a*a\ +\ b*b)" ).
+.SH SEE ALSO
+.BR abs (3),
+.BR cimag (3),
+.BR hypot (3),
+.BR complex (7)

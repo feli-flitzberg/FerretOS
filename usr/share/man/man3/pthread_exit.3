@@ -1,0 +1,106 @@
+'\" t
+.\" Copyright (c) 2008 Linux Foundation, written by Michael Kerrisk
+.\"     <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH pthread_exit 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+pthread_exit \- terminate calling thread
+.SH LIBRARY
+POSIX threads library
+.RI ( libpthread ", " \-lpthread )
+.SH SYNOPSIS
+.nf
+.B #include <pthread.h>
+.P
+.BI "[[noreturn]] void pthread_exit(void *" retval );
+.fi
+.SH DESCRIPTION
+The
+.BR pthread_exit ()
+function terminates the calling thread and returns a value via
+.I retval
+that (if the thread is joinable)
+is available to another thread in the same process that calls
+.BR pthread_join (3).
+.P
+Any clean-up handlers established by
+.BR pthread_cleanup_push (3)
+that have not yet been popped,
+are popped (in the reverse of the order in which they were pushed)
+and executed.
+If the thread has any thread-specific data, then,
+after the clean-up handlers have been executed,
+the corresponding destructor functions are called,
+in an unspecified order.
+.P
+When a thread terminates,
+process-shared resources (e.g., mutexes, condition variables,
+semaphores, and file descriptors) are not released,
+and functions registered using
+.BR atexit (3)
+are not called.
+.P
+After the last thread in a process terminates,
+the process terminates as by calling
+.BR exit (3)
+with an exit status of zero;
+thus, process-shared resources
+are released and functions registered using
+.BR atexit (3)
+are called.
+.SH RETURN VALUE
+This function does not return to the caller.
+.SH ERRORS
+This function always succeeds.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR pthread_exit ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001.
+.SH NOTES
+Performing a return from the start function of any thread other
+than the main thread results in an implicit call to
+.BR pthread_exit (),
+using the function's return value as the thread's exit status.
+.P
+To allow other threads to continue execution,
+the main thread should terminate by calling
+.BR pthread_exit ()
+rather than
+.BR exit (3).
+.P
+The value pointed to by
+.I retval
+should not be located on the calling thread's stack,
+since the contents of that stack are undefined after the thread terminates.
+.SH BUGS
+Currently,
+.\" Linux 2.6.27
+there are limitations in the kernel implementation logic for
+.BR wait (2)ing
+on a stopped thread group with a dead thread group leader.
+This can manifest in problems such as a locked terminal if a stop signal is
+sent to a foreground process whose thread group leader has already called
+.BR pthread_exit ().
+.\" FIXME . review a later kernel to see if this gets fixed
+.\" http://thread.gmane.org/gmane.linux.kernel/611611
+.\" http://marc.info/?l=linux-kernel&m=122525468300823&w=2
+.SH SEE ALSO
+.BR pthread_create (3),
+.BR pthread_join (3),
+.BR pthreads (7)

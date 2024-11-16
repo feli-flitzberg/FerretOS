@@ -1,0 +1,108 @@
+'\" t
+.\" %%%LICENSE_START(PUBLIC_DOMAIN)
+.\" This page is in the public domain. - aeb
+.\" %%%LICENSE_END
+.\"
+.TH grantpt 3 2024-05-26 "Linux man-pages 6.9.1"
+.SH NAME
+grantpt \- grant access to the slave pseudoterminal
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #define _XOPEN_SOURCE
+.B #include <stdlib.h>
+.P
+.BI "int grantpt(int " fd ");"
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR grantpt ():
+.nf
+    Since glibc 2.24:
+        _XOPEN_SOURCE >= 500
+.\"        || (_XOPEN_SOURCE && _XOPEN_SOURCE_EXTENDED)
+    glibc 2.23 and earlier:
+        _XOPEN_SOURCE
+.fi
+.SH DESCRIPTION
+The
+.BR grantpt ()
+function changes the mode and owner of the slave pseudoterminal device
+corresponding to the master pseudoterminal referred to by the file descriptor
+.IR fd .
+The user ID of the slave is set to the real UID of the calling process.
+The group ID is set to an unspecified value (e.g.,
+.IR tty ).
+The mode of the slave is set to 0620 (crw\-\-w\-\-\-\-).
+.P
+The behavior of
+.BR grantpt ()
+is unspecified if a signal handler is installed to catch
+.B SIGCHLD
+signals.
+.SH RETURN VALUE
+When successful,
+.BR grantpt ()
+returns 0.
+Otherwise, it returns \-1 and sets
+.I errno
+to indicate the error.
+.SH ERRORS
+.TP
+.B EACCES
+The corresponding slave pseudoterminal could not be accessed.
+.TP
+.B EBADF
+The
+.I fd
+argument is not a valid open file descriptor.
+.TP
+.B EINVAL
+The
+.I fd
+argument is valid but not associated with a master pseudoterminal.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR grantpt ()
+T}	Thread safety	MT-Safe locale
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+glibc 2.1.
+POSIX.1-2001.
+.P
+This is part of the UNIX 98 pseudoterminal support, see
+.BR pts (4).
+.P
+Historical systems implemented this function via a set-user-ID helper binary
+called "pt_chown".
+glibc on Linux before glibc 2.33 could do so as well,
+in order to support configurations with only BSD pseudoterminals;
+this support has been removed.
+On modern systems this is either a no-op
+\[em]with permissions configured on pty allocation, as is the case on Linux\[em]
+or an
+.BR ioctl (2).
+.SH SEE ALSO
+.BR open (2),
+.BR posix_openpt (3),
+.BR ptsname (3),
+.BR unlockpt (3),
+.BR pts (4),
+.BR pty (7)

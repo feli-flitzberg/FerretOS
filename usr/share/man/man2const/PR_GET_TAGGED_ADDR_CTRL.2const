@@ -1,0 +1,57 @@
+.\" Copyright 2020, Dave Martin <Dave.Martin@arm.com>
+.\" Copyright 2020, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_GET_TAGGED_ADDR_CTRL 2const 2024-06-01 "Linux man-pages 6.9.1"
+.SH NAME
+PR_GET_TAGGED_ADDR_CTRL
+\-
+get the tagged address mode for the calling thread
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.B int prctl(PR_GET_TAGGED_ADDR_CTRL, 0L, 0L, 0L, 0L);
+.fi
+.SH DESCRIPTION
+Returns the current tagged address mode
+for the calling thread.
+.P
+The call returns a nonnegative value
+describing the current tagged address mode,
+encoded in the same way as the
+.I mode
+argument of
+.BR PR_SET_TAGGED_ADDR_CTRL (2const).
+.SH RETURN VALUE
+On success,
+this call
+returns the nonnegative value described above.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+This feature is disabled or unsupported by the kernel,
+or disabled via
+.IR \%/proc/\:sys/\:abi/\:tagged_addr_disabled .
+.SH FILES
+.TP
+.I \%/proc/\:sys/\:abi/\:tagged_addr_disabled
+.SH STANDARDS
+Linux.
+arm64 only.
+.SH HISTORY
+.\" commit 63f0c60379650d82250f22e4cf4137ef3dc4f43d
+Linux 5.4 (arm64).
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_SET_TAGGED_ADDR_CTRL (2const)
+.P
+For more information, see the kernel source file
+.IR \%Documentation/\:arm64/\:tagged\-address\-abi.rst .

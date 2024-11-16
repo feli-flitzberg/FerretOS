@@ -1,0 +1,75 @@
+'\" t
+.\" Copyright (C), 1995, Graeme W. Wilford. (Wilf.)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" Wed Jun 14 16:10:28 BST 1995 Wilf. (G.Wilford@@ee.surrey.ac.uk)
+.\"
+.TH re_comp 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+re_comp, re_exec \- BSD regex functions
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #define _REGEX_RE_COMP
+.B #include <sys/types.h>
+.B #include <regex.h>
+.P
+.BI "[[deprecated]] char *re_comp(const char *" regex );
+.BI "[[deprecated]] int re_exec(const char *" string );
+.fi
+.SH DESCRIPTION
+.BR re_comp ()
+is used to compile the null-terminated regular expression pointed to by
+.IR regex .
+The compiled pattern occupies a static area, the pattern buffer,
+which is overwritten by subsequent use of
+.BR re_comp ().
+If
+.I regex
+is NULL,
+no operation is performed and the pattern buffer's contents are not
+altered.
+.P
+.BR re_exec ()
+is used to assess whether the null-terminated string pointed to by
+.I string
+matches the previously compiled
+.IR regex .
+.SH RETURN VALUE
+.BR re_comp ()
+returns NULL on successful compilation of
+.I regex
+otherwise it returns a pointer to an appropriate error message.
+.P
+.BR re_exec ()
+returns 1 for a successful match, zero for failure.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR re_comp (),
+.BR re_exec ()
+T}	Thread safety	MT-Unsafe
+.TE
+.SH STANDARDS
+None.
+.SH HISTORY
+4.3BSD.
+.P
+These functions are obsolete; the functions documented in
+.BR regcomp (3)
+should be used instead.
+.SH SEE ALSO
+.BR regcomp (3),
+.BR regex (7),
+GNU regex manual

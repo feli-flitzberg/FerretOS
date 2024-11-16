@@ -1,0 +1,69 @@
+.\" Copyright 2002, Walter Harms <walter.harms@informatik.uni-oldenburg.de>
+.\" Copyright 2002, Andries Brouwer <aeb@cwi.nl>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-1.0-or-later
+.\"
+.TH TIOCSPGRP 2const 2024-06-13 "Linux man-pages 6.9.1"
+.SH NAME
+TIOCGPGRP,
+TIOCSPGRP,
+TIOCGSID
+\-
+process group and session ID
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <asm/termbits.h>" "  /* Definition of " TIOC* " constants */"
+.B #include <sys/ioctl.h>
+.P
+.BI "int ioctl(int " fd ", TIOCGPGRP, pid_t *" argp );
+.BI "int ioctl(int " fd ", TIOCSPGRP, const pid_t *" argp );
+.BI "int ioctl(int " fd ", TIOCGSID, pid_t *" argp );
+.fi
+.SH DESCRIPTION
+.TP
+.B TIOCGPGRP
+When successful, equivalent to
+.IR "*argp = tcgetpgrp(fd)" .
+.IP
+Get the process group ID of the foreground process group on this terminal.
+.TP
+.B TIOCSPGRP
+Equivalent to
+.IR "tcsetpgrp(fd, *argp)" .
+.IP
+Set the foreground process group ID of this terminal.
+.TP
+.B TIOCGSID
+When successful, equivalent to
+.IR "*argp = tcgetsid(fd)" .
+.IP
+Get the session ID of the given terminal.
+This fails with the error
+.B ENOTTY
+if the terminal is not a master pseudoterminal
+and not our controlling terminal.
+Strange.
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error,
+\-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B ENOTTY
+The terminal is not a master pseudoterminal and not our controlling terminal.
+.TP
+.B EPERM
+Insufficient permission.
+.SH SEE ALSO
+.BR ioctl (2),
+.BR ioctl_tty (2),
+.BR tcgetpgrp (3),
+.BR tcsetpgrp (3),
+.BR tcgetsid (3)

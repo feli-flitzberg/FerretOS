@@ -1,0 +1,64 @@
+.\" Copyright Guillem Jover <guillem@hadrons.org>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_SET_FPEXC 2const 2024-06-02 "Linux man-pages 6.9.1"
+.SH NAME
+PR_SET_FPEXC
+\-
+set the floating-point exception mode
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.BI "int prctl(PR_SET_FPEXC, unsigned long " mode );
+.fi
+.SH DESCRIPTION
+Set floating-point exception mode to
+.IR mode .
+Pass
+.B PR_FP_EXC_SW_ENABLE
+to use FPEXC for FP exception enables,
+.B PR_FP_EXC_DIV
+for floating-point divide by zero,
+.B PR_FP_EXC_OVF
+for floating-point overflow,
+.B PR_FP_EXC_UND
+for floating-point underflow,
+.B PR_FP_EXC_RES
+for floating-point inexact result,
+.B PR_FP_EXC_INV
+for floating-point invalid operation,
+.B PR_FP_EXC_DISABLED
+for FP exceptions disabled,
+.B PR_FP_EXC_NONRECOV
+for async nonrecoverable exception mode,
+.B PR_FP_EXC_ASYNC
+for async recoverable exception mode,
+.B PR_FP_EXC_PRECISE
+for precise exception mode.
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+.I mode
+is not a valid value.
+.SH STANDARDS
+Linux.
+PowerPC only.
+.SH HISTORY
+Linux 2.4.21, 2.5.32.
+(PowerPC)
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_GET_FPEXC (2const)

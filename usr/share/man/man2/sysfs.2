@@ -1,0 +1,97 @@
+.\" Copyright (C) 1995, Thomas K. Dyas <tdyas@eden.rutgers.edu>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" Created   Wed Aug  9 1995     Thomas K. Dyas <tdyas@eden.rutgers.edu>
+.\"
+.TH sysfs 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+sysfs \- get filesystem type information
+.SH SYNOPSIS
+.nf
+.BI "[[deprecated]] int sysfs(int " option ", const char *" fsname );
+.BI "[[deprecated]] int sysfs(int " option ", unsigned int " fs_index ", char *" buf );
+.BI "[[deprecated]] int sysfs(int " option );
+.fi
+.SH DESCRIPTION
+.BR "Note" :
+if you are looking for information about the
+.B sysfs
+filesystem that is normally mounted at
+.IR /sys ,
+see
+.BR sysfs (5).
+.P
+The (obsolete)
+.BR sysfs ()
+system call returns information about the filesystem types
+currently present in the kernel.
+The specific form of the
+.BR sysfs ()
+call and the information returned depends on the
+.I option
+in effect:
+.TP 3
+.B 1
+Translate the filesystem identifier string
+.I fsname
+into a filesystem type index.
+.TP
+.B 2
+Translate the filesystem type index
+.I fs_index
+into a null-terminated filesystem identifier string.
+This string will
+be written to the buffer pointed to by
+.IR buf .
+Make sure that
+.I buf
+has enough space to accept the string.
+.TP
+.B 3
+Return the total number of filesystem types currently present in the
+kernel.
+.P
+The numbering of the filesystem type indexes begins with zero.
+.SH RETURN VALUE
+On success,
+.BR sysfs ()
+returns the filesystem index for option
+.BR 1 ,
+zero for option
+.BR 2 ,
+and the number of currently configured filesystems for option
+.BR 3 .
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EFAULT
+.RI "Either " fsname " or " buf
+is outside your accessible address space.
+.TP
+.B EINVAL
+.I fsname
+is not a valid filesystem type identifier;
+.I fs_index
+is out-of-bounds;
+.I option
+is invalid.
+.SH STANDARDS
+None.
+.SH HISTORY
+SVr4.
+.P
+This System-V derived system call is obsolete; don't use it.
+On systems with
+.IR /proc ,
+the same information can be obtained via
+.IR /proc ;
+use that interface instead.
+.SH BUGS
+There is no libc or glibc support.
+There is no way to guess how large \fIbuf\fP should be.
+.SH SEE ALSO
+.BR proc (5),
+.BR sysfs (5)

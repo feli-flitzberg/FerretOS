@@ -1,0 +1,85 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 17:57:50 1993 by Rik Faith (faith@cs.unc.edu)
+.TH strspn 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+strspn, strcspn \- get length of a prefix substring
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <string.h>
+.P
+.BI "size_t strspn(const char *" s ", const char *" accept );
+.BI "size_t strcspn(const char *" s ", const char *" reject );
+.fi
+.SH DESCRIPTION
+The
+.BR strspn ()
+function calculates the length (in bytes) of the initial
+segment of
+.I s
+which consists entirely of bytes in
+.IR accept .
+.P
+The
+.BR strcspn ()
+function calculates the length of the initial
+segment of
+.I s
+which consists entirely of bytes not in
+.IR reject .
+.SH RETURN VALUE
+The
+.BR strspn ()
+function returns the number of bytes in
+the initial segment of
+.I s
+which consist only of bytes
+from
+.IR accept .
+.P
+The
+.BR strcspn ()
+function returns the number of bytes in
+the initial segment of
+.I s
+which are not in the string
+.IR reject .
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR strspn (),
+.BR strcspn ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, C89, SVr4, 4.3BSD.
+.SH SEE ALSO
+.BR memchr (3),
+.BR strchr (3),
+.BR string (3),
+.BR strpbrk (3),
+.BR strsep (3),
+.BR strstr (3),
+.BR strtok (3),
+.BR wcscspn (3),
+.BR wcsspn (3)

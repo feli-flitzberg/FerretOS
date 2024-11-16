@@ -1,0 +1,121 @@
+'\" t
+.\" Copyright 2002 Walter Harms (walter.harms@informatik.uni-oldenburg.de)
+.\"
+.\" SPDX-License-Identifier: GPL-1.0-or-later
+.\"
+.\" Modified 2003-11-18, aeb: historical remarks
+.\"
+.TH gamma 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+gamma, gammaf, gammal \- (logarithm of the) gamma function
+.SH LIBRARY
+Math library
+.RI ( libm ", " \-lm )
+.SH SYNOPSIS
+.nf
+.B #include <math.h>
+.P
+.BI "[[deprecated]] double gamma(double " x ");"
+.BI "[[deprecated]] float gammaf(float " x ");"
+.BI "[[deprecated]] long double gammal(long double " x ");"
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR gamma ():
+.nf
+    _XOPEN_SOURCE
+        || /* Since glibc 2.19: */ _DEFAULT_SOURCE
+        || /* glibc <= 2.19: */ _BSD_SOURCE || _SVID_SOURCE
+.fi
+.P
+.BR gammaf (),
+.BR gammal ():
+.nf
+    _XOPEN_SOURCE >= 600 || (_XOPEN_SOURCE && _ISOC99_SOURCE)
+        || /* Since glibc 2.19: */ _DEFAULT_SOURCE
+        || /* glibc <= 2.19: */ _BSD_SOURCE || _SVID_SOURCE
+.fi
+.SH DESCRIPTION
+These functions are deprecated: instead, use either the
+.BR tgamma (3)
+or the
+.BR lgamma (3)
+functions, as appropriate.
+.P
+For the definition of the Gamma function, see
+.BR tgamma (3).
+.SS *BSD version
+The libm in 4.4BSD and some versions of FreeBSD had a
+.BR gamma ()
+function that computes the Gamma function, as one would expect.
+.SS glibc version
+glibc has a
+.BR gamma ()
+function that is equivalent to
+.BR lgamma (3)
+and computes the natural logarithm of the Gamma function.
+.SH RETURN VALUE
+See
+.BR lgamma (3).
+.SH ERRORS
+See
+.BR lgamma (3).
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR gamma (),
+.BR gammaf (),
+.BR gammal ()
+T}	Thread safety	MT-Unsafe race:signgam
+.TE
+.SH STANDARDS
+None.
+.SH HISTORY
+SVID 2.
+.P
+Because of historical variations in behavior across systems,
+this function is not specified in any recent standard.
+.P
+4.2BSD had a
+.BR gamma ()
+that computed
+.RI ln(|Gamma(| x |)|),
+leaving the sign of
+.RI Gamma(| x |)
+in the external integer
+.IR signgam .
+In 4.3BSD the name was changed to
+.BR lgamma (3),
+and the man page promises
+.P
+.in +4n
+"At some time in the future the name gamma will be rehabilitated
+and used for the Gamma function"
+.in
+.P
+This did indeed happen in 4.4BSD, where
+.BR gamma ()
+computes the Gamma function (with no effect on
+.IR signgam ).
+However, this came too late, and we now have
+.BR tgamma (3),
+the "true gamma" function.
+.\" The FreeBSD man page says about gamma() that it is like lgamma()
+.\" except that is does not set signgam.
+.\" Also, that 4.4BSD has a gamma() that computes the true gamma function.
+.SH SEE ALSO
+.BR lgamma (3),
+.BR signgam (3),
+.BR tgamma (3)

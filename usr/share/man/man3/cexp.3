@@ -1,0 +1,58 @@
+'\" t
+.\" Copyright 2002 Walter Harms (walter.harms@informatik.uni-oldenburg.de)
+.\"
+.\" SPDX-License-Identifier: GPL-1.0-or-later
+.\"
+.TH cexp 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+cexp, cexpf, cexpl \- complex exponential function
+.SH LIBRARY
+Math library
+.RI ( libm ", " \-lm )
+.SH SYNOPSIS
+.nf
+.B #include <complex.h>
+.P
+.BI "double complex cexp(double complex " z );
+.BI "float complex cexpf(float complex " z );
+.BI "long double complex cexpl(long double complex " z );
+.fi
+.SH DESCRIPTION
+These functions calculate e (2.71828..., the base of natural logarithms)
+raised to the power of
+.IR z .
+.P
+One has:
+.P
+.in +4n
+.EX
+cexp(I * z) = ccos(z) + I * csin(z)
+.EE
+.in
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR cexp (),
+.BR cexpf (),
+.BR cexpl ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+glibc 2.1.
+C99, POSIX.1-2001.
+.SH SEE ALSO
+.BR cabs (3),
+.BR cexp2 (3),
+.BR clog (3),
+.BR cpow (3),
+.BR complex (7)

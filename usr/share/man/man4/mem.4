@@ -1,0 +1,81 @@
+.\" Copyright (c) 1993 Michael Haardt (michael@moria.de),
+.\"     Fri Apr  2 11:32:09 MET DST 1993
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" Modified Sat Jul 24 16:59:10 1993 by Rik Faith (faith@cs.unc.edu)
+.TH mem 4 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+mem, kmem, port \- system memory, kernel memory and system ports
+.SH DESCRIPTION
+.I /dev/mem
+is a character device file
+that is an image of the main memory of the computer.
+It may be used, for example, to examine (and even patch) the system.
+.P
+Byte addresses in
+.I /dev/mem
+are interpreted as physical memory addresses.
+References to nonexistent locations cause errors to be returned.
+.P
+Examining and patching is likely to lead to unexpected results
+when read-only or write-only bits are present.
+.P
+Since Linux 2.6.26, and depending on the architecture, the
+.B CONFIG_STRICT_DEVMEM
+kernel configuration option limits the areas
+which can be accessed through this file.
+For example: on x86, RAM access is not allowed but accessing
+memory-mapped PCI regions is.
+.P
+It is typically created by:
+.P
+.in +4n
+.EX
+mknod \-m 660 /dev/mem c 1 1
+chown root:kmem /dev/mem
+.EE
+.in
+.P
+The file
+.I /dev/kmem
+is the same as
+.IR /dev/mem ,
+except that the kernel virtual memory
+rather than physical memory is accessed.
+Since Linux 2.6.26, this file is available only if the
+.B CONFIG_DEVKMEM
+kernel configuration option is enabled.
+.P
+It is typically created by:
+.P
+.in +4n
+.EX
+mknod \-m 640 /dev/kmem c 1 2
+chown root:kmem /dev/kmem
+.EE
+.in
+.P
+.I /dev/port
+is similar to
+.IR /dev/mem ,
+but the I/O ports are accessed.
+.P
+It is typically created by:
+.P
+.in +4n
+.EX
+mknod \-m 660 /dev/port c 1 4
+chown root:kmem /dev/port
+.EE
+.in
+.SH FILES
+.I /dev/mem
+.br
+.I /dev/kmem
+.br
+.I /dev/port
+.SH SEE ALSO
+.BR chown (1),
+.BR mknod (1),
+.BR ioperm (2)

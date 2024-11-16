@@ -1,0 +1,75 @@
+'\" t
+.\" Copyright (C) 2006 Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH sem_destroy 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+sem_destroy \- destroy an unnamed semaphore
+.SH LIBRARY
+POSIX threads library
+.RI ( libpthread ", " \-lpthread )
+.SH SYNOPSIS
+.nf
+.B #include <semaphore.h>
+.P
+.BI "int sem_destroy(sem_t *" sem );
+.fi
+.SH DESCRIPTION
+.BR sem_destroy ()
+destroys the unnamed semaphore at the address pointed to by
+.IR sem .
+.P
+Only a semaphore that has been initialized by
+.BR sem_init (3)
+should be destroyed using
+.BR sem_destroy ().
+.P
+Destroying a semaphore that other processes or threads are
+currently blocked on (in
+.BR sem_wait (3))
+produces undefined behavior.
+.P
+Using a semaphore that has been destroyed produces undefined results,
+until the semaphore has been reinitialized using
+.BR sem_init (3).
+.SH RETURN VALUE
+.BR sem_destroy ()
+returns 0 on success;
+on error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+.I sem
+is not a valid semaphore.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR sem_destroy ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001.
+.SH NOTES
+An unnamed semaphore should be destroyed with
+.BR sem_destroy ()
+before the memory in which it is located is deallocated.
+Failure to do this can result in resource leaks on some implementations.
+.\" But not on NPTL, where sem_destroy () is a no-op..
+.SH SEE ALSO
+.BR sem_init (3),
+.BR sem_post (3),
+.BR sem_wait (3),
+.BR sem_overview (7)

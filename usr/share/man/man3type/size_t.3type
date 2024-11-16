@@ -1,0 +1,181 @@
+.\" Copyright (c) 2020-2022 by Alejandro Colomar <alx@kernel.org>
+.\" and Copyright (c) 2020 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\"
+.TH size_t 3type 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+size_t, ssize_t \- count of bytes
+.SH LIBRARY
+Standard C library
+.RI ( libc )
+.SH SYNOPSIS
+.nf
+.B #include <stddef.h>
+.P
+.BR typedef " /* ... */  " size_t;
+.P
+.B #include <sys/types.h>
+.P
+.BR typedef " /* ... */  " ssize_t;
+.fi
+.SH DESCRIPTION
+.TP
+.I size_t
+Used for a count of bytes.
+It is the result of the
+.IR sizeof ()
+operator.
+It is an unsigned integer type
+capable of storing values in the range
+.RB [ 0 ,
+.BR SIZE_MAX ].
+.TP
+.I ssize_t
+Used for a count of bytes or an error indication.
+It is a signed integer type
+capable of storing values at least in the range
+.RB [ \-1 ,
+.BR SSIZE_MAX ].
+.SS Use with printf(3) and scanf(3)
+.TP
+.I size_t
+The length modifier for
+.I size_t
+for the
+.BR printf (3)
+and the
+.BR scanf (3)
+families of functions is
+.BR z ,
+resulting commonly in
+.B %zu
+or
+.B %zx
+for printing
+.I size_t
+values.
+.TP
+.I ssize_t
+glibc and most other implementations provide a length modifier for
+.I ssize_t
+for the
+.BR printf (3)
+and the
+.BR scanf (3)
+families of functions,
+which is
+.BR z ;
+resulting commonly in
+.B %zd
+or
+.B %zi
+for printing
+.I ssize_t
+values.
+Although
+.B z
+works for
+.I ssize_t
+on most implementations,
+portable POSIX programs should avoid using it\[em]for example,
+by converting the value to
+.I intmax_t
+and using its length modifier
+.RB ( j ).
+.SH STANDARDS
+.TP
+.I size_t
+C11, POSIX.1-2008.
+.TP
+.I ssize_t
+POSIX.1-2008.
+.PD
+.SH HISTORY
+.TP
+.I size_t
+C89, POSIX.1-2001.
+.TP
+.I ssize_t
+POSIX.1-2001.
+.P
+.IR <aio.h> ,
+.IR <glob.h> ,
+.IR <grp.h> ,
+.IR <iconv.h> ,
+.IR <mqueue.h> ,
+.IR <pwd.h> ,
+.IR <signal.h> ,
+and
+.I <sys/socket.h>
+define
+.I size_t
+since POSIX.1-2008.
+.P
+.IR <aio.h> ,
+.IR <mqueue.h> ,
+and
+.I <sys/socket.h>
+define
+.I ssize_t
+since POSIX.1-2008.
+.SH NOTES
+.TP
+.I size_t
+The following headers also provide
+.IR size_t :
+.IR <aio.h> ,
+.IR <glob.h> ,
+.IR <grp.h> ,
+.IR <iconv.h> ,
+.IR <monetary.h> ,
+.IR <mqueue.h> ,
+.IR <ndbm.h> ,
+.IR <pwd.h> ,
+.IR <regex.h> ,
+.IR <search.h> ,
+.IR <signal.h> ,
+.IR <stdio.h> ,
+.IR <stdlib.h> ,
+.IR <string.h> ,
+.IR <strings.h> ,
+.IR <sys/mman.h> ,
+.IR <sys/msg.h> ,
+.IR <sys/sem.h> ,
+.IR <sys/shm.h> ,
+.IR <sys/socket.h> ,
+.IR <sys/types.h> ,
+.IR <sys/uio.h> ,
+.IR <time.h> ,
+.IR <unistd.h> ,
+.IR <wchar.h> ,
+and
+.IR <wordexp.h> .
+.TP
+.I ssize_t
+The following headers also provide
+.IR ssize_t :
+.IR <aio.h> ,
+.IR <monetary.h> ,
+.IR <mqueue.h> ,
+.IR <stdio.h> ,
+.IR <sys/msg.h> ,
+.IR <sys/socket.h> ,
+.IR <sys/uio.h> ,
+and
+.IR <unistd.h> .
+.SH SEE ALSO
+.BR read (2),
+.BR readlink (2),
+.BR readv (2),
+.BR recv (2),
+.BR send (2),
+.BR write (2),
+.BR fread (3),
+.BR fwrite (3),
+.BR memcmp (3),
+.BR memcpy (3),
+.BR memset (3),
+.BR offsetof (3),
+.BR ptrdiff_t (3type)

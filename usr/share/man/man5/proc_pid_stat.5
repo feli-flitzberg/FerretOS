@@ -1,0 +1,380 @@
+.\" Copyright (C) 1994, 1995, Daniel Quinlan <quinlan@yggdrasil.com>
+.\" Copyright (C) 2002-2008, 2017, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright (C) 2023, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-3.0-or-later
+.\"
+.TH proc_pid_stat 5 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+/proc/pid/stat \- status information
+.SH DESCRIPTION
+.TP
+.IR /proc/ pid /stat
+Status information about the process.
+This is used by
+.BR ps (1).
+It is defined in the kernel source file
+.IR fs/proc/array.c "."
+.IP
+The fields, in order, with their proper
+.BR scanf (3)
+format specifiers, are listed below.
+Whether or not certain of these fields display valid information is governed by
+a ptrace access mode
+.BR PTRACE_MODE_READ_FSCREDS " | " PTRACE_MODE_NOAUDIT
+check (refer to
+.BR ptrace (2)).
+If the check denies access, then the field value is displayed as 0.
+The affected fields are indicated with the marking [PT].
+.RS
+.TP
+(1) \fIpid\fP \ %d
+.br
+The process ID.
+.TP
+(2) \fIcomm\fP \ %s
+The filename of the executable, in parentheses.
+Strings longer than
+.B TASK_COMM_LEN
+(16) characters (including the terminating null byte) are silently truncated.
+This is visible whether or not the executable is swapped out.
+.TP
+(3) \fIstate\fP \ %c
+One of the following characters, indicating process state:
+.RS
+.TP
+R
+Running
+.TP
+S
+Sleeping in an interruptible wait
+.TP
+D
+Waiting in uninterruptible
+disk sleep
+.TP
+Z
+Zombie
+.TP
+T
+Stopped (on a signal) or (before Linux 2.6.33) trace stopped
+.TP
+t
+.\" commit 44d90df6b757c59651ddd55f1a84f28132b50d29
+Tracing stop (Linux 2.6.33 onward)
+.TP
+W
+Paging (only before Linux 2.6.0)
+.TP
+X
+Dead (from Linux 2.6.0 onward)
+.TP
+x
+.\" commit 44d90df6b757c59651ddd55f1a84f28132b50d29
+Dead (Linux 2.6.33 to
+.\" commit 74e37200de8e9c4e09b70c21c3f13c2071e77457
+3.13 only)
+.TP
+K
+.\" commit 44d90df6b757c59651ddd55f1a84f28132b50d29
+Wakekill (Linux 2.6.33 to
+.\" commit 74e37200de8e9c4e09b70c21c3f13c2071e77457
+3.13 only)
+.TP
+W
+.\" commit 44d90df6b757c59651ddd55f1a84f28132b50d29
+Waking (Linux 2.6.33 to
+.\" commit 74e37200de8e9c4e09b70c21c3f13c2071e77457
+3.13 only)
+.TP
+P
+.\" commit f2530dc71cf0822f90bb63ea4600caaef33a66bb
+Parked (Linux 3.9 to
+.\" commit 74e37200de8e9c4e09b70c21c3f13c2071e77457
+3.13 only)
+.TP
+I
+.\" commit 06eb61844d841d0032a9950ce7f8e783ee49c0d0
+Idle (Linux 4.14 onward)
+.RE
+.TP
+(4) \fIppid\fP \ %d
+The PID of the parent of this process.
+.TP
+(5) \fIpgrp\fP \ %d
+The process group ID of the process.
+.TP
+(6) \fIsession\fP \ %d
+The session ID of the process.
+.TP
+(7) \fItty_nr\fP \ %d
+The controlling terminal of the process.
+(The minor device number is contained in the combination of bits
+31 to 20 and 7 to 0;
+the major device number is in bits 15 to 8.)
+.TP
+(8) \fItpgid\fP \ %d
+.\" This field and following, up to and including wchan added 0.99.1
+The ID of the foreground process group of the controlling
+terminal of the process.
+.TP
+(9) \fIflags\fP \ %u
+The kernel flags word of the process.
+For bit meanings,
+see the PF_* defines in the Linux kernel source file
+.IR include/linux/sched.h .
+Details depend on the kernel version.
+.IP
+The format for this field was %lu before Linux 2.6.
+.TP
+(10) \fIminflt\fP \ %lu
+The number of minor faults the process has made which have not
+required loading a memory page from disk.
+.TP
+(11) \fIcminflt\fP \ %lu
+The number of minor faults that the process's
+waited-for children have made.
+.TP
+(12) \fImajflt\fP \ %lu
+The number of major faults the process has made which have
+required loading a memory page from disk.
+.TP
+(13) \fIcmajflt\fP \ %lu
+The number of major faults that the process's
+waited-for children have made.
+.TP
+(14) \fIutime\fP \ %lu
+Amount of time that this process has been scheduled in user mode,
+measured in clock ticks (divide by
+.IR sysconf(_SC_CLK_TCK) ).
+This includes guest time, \fIguest_time\fP
+(time spent running a virtual CPU, see below),
+so that applications that are not aware of the guest time field
+do not lose that time from their calculations.
+.TP
+(15) \fIstime\fP \ %lu
+Amount of time that this process has been scheduled in kernel mode,
+measured in clock ticks (divide by
+.IR sysconf(_SC_CLK_TCK) ).
+.TP
+(16) \fIcutime\fP \ %ld
+Amount of time that this process's
+waited-for children have been scheduled in user mode,
+measured in clock ticks (divide by
+.IR sysconf(_SC_CLK_TCK) ).
+(See also
+.BR times (2).)
+This includes guest time, \fIcguest_time\fP
+(time spent running a virtual CPU, see below).
+.TP
+(17) \fIcstime\fP \ %ld
+Amount of time that this process's
+waited-for children have been scheduled in kernel mode,
+measured in clock ticks (divide by
+.IR sysconf(_SC_CLK_TCK) ).
+.TP
+(18) \fIpriority\fP \ %ld
+(Explanation for Linux 2.6)
+For processes running a real-time scheduling policy
+.RI ( policy
+below; see
+.BR sched_setscheduler (2)),
+this is the negated scheduling priority, minus one;
+that is, a number in the range \-2 to \-100,
+corresponding to real-time priorities 1 to 99.
+For processes running under a non-real-time scheduling policy,
+this is the raw nice value
+.RB ( setpriority (2))
+as represented in the kernel.
+The kernel stores nice values as numbers
+in the range 0 (high) to 39 (low),
+corresponding to the user-visible nice range of \-20 to 19.
+.IP
+Before Linux 2.6, this was a scaled value based on
+the scheduler weighting given to this process.
+.\" And back in Linux 1.2 days things were different again.
+.TP
+(19) \fInice\fP \ %ld
+The nice value (see
+.BR setpriority (2)),
+a value in the range 19 (low priority) to \-20 (high priority).
+.\" Back in Linux 1.2 days things were different.
+.\" .TP
+.\" \fIcounter\fP %ld
+.\" The current maximum size in jiffies of the process's next timeslice,
+.\" or what is currently left of its current timeslice, if it is the
+.\" currently running process.
+.\" .TP
+.\" \fItimeout\fP %u
+.\" The time in jiffies of the process's next timeout.
+.\" timeout was removed sometime around 2.1/2.2
+.TP
+(20) \fInum_threads\fP \ %ld
+Number of threads in this process (since Linux 2.6).
+Before Linux 2.6, this field was hard coded to 0 as a placeholder
+for an earlier removed field.
+.TP
+(21) \fIitrealvalue\fP \ %ld
+The time in jiffies before the next
+.B SIGALRM
+is sent to the process due to an interval timer.
+Since Linux 2.6.17, this field is no longer maintained,
+and is hard coded as 0.
+.TP
+(22) \fIstarttime\fP \ %llu
+The time the process started after system boot.
+Before Linux 2.6, this value was expressed in jiffies.
+Since Linux 2.6, the value is expressed in clock ticks (divide by
+.IR sysconf(_SC_CLK_TCK) ).
+.IP
+The format for this field was %lu before Linux 2.6.
+.TP
+(23) \fIvsize\fP \ %lu
+Virtual memory size in bytes.
+.TP
+(24) \fIrss\fP \ %ld
+Resident Set Size: number of pages the process has in real memory.
+This is just the pages which
+count toward text, data, or stack space.
+This does not include pages
+which have not been demand-loaded in, or which are swapped out.
+This value is inaccurate; see
+.IR /proc/ pid /statm
+below.
+.TP
+(25) \fIrsslim\fP \ %lu
+Current soft limit in bytes on the rss of the process;
+see the description of
+.B RLIMIT_RSS
+in
+.BR getrlimit (2).
+.TP
+(26) \fIstartcode\fP \ %lu \ [PT]
+The address above which program text can run.
+.TP
+(27) \fIendcode\fP \ %lu \ [PT]
+The address below which program text can run.
+.TP
+(28) \fIstartstack\fP \ %lu \ [PT]
+The address of the start (i.e., bottom) of the stack.
+.TP
+(29) \fIkstkesp\fP \ %lu \ [PT]
+The current value of ESP (stack pointer), as found in the
+kernel stack page for the process.
+.TP
+(30) \fIkstkeip\fP \ %lu \ [PT]
+The current EIP (instruction pointer).
+.TP
+(31) \fIsignal\fP \ %lu
+The bitmap of pending signals, displayed as a decimal number.
+Obsolete, because it does not provide information on real-time signals; use
+.IR /proc/ pid /status
+instead.
+.TP
+(32) \fIblocked\fP \ %lu
+The bitmap of blocked signals, displayed as a decimal number.
+Obsolete, because it does not provide information on real-time signals; use
+.IR /proc/ pid /status
+instead.
+.TP
+(33) \fIsigignore\fP \ %lu
+The bitmap of ignored signals, displayed as a decimal number.
+Obsolete, because it does not provide information on real-time signals; use
+.IR /proc/ pid /status
+instead.
+.TP
+(34) \fIsigcatch\fP \ %lu
+The bitmap of caught signals, displayed as a decimal number.
+Obsolete, because it does not provide information on real-time signals; use
+.IR /proc/ pid /status
+instead.
+.TP
+(35) \fIwchan\fP \ %lu \ [PT]
+This is the "channel" in which the process is waiting.
+It is the address of a location in the kernel where the process is sleeping.
+The corresponding symbolic name can be found in
+.IR /proc/ pid /wchan .
+.TP
+(36) \fInswap\fP \ %lu
+.\" nswap was added in Linux 2.0
+Number of pages swapped (not maintained).
+.TP
+(37) \fIcnswap\fP \ %lu
+.\" cnswap was added in Linux 2.0
+Cumulative \fInswap\fP for child processes (not maintained).
+.TP
+(38) \fIexit_signal\fP \ %d \ (since Linux 2.1.22)
+Signal to be sent to parent when we die.
+.TP
+(39) \fIprocessor\fP \ %d \ (since Linux 2.2.8)
+CPU number last executed on.
+.TP
+(40) \fIrt_priority\fP \ %u \ (since Linux 2.5.19)
+Real-time scheduling priority, a number in the range 1 to 99 for
+processes scheduled under a real-time policy,
+or 0, for non-real-time processes (see
+.BR sched_setscheduler (2)).
+.TP
+(41) \fIpolicy\fP \ %u \ (since Linux 2.5.19)
+Scheduling policy (see
+.BR sched_setscheduler (2)).
+Decode using the SCHED_* constants in
+.IR linux/sched.h .
+.IP
+The format for this field was %lu before Linux 2.6.22.
+.TP
+(42) \fIdelayacct_blkio_ticks\fP \ %llu \ (since Linux 2.6.18)
+Aggregated block I/O delays, measured in clock ticks (centiseconds).
+.TP
+(43) \fIguest_time\fP \ %lu \ (since Linux 2.6.24)
+Guest time of the process (time spent running a virtual CPU
+for a guest operating system), measured in clock ticks (divide by
+.IR sysconf(_SC_CLK_TCK) ).
+.TP
+(44) \fIcguest_time\fP \ %ld \ (since Linux 2.6.24)
+Guest time of the process's children, measured in clock ticks (divide by
+.IR sysconf(_SC_CLK_TCK) ).
+.TP
+(45) \fIstart_data\fP \ %lu \ (since Linux 3.3) \ [PT]
+.\" commit b3f7f573a20081910e34e99cbc91831f4f02f1ff
+Address above which program initialized and
+uninitialized (BSS) data are placed.
+.TP
+(46) \fIend_data\fP \ %lu \ (since Linux 3.3) \ [PT]
+.\" commit b3f7f573a20081910e34e99cbc91831f4f02f1ff
+Address below which program initialized and
+uninitialized (BSS) data are placed.
+.TP
+(47) \fIstart_brk\fP \ %lu \ (since Linux 3.3) \ [PT]
+.\" commit b3f7f573a20081910e34e99cbc91831f4f02f1ff
+Address above which program heap can be expanded with
+.BR brk (2).
+.TP
+(48) \fIarg_start\fP \ %lu \ (since Linux 3.5) \ [PT]
+.\" commit 5b172087f99189416d5f47fd7ab5e6fb762a9ba3
+Address above which program command-line arguments
+.RI ( argv )
+are placed.
+.TP
+(49) \fIarg_end\fP \ %lu \ (since Linux 3.5) \ [PT]
+.\" commit 5b172087f99189416d5f47fd7ab5e6fb762a9ba3
+Address below program command-line arguments
+.RI ( argv )
+are placed.
+.TP
+(50) \fIenv_start\fP \ %lu \ (since Linux 3.5) \ [PT]
+.\" commit 5b172087f99189416d5f47fd7ab5e6fb762a9ba3
+Address above which program environment is placed.
+.TP
+(51) \fIenv_end\fP \ %lu \ (since Linux 3.5) \ [PT]
+.\" commit 5b172087f99189416d5f47fd7ab5e6fb762a9ba3
+Address below which program environment is placed.
+.TP
+(52) \fIexit_code\fP \ %d \ (since Linux 3.5) \ [PT]
+.\" commit 5b172087f99189416d5f47fd7ab5e6fb762a9ba3
+The thread's exit status in the form reported by
+.BR waitpid (2).
+.RE
+.SH SEE ALSO
+.BR proc (5),
+.BR proc_pid_status (5)

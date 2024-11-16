@@ -1,0 +1,56 @@
+'\" t
+.\" Copyright (c) Bruno Haible <haible@clisp.cons.org>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" References consulted:
+.\"   GNU glibc-2 source code and manual
+.\"   OpenGroup's Single UNIX specification http://www.UNIX-systems.org/online.html
+.\"
+.TH iconv_close 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+iconv_close \- deallocate descriptor for character set conversion
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <iconv.h>
+.P
+.BI "int iconv_close(iconv_t " cd );
+.fi
+.SH DESCRIPTION
+The
+.BR iconv_close ()
+function deallocates a conversion descriptor
+.I cd
+previously allocated using
+.BR iconv_open (3).
+.SH RETURN VALUE
+On success,
+.BR iconv_close ()
+returns 0; otherwise, it returns \-1 and sets
+.I errno
+to indicate the error.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR iconv_close ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+glibc 2.1.
+POSIX.1-2001.
+.SH SEE ALSO
+.BR iconv (3),
+.BR iconv_open (3)

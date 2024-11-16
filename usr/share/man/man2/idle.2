@@ -1,0 +1,44 @@
+.\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" Portions extracted from linux/mm/swap.c:
+.\"                Copyright (C) 1991, 1992  Linus Torvalds
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" Modified 21 Aug 1994 by Michael Chastain <mec@shell.portal.com>:
+.\"   Added text about calling restriction (new in Linux 1.1.20 I believe).
+.\"   N.B. calling "idle" from user process used to hang process!
+.\" Modified Thu Oct 31 14:41:15 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" "
+.TH idle 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+idle \- make process 0 idle
+.SH SYNOPSIS
+.nf
+.B #include <unistd.h>
+.P
+.B [[deprecated]] int idle(void);
+.fi
+.SH DESCRIPTION
+.BR idle ()
+is an internal system call used during bootstrap.
+It marks the process's pages as swappable, lowers its priority,
+and enters the main scheduling loop.
+.BR idle ()
+never returns.
+.P
+Only process 0 may call
+.BR idle ().
+Any user process, even a process with superuser permission,
+will receive
+.BR EPERM .
+.SH RETURN VALUE
+.BR idle ()
+never returns for process 0, and always returns \-1 for a user process.
+.SH ERRORS
+.TP
+.B EPERM
+Always, for a user process.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Removed in Linux 2.3.13.

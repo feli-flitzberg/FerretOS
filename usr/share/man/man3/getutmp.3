@@ -1,0 +1,71 @@
+'\" t
+.\" Copyright (c) 2008, Linux Foundation, written by Michael Kerrisk
+.\"     <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH getutmp 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+getutmp, getutmpx \- copy utmp structure to utmpx, and vice versa
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#define _GNU_SOURCE" "             /* See feature_test_macros(7) */"
+.B #include <utmpx.h>
+.P
+.BI "void getutmp(const struct utmpx *" ux ", struct utmp *" u );
+.BI "void getutmpx(const struct utmp *" u ", struct utmpx *" ux );
+.fi
+.SH DESCRIPTION
+The
+.BR getutmp ()
+function copies the fields of the
+.I utmpx
+structure pointed to by
+.I ux
+to the corresponding fields of the
+.I utmp
+structure pointed to by
+.IR u .
+The
+.BR getutmpx ()
+function performs the converse operation.
+.SH RETURN VALUE
+These functions do not return a value.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR getutmp (),
+.BR getutmpx ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+None.
+.SH HISTORY
+glibc 2.1.1.
+Solaris, NetBSD.
+.SH NOTES
+These functions exist primarily for compatibility with other
+systems where the
+.I utmp
+and
+.I utmpx
+structures contain different fields,
+or the size of corresponding fields differs.
+.\" e.g., on Solaris, the utmpx structure is rather larger than utmp.
+On Linux, the two structures contain the same fields,
+and the fields have the same sizes.
+.SH SEE ALSO
+.BR utmpdump (1),
+.BR getutent (3),
+.BR utmp (5)

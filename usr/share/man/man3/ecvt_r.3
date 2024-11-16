@@ -1,0 +1,100 @@
+'\" t
+.\" Copyright (C) 2002 Andries Brouwer <aeb@cwi.nl>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" This replaces an earlier man page written by Walter Harms
+.\" <walter.harms@informatik.uni-oldenburg.de>.
+.\"
+.\" Corrected return types; from Fabian; 2004-10-05
+.\"
+.TH ecvt_r 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+ecvt_r, fcvt_r, qecvt_r, qfcvt_r \- convert a floating-point number to a string
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdlib.h>
+.P
+.BI "[[deprecated]] int ecvt_r(double " number ", int " ndigits ,
+.BI "                          int *restrict " decpt ", int *restrict " sign ,
+.BI "                          char *restrict " buf ", size_t " len );
+.BI "[[deprecated]] int fcvt_r(double " number ", int " ndigits ,
+.BI "                          int *restrict " decpt ", int *restrict " sign ,
+.BI "                          char *restrict " buf ", size_t " len );
+.P
+.BI "[[deprecated]] int qecvt_r(long double " number ", int " ndigits ,
+.BI "                          int *restrict " decpt ", int *restrict " sign ,
+.BI "                          char *restrict " buf ", size_t " len );
+.BI "[[deprecated]] int qfcvt_r(long double " number ", int " ndigits ,
+.BI "                          int *restrict " decpt ", int *restrict " sign ,
+.BI "                          char *restrict " buf ", size_t " len );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR ecvt_r (),
+.BR fcvt_r (),
+.BR qecvt_r (),
+.BR qfcvt_r ():
+.nf
+    /* glibc >= 2.19: */ _DEFAULT_SOURCE
+        || /* glibc <= 2.19: */ _SVID_SOURCE || _BSD_SOURCE
+.fi
+.SH DESCRIPTION
+The functions
+.BR ecvt_r (),
+.BR fcvt_r (),
+.BR qecvt_r (),
+and
+.BR qfcvt_r ()
+are identical to
+.BR ecvt (3),
+.BR fcvt (3),
+.BR qecvt (3),
+and
+.BR qfcvt (3),
+respectively, except that they do not return their result in a static
+buffer, but instead use the supplied
+.I buf
+of size
+.IR len .
+See
+.BR ecvt (3)
+and
+.BR qecvt (3).
+.SH RETURN VALUE
+These functions return 0 on success, and \-1 otherwise.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR ecvt_r (),
+.BR fcvt_r (),
+.BR qecvt_r (),
+.BR qfcvt_r ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+GNU.
+.SH NOTES
+These functions are obsolete.
+Instead,
+.BR sprintf (3)
+is recommended.
+.SH SEE ALSO
+.BR ecvt (3),
+.BR qecvt (3),
+.BR sprintf (3)

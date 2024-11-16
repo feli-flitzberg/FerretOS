@@ -1,0 +1,207 @@
+.\" Copyright 2023, Collabora
+.\" Written by Muhammad Usama Anjum <usama.anjum@collabora.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PAGEMAP_SCAN 2const 2024-06-17 "Linux man-pages 6.9.1"
+.SH NAME
+PAGEMAP_SCAN
+\-
+get and/or clear page flags
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/fs.h>" "  /* Definition of " PAGE* " and " PM_* " constants */"
+.B #include <sys/ioctl.h>
+.P
+.BI "int ioctl(int " pagemap_fd ", PAGEMAP_SCAN, struct pm_scan_arg *" arg );
+.P
+.B #include <linux/fs.h>
+.P
+.fi
+.EX
+.B struct pm_scan_arg {
+.B "    __u64  size;"
+.B "    __u64  flags;"
+.B "    __u64  start;"
+.B "    __u64  end;"
+.B "    __u64  walk_end;"
+.B "    __u64  vec;"
+.B "    __u64  vec_len;"
+.B "    __u64  max_pages;"
+.B "    __u64  category_inverted;"
+.B "    __u64  category_mask;"
+.B "    __u64  category_anyof_mask;"
+.B "    __u64  return_mask;"
+.B };
+.P
+.B struct page_region {
+.B "    __u64  start;"
+.B "    __u64  end;"
+.B "    __u64  categories;"
+.B };
+.EE
+.SH DESCRIPTION
+This
+.BR ioctl (2)
+is used to get and optionally clear some specific flags from page table entries.
+The information is returned with
+.B PAGE_SIZE
+granularity.
+.P
+To start tracking the written state (flag) of a page or range of memory,
+the
+.B UFFD_FEATURE_WP_ASYNC
+must be enabled by
+.B UFFDIO_API
+.BR ioctl (2)
+on
+.B userfaultfd
+and memory range must be registered with
+.B UFFDIO_REGISTER
+.BR ioctl (2)
+in
+.B UFFDIO_REGISTER_MODE_WP
+mode.
+.SS Supported page flags
+The following page table entry flags are supported:
+.TP
+.B PAGE_IS_WPALLOWED
+The page has asynchronous write-protection enabled.
+.TP
+.B PAGE_IS_WRITTEN
+The page has been written to from the time it was write protected.
+.TP
+.B PAGE_IS_FILE
+The page is file backed.
+.TP
+.B PAGE_IS_PRESENT
+The page is present in the memory.
+.TP
+.B PAGE_IS_SWAPPED
+The page is swapped.
+.TP
+.B PAGE_IS_PFNZERO
+The page has zero PFN.
+.TP
+.B PAGE_IS_HUGE
+The page is THP or Hugetlb backed.
+.SS Supported operations
+The get operation is always performed
+if the output buffer is specified.
+The other operations are as following:
+.TP
+.B PM_SCAN_WP_MATCHING
+Write protect the matched pages.
+.TP
+.B PM_SCAN_CHECK_WPASYNC
+Abort the scan
+when a page is found
+which doesn't have the Userfaultfd Asynchronous Write protection enabled.
+.SS The \f[I]struct pm_scan_arg\f[] argument
+.TP
+.B size
+This field should be set to the size of the structure in bytes,
+as in
+.IR sizeof(struct\~pm_scan_arg) .
+.TP
+.B flags
+The operations to be performed are specified in it.
+.TP
+.B start
+The starting address of the scan is specified in it.
+.TP
+.B end
+The ending address of the scan is specified in it.
+.TP
+.B walk_end
+The kernel returns the scan's ending address in it.
+The
+.I walk_end
+equal to
+.I end
+means that scan has completed on the entire range.
+.TP
+.B vec
+The address of
+.I page_region
+array for output.
+.TP
+.B vec_len
+The length of the
+.I page_region
+struct array.
+.TP
+.B max_pages
+It is the optional limit for the number of output pages required.
+.TP
+.B category_inverted
+.BI PAGE_IS_ *
+categories which values match if 0 instead of 1.
+.TP
+.B category_mask
+Skip pages for which any
+.BI PAGE_IS_ *
+category doesn't match.
+.TP
+.B category_anyof_mask
+Skip pages for which no
+.BI PAGE_IS_ *
+category matches.
+.TP
+.B return_mask
+.BI PAGE_IS_ *
+categories that are to be reported in
+.IR page_region .
+.SH RETURN VALUE
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+Error codes can be one of, but are not limited to, the following:
+.TP
+.B EINVAL
+Invalid arguments i.e.,
+invalid
+.I size
+of the argument,
+invalid
+.IR flags ,
+invalid
+.IR categories ,
+the
+.I start
+address isn't aligned with
+.BR PAGE_SIZE ,
+or
+.I vec_len
+is specified when
+.I vec
+is NULL.
+.TP
+.B EFAULT
+Invalid
+.I arg
+pointer,
+invalid
+.I vec
+pointer,
+or invalid address range specified by
+.I start
+and
+.IR end .
+.TP
+.B ENOMEM
+No memory is available.
+.TP
+.B EINTR
+Fetal signal is pending.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 6.7.
+.SH SEE ALSO
+.BR ioctl (2)

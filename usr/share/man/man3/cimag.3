@@ -1,0 +1,58 @@
+'\" t
+.\" Copyright 2002 Walter Harms (walter.harms@informatik.uni-oldenburg.de)
+.\"
+.\" SPDX-License-Identifier: GPL-1.0-or-later
+.\"
+.TH cimag 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+cimag, cimagf, cimagl \- get imaginary part of a complex number
+.SH LIBRARY
+Math library
+.RI ( libm ", " \-lm )
+.SH SYNOPSIS
+.nf
+.B #include <complex.h>
+.P
+.BI "double cimag(double complex " z );
+.BI "float cimagf(float complex " z );
+.BI "long double cimagl(long double complex " z );
+.fi
+.SH DESCRIPTION
+These functions return the imaginary part of the complex number
+.IR z .
+.P
+One has:
+.P
+.in +4n
+.EX
+z = creal(z) + I * cimag(z)
+.EE
+.in
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR cimag (),
+.BR cimagf (),
+.BR cimagl ()
+T}	Thread safety	MT-Safe
+.TE
+.SH VERSIONS
+GCC also supports __imag__.
+That is a GNU extension.
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+glibc 2.1.
+C99, POSIX.1-2001.
+.SH SEE ALSO
+.BR cabs (3),
+.BR creal (3),
+.BR complex (7)

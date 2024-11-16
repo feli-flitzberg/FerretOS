@@ -1,0 +1,177 @@
+.\" Copyright (c) 2020-2022 by Alejandro Colomar <alx@kernel.org>
+.\" and Copyright (c) 2020 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\"
+.TH intN_t 3type 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+intN_t, int8_t, int16_t, int32_t, int64_t,
+uintN_t, uint8_t, uint16_t, uint32_t, uint64_t
+\- fixed-width basic integer types
+.SH LIBRARY
+Standard C library
+.RI ( libc )
+.SH SYNOPSIS
+.nf
+.B #include <stdint.h>
+.P
+.BR typedef " /* ... */ " int8_t;
+.BR typedef " /* ... */ " int16_t;
+.BR typedef " /* ... */ " int32_t;
+.BR typedef " /* ... */ " int64_t;
+.P
+.BR typedef " /* ... */ " uint8_t;
+.BR typedef " /* ... */ " uint16_t;
+.BR typedef " /* ... */ " uint32_t;
+.BR typedef " /* ... */ " uint64_t;
+.P
+.B "#define INT8_WIDTH   8"
+.B "#define INT16_WIDTH  16"
+.B "#define INT32_WIDTH  32"
+.B "#define INT64_WIDTH  64"
+.P
+.B "#define UINT8_WIDTH  8"
+.B "#define UINT16_WIDTH 16"
+.B "#define UINT32_WIDTH 32"
+.B "#define UINT64_WIDTH 64"
+.P
+.BR "#define INT8_MAX     " "/*  2**(INT8_WIDTH - 1) - 1   */"
+.BR "#define INT16_MAX    " "/*  2**(INT16_WIDTH - 1) - 1  */"
+.BR "#define INT32_MAX    " "/*  2**(INT32_WIDTH - 1) - 1  */"
+.BR "#define INT64_MAX    " "/*  2**(INT64_WIDTH - 1) - 1  */"
+.P
+.BR "#define INT8_MIN     " "/*  - 2**(INT8_WIDTH - 1)     */"
+.BR "#define INT16_MIN    " "/*  - 2**(INT16_WIDTH - 1)    */"
+.BR "#define INT32_MIN    " "/*  - 2**(INT32_WIDTH - 1)    */"
+.BR "#define INT64_MIN    " "/*  - 2**(INT64_WIDTH - 1)    */"
+.P
+.BR "#define UINT8_MAX    " "/*  2**INT8_WIDTH - 1         */"
+.BR "#define UINT16_MAX   " "/*  2**INT16_WIDTH - 1        */"
+.BR "#define UINT32_MAX   " "/*  2**INT32_WIDTH - 1        */"
+.BR "#define UINT64_MAX   " "/*  2**INT64_WIDTH - 1        */"
+.P
+.BI "#define INT8_C(" c ")    " c " ## " "\fR/* ... */\fP"
+.BI "#define INT16_C(" c ")   " c " ## " "\fR/* ... */\fP"
+.BI "#define INT32_C(" c ")   " c " ## " "\fR/* ... */\fP"
+.BI "#define INT64_C(" c ")   " c " ## " "\fR/* ... */\fP"
+.P
+.BI "#define UINT8_C(" c ")   " c " ## " "\fR/* ... */\fP"
+.BI "#define UINT16_C(" c ")  " c " ## " "\fR/* ... */\fP"
+.BI "#define UINT32_C(" c ")  " c " ## " "\fR/* ... */\fP"
+.BI "#define UINT64_C(" c ")  " c " ## " "\fR/* ... */\fP"
+.fi
+.SH DESCRIPTION
+.IR int N _t
+are
+signed integer types
+of a fixed width of exactly N bits,
+.I N
+being the value specified in its type name.
+They are be capable of storing values in the range
+.RB [ INT \fIN\fP _MIN ,
+.BR INT \fIN\fP _MAX ],
+substituting
+.I N
+by the appropriate number.
+.P
+.IR uint N _t
+are
+unsigned integer types
+of a fixed width of exactly N bits,
+N being the value specified in its type name.
+They are capable of storing values in the range
+.RB [ 0 ,
+.BR UINT \fIN\fP _MAX ],
+substituting
+.I N
+by the appropriate number.
+.P
+According to POSIX,
+.RI [ u ] int8_t ,
+.RI [ u ] int16_t ,
+and
+.RI [ u ] int32_t
+are required;
+.RI [ u ] int64_t
+are only required in implementations that provide integer types with width 64;
+and all other types of this form are optional.
+.P
+The macros
+.RB [ U ] INT \fIN\fP _WIDTH
+expand to the width in bits of these types
+.RI ( N ).
+.P
+The macros
+.RB [ U ] INT \fIN\fP _MAX
+expand to the maximum value that these types can hold.
+.P
+The macros
+.BI INT N _MIN
+expand to the minimum value that these types can hold.
+.P
+The macros
+.RB [ U ] INT \fIN\fP _C ()
+expand their argument to an integer constant of type
+.RI [ u ] int N _t .
+.P
+The length modifiers for the
+.RI [ u ] int N _t
+types for the
+.BR printf (3)
+family of functions
+are expanded by macros of the forms
+.BR PRId \fIN\fP,
+.BR PRIi \fIN\fP,
+.BR PRIu \fIN\fP,
+and
+.BI PRIx N
+(defined in
+.IR <inttypes.h> );
+resulting for example in
+.B %"PRId64"
+or
+.B %"PRIi64"
+for printing
+.I int64_t
+values.
+The length modifiers for the
+.RI [ u ] int N _t
+types for the
+.BR scanf (3)
+family of functions
+are expanded by macros of the forms
+.BR SCNd \fIN\fP,
+.BR SCNi \fIN\fP,
+.BR SCNu \fIN\fP,
+and
+.BI SCNx N,
+(defined in
+.IR <inttypes.h> );
+resulting for example in
+.B %"SCNu8"
+or
+.B %"SCNx8"
+for scanning
+.I uint8_t
+values.
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+C99, POSIX.1-2001.
+.P
+The
+.RB [ U ] INT \fIN\fP _WIDTH
+macros were added in C23.
+.SH NOTES
+The following header also provides these types:
+.IR <inttypes.h> .
+.I <arpa/inet.h>
+also provides
+.I uint16_t
+and
+.IR uint32_t .
+.SH SEE ALSO
+.BR intmax_t (3type),
+.BR intptr_t (3type),
+.BR printf (3)

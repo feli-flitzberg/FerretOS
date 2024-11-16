@@ -1,0 +1,73 @@
+.\" Copyright (C) 1994, 1995, Daniel Quinlan <quinlan@yggdrasil.com>
+.\" Copyright (C) 2002-2008, 2017, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright (C) 2023, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-3.0-or-later
+.\"
+.TH proc_pid 5 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+/proc/pid/, /proc/self/ \- process information
+.SH DESCRIPTION
+.TP
+.IR /proc/ pid /
+There is a numerical subdirectory for each running process; the
+subdirectory is named by the process ID.
+Each
+.IR /proc/ pid
+subdirectory contains the pseudo-files and directories described below.
+.IP
+The files inside each
+.IR /proc/ pid
+directory are normally owned by the effective user and
+effective group ID of the process.
+However, as a security measure, the ownership is made
+.I root:root
+if the process's "dumpable" attribute is set to a value other than 1.
+.IP
+Before Linux 4.11,
+.\" commit 68eb94f16227336a5773b83ecfa8290f1d6b78ce
+.I root:root
+meant the "global" root user ID and group ID
+(i.e., UID 0 and GID 0 in the initial user namespace).
+Since Linux 4.11,
+if the process is in a noninitial user namespace that has a
+valid mapping for user (group) ID 0 inside the namespace, then
+the user (group) ownership of the files under
+.IR /proc/ pid
+is instead made the same as the root user (group) ID of the namespace.
+This means that inside a container,
+things work as expected for the container "root" user.
+.IP
+The process's "dumpable" attribute may change for the following reasons:
+.RS
+.IP \[bu] 3
+The attribute was explicitly set via the
+.BR prctl (2)
+.B PR_SET_DUMPABLE
+operation.
+.IP \[bu]
+The attribute was reset to the value in the file
+.I /proc/sys/fs/suid_dumpable
+(described below), for the reasons described in
+.BR prctl (2).
+.RE
+.IP
+Resetting the "dumpable" attribute to 1 reverts the ownership of the
+.IR /proc/ pid /*
+files to the process's effective UID and GID.
+Note, however, that if the effective UID or GID is subsequently modified,
+then the "dumpable" attribute may be reset, as described in
+.BR prctl (2).
+Therefore, it may be desirable to reset the "dumpable" attribute
+.I after
+making any desired changes to the process's effective UID or GID.
+.TP
+.I /proc/self/
+This directory refers to the process accessing the
+.I /proc
+filesystem,
+and is identical to the
+.I /proc
+directory named by the process ID of the same process.
+.SH SEE ALSO
+.BR proc (5)

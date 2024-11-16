@@ -1,0 +1,57 @@
+'\" t
+.\" Copyright 2002 Walter Harms (walter.harms@informatik.uni-oldenburg.de)
+.\"
+.\" SPDX-License-Identifier: GPL-1.0-or-later
+.\"
+.TH ctan 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+ctan, ctanf, ctanl \- complex tangent function
+.SH LIBRARY
+Math library
+.RI ( libm ", " \-lm )
+.SH SYNOPSIS
+.nf
+.B #include <complex.h>
+.P
+.BI "double complex ctan(double complex " z );
+.BI "float complex ctanf(float complex " z );
+.BI "long double complex ctanl(long double complex " z );
+.fi
+.SH DESCRIPTION
+These functions calculate the complex tangent of
+.IR z .
+.P
+The complex tangent function is defined as:
+.P
+.in +4n
+.EX
+ctan(z) = csin(z) / ccos(z)
+.EE
+.in
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR ctan (),
+.BR ctanf (),
+.BR ctanl ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+glibc 2.1.
+C99, POSIX.1-2001.
+.SH SEE ALSO
+.BR cabs (3),
+.BR catan (3),
+.BR ccos (3),
+.BR csin (3),
+.BR complex (7)

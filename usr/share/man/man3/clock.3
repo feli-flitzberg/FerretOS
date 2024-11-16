@@ -1,0 +1,101 @@
+'\" t
+.\" Copyright (c) 1993 by Thomas Koenig (ig25@rz.uni-karlsruhe.de)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" Modified Sat Jul 24 21:27:01 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified 14 Jun 2002, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" 	Added notes on differences from other UNIX systems with respect to
+.\"	waited-for children.
+.TH clock 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+clock \- determine processor time
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <time.h>
+.P
+.B clock_t clock(void);
+.fi
+.SH DESCRIPTION
+The
+.BR clock ()
+function returns an approximation of processor time used by the program.
+.SH RETURN VALUE
+The value returned is the CPU time used so far as a
+.IR clock_t ;
+to get the number of seconds used, divide by
+.BR CLOCKS_PER_SEC .
+If the processor time used is not available or its value cannot
+be represented, the function returns the value
+.IR (clock_t)\ \-1 .
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR clock ()
+T}	Thread safety	MT-Safe
+.TE
+.SH VERSIONS
+XSI requires that
+.B CLOCKS_PER_SEC
+equals 1000000 independent
+of the actual resolution.
+.P
+On several other implementations,
+the value returned by
+.BR clock ()
+also includes the times of any children whose status has been
+collected via
+.BR wait (2)
+(or another wait-type call).
+Linux does not include the times of waited-for children in the
+value returned by
+.BR clock ().
+.\" I have seen this behavior on Irix 6.3, and the OSF/1, HP/UX, and
+.\" Solaris manual pages say that clock() also does this on those systems.
+.\" POSIX.1-2001 doesn't explicitly allow this, nor is there an
+.\" explicit prohibition. -- MTK
+The
+.BR times (2)
+function, which explicitly returns (separate) information about the
+caller and its children, may be preferable.
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, C89.
+.P
+In glibc 2.17 and earlier,
+.BR clock ()
+was implemented on top of
+.BR times (2).
+For improved accuracy,
+since glibc 2.18, it is implemented on top of
+.BR clock_gettime (2)
+(using the
+.B CLOCK_PROCESS_CPUTIME_ID
+clock).
+.SH NOTES
+The C standard allows for arbitrary values at the start of the program;
+subtract the value returned from a call to
+.BR clock ()
+at the start of the program to get maximum portability.
+.P
+Note that the time can wrap around.
+On a 32-bit system where
+.B CLOCKS_PER_SEC
+equals 1000000 this function will return the same
+value approximately every 72 minutes.
+.SH SEE ALSO
+.BR clock_gettime (2),
+.BR getrusage (2),
+.BR times (2)

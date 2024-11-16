@@ -1,0 +1,71 @@
+'\" t
+.\" Copyright 2002 Walter Harms (walter.harms@informatik.uni-oldenburg.de)
+.\"
+.\" SPDX-License-Identifier: GPL-1.0-or-later
+.\"
+.TH clog 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+clog, clogf, clogl \- natural logarithm of a complex number
+.SH LIBRARY
+Math library
+.RI ( libm ", " \-lm )
+.SH SYNOPSIS
+.nf
+.B #include <complex.h>
+.P
+.BI "double complex clog(double complex " z );
+.BI "float complex clogf(float complex " z );
+.BI "long double complex clogl(long double complex " z );
+.fi
+.SH DESCRIPTION
+These functions calculate the complex natural logarithm of
+.IR z ,
+with a branch cut along the negative real axis.
+.P
+The logarithm
+.BR clog ()
+is the inverse function of the exponential
+.BR cexp (3).
+Thus, if \fIy\ =\ clog(z)\fP, then \fIz\ =\ cexp(y)\fP.
+The imaginary part of
+.I y
+is chosen in the interval [\-pi,pi].
+.P
+One has:
+.P
+.in +4n
+.EX
+clog(z) = log(cabs(z)) + I * carg(z)
+.EE
+.in
+.P
+Note that
+.I z
+close to zero will cause an overflow.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR clog (),
+.BR clogf (),
+.BR clogl ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+glibc 2.1.
+C99, POSIX.1-2001.
+.SH SEE ALSO
+.BR cabs (3),
+.BR cexp (3),
+.BR clog10 (3),
+.BR clog2 (3),
+.BR complex (7)

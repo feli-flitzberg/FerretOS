@@ -1,0 +1,70 @@
+'\" t
+.\" Copyright (c) Bruno Haible <haible@clisp.cons.org>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" References consulted:
+.\"   GNU glibc-2 source code and manual
+.\"   Dinkumware C library reference http://www.dinkumware.com/
+.\"   OpenGroup's Single UNIX specification http://www.UNIX-systems.org/online.html
+.\"   ISO/IEC 9899:1999
+.\"
+.TH wmemmove 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+wmemmove \- copy an array of wide-characters
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <wchar.h>
+.P
+.BI "wchar_t *wmemmove(wchar_t " dest [. n "], const wchar_t " src [. n "], \
+size_t " n );
+.fi
+.SH DESCRIPTION
+The
+.BR wmemmove ()
+function is the wide-character equivalent of the
+.BR memmove (3)
+function.
+It copies
+.I n
+wide characters from the array
+starting at
+.I src
+to the array starting at
+.IR dest .
+The arrays may
+overlap.
+.P
+The programmer must ensure that there is room for at least
+.I n
+wide
+characters at
+.IR dest .
+.SH RETURN VALUE
+.BR wmemmove ()
+returns
+.IR dest .
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR wmemmove ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, C99.
+.SH SEE ALSO
+.BR memmove (3),
+.BR wmemcpy (3)

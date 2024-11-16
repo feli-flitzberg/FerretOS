@@ -1,0 +1,114 @@
+.\" Copyright (c) 1992 Drew Eckhardt (drew@cs.colorado.edu), March 28, 1992
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" Modified by Michael Haardt <michael@moria.de>
+.\" Modified Sat Jul 24 14:13:40 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Additions by Joseph S. Myers <jsm28@cam.ac.uk>, 970909
+.\"
+.TH time 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+time \- get time in seconds
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <time.h>
+.P
+.BI "time_t time(time_t *_Nullable " tloc );
+.fi
+.SH DESCRIPTION
+.BR time ()
+returns the time as the number of seconds since the
+Epoch, 1970-01-01 00:00:00 +0000 (UTC).
+.P
+If
+.I tloc
+is non-NULL,
+the return value is also stored in the memory pointed to by
+.IR tloc .
+.SH RETURN VALUE
+On success, the value of time in seconds since the Epoch is returned.
+On error, \fI((time_t)\ \-1)\fP is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EOVERFLOW
+The time cannot be represented as a
+.I time_t
+value.
+This can happen if an executable with 32-bit
+.I time_t
+is run on a 64-bit kernel when the time is 2038-01-19 03:14:08 UTC or later.
+However, when the system time is out of
+.I time_t
+range in other situations, the behavior is undefined.
+.TP
+.B EFAULT
+.I tloc
+points outside your accessible address space (but see BUGS).
+.IP
+On systems where the C library
+.BR time ()
+wrapper function invokes an implementation provided by the
+.BR vdso (7)
+(so that there is no trap into the kernel),
+an invalid address may instead trigger a
+.B SIGSEGV
+signal.
+.SH VERSIONS
+POSIX.1 defines
+.I seconds since the Epoch
+using a formula that approximates the number of seconds between a
+specified time and the Epoch.
+This formula takes account of the facts that
+all years that are evenly divisible by 4 are leap years,
+but years that are evenly divisible by 100 are not leap years
+unless they are also evenly divisible by 400,
+in which case they are leap years.
+This value is not the same as the actual number of seconds between the time
+and the Epoch, because of leap seconds and because system clocks are not
+required to be synchronized to a standard reference.
+Linux systems normally follow the POSIX requirement
+that this value ignore leap seconds,
+so that conforming systems interpret it consistently;
+see POSIX.1-2018 Rationale A.4.16.
+.P
+Applications intended to run after 2038 should use ABIs with
+.I time_t
+wider than 32 bits; see
+.BR time_t (3type).
+.SS C library/kernel differences
+On some architectures, an implementation of
+.BR time ()
+is provided in the
+.BR vdso (7).
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+SVr4, 4.3BSD, C89, POSIX.1-2001.
+.\" Under 4.3BSD, this call is obsoleted by
+.\" .BR gettimeofday (2).
+.SH BUGS
+Error returns from this system call are indistinguishable from
+successful reports that the time is a few seconds
+.I before
+the Epoch, so the C library wrapper function never sets
+.I errno
+as a result of this call.
+.P
+The
+.I tloc
+argument is obsolescent and should always be NULL in new code.
+When
+.I tloc
+is NULL, the call cannot fail.
+.SH SEE ALSO
+.BR date (1),
+.BR gettimeofday (2),
+.BR ctime (3),
+.BR ftime (3),
+.BR time (7),
+.BR vdso (7)

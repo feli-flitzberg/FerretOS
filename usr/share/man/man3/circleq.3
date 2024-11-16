@@ -1,0 +1,318 @@
+.\" Copyright (c) 1993
+.\"    The Regents of the University of California.  All rights reserved.
+.\" and Copyright (c) 2020 by Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: BSD-3-Clause
+.\"
+.\"
+.TH CIRCLEQ 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+CIRCLEQ_EMPTY,
+CIRCLEQ_ENTRY,
+CIRCLEQ_FIRST,
+CIRCLEQ_FOREACH,
+CIRCLEQ_FOREACH_REVERSE,
+CIRCLEQ_HEAD,
+CIRCLEQ_HEAD_INITIALIZER,
+CIRCLEQ_INIT,
+CIRCLEQ_INSERT_AFTER,
+CIRCLEQ_INSERT_BEFORE,
+CIRCLEQ_INSERT_HEAD,
+CIRCLEQ_INSERT_TAIL,
+CIRCLEQ_LAST,
+CIRCLEQ_LOOP_NEXT,
+CIRCLEQ_LOOP_PREV,
+CIRCLEQ_NEXT,
+CIRCLEQ_PREV,
+CIRCLEQ_REMOVE
+\- implementation of a doubly linked circular queue
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <sys/queue.h>
+.P
+.B CIRCLEQ_ENTRY(TYPE);
+.P
+.B CIRCLEQ_HEAD(HEADNAME, TYPE);
+.BI "CIRCLEQ_HEAD CIRCLEQ_HEAD_INITIALIZER(CIRCLEQ_HEAD " head );
+.BI "void CIRCLEQ_INIT(CIRCLEQ_HEAD *" head );
+.P
+.BI "int CIRCLEQ_EMPTY(CIRCLEQ_HEAD *" head );
+.P
+.BI "void CIRCLEQ_INSERT_HEAD(CIRCLEQ_HEAD *" head ,
+.BI "                           struct TYPE *" elm ", CIRCLEQ_ENTRY " NAME );
+.BI "void CIRCLEQ_INSERT_TAIL(CIRCLEQ_HEAD *" head ,
+.BI "                           struct TYPE *" elm ", CIRCLEQ_ENTRY " NAME );
+.BI "void CIRCLEQ_INSERT_BEFORE(CIRCLEQ_HEAD *" head ", struct TYPE *" listelm ,
+.BI "                           struct TYPE *" elm ", CIRCLEQ_ENTRY " NAME );
+.BI "void CIRCLEQ_INSERT_AFTER(CIRCLEQ_HEAD *" head ", struct TYPE *" listelm ,
+.BI "                           struct TYPE *" elm ", CIRCLEQ_ENTRY " NAME );
+.P
+.BI "struct TYPE *CIRCLEQ_FIRST(CIRCLEQ_HEAD *" head );
+.BI "struct TYPE *CIRCLEQ_LAST(CIRCLEQ_HEAD *" head );
+.BI "struct TYPE *CIRCLEQ_PREV(struct TYPE *" elm ", CIRCLEQ_ENTRY " NAME );
+.BI "struct TYPE *CIRCLEQ_NEXT(struct TYPE *" elm ", CIRCLEQ_ENTRY " NAME );
+.BI "struct TYPE *CIRCLEQ_LOOP_PREV(CIRCLEQ_HEAD *" head ,
+.BI "                           struct TYPE *" elm ", CIRCLEQ_ENTRY " NAME );
+.BI "struct TYPE *CIRCLEQ_LOOP_NEXT(CIRCLEQ_HEAD *" head ,
+.BI "                           struct TYPE *" elm ", CIRCLEQ_ENTRY " NAME );
+.P
+.BI "CIRCLEQ_FOREACH(struct TYPE *" var ", CIRCLEQ_HEAD *" head ,
+.BI "                           CIRCLEQ_ENTRY " NAME );
+.BI "CIRCLEQ_FOREACH_REVERSE(struct TYPE *" var ", CIRCLEQ_HEAD *" head ,
+.BI "                           CIRCLEQ_ENTRY " NAME );
+.P
+.BI "void CIRCLEQ_REMOVE(CIRCLEQ_HEAD *" head ", struct TYPE *" elm ,
+.BI "                           CIRCLEQ_ENTRY " NAME );
+.fi
+.SH DESCRIPTION
+These macros define and operate on doubly linked circular queues.
+.P
+In the macro definitions,
+.I TYPE
+is the name of a user-defined structure,
+that must contain a field of type
+.IR CIRCLEQ_ENTRY ,
+named
+.IR NAME .
+The argument
+.I HEADNAME
+is the name of a user-defined structure
+that must be declared using the macro
+.BR CIRCLEQ_HEAD ().
+.SS Creation
+A circular queue is headed by a structure defined by the
+.BR CIRCLEQ_HEAD ()
+macro.
+This structure contains a pair of pointers,
+one to the first element in the queue
+and the other to the last element in the queue.
+The elements are doubly linked
+so that an arbitrary element can be removed without traversing the queue.
+New elements can be added to the queue
+after an existing element,
+before an existing element,
+at the head of the queue,
+or at the end of the queue.
+A
+.I CIRCLEQ_HEAD
+structure is declared as follows:
+.P
+.in +4
+.EX
+CIRCLEQ_HEAD(HEADNAME, TYPE) head;
+.EE
+.in
+.P
+where
+.I struct HEADNAME
+is the structure to be defined, and
+.I struct TYPE
+is the type of the elements to be linked into the queue.
+A pointer to the head of the queue can later be declared as:
+.P
+.in +4
+.EX
+struct HEADNAME *headp;
+.EE
+.in
+.P
+(The names
+.I head
+and
+.I headp
+are user selectable.)
+.P
+.BR CIRCLEQ_ENTRY ()
+declares a structure that connects the elements in the queue.
+.P
+.BR CIRCLEQ_HEAD_INITIALIZER ()
+evaluates to an initializer for the queue
+.IR head .
+.P
+.BR CIRCLEQ_INIT ()
+initializes the queue referenced by
+.IR head .
+.P
+.BR CIRCLEQ_EMPTY ()
+evaluates to true if there are no items on the queue.
+.SS Insertion
+.BR CIRCLEQ_INSERT_HEAD ()
+inserts the new element
+.I elm
+at the head of the queue.
+.P
+.BR CIRCLEQ_INSERT_TAIL ()
+inserts the new element
+.I elm
+at the end of the queue.
+.P
+.BR CIRCLEQ_INSERT_BEFORE ()
+inserts the new element
+.I elm
+before the element
+.IR listelm .
+.P
+.BR CIRCLEQ_INSERT_AFTER ()
+inserts the new element
+.I elm
+after the element
+.IR listelm .
+.SS Traversal
+.BR CIRCLEQ_FIRST ()
+returns the first item on the queue.
+.P
+.BR CIRCLEQ_LAST ()
+returns the last item on the queue.
+.P
+.BR CIRCLEQ_PREV ()
+returns the previous item on the queue, or
+.I &head
+if this item is the first one.
+.P
+.BR CIRCLEQ_NEXT ()
+returns the next item on the queue, or
+.I &head
+if this item is the last one.
+.P
+.BR CIRCLEQ_LOOP_PREV ()
+returns the previous item on the queue.
+If
+.I elm
+is the first element on the queue, the last element is returned.
+.P
+.BR CIRCLEQ_LOOP_NEXT ()
+returns the next item on the queue.
+If
+.I elm
+is the last element on the queue, the first element is returned.
+.P
+.BR CIRCLEQ_FOREACH ()
+traverses the queue referenced by
+.I head
+in the forward direction, assigning each element in turn to
+.IR var .
+.I var
+is set to
+.I &head
+if the loop completes normally, or if there were no elements.
+.P
+.BR CIRCLEQ_FOREACH_REVERSE ()
+traverses the queue referenced by
+.I head
+in the reverse direction,
+assigning each element in turn to
+.IR var .
+.SS Removal
+.BR CIRCLEQ_REMOVE ()
+removes the element
+.I elm
+from the queue.
+.SH RETURN VALUE
+.BR CIRCLEQ_EMPTY ()
+returns nonzero if the queue is empty,
+and zero if the queue contains at least one entry.
+.P
+.BR CIRCLEQ_FIRST (),
+.BR CIRCLEQ_LAST (),
+.BR CIRCLEQ_LOOP_PREV (),
+and
+.BR CIRCLEQ_LOOP_NEXT ()
+return a pointer to the first, last, previous, or next
+.I TYPE
+structure, respectively.
+.P
+.BR CIRCLEQ_PREV (),
+and
+.BR CIRCLEQ_NEXT ()
+are similar to their
+.BR CIRCLEQ_LOOP_* ()
+counterparts,
+except that if the argument is the first or last element, respectively,
+they return
+.IR &head .
+.P
+.BR CIRCLEQ_HEAD_INITIALIZER ()
+returns an initializer that can be assigned to the queue
+.IR head .
+.SH STANDARDS
+BSD.
+.SH BUGS
+.BR CIRCLEQ_FOREACH ()
+and
+.BR CIRCLEQ_FOREACH_REVERSE ()
+don't allow
+.I var
+to be removed or freed within the loop,
+as it would interfere with the traversal.
+.BR CIRCLEQ_FOREACH_SAFE ()
+and
+.BR CIRCLEQ_FOREACH_REVERSE_SAFE (),
+which are present on the BSDs but are not present in glibc,
+fix this limitation by allowing
+.I var
+to safely be removed from the list and freed from within the loop
+without interfering with the traversal.
+.SH EXAMPLES
+.\" SRC BEGIN (circleq.c)
+.EX
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/queue.h>
+\&
+struct entry {
+    int data;
+    CIRCLEQ_ENTRY(entry) entries;           /* Queue */
+};
+\&
+CIRCLEQ_HEAD(circlehead, entry);
+\&
+int
+main(void)
+{
+    struct entry *n1, *n2, *n3, *np;
+    struct circlehead head;                 /* Queue head */
+    int i;
+\&
+    CIRCLEQ_INIT(&head);                    /* Initialize the queue */
+\&
+    n1 = malloc(sizeof(struct entry));      /* Insert at the head */
+    CIRCLEQ_INSERT_HEAD(&head, n1, entries);
+\&
+    n1 = malloc(sizeof(struct entry));      /* Insert at the tail */
+    CIRCLEQ_INSERT_TAIL(&head, n1, entries);
+\&
+    n2 = malloc(sizeof(struct entry));      /* Insert after */
+    CIRCLEQ_INSERT_AFTER(&head, n1, n2, entries);
+\&
+    n3 = malloc(sizeof(struct entry));      /* Insert before */
+    CIRCLEQ_INSERT_BEFORE(&head, n2, n3, entries);
+\&
+    CIRCLEQ_REMOVE(&head, n2, entries);     /* Deletion */
+    free(n2);
+                                            /* Forward traversal */
+    i = 0;
+    CIRCLEQ_FOREACH(np, &head, entries)
+        np\->data = i++;
+                                            /* Reverse traversal */
+    CIRCLEQ_FOREACH_REVERSE(np, &head, entries)
+        printf("%i\[rs]n", np\->data);
+                                            /* Queue deletion */
+    n1 = CIRCLEQ_FIRST(&head);
+    while (n1 != (void *)&head) {
+        n2 = CIRCLEQ_NEXT(n1, entries);
+        free(n1);
+        n1 = n2;
+    }
+    CIRCLEQ_INIT(&head);
+\&
+    exit(EXIT_SUCCESS);
+}
+.EE
+.\" SRC END
+.SH SEE ALSO
+.BR insque (3),
+.BR queue (7)

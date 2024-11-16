@@ -1,0 +1,137 @@
+'\" t
+.\" Copyright (C) 2001 Andries Brouwer <aeb@cwi.nl>.
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH stdio_ext 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+__fbufsize, __flbf, __fpending, __fpurge, __freadable,
+__freading, __fsetlocking, __fwritable, __fwriting, _flushlbf \-
+interfaces to stdio FILE structure
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdio.h>
+.B #include <stdio_ext.h>
+.P
+.BI "size_t __fbufsize(FILE *" stream );
+.BI "size_t __fpending(FILE *" stream );
+.BI "int __flbf(FILE *" stream );
+.BI "int __freadable(FILE *" stream );
+.BI "int __fwritable(FILE *" stream );
+.BI "int __freading(FILE *" stream );
+.BI "int __fwriting(FILE *" stream );
+.BI "int __fsetlocking(FILE *" stream ", int " type );
+.B "void _flushlbf(void);"
+.BI "void __fpurge(FILE *" stream );
+.fi
+.SH DESCRIPTION
+Solaris introduced routines to allow portable access to the
+internals of the
+.I FILE
+structure, and glibc also implemented these.
+.P
+The
+.BR __fbufsize ()
+function returns the size of the buffer currently used
+by the given stream.
+.P
+The
+.BR __fpending ()
+function returns the number of bytes in the output buffer.
+For wide-oriented streams the unit is wide characters.
+This function is undefined on buffers in reading mode,
+or opened read-only.
+.P
+The
+.BR __flbf ()
+function returns a nonzero value if the stream is line-buffered,
+and zero otherwise.
+.P
+The
+.BR __freadable ()
+function returns a nonzero value if the stream allows reading,
+and zero otherwise.
+.P
+The
+.BR __fwritable ()
+function returns a nonzero value if the stream allows writing,
+and zero otherwise.
+.P
+The
+.BR __freading ()
+function returns a nonzero value if the stream is read-only, or
+if the last operation on the stream was a read operation,
+and zero otherwise.
+.P
+The
+.BR __fwriting ()
+function returns a nonzero value if the stream is write-only (or
+append-only), or if the last operation on the stream was a write
+operation, and zero otherwise.
+.P
+The
+.BR __fsetlocking ()
+function can be used to select the desired type of locking on the stream.
+It returns the current type.
+The
+.I type
+argument can take the following three values:
+.TP
+.B FSETLOCKING_INTERNAL
+Perform implicit locking around every operation on the given stream
+(except for the *_unlocked ones).
+This is the default.
+.TP
+.B FSETLOCKING_BYCALLER
+The caller will take care of the locking (possibly using
+.BR flockfile (3)
+in case there is more than one thread), and the stdio routines
+will not do locking until the state is reset to
+.BR FSETLOCKING_INTERNAL .
+.TP
+.B FSETLOCKING_QUERY
+Don't change the type of locking.
+(Only return it.)
+.P
+The
+.BR _flushlbf ()
+function flushes all line-buffered streams.
+(Presumably so that
+output to a terminal is forced out, say before reading keyboard input.)
+.P
+The
+.BR __fpurge ()
+function discards the contents of the stream's buffer.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR __fbufsize (),
+.BR __fpending (),
+.BR __fpurge (),
+.BR __fsetlocking ()
+T}	Thread safety	MT-Safe race:stream
+T{
+.na
+.nh
+.BR __flbf (),
+.BR __freadable (),
+.BR __freading (),
+.BR __fwritable (),
+.BR __fwriting (),
+.BR _flushlbf ()
+T}	Thread safety	MT-Safe
+.TE
+.SH SEE ALSO
+.BR flockfile (3),
+.BR fpurge (3)

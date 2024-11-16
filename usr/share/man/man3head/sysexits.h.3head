@@ -1,0 +1,200 @@
+'\" t
+.\" Copyright (c) 1996 Joerg Wunsch
+.\" Copyright (c) 2022 Alejandro Colomar <alx@kernel.org>
+.\"
+.\" All rights reserved.
+.\"
+.\" SPDX-License-Identifier: BSD-2-Clause
+.\"
+.\" Rewritten for the Linux man-pages by Alejandro Colomar
+.\"
+.TH sysexits.h 3head 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+sysexits.h \- exit codes for programs
+.SH LIBRARY
+Standard C library
+.RI ( libc )
+.SH SYNOPSIS
+.nf
+.B #include <sysexits.h>
+.fi
+.TS
+lB2 lB2 l1 lX.
+#define EX_OK	0	/*	T{
+successful termination */
+T}
+.P
+#define EX__BASE	64	/*	T{
+base value for error messages */
+T}
+.P
+#define EX_USAGE	64	/*	T{
+command line usage error */
+T}
+#define EX_DATAERR	65	/*	T{
+data format error */
+T}
+#define EX_NOINPUT	66	/*	T{
+cannot open input */
+T}
+#define EX_NOUSER	67	/*	T{
+addressee unknown */
+T}
+#define EX_NOHOST	68	/*	T{
+host name unknown */
+T}
+#define EX_UNAVAILABLE	69	/*	T{
+service unavailable */
+T}
+#define EX_SOFTWARE	70	/*	T{
+internal software error */
+T}
+#define EX_OSERR	71	/*	T{
+system error (e.g., can't fork) */
+T}
+#define EX_OSFILE	72	/*	T{
+critical OS file missing */
+T}
+#define EX_CANTCREAT	73	/*	T{
+can't create (user) output file */
+T}
+#define EX_IOERR	74	/*	T{
+input/output error */
+T}
+#define EX_TEMPFAIL	75	/*	T{
+temp failure; user is invited to retry */
+T}
+#define EX_PROTOCOL	76	/*	T{
+remote error in protocol */
+T}
+#define EX_NOPERM	77	/*	T{
+permission denied */
+T}
+#define EX_CONFIG	78	/*	T{
+configuration error */
+T}
+.P
+.T&
+lB2 l2 l1 lX.
+#define EX__MAX	...	/*	T{
+maximum listed value */
+T}
+.TE
+.SH DESCRIPTION
+A few programs exit with the following error codes.
+.P
+The successful exit is always indicated by a status of
+.BR 0 ,
+or
+.B EX_OK
+(equivalent to
+.B EXIT_SUCCESS
+from
+.IR <stdlib.h> ).
+Error numbers begin at
+.B EX__BASE
+to reduce the possibility of clashing with other exit statuses
+that random programs may already return.
+The meaning of the code is approximately as follows:
+.TP
+.B EX_USAGE
+The command was used incorrectly,
+e.g.,
+with the wrong number of arguments,
+a bad flag,
+bad syntax in a parameter,
+or whatever.
+.TP
+.B EX_DATAERR
+The input data was incorrect in some way.
+This should only be used for user's data and not system files.
+.TP
+.B EX_NOINPUT
+An input file (not a system file) did not exist or was not readable.
+This could also include errors like "No message" to a mailer
+(if it cared to catch it).
+.TP
+.B EX_NOUSER
+The user specified did not exist.
+This might be used for mail addresses or remote logins.
+.TP
+.B EX_NOHOST
+The host specified did not exist.
+This is used in mail addresses or network requests.
+.TP
+.B EX_UNAVAILABLE
+A service is unavailable.
+This can occur if a support program or file does not exist.
+This can also be used as a catch-all message
+when something you wanted to do doesn't work, but you don't know why.
+.TP
+.B EX_SOFTWARE
+An internal software error has been detected.
+This should be limited to non-operating system related errors if possible.
+.TP
+.B EX_OSERR
+An operating system error has been detected.
+This is intended to be used for such things as
+"cannot fork",
+"cannot create pipe",
+or the like.
+It includes things like
+.BR getuid (2)
+returning a user that does not exist in the
+.BR passwd (5)
+file.
+.TP
+.B EX_OSFILE
+Some system file
+(e.g.,
+.IR /etc/passwd ,
+.IR /etc/utmp ,
+etc.)
+does not exist,
+cannot be opened,
+or has some sort of error (e.g., syntax error).
+.TP
+.B EX_CANTCREAT
+A (user specified) output file cannot be created.
+.TP
+.B EX_IOERR
+An error occurred while doing I/O on some file.
+.TP
+.B EX_TEMPFAIL
+Temporary failure,
+indicating something that is not really an error.
+For example that a mailer could not create a connection,
+and the request should be reattempted later.
+.TP
+.B EX_PROTOCOL
+The remote system returned something that
+was "not possible" during a protocol exchange.
+.TP
+.B EX_OSFILE
+You did not have sufficient permission to perform the operation.
+This is not intended for file system problems,
+which should use
+.B EX_NOINPUT
+or
+.BR EX_CANTCREAT ,
+but rather for higher level permissions.
+.TP
+.B EX_CONFIG
+Something was found in an unconfigured or misconfigured state.
+.P
+The numerical values corresponding to the symbolical ones
+are given in parenthesis for easy reference.
+.SH STANDARDS
+BSD.
+.SH HISTORY
+The
+.I <sysexits.h>
+file appeared in 4.0BSD for use by the deliverymail utility,
+later renamed to
+.BR sendmail (8).
+.SH CAVEATS
+The choice of an appropriate exit value is often ambiguous.
+.SH SEE ALSO
+.BR err (3),
+.BR error (3),
+.BR exit (3)

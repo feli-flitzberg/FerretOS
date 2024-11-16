@@ -1,0 +1,102 @@
+.\" Copyright (C) 2014 Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH uselocale 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+uselocale \- set/get the locale for the calling thread
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <locale.h>
+.P
+.BI "locale_t uselocale(locale_t " newloc );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR uselocale ():
+.nf
+    Since glibc 2.10:
+        _XOPEN_SOURCE >= 700
+    Before glibc 2.10:
+        _GNU_SOURCE
+.fi
+.SH DESCRIPTION
+The
+.BR uselocale ()
+function sets the current locale for the calling thread,
+and returns the thread's previously current locale.
+After a successful call to
+.BR uselocale (),
+any calls by this thread to functions that depend on the locale
+will operate as though the locale has been set to
+.IR newloc .
+.P
+The
+.I newloc
+argument can have one of the following values:
+.TP
+A handle returned by a call to \fBnewlocale\fP(3) or \fBduplocale\fP(3)
+The calling thread's current locale is set to the specified locale.
+.TP
+The special locale object handle \fBLC_GLOBAL_LOCALE\fP
+The calling thread's current locale is set to the global locale determined by
+.BR setlocale (3).
+.TP
+.I "(locale_t) 0"
+The calling thread's current locale is left unchanged
+(and the current locale is returned as the function result).
+.SH RETURN VALUE
+On success,
+.BR uselocale ()
+returns the locale handle that was set by the previous call to
+.BR uselocale ()
+in this thread, or
+.B LC_GLOBAL_LOCALE
+if there was no such previous call.
+On error, it returns
+.IR "(locale_t)\ 0" ,
+and sets
+.I errno
+to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+.I newloc
+does not refer to a valid locale object.
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+glibc 2.3.
+POSIX.1-2008.
+.SH NOTES
+Unlike
+.BR setlocale (3),
+.BR uselocale ()
+does not allow selective replacement of individual locale categories.
+To employ a locale that differs in only a few categories from the current
+locale, use calls to
+.BR duplocale (3)
+and
+.BR newlocale (3)
+to obtain a locale object equivalent to the current locale and
+modify the desired categories in that object.
+.SH EXAMPLES
+See
+.BR newlocale (3)
+and
+.BR duplocale (3).
+.SH SEE ALSO
+.BR locale (1),
+.BR duplocale (3),
+.BR freelocale (3),
+.BR newlocale (3),
+.BR setlocale (3),
+.BR locale (5),
+.BR locale (7)

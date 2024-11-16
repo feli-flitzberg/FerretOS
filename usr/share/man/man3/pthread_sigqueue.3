@@ -1,0 +1,109 @@
+'\" t
+.\" Copyright (c) 2010 Michael Kerrisk, <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH pthread_sigqueue 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+pthread_sigqueue \- queue a signal and data to a thread
+.SH LIBRARY
+POSIX threads library
+.RI ( libpthread ", " \-lpthread )
+.SH SYNOPSIS
+.nf
+.B #include <signal.h>
+.B #include <pthread.h>
+.P
+.BI "int pthread_sigqueue(pthread_t " thread ", int " sig ,
+.BI "                     const union sigval " value );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR pthread_sigqueue ():
+.nf
+    _GNU_SOURCE
+.fi
+.SH DESCRIPTION
+The
+.BR pthread_sigqueue ()
+function performs a similar task to
+.BR sigqueue (3),
+but, rather than sending a signal to a process,
+it sends a signal to a thread in the same process as the
+calling thread.
+.P
+The
+.I thread
+argument is the ID of a thread in the same process as the caller.
+The
+.I sig
+argument specifies the signal to be sent.
+The
+.I value
+argument specifies data to accompany the signal; see
+.BR sigqueue (3)
+for details.
+.SH RETURN VALUE
+On success,
+.BR pthread_sigqueue ()
+returns 0;
+on error, it returns an error number.
+.SH ERRORS
+.TP
+.B EAGAIN
+The limit of signals which may be queued has been reached.
+(See
+.BR signal (7)
+for further information.)
+.TP
+.B EINVAL
+.I sig
+was invalid.
+.TP
+.B ENOSYS
+.BR pthread_sigqueue ()
+is not supported on this system.
+.TP
+.B ESRCH
+.I thread
+is not valid.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR pthread_sigqueue ()
+T}	Thread safety	MT-Safe
+.TE
+.SH VERSIONS
+The glibc implementation of
+.BR pthread_sigqueue ()
+gives an error
+.RB ( EINVAL )
+on attempts to send either of the real-time signals
+used internally by the NPTL threading implementation.
+See
+.BR nptl (7)
+for details.
+.SH STANDARDS
+GNU.
+.SH HISTORY
+glibc 2.11.
+.SH SEE ALSO
+.BR rt_tgsigqueueinfo (2),
+.BR sigaction (2),
+.BR pthread_sigmask (3),
+.BR sigqueue (3),
+.BR sigwait (3),
+.BR pthreads (7),
+.BR signal (7)

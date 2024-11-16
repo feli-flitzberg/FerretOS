@@ -1,0 +1,80 @@
+'\" t
+.\" Copyright 2013 Michael Kerrisk <mtk.manpages@gmail.com>
+.\" (Replaces an earlier page by Walter Harms and Michael Kerrisk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH canonicalize_file_name 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+canonicalize_file_name \- return the canonicalized absolute pathname
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#define _GNU_SOURCE" "         /* See feature_test_macros(7) */"
+.B #include <stdlib.h>
+.P
+.BI "char *canonicalize_file_name(const char *" path ");"
+.fi
+.SH DESCRIPTION
+The
+.BR canonicalize_file_name ()
+function returns a null-terminated string containing
+the canonicalized absolute pathname corresponding to
+.IR path .
+In the returned string, symbolic links are resolved, as are
+.I .
+and
+.I ..
+pathname components.
+Consecutive slash
+.RI ( / )
+characters are replaced by a single slash.
+.P
+The returned string is dynamically allocated by
+.BR canonicalize_file_name ()
+and the caller should deallocate it with
+.BR free (3)
+when it is no longer required.
+.P
+The call
+.I canonicalize_file_name(path)
+is equivalent to the call:
+.P
+.in +4n
+.EX
+realpath(path, NULL);
+.EE
+.in
+.SH RETURN VALUE
+On success,
+.BR canonicalize_file_name ()
+returns a null-terminated string.
+On error (e.g., a pathname component is unreadable or does not exist),
+.BR canonicalize_file_name ()
+returns NULL and sets
+.I errno
+to indicate the error.
+.SH ERRORS
+See
+.BR realpath (3).
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR canonicalize_file_name ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+GNU.
+.SH SEE ALSO
+.BR readlink (2),
+.BR realpath (3)

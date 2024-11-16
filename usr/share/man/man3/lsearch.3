@@ -1,0 +1,94 @@
+'\" t
+.\" Copyright 1995 Jim Van Zandt <jrv@vanzandt.mv.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" Corrected prototype and include, aeb, 990927
+.TH lsearch 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+lfind, lsearch \- linear search of an array
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <search.h>
+.P
+.BI "void *lfind(const void " key [. size "], \
+const void " base [. size " * ." nmemb ],
+.BI "            size_t *" nmemb ", size_t " size ,
+.BI "            int(*" compar ")(const void [." size "], \
+const void [." size ]));
+.BI "void *lsearch(const void " key [. size "], \
+void " base [. size " * ." nmemb ],
+.BI "            size_t *" nmemb ", size_t " size ,
+.BI "            int(*" compar ")(const void [." size "], \
+const void [." size ]));
+.fi
+.SH DESCRIPTION
+.BR lfind ()
+and
+.BR lsearch ()
+perform a linear search for
+.I key
+in the array
+.I base
+which has
+.I *nmemb
+elements of
+.I size
+bytes each.
+The comparison function referenced by
+.I compar
+is expected to have two arguments which point to the
+.I key
+object and to an array member, in that order, and which
+returns zero if the
+.I key
+object matches the array member, and
+nonzero otherwise.
+.P
+If
+.BR lsearch ()
+does not find a matching element, then the
+.I key
+object is inserted at the end of the table, and
+.I *nmemb
+is
+incremented.
+In particular, one should know that a matching element
+exists, or that more room is available.
+.SH RETURN VALUE
+.BR lfind ()
+returns a pointer to a matching member of the array, or
+NULL if no match is found.
+.BR lsearch ()
+returns a pointer to
+a matching member of the array, or to the newly added member if no
+match is found.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR lfind (),
+.BR lsearch ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, SVr4, 4.3BSD.
+libc-4.6.27.
+.SH BUGS
+The naming is unfortunate.
+.SH SEE ALSO
+.BR bsearch (3),
+.BR hsearch (3),
+.BR tsearch (3)

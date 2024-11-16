@@ -1,0 +1,64 @@
+'\" t
+.\" Copyright (c) 2006 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH fcloseall 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+fcloseall \- close all open streams
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#define _GNU_SOURCE" "         /* See feature_test_macros(7) */"
+.B #include <stdio.h>
+.P
+.B int fcloseall(void);
+.fi
+.SH DESCRIPTION
+The
+.BR fcloseall ()
+function closes all of the calling process's open streams.
+Buffered output for each stream is written before it is closed
+(as for
+.BR fflush (3));
+buffered input is discarded.
+.P
+The standard streams,
+.IR stdin ,
+.IR stdout ,
+and
+.I stderr
+are also closed.
+.SH RETURN VALUE
+This function returns 0 if all files were successfully closed;
+on error,
+.B EOF
+is returned.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR fcloseall ()
+T}	Thread safety	MT-Unsafe race:streams
+.TE
+.P
+The
+.BR fcloseall ()
+function does not lock the streams, so it is not thread-safe.
+.SH STANDARDS
+GNU.
+.SH SEE ALSO
+.BR close (2),
+.BR fclose (3),
+.BR fflush (3),
+.BR fopen (3),
+.BR setbuf (3)

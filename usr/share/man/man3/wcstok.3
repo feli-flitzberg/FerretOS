@@ -1,0 +1,117 @@
+'\" t
+.\" Copyright (c) Bruno Haible <haible@clisp.cons.org>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" References consulted:
+.\"   GNU glibc-2 source code and manual
+.\"   Dinkumware C library reference http://www.dinkumware.com/
+.\"   OpenGroup's Single UNIX specification http://www.UNIX-systems.org/online.html
+.\"   ISO/IEC 9899:1999
+.\"
+.TH wcstok 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+wcstok \- split wide-character string into tokens
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <wchar.h>
+.P
+.BI "wchar_t *wcstok(wchar_t *restrict " wcs \
+", const wchar_t *restrict " delim ,
+.BI "                wchar_t **restrict " ptr );
+.fi
+.SH DESCRIPTION
+The
+.BR wcstok ()
+function is the wide-character equivalent of the
+.BR strtok (3)
+function,
+with an added argument to make it multithread-safe.
+It can be used
+to split a wide-character string
+.I wcs
+into tokens, where a token is
+defined as a substring not containing any wide-characters from
+.IR delim .
+.P
+The search starts at
+.IR wcs ,
+if
+.I wcs
+is not NULL,
+or at
+.IR *ptr ,
+if
+.I wcs
+is NULL.
+First, any delimiter wide-characters are skipped, that is, the
+pointer is advanced beyond any wide-characters which occur in
+.IR delim .
+If the end of the wide-character string is now
+reached,
+.BR wcstok ()
+returns NULL, to indicate that no tokens
+were found, and stores an appropriate value in
+.IR *ptr ,
+so that subsequent calls to
+.BR wcstok ()
+will continue to return NULL.
+Otherwise, the
+.BR wcstok ()
+function recognizes the beginning of a token
+and returns a pointer to it, but before doing that, it zero-terminates the
+token by replacing the next wide-character which occurs in
+.I delim
+with
+a null wide character (L\[aq]\[rs]0\[aq]),
+and it updates
+.I *ptr
+so that subsequent calls will
+continue searching after the end of recognized token.
+.SH RETURN VALUE
+The
+.BR wcstok ()
+function returns a pointer to the next token,
+or NULL if no further token was found.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR wcstok ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, C99.
+.SH NOTES
+The original
+.I wcs
+wide-character string is destructively modified during
+the operation.
+.SH EXAMPLES
+The following code loops over the tokens contained in a wide-character string.
+.P
+.EX
+wchar_t *wcs = ...;
+wchar_t *token;
+wchar_t *state;
+for (token = wcstok(wcs, L" \[rs]t\[rs]n", &state);
+    token != NULL;
+    token = wcstok(NULL, L" \[rs]t\[rs]n", &state)) {
+    ...
+}
+.EE
+.SH SEE ALSO
+.BR strtok (3),
+.BR wcschr (3)

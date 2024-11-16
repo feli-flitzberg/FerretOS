@@ -1,0 +1,92 @@
+.\" Copyright (c) 2020-2022 by Alejandro Colomar <alx@kernel.org>
+.\" and Copyright (c) 2020 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\"
+.TH off_t 3type 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+off_t, off64_t, loff_t \- file sizes
+.SH LIBRARY
+Standard C library
+.RI ( libc )
+.SH SYNOPSIS
+.nf
+.B #include <sys/types.h>
+.P
+.BR typedef " /* ... */  " off_t;
+.P
+.B #define _LARGEFILE64_SOURCE
+.B #include <sys/types.h>
+.P
+.BR typedef " /* ... */  " off64_t;
+.P
+.B #define _GNU_SOURCE
+.B #include <sys/types.h>
+.P
+.BR typedef " /* ... */  " loff_t;
+.fi
+.SH DESCRIPTION
+.I off_t
+is used for describing file sizes.
+It is a signed integer type.
+.P
+.I off64_t
+is a 64-bit version of the type,
+used in glibc.
+.P
+.I loff_t
+is a 64-bit version of the type,
+introduced by the Linux kernel.
+.SH STANDARDS
+.TP
+.I off_t
+POSIX.1-2008.
+.TP
+.I off64_t
+GNU and some BSDs.
+.TP
+.I loff_t
+Linux.
+.SH VERSIONS
+.TP
+.I off_t
+POSIX.1-2001.
+.P
+.I <aio.h>
+and
+.I <stdio.h>
+define
+.I off_t
+since POSIX.1-2008.
+.SH NOTES
+On some architectures,
+the width of
+.I off_t
+can be controlled with the feature test macro
+.BR _FILE_OFFSET_BITS .
+.P
+The following headers also provide
+.IR off_t :
+.IR <aio.h> ,
+.IR <fcntl.h> ,
+.IR <stdio.h> ,
+.IR <sys/mman.h> ,
+.IR <sys/stat.h> ,
+and
+.IR <unistd.h> .
+.SH SEE ALSO
+.BR copy_file_range (2),
+.BR llseek (2),
+.BR lseek (2),
+.BR mmap (2),
+.BR posix_fadvise (2),
+.BR pread (2),
+.BR readahead (2),
+.BR sync_file_range (2),
+.BR truncate (2),
+.BR fseeko (3),
+.BR lockf (3),
+.BR lseek64 (3),
+.BR posix_fallocate (3),
+.BR feature_test_macros (7)

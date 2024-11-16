@@ -1,0 +1,99 @@
+'\" t
+.\" Copyright (c) 2012 YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH if_nametoindex 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+if_nametoindex, if_indextoname \- mappings between network interface
+names and indexes
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <net/if.h>
+.P
+.BI "unsigned int if_nametoindex(const char *" "ifname" );
+.BI "char *if_indextoname(unsigned int ifindex, char *" ifname );
+.fi
+.SH DESCRIPTION
+The
+.BR if_nametoindex ()
+function returns the index of the network interface
+corresponding to the name
+.IR ifname .
+.P
+The
+.BR if_indextoname ()
+function returns the name of the network interface
+corresponding to the interface index
+.IR ifindex .
+The name is placed in the buffer pointed to by
+.IR ifname .
+The buffer must allow for the storage of at least
+.B IF_NAMESIZE
+bytes.
+.SH RETURN VALUE
+On success,
+.BR if_nametoindex ()
+returns the index number of the network interface;
+on error, 0 is returned and
+.I errno
+is set to indicate the error.
+.P
+On success,
+.BR if_indextoname ()
+returns
+.IR ifname ;
+on error, NULL is returned and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.BR if_nametoindex ()
+may fail and set
+.I errno
+if:
+.TP
+.B ENODEV
+No interface found with given name.
+.P
+.BR if_indextoname ()
+may fail and set
+.I errno
+if:
+.TP
+.B ENXIO
+No interface found for the index.
+.P
+.BR if_nametoindex ()
+and
+.BR if_indextoname ()
+may also fail for any of the errors specified for
+.BR socket (2)
+or
+.BR ioctl (2).
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR if_nametoindex (),
+.BR if_indextoname ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008, RFC\ 3493.
+.SH HISTORY
+POSIX.1-2001.
+BSDi.
+.SH SEE ALSO
+.BR getifaddrs (3),
+.BR if_nameindex (3),
+.BR ifconfig (8)

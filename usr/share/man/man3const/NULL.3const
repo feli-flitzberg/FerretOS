@@ -1,0 +1,75 @@
+.\" Copyright (c) 2022 by Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\"
+.TH NULL 3const 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+NULL \- null pointer constant
+.SH LIBRARY
+Standard C library
+.RI ( libc )
+.SH SYNOPSIS
+.nf
+.B #include <stddef.h>
+.P
+.B "#define NULL  ((void *) 0)"
+.fi
+.SH DESCRIPTION
+.B NULL
+represents a null pointer constant,
+that is, a pointer that does not point to anything.
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+C89, POSIX.1-2001.
+.SH NOTES
+The following headers also provide
+.BR NULL :
+.IR <locale.h> ,
+.IR <stdio.h> ,
+.IR <stdlib.h> ,
+.IR <string.h> ,
+.IR <time.h> ,
+.IR <unistd.h> ,
+and
+.IR <wchar.h> .
+.SH CAVEATS
+It is undefined behavior to dereference a null pointer,
+and that usually causes a segmentation fault in practice.
+.P
+It is also undefined behavior to perform pointer arithmetic on it.
+.P
+.I NULL \- NULL
+is undefined behavior, according to ISO C, but is defined to be 0 in C++.
+.P
+To avoid confusing human readers of the code,
+do not compare pointer variables to
+.BR 0 ,
+and do not assign
+.B 0
+to them.
+Instead, always use
+.BR NULL .
+.P
+.B NULL
+shouldn't be confused with
+.BR NUL ,
+which is an
+.BR ascii (7)
+character,
+represented in C as
+.BR \[aq]\[rs]0\[aq] .
+.SH BUGS
+When it is necessary to set a pointer variable to a null pointer,
+it is not enough to use
+.BR memset (3)
+to zero the pointer
+(this is usually done when zeroing a struct that contains pointers),
+since ISO C and POSIX don't guarantee that a bit pattern of all 0s
+represent a null pointer.
+See the EXAMPLES section in
+.BR getaddrinfo (3)
+for an example program that does this correctly.
+.SH SEE ALSO
+.BR void (3type)

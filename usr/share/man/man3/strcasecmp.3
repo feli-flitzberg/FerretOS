@@ -1,0 +1,112 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 18:12:45 1993 by Rik Faith (faith@cs.unc.edu)
+.TH strcasecmp 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+strcasecmp, strncasecmp \- compare two strings ignoring case
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <strings.h>
+.P
+.BI "int strcasecmp(const char *" s1 ", const char *" s2 );
+.BI "int strncasecmp(const char " s1 [. n "], const char " s2 [. n "], \
+size_t " n );
+.fi
+.SH DESCRIPTION
+The
+.BR strcasecmp ()
+function performs a byte-by-byte comparison of the strings
+.I s1
+and
+.IR s2 ,
+ignoring the case of the characters.
+It returns an integer
+less than, equal to, or greater than zero if
+.I s1
+is found,
+respectively, to be less than, to match, or be greater than
+.IR s2 .
+.P
+The
+.BR strncasecmp ()
+function is similar, except that it compares
+no more than
+.I n
+bytes of
+.I s1
+and
+.IR s2 .
+.SH RETURN VALUE
+The
+.BR strcasecmp ()
+and
+.BR strncasecmp ()
+functions return
+an integer less than, equal to, or greater than zero if
+.I s1
+is, after ignoring case, found to be
+less than, to match, or be greater than
+.IR s2 ,
+respectively.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR strcasecmp (),
+.BR strncasecmp ()
+T}	Thread safety	MT-Safe locale
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+4.4BSD, POSIX.1-2001.
+.P
+The
+.BR strcasecmp ()
+and
+.BR strncasecmp ()
+functions first appeared in 4.4BSD, where they were declared in
+.IR <string.h> .
+Thus, for reasons of historical compatibility, the glibc
+.I <string.h>
+header file also declares these functions, if the
+.B _DEFAULT_SOURCE
+(or, in glibc 2.19 and earlier,
+.BR _BSD_SOURCE )
+feature test macro is defined.
+.P
+The POSIX.1-2008 standard says of these functions:
+.P
+.RS
+When the
+.B LC_CTYPE
+category of the locale being used is from the POSIX locale,
+these functions shall behave as if the strings had been converted
+to lowercase and then a byte comparison performed.
+Otherwise, the results are unspecified.
+.RE
+.SH SEE ALSO
+.BR memcmp (3),
+.BR strcmp (3),
+.BR strcoll (3),
+.BR string (3),
+.BR strncmp (3),
+.BR wcscasecmp (3),
+.BR wcsncasecmp (3)

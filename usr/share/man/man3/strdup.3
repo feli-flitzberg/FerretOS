@@ -1,0 +1,145 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sun Jul 25 10:41:34 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Wed Oct 17 01:12:26 2001 by John Levon <moz@compsoc.man.ac.uk>
+.TH strdup 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+strdup, strndup, strdupa, strndupa \- duplicate a string
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <string.h>
+.P
+.BI "char *strdup(const char *" s );
+.P
+.BI "char *strndup(const char " s [. n "], size_t " n );
+.BI "char *strdupa(const char *" s );
+.BI "char *strndupa(const char " s [. n "], size_t " n );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR strdup ():
+.nf
+    _XOPEN_SOURCE >= 500
+.\"    || _XOPEN_SOURCE && _XOPEN_SOURCE_EXTENDED
+        || /* Since glibc 2.12: */ _POSIX_C_SOURCE >= 200809L
+        || /* glibc <= 2.19: */ _BSD_SOURCE || _SVID_SOURCE
+.fi
+.P
+.BR strndup ():
+.nf
+    Since glibc 2.10:
+        _POSIX_C_SOURCE >= 200809L
+    Before glibc 2.10:
+        _GNU_SOURCE
+.fi
+.P
+.BR strdupa (),
+.BR strndupa ():
+.nf
+    _GNU_SOURCE
+.fi
+.SH DESCRIPTION
+The
+.BR strdup ()
+function returns a pointer to a new string which
+is a duplicate of the string
+.IR s .
+Memory for the new string is
+obtained with
+.BR malloc (3),
+and can be freed with
+.BR free (3).
+.P
+The
+.BR strndup ()
+function is similar, but copies at most
+.I n
+bytes.
+If
+.I s
+is longer than
+.IR n ,
+only
+.I n
+bytes are copied, and a terminating null byte (\[aq]\[rs]0\[aq]) is added.
+.P
+.BR strdupa ()
+and
+.BR strndupa ()
+are similar, but use
+.BR alloca (3)
+to allocate the buffer.
+.SH RETURN VALUE
+On success, the
+.BR strdup ()
+function returns a pointer to the duplicated
+string.
+It returns NULL if insufficient memory was available, with
+.I errno
+set to indicate the error.
+.SH ERRORS
+.TP
+.B ENOMEM
+Insufficient memory available to allocate duplicate string.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR strdup (),
+.BR strndup (),
+.BR strdupa (),
+.BR strndupa ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+.TP
+.BR strdup ()
+.TQ
+.BR strndup ()
+POSIX.1-2008.
+.TP
+.BR strdupa ()
+.TQ
+.BR strndupa ()
+GNU.
+.SH HISTORY
+.TP
+.BR strdup ()
+SVr4, 4.3BSD-Reno, POSIX.1-2001.
+.TP
+.BR strndup ()
+POSIX.1-2008.
+.TP
+.BR strdupa ()
+.TQ
+.BR strndupa ()
+GNU.
+.SH SEE ALSO
+.BR alloca (3),
+.BR calloc (3),
+.BR free (3),
+.BR malloc (3),
+.BR realloc (3),
+.BR string (3),
+.BR wcsdup (3)

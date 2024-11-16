@@ -1,0 +1,56 @@
+.\" Copyright (c) 2024 by Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH wint_t 3type 2024-05-03 "Linux man-pages 6.9.1"
+.SH NAME
+wint_t,
+WEOF
+\-
+integer type capable of storing any wchar_t of WEOF
+.SH LIBRARY
+Standard C library
+.RI ( libc )
+.SH SYNOPSIS
+.nf
+.B #include <wchar.h>
+.P
+.BR typedef " /* ... */  " wint_t;
+.P
+.BR "#define WEOF        " "/* ... */"
+.P
+.B #include <stdint.h>
+.P
+.BR "#define WINT_WIDTH  " "/* ... */"
+.BR "#define WINT_MAX    " "/* ... */"
+.BR "#define WINT_MIN    " "/* ... */"
+.fi
+.SH DESCRIPTION
+.I wint_t
+is a type used in functions that work with wide characters.
+It is capable of storing any valid wchar_t or WEOF.
+It is an integer type.
+.P
+.B WEOF
+is used by wide-character functions
+to indicate the end of an input file
+or an error.
+It is of type
+.IR wint_t .
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+C99, POSIX.1-2001.
+.P
+The
+.B WINT_WIDTH
+macro was added in C23.
+.SH NOTES
+The following header also provides
+.I wint_t
+and
+.BR WEOF :
+.IR <wctype.h> .
+.SH SEE ALSO
+.BR wchar_t (3type),
+.BR fputwc (3)

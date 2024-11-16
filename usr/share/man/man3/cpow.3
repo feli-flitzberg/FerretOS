@@ -1,0 +1,53 @@
+'\" t
+.\" Copyright 2002 Walter Harms (walter.harms@informatik.uni-oldenburg.de)
+.\"
+.\" SPDX-License-Identifier: GPL-1.0-or-later
+.\"
+.TH cpow 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+cpow, cpowf, cpowl \- complex power function
+.SH LIBRARY
+Math library
+.RI ( libm ", " \-lm )
+.SH SYNOPSIS
+.nf
+.B #include <complex.h>
+.P
+.BI "double complex cpow(double complex " x ", double complex " z );
+.BI "float complex cpowf(float complex " x ", float complex " z );
+.BI "long double complex cpowl(long double complex " x ,
+.BI "                          long double complex " z );
+.fi
+.SH DESCRIPTION
+These functions calculate
+.I x
+raised to the power
+.I z
+(with a branch cut for
+.I x
+along the negative real axis).
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR cpow (),
+.BR cpowf (),
+.BR cpowl ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+glibc 2.1.
+C99, POSIX.1-2001.
+.SH SEE ALSO
+.BR cabs (3),
+.BR pow (3),
+.BR complex (7)

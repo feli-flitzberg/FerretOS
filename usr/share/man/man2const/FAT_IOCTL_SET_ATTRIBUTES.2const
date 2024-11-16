@@ -1,0 +1,187 @@
+.\" Copyright 2014, Heinrich Schuchardt <xypron.glpk@gmx.de>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH FAT_IOCTL_SET_ATTRIBUTES 2const 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+FAT_IOCTL_GET_ATTRIBUTES,
+FAT_IOCTL_SET_ATTRIBUTES
+\-
+get and set file attributes in a FAT filesystem
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/msdos_fs.h>" "  /* Definition of " FAT_* " and"
+.RB "                                " ATTR_* " constants */"
+.B #include <sys/ioctl.h>
+.P
+.BI "int ioctl(int " fd ", FAT_IOCTL_GET_ATTRIBUTES, uint32_t *" attr );
+.BI "int ioctl(int " fd ", FAT_IOCTL_SET_ATTRIBUTES, uint32_t *" attr );
+.fi
+.SH DESCRIPTION
+Files and directories in the FAT filesystem possess an attribute bit mask that
+can be read with
+.B FAT_IOCTL_GET_ATTRIBUTES
+and written with
+.BR FAT_IOCTL_SET_ATTRIBUTES .
+.P
+The
+.I fd
+argument contains a file descriptor for a file or directory.
+It is sufficient to create the file descriptor by calling
+.BR open (2)
+with the
+.B O_RDONLY
+flag.
+.P
+The
+.I attr
+argument contains a pointer to a bit mask.
+The bits of the bit mask are:
+.TP
+.B ATTR_RO
+This bit specifies that the file or directory is read-only.
+.TP
+.B ATTR_HIDDEN
+This bit specifies that the file or directory is hidden.
+.TP
+.B ATTR_SYS
+This bit specifies that the file is a system file.
+.TP
+.B ATTR_VOLUME
+This bit specifies that the file is a volume label.
+This attribute is read-only.
+.TP
+.B ATTR_DIR
+This bit specifies that this is a directory.
+This attribute is read-only.
+.TP
+.B ATTR_ARCH
+This bit indicates that this file or directory should be archived.
+It is set when a file is created or modified.
+It is reset by an archiving system.
+.P
+The zero value
+.B ATTR_NONE
+can be used to indicate that no attribute bit is set.
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+.\" just before we got Git history
+Linux 2.6.12.
+.SH EXAMPLES
+The following program demonstrates the usage of
+.BR ioctl (2)
+to manipulate file attributes.
+The program reads and displays the archive attribute of a file.
+After inverting the value of the attribute,
+the program reads and displays the attribute again.
+.P
+The following was recorded when applying the program for the file
+.IR /mnt/user/foo :
+.P
+.in +4n
+.EX
+# ./toggle_fat_archive_flag /mnt/user/foo
+Archive flag is set
+Toggling archive flag
+Archive flag is not set
+.EE
+.in
+.SS Program source (toggle_fat_archive_flag.c)
+\&
+.\" SRC BEGIN (toggle_fat_archive_flag.c)
+.EX
+#include <fcntl.h>
+#include <linux/msdos_fs.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
+\&
+/*
+ * Read file attributes of a file on a FAT filesystem.
+ * Output the state of the archive flag.
+ */
+static uint32_t
+readattr(int fd)
+{
+    int       ret;
+    uint32_t  attr;
+\&
+    ret = ioctl(fd, FAT_IOCTL_GET_ATTRIBUTES, &attr);
+    if (ret == \-1) {
+        perror("ioctl");
+        exit(EXIT_FAILURE);
+    }
+\&
+    if (attr & ATTR_ARCH)
+        printf("Archive flag is set\[rs]n");
+    else
+        printf("Archive flag is not set\[rs]n");
+\&
+    return attr;
+}
+\&
+int
+main(int argc, char *argv[])
+{
+    int       fd;
+    int       ret;
+    uint32_t  attr;
+\&
+    if (argc != 2) {
+        printf("Usage: %s FILENAME\[rs]n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+\&
+    fd = open(argv[1], O_RDONLY);
+    if (fd == \-1) {
+        perror("open");
+        exit(EXIT_FAILURE);
+    }
+\&
+    /*
+     * Read and display the FAT file attributes.
+     */
+    attr = readattr(fd);
+\&
+    /*
+     * Invert archive attribute.
+     */
+    printf("Toggling archive flag\[rs]n");
+    attr \[ha]= ATTR_ARCH;
+\&
+    /*
+     * Write the changed FAT file attributes.
+     */
+    ret = ioctl(fd, FAT_IOCTL_SET_ATTRIBUTES, &attr);
+    if (ret == \-1) {
+        perror("ioctl");
+        exit(EXIT_FAILURE);
+    }
+\&
+    /*
+     * Read and display the FAT file attributes.
+     */
+    readattr(fd);
+\&
+    close(fd);
+\&
+    exit(EXIT_SUCCESS);
+}
+.EE
+.\" SRC END
+.SH SEE ALSO
+.BR ioctl (2),
+.BR ioctl_fat (2)

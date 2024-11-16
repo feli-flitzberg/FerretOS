@@ -1,0 +1,242 @@
+.\" Copyright (c) 2020 by Alejandro Colomar <alx@kernel.org>
+.\" and Copyright (c) 2020 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\"
+.TH system_data_types 7 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+system_data_types \- overview of system data types
+.SH DESCRIPTION
+.\" Layout:
+.\"	A list of type names (the struct/union keyword will be omitted).
+.\"	Each entry will have the following parts:
+.\"		* Include (see NOTES)
+.\"
+.\"		* Definition (no "Definition" header)
+.\"			Only struct/union types will have definition;
+.\"			typedefs will remain opaque.
+.\"
+.\"		* Description (no "Description" header)
+.\"			A few lines describing the type.
+.\"
+.\"		* Versions (optional)
+.\"
+.\"		* Conforming to (see NOTES)
+.\"			Format: CXY and later; POSIX.1-XXXX and later.
+.\"
+.\"		* Notes (optional)
+.\"
+.\"		* Bugs (if any)
+.\"
+.\"		* See also
+.\"------------------------------------- aiocb ------------------------/
+.\"------------------------------------- blkcnt_t ---------------------/
+.\"------------------------------------- blksize_t --------------------/
+.\"------------------------------------- cc_t -------------------------/
+.\"------------------------------------- clock_t ----------------------/
+.\"------------------------------------- clockid_t --------------------/
+.\"------------------------------------- dev_t ------------------------/
+.\"------------------------------------- div_t ------------------------/
+.\"------------------------------------- double_t ---------------------/
+.\"------------------------------------- fd_set -----------------------/
+.\"------------------------------------- fenv_t -----------------------/
+.\"------------------------------------- fexcept_t --------------------/
+.\"------------------------------------- FILE -------------------------/
+.\"------------------------------------- float_t ----------------------/
+.\"------------------------------------- gid_t ------------------------/
+.\"------------------------------------- id_t -------------------------/
+.\"------------------------------------- imaxdiv_t --------------------/
+.\"------------------------------------- intmax_t ---------------------/
+.\"------------------------------------- intN_t -----------------------/
+.\"------------------------------------- intptr_t ---------------------/
+.\"------------------------------------- lconv ------------------------/
+.\"------------------------------------- ldiv_t -----------------------/
+.\"------------------------------------- lldiv_t ----------------------/
+.\"------------------------------------- mode_t -----------------------/
+.\"------------------------------------- off64_t ----------------------/
+.\"------------------------------------- off_t ------------------------/
+.\"------------------------------------- pid_t ------------------------/
+.\"------------------------------------- ptrdiff_t --------------------/
+.\"------------------------------------- regex_t ----------------------/
+.\"------------------------------------- regmatch_t -------------------/
+.\"------------------------------------- regoff_t ---------------------/
+.\"------------------------------------- sigevent ---------------------/
+.\"------------------------------------- siginfo_t --------------------/
+.TP
+.I siginfo_t
+.RS
+.IR Include :
+.IR <signal.h> .
+Alternatively,
+.IR <sys/wait.h> .
+.P
+.EX
+typedef struct {
+    int      si_signo;  /* Signal number */
+    int      si_code;   /* Signal code */
+    pid_t    si_pid;    /* Sending process ID */
+    uid_t    si_uid;    /* Real user ID of sending process */
+    void    *si_addr;   /* Memory location which caused fault */
+    int      si_status; /* Exit value or signal */
+    union sigval si_value;  /* Signal value */
+} siginfo_t;
+.EE
+.P
+Information associated with a signal.
+For further details on this structure
+(including additional, Linux-specific fields), see
+.BR sigaction (2).
+.P
+.IR "Conforming to" :
+POSIX.1-2001 and later.
+.P
+.IR "See also" :
+.BR pidfd_send_signal (2),
+.BR rt_sigqueueinfo (2),
+.BR sigaction (2),
+.BR sigwaitinfo (2),
+.BR psiginfo (3)
+.RE
+.\"------------------------------------- sigset_t ---------------------/
+.TP
+.I sigset_t
+.RS
+.IR Include :
+.IR <signal.h> .
+Alternatively,
+.IR <spawn.h> ,
+or
+.IR <sys/select.h> .
+.P
+This is a type that represents a set of signals.
+According to POSIX, this shall be an integer or structure type.
+.P
+.IR "Conforming to" :
+POSIX.1-2001 and later.
+.P
+.IR "See also" :
+.BR epoll_pwait (2),
+.BR ppoll (2),
+.BR pselect (2),
+.BR sigaction (2),
+.BR signalfd (2),
+.BR sigpending (2),
+.BR sigprocmask (2),
+.BR sigsuspend (2),
+.BR sigwaitinfo (2),
+.BR signal (7)
+.RE
+.\"------------------------------------- sigval -----------------------/
+.\"------------------------------------- size_t -----------------------/
+.\"------------------------------------- sockaddr ---------------------/
+.\"------------------------------------- socklen_t --------------------/
+.\"------------------------------------- ssize_t ----------------------/
+.\"------------------------------------- stat -------------------------/
+.\"------------------------------------- suseconds_t ------------------/
+.\"------------------------------------- time_t -----------------------/
+.\"------------------------------------- timer_t ----------------------/
+.\"------------------------------------- timespec ---------------------/
+.\"------------------------------------- timeval ----------------------/
+.\"------------------------------------- uid_t ----------------------/
+.\"------------------------------------- uintmax_t --------------------/
+.\"------------------------------------- uintN_t ----------------------/
+.\"------------------------------------- uintptr_t --------------------/
+.\"------------------------------------- useconds_t -------------------/
+.\"------------------------------------- va_list ----------------------/
+.\"------------------------------------- void * -----------------------/
+.\"--------------------------------------------------------------------/
+.SH NOTES
+The structures described in this manual page shall contain,
+at least, the members shown in their definition, in no particular order.
+.P
+Most of the integer types described in this page don't have
+a corresponding length modifier for the
+.BR printf (3)
+and the
+.BR scanf (3)
+families of functions.
+To print a value of an integer type that doesn't have a length modifier,
+it should be converted to
+.I intmax_t
+or
+.I uintmax_t
+by an explicit cast.
+To scan into a variable of an integer type
+that doesn't have a length modifier,
+an intermediate temporary variable of type
+.I intmax_t
+or
+.I uintmax_t
+should be used.
+When copying from the temporary variable to the destination variable,
+the value could overflow.
+If the type has upper and lower limits,
+the user should check that the value is within those limits,
+before actually copying the value.
+The example below shows how these conversions should be done.
+.SS Conventions used in this page
+In "Conforming to" we only concern ourselves with
+C99 and later and POSIX.1-2001 and later.
+Some types may be specified in earlier versions of one of these standards,
+but in the interests of simplicity we omit details from earlier standards.
+.P
+In "Include", we first note the "primary" header(s) that
+define the type according to either the C or POSIX.1 standards.
+Under "Alternatively", we note additional headers that
+the standards specify shall define the type.
+.SH EXAMPLES
+The program shown below scans from a string and prints a value stored in
+a variable of an integer type that doesn't have a length modifier.
+The appropriate conversions from and to
+.IR intmax_t ,
+and the appropriate range checks,
+are used as explained in the notes section above.
+.P
+.EX
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+\&
+int
+main (void)
+{
+    static const char *const str = "500000 us in half a second";
+    suseconds_t us;
+    intmax_t    tmp;
+\&
+    /* Scan the number from the string into the temporary variable. */
+\&
+    sscanf(str, "%jd", &tmp);
+\&
+    /* Check that the value is within the valid range of suseconds_t. */
+\&
+    if (tmp < \-1 || tmp > 1000000) {
+        fprintf(stderr, "Scanned value outside valid range!\[rs]n");
+        exit(EXIT_FAILURE);
+    }
+\&
+    /* Copy the value to the suseconds_t variable \[aq]us\[aq]. */
+\&
+    us = tmp;
+\&
+    /* Even though suseconds_t can hold the value \-1, this isn\[aq]t
+       a sensible number of microseconds. */
+\&
+    if (us < 0) {
+        fprintf(stderr, "Scanned value shouldn\[aq]t be negative!\[rs]n");
+        exit(EXIT_FAILURE);
+    }
+\&
+    /* Print the value. */
+\&
+    printf("There are %jd microseconds in half a second.\[rs]n",
+            (intmax_t) us);
+\&
+    exit(EXIT_SUCCESS);
+}
+.EE
+.SH SEE ALSO
+.BR feature_test_macros (7),
+.BR standards (7)

@@ -1,0 +1,78 @@
+'\" t
+.\" Copyright (c) 2009 Michael Kerrisk, <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH pthread_yield 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+pthread_yield \- yield the processor
+.SH LIBRARY
+POSIX threads library
+.RI ( libpthread ", " \-lpthread )
+.SH SYNOPSIS
+.nf
+.BR "#define _GNU_SOURCE" "             /* See feature_test_macros(7) */"
+.B #include <pthread.h>
+.P
+.B [[deprecated]] int pthread_yield(void);
+.fi
+.SH DESCRIPTION
+.BR Note :
+This function is deprecated; see below.
+.P
+.BR pthread_yield ()
+causes the calling thread to relinquish the CPU.
+The thread is placed at the end of the run queue for its static
+priority and another thread is scheduled to run.
+For further details, see
+.BR sched_yield (2)
+.SH RETURN VALUE
+On success,
+.BR pthread_yield ()
+returns 0;
+on error, it returns an error number.
+.SH ERRORS
+On Linux, this call always succeeds
+(but portable and future-proof applications should nevertheless
+handle a possible error return).
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR pthread_yield ()
+T}	Thread safety	MT-Safe
+.TE
+.SH VERSIONS
+On Linux, this function is implemented as a call to
+.BR sched_yield (2).
+.SH STANDARDS
+None.
+.SH HISTORY
+.\" BSD, Tru64, AIX, and Irix.
+Deprecated since glibc 2.34.
+Use the standardized
+.BR sched_yield (2)
+instead.
+.SH NOTES
+.BR pthread_yield ()
+is intended for use with real-time scheduling policies (i.e.,
+.B SCHED_FIFO
+or
+.BR SCHED_RR ).
+Use of
+.BR pthread_yield ()
+with nondeterministic scheduling policies such as
+.B SCHED_OTHER
+is unspecified and very likely means your application design is broken.
+.SH SEE ALSO
+.BR sched_yield (2),
+.\" FIXME . .BR pthread_cond_wait (3),
+.BR pthreads (7),
+.BR sched (7)

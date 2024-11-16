@@ -1,0 +1,290 @@
+'\" t
+.\" Copyright (C) 2005, 2013 Michael Kerrisk <mtk.manpages@gmail.com>
+.\" a few fragments from an earlier (1996) version by
+.\" Andries Brouwer (aeb@cwi.nl) remain.
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" Rewritten old page, 960210, aeb@cwi.nl
+.\" Updated, added strtok_r. 2000-02-13 Nicolás Lichtmaier <nick@debian.org>
+.\" 2005-11-17, mtk: Substantial parts rewritten
+.\" 2013-05-19, mtk: added much further detail on the operation of strtok()
+.\"
+.TH strtok 3 2024-06-16 "Linux man-pages 6.9.1"
+.SH NAME
+strtok, strtok_r \- extract tokens from strings
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <string.h>
+.P
+.BI "char *strtok(char *_Nullable restrict " str \
+", const char *restrict " delim );
+.BI "char *strtok_r(char *_Nullable restrict " str \
+", const char *restrict " delim ,
+.BI "               char **restrict " saveptr );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR strtok_r ():
+.nf
+    _POSIX_C_SOURCE
+        || /* glibc <= 2.19: */ _BSD_SOURCE || _SVID_SOURCE
+.fi
+.SH DESCRIPTION
+The
+.BR strtok ()
+function breaks a string into a sequence of zero or more nonempty tokens.
+On the first call to
+.BR strtok (),
+the string to be parsed should be
+specified in
+.IR str .
+In each subsequent call that should parse the same string,
+.I str
+must be NULL.
+.P
+The
+.I delim
+argument specifies a set of bytes that
+delimit the tokens in the parsed string.
+The caller may specify different strings in
+.I delim
+in successive
+calls that parse the same string.
+.P
+Each call to
+.BR strtok ()
+returns a pointer to a
+null-terminated string containing the next token.
+This string does not include the delimiting byte.
+If no more tokens are found,
+.BR strtok ()
+returns NULL.
+.P
+A sequence of calls to
+.BR strtok ()
+that operate on the same string maintains a pointer
+that determines the point from which to start searching for the next token.
+The first call to
+.BR strtok ()
+sets this pointer to point to the first byte of the string.
+The start of the next token is determined by scanning forward
+for the next nondelimiter byte in
+.IR str .
+If such a byte is found, it is taken as the start of the next token.
+If no such byte is found,
+then there are no more tokens, and
+.BR strtok ()
+returns NULL.
+(A string that is empty or that contains only delimiters
+will thus cause
+.BR strtok ()
+to return NULL on the first call.)
+.P
+The end of each token is found by scanning forward until either
+the next delimiter byte is found or until the
+terminating null byte (\[aq]\[rs]0\[aq]) is encountered.
+If a delimiter byte is found, it is overwritten with
+a null byte to terminate the current token, and
+.BR strtok ()
+saves a pointer to the following byte;
+that pointer will be used as the starting point
+when searching for the next token.
+In this case,
+.BR strtok ()
+returns a pointer to the start of the found token.
+.P
+From the above description,
+it follows that a sequence of two or more contiguous delimiter bytes in
+the parsed string is considered to be a single delimiter, and that
+delimiter bytes at the start or end of the string are ignored.
+Put another way: the tokens returned by
+.BR strtok ()
+are always nonempty strings.
+Thus, for example, given the string "\fIaaa;;bbb,\fP",
+successive calls to
+.BR strtok ()
+that specify the delimiter string "\fI;,\fP"
+would return the strings "\fIaaa\fP" and "\fIbbb\fP",
+and then a null pointer.
+.P
+The
+.BR strtok_r ()
+function is a reentrant version of
+.BR strtok ().
+The
+.I saveptr
+argument is a pointer to a
+.I char\~*
+variable that is used internally by
+.BR strtok_r ()
+in order to maintain context between successive calls that parse the
+same string.
+.P
+On the first call to
+.BR strtok_r (),
+.I str
+should point to the string to be parsed, and the value of
+.I *saveptr
+is ignored (but see VERSIONS).
+In subsequent calls,
+.I str
+should be NULL, and
+.I saveptr
+(and the buffer that it points to)
+should be unchanged since the previous call.
+.P
+Different strings may be parsed concurrently using sequences of calls to
+.BR strtok_r ()
+that specify different
+.I saveptr
+arguments.
+.SH RETURN VALUE
+The
+.BR strtok ()
+and
+.BR strtok_r ()
+functions return a pointer to
+the next token, or NULL if there are no more tokens.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR strtok ()
+T}	Thread safety	MT-Unsafe race:strtok
+T{
+.na
+.nh
+.BR strtok_r ()
+T}	Thread safety	MT-Safe
+.TE
+.SH VERSIONS
+On some implementations,
+.\" Tru64, according to its manual page
+.I *saveptr
+is required to be NULL on the first call to
+.BR strtok_r ()
+that is being used to parse
+.IR str .
+.SH STANDARDS
+.TP
+.BR strtok ()
+C11, POSIX.1-2008.
+.TP
+.BR strtok_r ()
+POSIX.1-2008.
+.SH HISTORY
+.TP
+.BR strtok ()
+POSIX.1-2001, C89, SVr4, 4.3BSD.
+.TP
+.BR strtok_r ()
+POSIX.1-2001.
+.SH BUGS
+Be cautious when using these functions.
+If you do use them, note that:
+.IP \[bu] 3
+These functions modify their first argument.
+.IP \[bu]
+These functions cannot be used on constant strings.
+.IP \[bu]
+The identity of the delimiting byte is lost.
+.IP \[bu]
+The
+.BR strtok ()
+function uses a static buffer while parsing, so it's not thread safe.
+Use
+.BR strtok_r ()
+if this matters to you.
+.SH EXAMPLES
+The program below uses nested loops that employ
+.BR strtok_r ()
+to break a string into a two-level hierarchy of tokens.
+The first command-line argument specifies the string to be parsed.
+The second argument specifies the delimiter byte(s)
+to be used to separate that string into "major" tokens.
+The third argument specifies the delimiter byte(s)
+to be used to separate the "major" tokens into subtokens.
+.P
+An example of the output produced by this program is the following:
+.P
+.in +4n
+.EX
+.RB "$" " ./a.out \[aq]a/bbb///cc;xxx:yyy:\[aq] \[aq]:;\[aq] \[aq]/\[aq]"
+1: a/bbb///cc
+         \-\-> a
+         \-\-> bbb
+         \-\-> cc
+2: xxx
+         \-\-> xxx
+3: yyy
+         \-\-> yyy
+.EE
+.in
+.SS Program source
+\&
+.\" SRC BEGIN (strtok.c)
+.EX
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+\&
+int
+main(int argc, char *argv[])
+{
+    char *str1, *str2, *token, *subtoken;
+    char *saveptr1, *saveptr2;
+    int j;
+\&
+    if (argc != 4) {
+        fprintf(stderr, "Usage: %s string delim subdelim\[rs]n",
+                argv[0]);
+        exit(EXIT_FAILURE);
+    }
+\&
+    for (j = 1, str1 = argv[1]; ; j++, str1 = NULL) {
+        token = strtok_r(str1, argv[2], &saveptr1);
+        if (token == NULL)
+            break;
+        printf("%d: %s\[rs]n", j, token);
+\&
+        for (str2 = token; ; str2 = NULL) {
+            subtoken = strtok_r(str2, argv[3], &saveptr2);
+            if (subtoken == NULL)
+                break;
+            printf("\[rs]t \-\-> %s\[rs]n", subtoken);
+        }
+    }
+\&
+    exit(EXIT_SUCCESS);
+}
+.EE
+.\" SRC END
+.P
+Another example program using
+.BR strtok ()
+can be found in
+.BR getaddrinfo_a (3).
+.SH SEE ALSO
+.BR memchr (3),
+.BR strchr (3),
+.BR string (3),
+.BR strpbrk (3),
+.BR strsep (3),
+.BR strspn (3),
+.BR strstr (3),
+.BR wcstok (3)

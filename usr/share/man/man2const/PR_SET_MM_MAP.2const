@@ -1,0 +1,80 @@
+.\" Copyright 2012, Cyrill Gorcunov <gorcunov@openvz.org>
+.\" Copyright 2012, 2013, 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_SET_MM_MAP 2const 2024-06-01 "Linux man-pages 6.9.1"
+.SH NAME
+PR_SET_MM_MAP,
+PR_SET_MM_MAP_SIZE
+\-
+modify kernel memory map descriptor fields
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.B int prctl(PR_SET_MM, PR_SET_MM_MAP,
+.BI "          struct prctl_mm_map *" map ", unsigned long " size ", 0L);"
+.BI "int prctl(PR_SET_MM, PR_SET_MM_MAP_SIZE, unsigned int *" size ", 0L, 0L);"
+.fi
+.SH DESCRIPTION
+.TP
+.B PR_SET_MM_MAP
+Provides one-shot access to all the addresses modifyable with
+.BR PR_SET_MM (2const)
+by passing in a
+.I struct prctl_mm_map
+(as defined in \fI<linux/prctl.h>\fP).
+The
+.I size
+argument should provide the size of the struct.
+.TP
+.B PR_SET_MM_MAP_SIZE
+Returns
+(via the
+.I size
+argument)
+the size of the
+.I struct prctl_mm_map
+the kernel expects.
+This allows user space to find a compatible struct.
+.P
+These features are available only if the kernel is built with the
+.B CONFIG_CHECKPOINT_RESTORE
+option enabled.
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+The third argument
+is an invalid address.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 3.18.
+.\" commit f606b77f1a9e362451aca8f81d8f36a3a112139e
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_SET_MM (2const),
+.BR PR_SET_MM_START_CODE (2const),
+.BR PR_SET_MM_END_CODE (2const),
+.BR PR_SET_MM_START_DATA (2const),
+.BR PR_SET_MM_END_DATA (2const),
+.BR PR_SET_MM_START_STACK (2const),
+.BR PR_SET_MM_START_BRK (2const),
+.BR PR_SET_MM_BRK (2const),
+.BR PR_SET_MM_ARG_START (2const),
+.BR PR_SET_MM_ARG_END (2const),
+.BR PR_SET_MM_ENV_START (2const),
+.BR PR_SET_MM_ENV_END (2const),
+.BR PR_SET_MM_EXE_FILE (2const)

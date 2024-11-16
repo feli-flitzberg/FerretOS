@@ -1,0 +1,101 @@
+'\" t
+.\" Copyright (c) 2008 Linux Foundation, written by Michael Kerrisk
+.\"     <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH pthread_setschedprio 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+pthread_setschedprio \- set scheduling priority of a thread
+.SH LIBRARY
+POSIX threads library
+.RI ( libpthread ", " \-lpthread )
+.SH SYNOPSIS
+.nf
+.B #include <pthread.h>
+.P
+.BI "int pthread_setschedprio(pthread_t " thread ", int " prio );
+.fi
+.SH DESCRIPTION
+The
+.BR pthread_setschedprio ()
+function sets the scheduling priority of the thread
+.I thread
+to the value specified in
+.IR prio .
+(By contrast
+.BR pthread_setschedparam (3)
+changes both the scheduling policy and priority of a thread.)
+.\" FIXME . nptl/pthread_setschedprio.c has the following
+.\"   /* If the thread should have higher priority because of some
+.\"      PTHREAD_PRIO_PROTECT mutexes it holds, adjust the priority. */
+.\" Eventually (perhaps after writing the mutexattr pages), we
+.\" may want to add something on the topic to this page.
+.\" nptl/pthread_setschedparam.c has a similar case.
+.SH RETURN VALUE
+On success, this function returns 0;
+on error, it returns a nonzero error number.
+If
+.BR pthread_setschedprio ()
+fails, the scheduling priority of
+.I thread
+is not changed.
+.SH ERRORS
+.TP
+.B EINVAL
+.I prio
+is not valid for the scheduling policy of the specified thread.
+.TP
+.B EPERM
+The caller does not have appropriate privileges
+to set the specified priority.
+.TP
+.B ESRCH
+No thread with the ID
+.I thread
+could be found.
+.P
+POSIX.1 also documents an
+.B ENOTSUP
+("attempt was made to set the priority
+to an unsupported value") error for
+.BR pthread_setschedparam (3).
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR pthread_setschedprio ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+glibc 2.3.4.
+POSIX.1-2001.
+.SH NOTES
+For a description of the permissions required to, and the effect of,
+changing a thread's scheduling priority,
+and details of the permitted ranges for priorities
+in each scheduling policy, see
+.BR sched (7).
+.SH SEE ALSO
+.ad l
+.nh
+.BR getrlimit (2),
+.BR sched_get_priority_min (2),
+.BR pthread_attr_init (3),
+.BR pthread_attr_setinheritsched (3),
+.BR pthread_attr_setschedparam (3),
+.BR pthread_attr_setschedpolicy (3),
+.BR pthread_create (3),
+.BR pthread_self (3),
+.BR pthread_setschedparam (3),
+.BR pthreads (7),
+.BR sched (7)

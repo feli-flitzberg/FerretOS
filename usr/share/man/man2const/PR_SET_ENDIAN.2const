@@ -1,0 +1,50 @@
+.\" Copyright 2006, 2008, 2012, 2013, 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_SET_ENDIAN 2const 2024-06-02 "Linux man-pages 6.9.1"
+.SH NAME
+PR_SET_ENDIAN
+\-
+set endianness of the calling process
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.BI "int prctl(PR_SET_ENDIAN, long " endianness );
+.fi
+.SH DESCRIPTION
+Set the endian-ness of the calling process
+to the value given in
+.IR endianness ,
+which should be one of the following:
+.\" Respectively 0, 1, 2
+.BR PR_ENDIAN_BIG ,
+.BR PR_ENDIAN_LITTLE ,
+or
+.B PR_ENDIAN_PPC_LITTLE
+(PowerPC pseudo little endian).
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+.I endianness
+is not a valid value.
+.SH STANDARDS
+Linux.
+PowerPC only.
+.SH HISTORY
+Linux 2.6.18 (PowerPC).
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_GET_ENDIAN (2const)

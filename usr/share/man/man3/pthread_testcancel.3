@@ -1,0 +1,64 @@
+'\" t
+.\" Copyright (c) 2008 Linux Foundation, written by Michael Kerrisk
+.\"     <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH pthread_testcancel 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+pthread_testcancel \- request delivery of any pending cancelation request
+.SH LIBRARY
+POSIX threads library
+.RI ( libpthread ", " \-lpthread )
+.SH SYNOPSIS
+.nf
+.B #include <pthread.h>
+.P
+.B void pthread_testcancel(void);
+.fi
+.SH DESCRIPTION
+Calling
+.BR pthread_testcancel ()
+creates a cancelation point within the calling thread,
+so that a thread that is otherwise executing code that contains
+no cancelation points will respond to a cancelation request.
+.P
+If cancelability is disabled (using
+.BR pthread_setcancelstate (3)),
+or no cancelation request is pending,
+then a call to
+.BR pthread_testcancel ()
+has no effect.
+.SH RETURN VALUE
+This function does not return a value.
+If the calling thread is canceled as a consequence of a call
+to this function, then the function does not return.
+.SH ERRORS
+This function always succeeds.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR pthread_testcancel ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+glibc 2.0.
+POSIX.1-2001.
+.SH EXAMPLES
+See
+.BR pthread_cleanup_push (3).
+.SH SEE ALSO
+.BR pthread_cancel (3),
+.BR pthread_cleanup_push (3),
+.BR pthread_setcancelstate (3),
+.BR pthreads (7)

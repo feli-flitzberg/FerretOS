@@ -1,0 +1,110 @@
+.\" Copyright (c) 2020-2022 by Alejandro Colomar <alx@kernel.org>
+.\" and Copyright (c) 2020 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\"
+.TH id_t 3type 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+pid_t, uid_t, gid_t, id_t \- process/user/group identifier
+.SH LIBRARY
+Standard C library
+.RI ( libc )
+.SH SYNOPSIS
+.nf
+.B #include <sys/types.h>
+.P
+.BR typedef " /* ... */ " pid_t;
+.BR typedef " /* ... */ " uid_t;
+.BR typedef " /* ... */ " gid_t;
+.BR typedef " /* ... */ " id_t;
+.fi
+.SH DESCRIPTION
+.I pid_t
+is a type used for storing process IDs, process group IDs, and session IDs.
+It is a signed integer type.
+.P
+.I uid_t
+is a type used to hold user IDs.
+It is an integer type.
+.P
+.I gid_t
+is a type used to hold group IDs.
+It is an integer type.
+.P
+.I id_t
+is a type used to hold a general identifier.
+It is an integer type that can be used to contain a
+.IR pid_t ,
+.IR uid_t ,
+or
+.IR gid_t .
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001.
+.SH NOTES
+The following headers also provide
+.IR pid_t :
+.IR <fcntl.h> ,
+.IR <sched.h> ,
+.IR <signal.h> ,
+.IR <spawn.h> ,
+.IR <sys/msg.h> ,
+.IR <sys/sem.h> ,
+.IR <sys/shm.h> ,
+.IR <sys/wait.h> ,
+.IR <termios.h> ,
+.IR <time.h> ,
+.IR <unistd.h> ,
+and
+.IR <utmpx.h> .
+.P
+The following headers also provide
+.IR uid_t :
+.IR <pwd.h> ,
+.IR <signal.h> ,
+.IR <stropts.h> ,
+.IR <sys/ipc.h> ,
+.IR <sys/stat.h> ,
+and
+.IR <unistd.h> .
+.P
+The following headers also provide
+.IR gid_t :
+.IR <grp.h> ,
+.IR <pwd.h> ,
+.IR <signal.h> ,
+.IR <stropts.h> ,
+.IR <sys/ipc.h> ,
+.IR <sys/stat.h> ,
+and
+.IR <unistd.h> .
+.P
+The following header also provides
+.IR id_t :
+.IR <sys/resource.h> .
+.SH SEE ALSO
+.BR chown (2),
+.BR fork (2),
+.BR getegid (2),
+.BR geteuid (2),
+.BR getgid (2),
+.BR getgroups (2),
+.BR getpgid (2),
+.BR getpid (2),
+.BR getppid (2),
+.BR getpriority (2),
+.BR getpwnam (3),
+.BR getresgid (2),
+.BR getresuid (2),
+.BR getsid (2),
+.BR gettid (2),
+.BR getuid (2),
+.BR kill (2),
+.BR pidfd_open (2),
+.BR sched_setscheduler (2),
+.BR waitid (2),
+.BR getgrnam (3),
+.BR sigqueue (3),
+.BR credentials (7)

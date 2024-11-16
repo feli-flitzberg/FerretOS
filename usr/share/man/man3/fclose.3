@@ -1,0 +1,102 @@
+'\" t
+.\" Copyright (c) 1990, 1991 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" This code is derived from software contributed to Berkeley by
+.\" Chris Torek and the American National Standards Committee X3,
+.\" on Information Processing Systems.
+.\"
+.\" SPDX-License-Identifier: BSD-4-Clause-UC
+.\"
+.\"     @(#)fclose.3	6.7 (Berkeley) 6/29/91
+.\"
+.\" Converted for Linux, Mon Nov 29 15:19:14 1993, faith@cs.unc.edu
+.\"
+.\" Modified 2000-07-22 by Nicolás Lichtmaier <nick@debian.org>
+.\"
+.TH fclose 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+fclose \- close a stream
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdio.h>
+.P
+.BI "int fclose(FILE *" stream );
+.fi
+.SH DESCRIPTION
+The
+.BR fclose ()
+function flushes the stream pointed to by
+.I stream
+(writing any buffered output data using
+.BR fflush (3))
+and closes the underlying file descriptor.
+.SH RETURN VALUE
+Upon successful completion, 0 is returned.
+Otherwise,
+.B EOF
+is returned and
+.I errno
+is set to indicate the error.
+In either case, any further access
+(including another call to
+.BR fclose ())
+to the stream results in undefined behavior.
+.SH ERRORS
+.TP
+.B EBADF
+The file descriptor underlying
+.I stream
+is not valid.
+.\"  This error cannot occur unless you are mixing ANSI C stdio operations and
+.\"  low-level file operations on the same stream. If you do get this error,
+.\"  you must have closed the stream's low-level file descriptor using
+.\"  something like close(fileno(stream)).
+.P
+The
+.BR fclose ()
+function may also fail and set
+.I errno
+for any of the errors specified for the routines
+.BR close (2),
+.BR write (2),
+or
+.BR fflush (3).
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR fclose ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+C89, POSIX.1-2001.
+.SH NOTES
+Note that
+.BR fclose ()
+flushes only the user-space buffers provided by the
+C library.
+To ensure that the data is physically stored
+on disk the kernel buffers must be flushed too, for example, with
+.BR sync (2)
+or
+.BR fsync (2).
+.SH SEE ALSO
+.BR close (2),
+.BR fcloseall (3),
+.BR fflush (3),
+.BR fileno (3),
+.BR fopen (3),
+.BR setbuf (3)

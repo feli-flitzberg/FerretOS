@@ -1,0 +1,38 @@
+.\" Copyright (C) 2004 Andries Brouwer (aeb@cwi.nl)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH exit_group 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+exit_group \- exit all threads in a process
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <sys/syscall.h>" "       /* Definition of " SYS_* " constants */"
+.B #include <unistd.h>
+.P
+.BI "[[noreturn]] void syscall(SYS_exit_group, int " status );
+.fi
+.P
+.IR Note :
+glibc provides no wrapper for
+.BR exit_group (),
+necessitating the use of
+.BR syscall (2).
+.SH DESCRIPTION
+This system call terminates all threads
+in the calling process's thread group.
+.SH RETURN VALUE
+This system call does not return.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 2.5.35.
+.SH NOTES
+Since glibc 2.3, this is the system call invoked when the
+.BR _exit (2)
+wrapper function is called.
+.SH SEE ALSO
+.BR _exit (2)

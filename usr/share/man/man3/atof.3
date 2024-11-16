@@ -1,0 +1,67 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Mon Mar 29 22:39:24 1993, David Metcalfe
+.\" Modified Sat Jul 24 21:39:22 1993, Rik Faith (faith@cs.unc.edu)
+.TH atof 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+atof \- convert a string to a double
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdlib.h>
+.P
+.BI "double atof(const char *" nptr );
+.fi
+.SH DESCRIPTION
+The
+.BR atof ()
+function converts the initial portion of the string
+pointed to by \fInptr\fP to
+.IR double .
+The behavior is the same as
+.P
+.in +4n
+.EX
+strtod(nptr, NULL);
+.EE
+.in
+.P
+except that
+.BR atof ()
+does not detect errors.
+.SH RETURN VALUE
+The converted value.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR atof ()
+T}	Thread safety	MT-Safe locale
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, C89, C99, SVr4, 4.3BSD.
+.SH SEE ALSO
+.BR atoi (3),
+.BR atol (3),
+.BR strfromd (3),
+.BR strtod (3),
+.BR strtol (3),
+.BR strtoul (3)

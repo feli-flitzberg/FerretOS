@@ -1,0 +1,106 @@
+.\" Copyright 2018, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+.\" Copyright 2018, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_SET_SPECULATION_CTRL 2const 2024-06-01 "Linux man-pages 6.9.1"
+.SH NAME
+PR_SET_SPECULATION_CTRL
+\-
+set the state of a speculation misfeature for the calling thread
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.BI "int prctl(PR_SET_SPECULATION_CTRL, long " misfeature ", long " val ", 0L, 0L);"
+.fi
+.SH DESCRIPTION
+Sets the state of the speculation misfeature specified in
+.IR misfeature .
+The speculation-misfeature settings are per-thread attributes.
+.P
+Currently,
+.I misfeature
+must be one of:
+.TP
+.B PR_SPEC_STORE_BYPASS
+Set the state of the speculative store bypass misfeature.
+.\" commit 9137bb27e60e554dab694eafa4cca241fa3a694f
+.TP
+.BR PR_SPEC_INDIRECT_BRANCH " (since Linux 4.20)"
+Set the state of the indirect branch speculation misfeature.
+.P
+The
+.I val
+argument is used to hand in the control value,
+which is one of the following:
+.TP
+.B PR_SPEC_ENABLE
+The speculation feature is enabled, mitigation is disabled.
+.TP
+.B PR_SPEC_DISABLE
+The speculation feature is disabled, mitigation is enabled.
+.TP
+.B PR_SPEC_FORCE_DISABLE
+Same as
+.BR PR_SPEC_DISABLE ,
+but cannot be undone.
+.\" commit 71368af9027f18fe5d1c6f372cfdff7e4bde8b48
+.TP
+.BR PR_SPEC_DISABLE_NOEXEC " (since Linux 5.1)"
+Same as
+.BR PR_SPEC_DISABLE ,
+but the state will be cleared on
+.BR execve (2).
+Currently only supported for
+.BR PR_SPEC_STORE_BYPASS .
+.P
+The speculation feature can also be controlled by the
+.B spec_store_bypass_disable
+boot parameter.
+This parameter may enforce a read-only policy which will result in the
+.BR prctl ()
+call failing with the error
+.BR ENXIO .
+For further details, see the kernel source file
+.IR Documentation/\:admin\-guide/\:kernel\-parameters.txt .
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B ENODEV
+The kernel or CPU does not support the requested speculation
+.IR misfeature .
+.TP
+.B ENXIO
+The control of the selected speculation misfeature is not possible.
+See
+.B PR_GET_SPECULATION_CTRL
+for the bit fields to determine which option is available.
+.TP
+.B EPERM
+The speculation was disabled with
+.B PR_SPEC_FORCE_DISABLE
+and caller tried to enable it again.
+.TP
+.B ERANGE
+.I misfeature
+is not a valid value.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 4.17.
+.\" commit b617cfc858161140d69cc0b5cc211996b557a1c7
+.\" commit 356e4bfff2c5489e016fdb925adbf12a1e3950ee
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_GET_SPECULATION_CTRL (2const)

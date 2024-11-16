@@ -1,0 +1,224 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sun Jul 25 10:54:03 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Fixed typo, aeb, 950823
+.\" 2002-02-22, joey, mihtjel: Added strtoull()
+.\"
+.TH strtoul 3 2024-06-16 "Linux man-pages 6.9.1"
+.SH NAME
+strtoul, strtoull, strtouq \- convert a string to an unsigned long integer
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdlib.h>
+.P
+.BI "unsigned long strtoul(const char *restrict " nptr ,
+.BI "                      char **_Nullable restrict " endptr ", int " base );
+.BI "unsigned long long strtoull(const char *restrict " nptr ,
+.BI "                      char **_Nullable restrict " endptr ", int " base );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR strtoull ():
+.nf
+    _ISOC99_SOURCE
+        || /* glibc <= 2.19: */ _SVID_SOURCE || _BSD_SOURCE
+.fi
+.SH DESCRIPTION
+The
+.BR strtoul ()
+function converts the initial part of the string
+in
+.I nptr
+to an
+.I "unsigned long"
+value according to the
+given
+.IR base ,
+which must be between 2 and 36 inclusive, or be
+the special value 0.
+.P
+The string may begin with an arbitrary amount of white space (as
+determined by
+.BR isspace (3))
+followed by a single optional \[aq]+\[aq] or \[aq]\-\[aq]
+sign.
+If
+.I base
+is zero or 16, the string may then include a
+"0x" prefix, and the number will be read in base 16; otherwise, a
+zero
+.I base
+is taken as 10 (decimal) unless the next character
+is \[aq]0\[aq], in which case it is taken as 8 (octal).
+.P
+The remainder of the string is converted to an
+.I "unsigned long"
+value in the obvious manner,
+stopping at the first character which is not a
+valid digit in the given base.
+(In bases above 10, the letter \[aq]A\[aq] in
+either uppercase or lowercase represents 10, \[aq]B\[aq] represents 11, and so
+forth, with \[aq]Z\[aq] representing 35.)
+.P
+If
+.I endptr
+is not NULL,
+and the
+.I base
+is supported,
+.BR strtoul ()
+stores the address of the
+first invalid character in
+.IR *endptr .
+If there were no digits at
+all,
+.BR strtoul ()
+stores the original value of
+.I nptr
+in
+.I *endptr
+(and returns 0).
+In particular, if
+.I *nptr
+is not \[aq]\[rs]0\[aq] but
+.I **endptr
+is \[aq]\[rs]0\[aq] on return, the entire string is valid.
+.P
+The
+.BR strtoull ()
+function works just like the
+.BR strtoul ()
+function but returns an
+.I "unsigned long long"
+value.
+.SH RETURN VALUE
+The
+.BR strtoul ()
+function returns either the result of the conversion
+or, if there was a leading minus sign, the negation of the result of the
+conversion represented as an unsigned value,
+unless the original (nonnegated) value would overflow; in
+the latter case,
+.BR strtoul ()
+returns
+.B ULONG_MAX
+and sets
+.I errno
+to
+.BR ERANGE .
+Precisely the same holds for
+.BR strtoull ()
+(with
+.B ULLONG_MAX
+instead of
+.BR ULONG_MAX ).
+.SH ERRORS
+This function does not modify
+.I errno
+on success.
+.TP
+.B EINVAL
+(not in C99)
+The given
+.I base
+contains an unsupported value.
+.TP
+.B ERANGE
+The resulting value was out of range.
+.P
+The implementation may also set
+.I errno
+to
+.B EINVAL
+in case
+no conversion was performed (no digits seen, and 0 returned).
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR strtoul (),
+.BR strtoull (),
+.BR strtouq ()
+T}	Thread safety	MT-Safe locale
+.TE
+.SH VERSIONS
+In locales other than the "C" locale, other strings may be accepted.
+(For example, the thousands separator of the current locale may be
+supported.)
+.P
+BSD also has
+.P
+.in +4n
+.EX
+.BI "u_quad_t strtouq(const char *" nptr ", char **" endptr ", int " base );
+.EE
+.in
+.P
+with completely analogous definition.
+Depending on the wordsize of the current architecture, this
+may be equivalent to
+.BR strtoull ()
+or to
+.BR strtoul ().
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+.TP
+.BR strtoul ()
+POSIX.1-2001, C89, SVr4.
+.TP
+.BR strtoull ()
+POSIX.1-2001, C99.
+.SH CAVEATS
+Since
+.BR strtoul ()
+can legitimately return 0 or
+.B ULONG_MAX
+.RB ( ULLONG_MAX
+for
+.BR strtoull ())
+on both success and failure, the calling program should set
+.I errno
+to 0 before the call,
+and then determine if an error occurred by checking whether
+.I errno
+has a nonzero value after the call.
+.P
+Negative values are considered valid input and are
+silently converted to the equivalent
+.I "unsigned long"
+value.
+.SH EXAMPLES
+See the example on the
+.BR strtol (3)
+manual page;
+the use of the functions described in this manual page is similar.
+.SH SEE ALSO
+.BR a64l (3),
+.BR atof (3),
+.BR atoi (3),
+.BR atol (3),
+.BR strtod (3),
+.BR strtol (3),
+.BR strtoumax (3)

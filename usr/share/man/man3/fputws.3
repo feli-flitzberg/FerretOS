@@ -1,0 +1,78 @@
+'\" t
+.\" Copyright (c) Bruno Haible <haible@clisp.cons.org>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" References consulted:
+.\"   GNU glibc-2 source code and manual
+.\"   Dinkumware C library reference http://www.dinkumware.com/
+.\"   OpenGroup's Single UNIX specification http://www.UNIX-systems.org/online.html
+.\"   ISO/IEC 9899:1999
+.\"
+.TH fputws 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+fputws \- write a wide-character string to a FILE stream
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <wchar.h>
+.P
+.BI "int fputws(const wchar_t *restrict " ws ", FILE *restrict " stream );
+.fi
+.SH DESCRIPTION
+The
+.BR fputws ()
+function is the wide-character equivalent of
+the
+.BR fputs (3)
+function.
+It writes the wide-character string starting at \fIws\fP,
+up to but not including the terminating null wide character (L\[aq]\[rs]0\[aq]),
+to \fIstream\fP.
+.P
+For a nonlocking counterpart, see
+.BR unlocked_stdio (3).
+.SH RETURN VALUE
+The
+.BR fputws ()
+function returns a
+nonnegative integer if the operation was
+successful, or \-1 to indicate an error.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR fputws ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, C99.
+.SH NOTES
+The behavior of
+.BR fputws ()
+depends on the
+.B LC_CTYPE
+category of the
+current locale.
+.P
+In the absence of additional information passed to the
+.BR fopen (3)
+call, it is
+reasonable to expect that
+.BR fputws ()
+will actually write the multibyte
+string corresponding to the wide-character string \fIws\fP.
+.SH SEE ALSO
+.BR fputwc (3),
+.BR unlocked_stdio (3)

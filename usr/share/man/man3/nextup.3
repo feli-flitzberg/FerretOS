@@ -1,0 +1,94 @@
+'\" t
+.\" Copyright (C) 2016, Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH nextup 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+nextup, nextupf, nextupl, nextdown, nextdownf, nextdownl \-
+return next floating-point number toward positive/negative infinity
+.SH LIBRARY
+Math library
+.RI ( libm ", " \-lm )
+.SH SYNOPSIS
+.nf
+.BR "#define _GNU_SOURCE" "     /* See feature_test_macros(7) */"
+.B #include <math.h>
+.P
+.BI "double nextup(double " x );
+.BI "float nextupf(float " x );
+.BI "long double nextupl(long double " x );
+.P
+.BI "double nextdown(double " x );
+.BI "float nextdownf(float " x );
+.BI "long double nextdownl(long double " x );
+.fi
+.SH DESCRIPTION
+The
+.BR nextup (),
+.BR nextupf (),
+and
+.BR nextupl ()
+functions return the next representable floating-point number greater than
+.IR x .
+.P
+If
+.I x
+is the smallest representable negative number in the corresponding type,
+these functions return \-0.
+If
+.I x
+is 0, the returned value is the smallest representable positive number
+of the corresponding type.
+.P
+If
+.I x
+is positive infinity, the returned value is positive infinity.
+If
+.I x
+is negative infinity,
+the returned value is the largest representable finite negative number
+of the corresponding type.
+.P
+If
+.I x
+is Nan,
+the returned value is NaN.
+.P
+The value returned by
+.I nextdown(x)
+is
+.IR \-nextup(\-x) ,
+and similarly for the other types.
+.SH RETURN VALUE
+See DESCRIPTION.
+.\" .SH ERRORS
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR nextup (),
+.BR nextupf (),
+.BR nextupl (),
+.BR nextdown (),
+.BR nextdownf (),
+.BR nextdownl ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+These functions are described in
+.I IEEE Std 754-2008 - Standard for Floating-Point Arithmetic
+and
+.IR "ISO/IEC TS 18661".
+.SH HISTORY
+glibc 2.24.
+.SH SEE ALSO
+.BR nearbyint (3),
+.BR nextafter (3)

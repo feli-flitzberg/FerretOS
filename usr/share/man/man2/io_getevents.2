@@ -1,0 +1,137 @@
+.\" Copyright (C) 2003 Free Software Foundation, Inc.
+.\"
+.\" SPDX-License-Identifier: GPL-1.0-or-later
+.\"
+.TH io_getevents 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+io_getevents \- read asynchronous I/O events from the completion queue
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.P
+Alternatively, Asynchronous I/O library
+.RI ( libaio ", " \-laio );
+see VERSIONS.
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/aio_abi.h>" "    /* Definition of " *io_* " types */"
+.BR "#include <sys/syscall.h>" "      /* Definition of " SYS_* " constants */"
+.B #include <unistd.h>
+.P
+.BI "int syscall(SYS_io_getevents, aio_context_t " ctx_id ,
+.BI "            long " min_nr ", long " nr ", struct io_event *" events ,
+.BI "            struct timespec *" timeout );
+.fi
+.P
+.IR Note :
+glibc provides no wrapper for
+.BR io_getevents (),
+necessitating the use of
+.BR syscall (2).
+.SH DESCRIPTION
+.IR Note :
+this page describes the raw Linux system call interface.
+The wrapper function provided by
+.I libaio
+uses a different type for the
+.I ctx_id
+argument.
+See VERSIONS.
+.P
+The
+.BR io_getevents ()
+system call
+attempts to read at least \fImin_nr\fP events and
+up to \fInr\fP events from the completion queue of the AIO context
+specified by \fIctx_id\fP.
+.P
+The \fItimeout\fP argument specifies the amount of time to wait for events,
+and is specified as a relative timeout in a
+.BR timespec (3)
+structure.
+.P
+The specified time will be rounded up to the system clock granularity
+and is guaranteed not to expire early.
+.P
+Specifying
+.I timeout
+as NULL means block indefinitely until at least
+.I min_nr
+events have been obtained.
+.SH RETURN VALUE
+On success,
+.BR io_getevents ()
+returns the number of events read.
+This may be 0, or a value less than
+.IR min_nr ,
+if the
+.I timeout
+expired.
+It may also be a nonzero value less than
+.IR min_nr ,
+if the call was interrupted by a signal handler.
+.P
+For the failure return, see VERSIONS.
+.SH ERRORS
+.TP
+.B EFAULT
+Either \fIevents\fP or \fItimeout\fP is an invalid pointer.
+.TP
+.B EINTR
+Interrupted by a signal handler; see
+.BR signal (7).
+.TP
+.B EINVAL
+\fIctx_id\fP is invalid.
+\fImin_nr\fP is out of range or \fInr\fP is
+out of range.
+.TP
+.B ENOSYS
+.BR io_getevents ()
+is not implemented on this architecture.
+.SH VERSIONS
+You probably want to use the
+.BR io_getevents ()
+wrapper function provided by
+.\" http://git.fedorahosted.org/git/?p=libaio.git
+.IR libaio .
+.P
+Note that the
+.I libaio
+wrapper function uses a different type
+.RI ( io_context_t )
+.\" But glibc is confused, since <libaio.h> uses 'io_context_t' to declare
+.\" the system call.
+for the
+.I ctx_id
+argument.
+Note also that the
+.I libaio
+wrapper does not follow the usual C library conventions for indicating errors:
+on error it returns a negated error number
+(the negative of one of the values listed in ERRORS).
+If the system call is invoked via
+.BR syscall (2),
+then the return value follows the usual conventions for
+indicating an error: \-1, with
+.I errno
+set to a (positive) value that indicates the error.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 2.5.
+.SH BUGS
+An invalid
+.I ctx_id
+may cause a segmentation fault instead of generating the error
+.BR EINVAL .
+.SH SEE ALSO
+.BR io_cancel (2),
+.BR io_destroy (2),
+.BR io_setup (2),
+.BR io_submit (2),
+.BR timespec (3),
+.BR aio (7),
+.BR time (7)
+.\" .SH AUTHOR
+.\" Kent Yoder.

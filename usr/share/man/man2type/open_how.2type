@@ -1,0 +1,51 @@
+.\" Copyright (c) 2022 by Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\"
+.TH open_how 2type 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+open_how \- how to open a pathname
+.SH LIBRARY
+Linux kernel headers
+.SH SYNOPSIS
+.EX
+.B #include <linux/openat2.h>
+.P
+.B struct open_how {
+.BR "    u64  flags;" "    /* " O_ "* flags */"
+.BR "    u64  mode;" "     /* Mode for " O_ { CREAT , TMPFILE "} */"
+.BR "    u64  resolve;" "  /* " RESOLVE_ "* flags */"
+    /* ... */
+.B };
+.EE
+.SH DESCRIPTION
+Specifies how a pathname should be opened.
+.P
+The fields are as follows:
+.TP
+.I flags
+This field specifies the file creation and file status flags
+to use when opening the file.
+.TP
+.I mode
+This field specifies the mode for the new file.
+.TP
+.I resolve
+This is a bit mask of flags that modify the way in which
+.I all
+components of a pathname will be resolved
+(see
+.BR path_resolution (7)
+for background information).
+.SH VERSIONS
+Extra fields may be appended to the structure,
+with a zero value in a new field resulting in
+the kernel behaving as though that extension field was not present.
+Therefore, a user
+.I must
+zero-fill this structure on initialization.
+.SH STANDARDS
+Linux.
+.SH SEE ALSO
+.BR openat2 (2)

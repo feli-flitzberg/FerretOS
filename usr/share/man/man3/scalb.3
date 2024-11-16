@@ -1,0 +1,196 @@
+'\" t
+.\" Copyright 2004 Andries Brouwer <aeb@cwi.nl>.
+.\" and Copyright 2008, Linux Foundation, written by Michael Kerrisk
+.\"     <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH scalb 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+scalb, scalbf, scalbl \- multiply floating-point number
+by integral power of radix (OBSOLETE)
+.SH LIBRARY
+Math library
+.RI ( libm ", " \-lm )
+.SH SYNOPSIS
+.nf
+.B #include <math.h>
+.P
+.BI "[[deprecated]] double scalb(double " x ", double " exp );
+.BI "[[deprecated]] float scalbf(float " x ", float " exp );
+.BI "[[deprecated]] long double scalbl(long double " x ", long double " exp );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR scalb ():
+.nf
+    _XOPEN_SOURCE >= 500
+.\"    || _XOPEN_SOURCE && _XOPEN_SOURCE_EXTENDED
+        || /* Since glibc 2.19: */ _DEFAULT_SOURCE
+        || /* glibc <= 2.19: */ _BSD_SOURCE || _SVID_SOURCE
+.fi
+.P
+.BR scalbf (),
+.BR scalbl ():
+.nf
+    _XOPEN_SOURCE >= 600
+        || /* Since glibc 2.19: */ _DEFAULT_SOURCE
+        || /* glibc <= 2.19: */ _BSD_SOURCE || _SVID_SOURCE
+.fi
+.SH DESCRIPTION
+These functions multiply their first argument
+.I x
+by
+.B FLT_RADIX
+(probably 2)
+to the power of
+.IR exp ,
+that is:
+.P
+.nf
+    x * FLT_RADIX ** exp
+.fi
+.P
+The definition of
+.B FLT_RADIX
+can be obtained by including
+.IR <float.h> .
+.\" not in /usr/include but in a gcc lib
+.SH RETURN VALUE
+On success, these functions return
+.I x
+*
+.B FLT_RADIX
+**
+.IR exp .
+.P
+If
+.I x
+or
+.I exp
+is a NaN, a NaN is returned.
+.P
+If
+.I x
+is positive infinity (negative infinity),
+and
+.I exp
+is not negative infinity,
+positive infinity (negative infinity) is returned.
+.P
+If
+.I x
+is +0 (\-0), and
+.I exp
+is not positive infinity, +0 (\-0) is returned.
+.P
+If
+.I x
+is zero, and
+.I exp
+is positive infinity,
+a domain error occurs, and
+a NaN is returned.
+.P
+If
+.I x
+is an infinity,
+and
+.I exp
+is negative infinity,
+a domain error occurs, and
+a NaN is returned.
+.P
+If the result overflows,
+a range error occurs,
+and the functions return
+.BR HUGE_VAL ,
+.BR HUGE_VALF ,
+or
+.BR HUGE_VALL ,
+respectively, with a sign the same as
+.IR x .
+.P
+If the result underflows,
+a range error occurs,
+and the functions return zero, with a sign the same as
+.IR x .
+.SH ERRORS
+See
+.BR math_error (7)
+for information on how to determine whether an error has occurred
+when calling these functions.
+.P
+The following errors can occur:
+.TP
+Domain error: \fIx\fP is 0, and \fIexp\fP is positive infinity, \
+or \fIx\fP is positive infinity and \fIexp\fP is negative infinity \
+and the other argument is not a NaN
+.I errno
+is set to
+.BR EDOM .
+An invalid floating-point exception
+.RB ( FE_INVALID )
+is raised.
+.TP
+Range error, overflow
+.I errno
+is set to
+.BR ERANGE .
+An overflow floating-point exception
+.RB ( FE_OVERFLOW )
+is raised.
+.TP
+Range error, underflow
+.I errno
+is set to
+.BR ERANGE .
+An underflow floating-point exception
+.RB ( FE_UNDERFLOW )
+is raised.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR scalb (),
+.BR scalbf (),
+.BR scalbl ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+None.
+.SH HISTORY
+.TP
+.BR scalb ()
+4.3BSD.
+Obsolescent in POSIX.1-2001;
+Removed in POSIX.1-2008,
+recommending the use of
+.BR scalbln (3),
+.BR scalblnf (3),
+or
+.BR scalblnl (3)
+instead.
+.\" Looking at header files: scalbf() is present on the
+.\" BSDs, Tru64, HP-UX 11, Irix 6.5; scalbl() is on HP-UX 11 and Tru64.
+.SH BUGS
+Before glibc 2.20,
+.\" https://www.sourceware.org/bugzilla/show_bug.cgi?id=6803
+.\" https://www.sourceware.org/bugzilla/show_bug.cgi?id=6804
+these functions did not set
+.I errno
+for domain and range errors.
+.SH SEE ALSO
+.BR ldexp (3),
+.BR scalbln (3)

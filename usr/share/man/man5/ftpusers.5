@@ -1,0 +1,42 @@
+.\" Copyright (c) 2000 Christoph J. Thompson <obituary@linuxbe.org>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.TH ftpusers 5 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+ftpusers \- list of users that may not log in via the FTP daemon
+.SH DESCRIPTION
+The text file
+.B ftpusers
+contains a list of users that may not log in using the
+File Transfer Protocol (FTP) server daemon.
+This file is used not merely for
+system administration purposes but also for improving security within a TCP/IP
+networked environment.
+.P
+The
+.B ftpusers
+file will typically contain a list of the users that
+either have no business using ftp or have too many privileges to be allowed
+to log in through the FTP server daemon.
+Such users usually include root, daemon, bin, uucp, and news.
+.P
+If your FTP server daemon doesn't use
+.BR ftpusers ,
+then it is suggested that you read its documentation to find out how to
+block access for certain users.
+Washington University FTP server Daemon
+(wuftpd) and Professional FTP Daemon (proftpd) are known to make use of
+.BR ftpusers .
+.SS Format
+The format of
+.B ftpusers
+is very simple.
+There is one account name (or username) per line.
+Lines starting with a # are ignored.
+.SH FILES
+.I /etc/ftpusers
+.SH SEE ALSO
+.BR passwd (5),
+.BR proftpd (8),
+.BR wuftpd (8)

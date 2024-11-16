@@ -1,0 +1,405 @@
+'\" t
+.\" Copyright (c) 1993 by Thomas Koenig (ig25@rz.uni-karlsruhe.de)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" Modified Sat Jul 24 19:10:00 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Sun Aug 21 17:51:50 1994 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Sat Sep  2 21:52:01 1995 by Jim Van Zandt <jrv@vanzandt.mv.com>
+.\" Modified Mon May 27 22:55:26 1996 by Martin Schulze (joey@linux.de)
+.\"
+.TH isalpha 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+isalnum, isalpha, isascii, isblank, iscntrl, isdigit, isgraph, islower,
+isprint, ispunct, isspace, isupper, isxdigit,
+isalnum_l, isalpha_l, isascii_l, isblank_l, iscntrl_l,
+isdigit_l, isgraph_l, islower_l,
+isprint_l, ispunct_l, isspace_l, isupper_l, isxdigit_l
+\- character classification functions
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <ctype.h>
+.P
+.BI "int isalnum(int " c );
+.BI "int isalpha(int " c );
+.BI "int iscntrl(int " c );
+.BI "int isdigit(int " c );
+.BI "int isgraph(int " c );
+.BI "int islower(int " c );
+.BI "int isprint(int " c );
+.BI "int ispunct(int " c );
+.BI "int isspace(int " c );
+.BI "int isupper(int " c );
+.BI "int isxdigit(int " c );
+.P
+.BI "int isascii(int " c );
+.BI "int isblank(int " c );
+.P
+.BI "int isalnum_l(int " c ", locale_t " locale );
+.BI "int isalpha_l(int " c ", locale_t " locale );
+.BI "int isblank_l(int " c ", locale_t " locale );
+.BI "int iscntrl_l(int " c ", locale_t " locale );
+.BI "int isdigit_l(int " c ", locale_t " locale );
+.BI "int isgraph_l(int " c ", locale_t " locale );
+.BI "int islower_l(int " c ", locale_t " locale );
+.BI "int isprint_l(int " c ", locale_t " locale );
+.BI "int ispunct_l(int " c ", locale_t " locale );
+.BI "int isspace_l(int " c ", locale_t " locale );
+.BI "int isupper_l(int " c ", locale_t " locale );
+.BI "int isxdigit_l(int " c ", locale_t " locale );
+.P
+.BI "int isascii_l(int " c ", locale_t " locale );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.ad l
+.P
+.BR isascii ():
+.nf
+    _XOPEN_SOURCE
+        || /* glibc >= 2.19: */ _DEFAULT_SOURCE
+        || /* glibc <= 2.19: */ _SVID_SOURCE
+.fi
+.P
+.BR isblank ():
+.nf
+    _ISOC99_SOURCE || _POSIX_C_SOURCE >= 200112L
+.fi
+.P
+.BR \%salnum_l (),
+.BR \%salpha_l (),
+.BR \%sblank_l (),
+.BR \%scntrl_l (),
+.BR \%sdigit_l (),
+.BR \%sgraph_l (),
+.BR \%slower_l (),
+.BR \%sprint_l (),
+.BR \%spunct_l (),
+.BR \%sspace_l (),
+.BR \%supper_l (),
+.BR \%sxdigit_l ():
+.nf
+    Since glibc 2.10:
+        _XOPEN_SOURCE >= 700
+    Before glibc 2.10:
+        _GNU_SOURCE
+.fi
+.P
+.BR isascii_l ():
+.nf
+    Since glibc 2.10:
+        _XOPEN_SOURCE >= 700 && (_SVID_SOURCE || _BSD_SOURCE)
+    Before glibc 2.10:
+        _GNU_SOURCE
+.fi
+.ad
+.SH DESCRIPTION
+These functions check whether
+.IR c ,
+which must have the value of an
+.I unsigned char
+or
+.BR EOF ,
+falls into a certain character class according to the specified locale.
+The functions without the
+"_l" suffix perform the check based on the current locale.
+.P
+The functions with the "_l" suffix perform the check
+based on the locale specified by the locale object
+.IR locale .
+The behavior of these functions is undefined if
+.I locale
+is the special locale object
+.B LC_GLOBAL_LOCALE
+(see
+.BR duplocale (3))
+or is not a valid locale object handle.
+.P
+The list below explains the operation of the functions without
+the "_l" suffix;
+the functions with the "_l" suffix differ only in using the locale object
+.I locale
+instead of the current locale.
+.TP
+.BR isalnum ()
+checks for an alphanumeric character; it is equivalent to
+.BI "(isalpha(" c ") || isdigit(" c "))" \fR.
+.TP
+.BR isalpha ()
+checks for an alphabetic character; in the standard \fB"C"\fP
+locale, it is equivalent to
+.BI "(isupper(" c ") || islower(" c "))" \fR.
+In some locales, there may be additional characters for which
+.BR isalpha ()
+is true\[em]letters which are neither uppercase nor lowercase.
+.TP
+.BR isascii ()
+checks whether \fIc\fP is a 7-bit
+.I unsigned char
+value that fits into
+the ASCII character set.
+.TP
+.BR isblank ()
+checks for a blank character; that is, a space or a tab.
+.TP
+.BR iscntrl ()
+checks for a control character.
+.TP
+.BR isdigit ()
+checks for a digit (0 through 9).
+.TP
+.BR isgraph ()
+checks for any printable character except space.
+.TP
+.BR islower ()
+checks for a lowercase character.
+.TP
+.BR isprint ()
+checks for any printable character including space.
+.TP
+.BR ispunct ()
+checks for any printable character which is not a space or an
+alphanumeric character.
+.TP
+.BR isspace ()
+checks for white-space characters.
+In the
+.B \[dq]C\[dq]
+and
+.B \[dq]POSIX\[dq]
+locales, these are: space, form-feed
+.RB ( \[aq]\[rs]f\[aq] ),
+newline
+.RB ( \[aq]\[rs]n\[aq] ),
+carriage return
+.RB ( \[aq]\[rs]r\[aq] ),
+horizontal tab
+.RB ( \[aq]\[rs]t\[aq] ),
+and vertical tab
+.RB ( \[aq]\[rs]v\[aq] ).
+.TP
+.BR isupper ()
+checks for an uppercase letter.
+.TP
+.BR isxdigit ()
+checks for hexadecimal digits, that is, one of
+.br
+.BR "0 1 2 3 4 5 6 7 8 9 a b c d e f A B C D E F" .
+.SH RETURN VALUE
+The values returned are nonzero if the character
+.I c
+falls into the tested class, and zero if not.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR isalnum (),
+.BR isalpha (),
+.BR isascii (),
+.BR isblank (),
+.BR iscntrl (),
+.BR isdigit (),
+.BR isgraph (),
+.BR islower (),
+.BR isprint (),
+.BR ispunct (),
+.BR isspace (),
+.BR isupper (),
+.BR isxdigit ()
+T}	Thread safety	MT-Safe
+.TE
+.\" FIXME: need a thread-safety statement about the *_l functions
+.SH STANDARDS
+.TP
+.BR isalnum ()
+.TQ
+.BR isalpha ()
+.TQ
+.BR iscntrl ()
+.TQ
+.BR isdigit ()
+.TQ
+.BR isgraph ()
+.TQ
+.BR islower ()
+.TQ
+.BR isprint ()
+.TQ
+.BR ispunct ()
+.TQ
+.BR isspace ()
+.TQ
+.BR isupper ()
+.TQ
+.BR isxdigit ()
+.TQ
+.BR isblank ()
+C11, POSIX.1-2008.
+.TP
+.BR isascii ()
+.TQ
+.BR isalnum_l ()
+.TQ
+.BR isalpha_l ()
+.TQ
+.BR isblank_l ()
+.TQ
+.BR iscntrl_l ()
+.TQ
+.BR isdigit_l ()
+.TQ
+.BR isgraph_l ()
+.TQ
+.BR islower_l ()
+.TQ
+.BR isprint_l ()
+.TQ
+.BR ispunct_l ()
+.TQ
+.BR isspace_l ()
+.TQ
+.BR isupper_l ()
+.TQ
+.BR isxdigit_l ()
+POSIX.1-2008.
+.TP
+.BR isascii_l ()
+GNU.
+.SH HISTORY
+.TP
+.BR isalnum ()
+.TQ
+.BR isalpha ()
+.TQ
+.BR iscntrl ()
+.TQ
+.BR isdigit ()
+.TQ
+.BR isgraph ()
+.TQ
+.BR islower ()
+.TQ
+.BR isprint ()
+.TQ
+.BR ispunct ()
+.TQ
+.BR isspace ()
+.TQ
+.BR isupper ()
+.TQ
+.BR isxdigit ()
+C89, POSIX.1-2001.
+.TP
+.BR isblank ()
+C99, POSIX.1-2001.
+.TP
+.BR isascii ()
+POSIX.1-2001 (XSI).
+.IP
+POSIX.1-2008 marks it as obsolete,
+noting that it cannot be used portably in a localized application.
+.TP
+.BR isalnum_l ()
+.TQ
+.BR isalpha_l ()
+.TQ
+.BR isblank_l ()
+.TQ
+.BR iscntrl_l ()
+.TQ
+.BR isdigit_l ()
+.TQ
+.BR isgraph_l ()
+.TQ
+.BR islower_l ()
+.TQ
+.BR isprint_l ()
+.TQ
+.BR ispunct_l ()
+.TQ
+.BR isspace_l ()
+.TQ
+.BR isupper_l ()
+.TQ
+.BR isxdigit_l ()
+glibc 2.3.
+POSIX.1-2008.
+.TP
+.BR isascii_l ()
+glibc 2.3.
+.SH CAVEATS
+The standards require that the argument
+.I c
+for these functions is either
+.B EOF
+or a value that is representable in the type
+.IR "unsigned char" ;
+otherwise,
+the behavior is undefined.
+If the argument
+.I c
+is of type
+.IR char ,
+it must be cast to
+.IR "unsigned char" ,
+as in the following example:
+.P
+.in +4n
+.EX
+char c;
+\&...
+res = toupper((unsigned char) c);
+.EE
+.in
+.P
+This is necessary because
+.I char
+may be the equivalent of
+.IR "signed char" ,
+in which case a byte where the top bit is set would be sign extended when
+converting to
+.IR int ,
+yielding a value that is outside the range of
+.IR "unsigned char" .
+.P
+The details of what characters belong to which class depend on the
+locale.
+For example,
+.BR isupper ()
+will not recognize an A-umlaut (\(:A) as an uppercase letter in the default
+.B "C"
+locale.
+.SH SEE ALSO
+.BR iswalnum (3),
+.BR iswalpha (3),
+.BR iswblank (3),
+.BR iswcntrl (3),
+.BR iswdigit (3),
+.BR iswgraph (3),
+.BR iswlower (3),
+.BR iswprint (3),
+.BR iswpunct (3),
+.BR iswspace (3),
+.BR iswupper (3),
+.BR iswxdigit (3),
+.BR newlocale (3),
+.BR setlocale (3),
+.BR toascii (3),
+.BR tolower (3),
+.BR toupper (3),
+.BR uselocale (3),
+.BR ascii (7),
+.BR locale (7)

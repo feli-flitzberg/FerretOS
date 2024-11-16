@@ -1,0 +1,180 @@
+'\" t
+.\" Copyright (c) 2009 Linux Foundation, written by Michael Kerrisk
+.\"     <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH pthread_getcpuclockid 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+pthread_getcpuclockid \- retrieve ID of a thread's CPU time clock
+.SH LIBRARY
+POSIX threads library
+.RI ( libpthread ", " \-lpthread )
+.SH SYNOPSIS
+.nf
+.B #include <pthread.h>
+.B #include <time.h>
+.P
+.BI "int pthread_getcpuclockid(pthread_t " thread ", clockid_t *" clockid );
+.fi
+.SH DESCRIPTION
+The
+.BR pthread_getcpuclockid ()
+function obtains the ID of the CPU-time clock of the thread whose ID is
+given in
+.IR thread ,
+and returns it in the location pointed to by
+.IR clockid .
+.\" The clockid is constructed as follows:
+.\" *clockid = CLOCK_THREAD_CPUTIME_ID | (pd->tid << CLOCK_IDFIELD_SIZE)
+.\" where CLOCK_IDFIELD_SIZE is 3.
+.SH RETURN VALUE
+On success, this function returns 0;
+on error, it returns a nonzero error number.
+.SH ERRORS
+.TP
+.B ENOENT
+.\" CLOCK_THREAD_CPUTIME_ID not defined
+Per-thread CPU time clocks are not supported by the system.
+.\"
+.\" Looking at nptl/pthread_getcpuclockid.c an ERANGE error would
+.\" be possible if kernel thread IDs took more than 29 bits (which
+.\" they currently cannot).
+.TP
+.B ESRCH
+No thread with the ID
+.I thread
+could be found.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR pthread_getcpuclockid ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+glibc 2.2.
+POSIX.1-2001.
+.SH NOTES
+When
+.I thread
+refers to the calling thread,
+this function returns an identifier that refers to the same clock
+manipulated by
+.BR clock_gettime (2)
+and
+.BR clock_settime (2)
+when given the clock ID
+.BR CLOCK_THREAD_CPUTIME_ID .
+.SH EXAMPLES
+The program below creates a thread and then uses
+.BR clock_gettime (2)
+to retrieve the total process CPU time,
+and the per-thread CPU time consumed by the two threads.
+The following shell session shows an example run:
+.P
+.in +4n
+.EX
+$ \fB./a.out\fP
+Main thread sleeping
+Subthread starting infinite loop
+Main thread consuming some CPU time...
+Process total CPU time:    1.368
+Main thread CPU time:      0.376
+Subthread CPU time:        0.992
+.EE
+.in
+.SS Program source
+\&
+.\" SRC BEGIN (pthread_getcpuclockid.c)
+.EX
+/* Link with "\-lrt" */
+\&
+#include <errno.h>
+#include <pthread.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h>
+\&
+#define handle_error(msg) \[rs]
+        do { perror(msg); exit(EXIT_FAILURE); } while (0)
+\&
+#define handle_error_en(en, msg) \[rs]
+        do { errno = en; perror(msg); exit(EXIT_FAILURE); } while (0)
+\&
+static void *
+thread_start(void *arg)
+{
+    printf("Subthread starting infinite loop\[rs]n");
+    for (;;)
+        continue;
+}
+\&
+static void
+pclock(char *msg, clockid_t cid)
+{
+    struct timespec ts;
+\&
+    printf("%s", msg);
+    if (clock_gettime(cid, &ts) == \-1)
+        handle_error("clock_gettime");
+    printf("%4jd.%03ld\[rs]n", (intmax_t) ts.tv_sec, ts.tv_nsec / 1000000);
+}
+\&
+int
+main(void)
+{
+    pthread_t thread;
+    clockid_t cid;
+    int s;
+\&
+    s = pthread_create(&thread, NULL, thread_start, NULL);
+    if (s != 0)
+        handle_error_en(s, "pthread_create");
+\&
+    printf("Main thread sleeping\[rs]n");
+    sleep(1);
+\&
+    printf("Main thread consuming some CPU time...\[rs]n");
+    for (unsigned int j = 0; j < 2000000; j++)
+        getppid();
+\&
+    pclock("Process total CPU time: ", CLOCK_PROCESS_CPUTIME_ID);
+\&
+    s = pthread_getcpuclockid(pthread_self(), &cid);
+    if (s != 0)
+        handle_error_en(s, "pthread_getcpuclockid");
+    pclock("Main thread CPU time:   ", cid);
+\&
+    /* The preceding 4 lines of code could have been replaced by:
+       pclock("Main thread CPU time:   ", CLOCK_THREAD_CPUTIME_ID); */
+\&
+    s = pthread_getcpuclockid(thread, &cid);
+    if (s != 0)
+        handle_error_en(s, "pthread_getcpuclockid");
+    pclock("Subthread CPU time: 1    ", cid);
+\&
+    exit(EXIT_SUCCESS);         /* Terminates both threads */
+}
+.EE
+.\" SRC END
+.SH SEE ALSO
+.BR clock_gettime (2),
+.BR clock_settime (2),
+.BR timer_create (2),
+.BR clock_getcpuclockid (3),
+.BR pthread_self (3),
+.BR pthreads (7),
+.BR time (7)

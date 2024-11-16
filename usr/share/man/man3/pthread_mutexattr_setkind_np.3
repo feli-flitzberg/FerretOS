@@ -1,0 +1,55 @@
+.\" Copyright, Xavier Leroy <Xavier.Leroy@inria.fr>
+.\" Copyright 2023, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH pthread_mutexattr_setkind_np 3 2024-05-19 "Linux man-pages 6.9.1"
+.
+.
+.SH NAME
+pthread_mutexattr_setkind_np,
+pthread_mutexattr_getkind_np
+\-
+deprecated mutex creation attributes
+.
+.
+.SH SYNOPSIS
+.nf
+.B #include <pthread.h>
+.P
+.BI "int pthread_mutexattr_setkind_np(pthread_mutexattr_t *" attr ", int " kind );
+.BI "int pthread_mutexattr_getkind_np(const pthread_mutexattr_t *" attr ,
+.BI "                                 int *" kind );
+.fi
+.
+.
+.SH DESCRIPTION
+These functions are deprecated,
+use \fBpthread_mutexattr_settype\fP(3)
+and \fBpthread_mutexattr_gettype\fP(3)
+instead.
+.
+.
+.SH "RETURN VALUE"
+\fBpthread_mutexattr_getkind_np\fP always returns 0.
+.P
+\fBpthread_mutexattr_setkind_np\fP
+returns 0 on success and a non-zero error code on error.
+.
+.
+.SH ERRORS
+On error,
+\fBpthread_mutexattr_setkind_np\fP returns the following error code:
+.TP
+\fBEINVAL\fP
+\fIkind\fP is neither
+\fBPTHREAD_MUTEX_FAST_NP\fP
+nor
+\fBPTHREAD_MUTEX_RECURSIVE_NP\fP
+nor
+\fBPTHREAD_MUTEX_ERRORCHECK_NP\fP.
+.
+.
+.SH "SEE ALSO"
+\fBpthread_mutexattr_settype\fP(3),
+\fBpthread_mutexattr_gettype\fP(3).

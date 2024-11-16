@@ -1,0 +1,193 @@
+.\" Copyright (C) 2006 Red Hat, Inc. All Rights Reserved.
+.\" and Copyright (C) 2013 Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Written by Ivana Varekova <varekova@redhat.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH perfmonctl 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+perfmonctl \- interface to IA-64 performance monitoring unit
+.SH SYNOPSIS
+.nf
+.B #include <syscall.h>
+.B #include <perfmon.h>
+.P
+.BI "long perfmonctl(int " fd ", int " cmd ", void " arg [. narg "], int " narg ");"
+.fi
+.P
+.IR Note :
+There is no glibc wrapper for this system call; see HISTORY.
+.SH DESCRIPTION
+The IA-64-specific
+.BR perfmonctl ()
+system call provides an interface to the
+PMU (performance monitoring unit).
+The PMU consists of PMD (performance monitoring data) registers and
+PMC (performance monitoring control) registers,
+which gather hardware statistics.
+.P
+.BR perfmonctl ()
+applies the operation
+.I cmd
+to the input arguments specified by
+.IR arg .
+The number of arguments is defined by \fInarg\fR.
+The
+.I fd
+argument specifies the perfmon context to operate on.
+.P
+Supported values for
+.I cmd
+are:
+.TP
+.B PFM_CREATE_CONTEXT
+.nf
+.BI  "perfmonctl(int " fd ", PFM_CREATE_CONTEXT, pfarg_context_t *" ctxt ", 1);"
+.fi
+Set up a context.
+.IP
+The
+.I fd
+parameter is ignored.
+A new perfmon context is created as specified in
+.I ctxt
+and its file descriptor is returned in \fIctxt\->ctx_fd\fR.
+.IP
+The file descriptor can be used in subsequent calls to
+.BR perfmonctl ()
+and can be used to read event notifications (type
+.IR pfm_msg_t )
+using
+.BR read (2).
+The file descriptor is pollable using
+.BR select (2),
+.BR poll (2),
+and
+.BR epoll (7).
+.IP
+The context can be destroyed by calling
+.BR close (2)
+on the file descriptor.
+.TP
+.B PFM_WRITE_PMCS
+.\" pfm_write_pmcs()
+.nf
+.BI  "perfmonctl(int " fd ", PFM_WRITE_PMCS, pfarg_reg_t *" pmcs ", n);"
+.fi
+Set PMC registers.
+.TP
+.B PFM_WRITE_PMDS
+.nf
+.BI  "perfmonctl(int " fd ", PFM_WRITE_PMDS, pfarg_reg_t *" pmds ", n);"
+.fi
+.\" pfm_write_pmds()
+Set PMD registers.
+.TP
+.B PFM_READ_PMDS
+.\" pfm_read_pmds()
+.nf
+.BI  "perfmonctl(int " fd ", PFM_READ_PMDS, pfarg_reg_t *" pmds ", n);"
+.fi
+Read PMD registers.
+.TP
+.B PFM_START
+.\" pfm_start()
+.nf
+.\" .BI  "perfmonctl(int " fd ", PFM_START, arg, 1);
+.BI  "perfmonctl(int " fd ", PFM_START, NULL, 0);"
+.fi
+Start monitoring.
+.TP
+.B PFM_STOP
+.\" pfm_stop()
+.nf
+.BI  "perfmonctl(int " fd ", PFM_STOP, NULL, 0);"
+.fi
+Stop monitoring.
+.TP
+.B PFM_LOAD_CONTEXT
+.\" pfm_context_load()
+.nf
+.BI  "perfmonctl(int " fd ", PFM_LOAD_CONTEXT, pfarg_load_t *" largs ", 1);"
+.fi
+Attach the context to a thread.
+.TP
+.B PFM_UNLOAD_CONTEXT
+.\" pfm_context_unload()
+.nf
+.BI  "perfmonctl(int " fd ", PFM_UNLOAD_CONTEXT, NULL, 0);"
+.fi
+Detach the context from a thread.
+.TP
+.B PFM_RESTART
+.\" pfm_restart()
+.nf
+.BI  "perfmonctl(int " fd ", PFM_RESTART, NULL, 0);"
+.fi
+Restart monitoring after receiving an overflow notification.
+.TP
+.B PFM_GET_FEATURES
+.\" pfm_get_features()
+.nf
+.BI  "perfmonctl(int " fd ", PFM_GET_FEATURES, pfarg_features_t *" arg ", 1);"
+.fi
+.TP
+.B PFM_DEBUG
+.\" pfm_debug()
+.nf
+.BI  "perfmonctl(int " fd ", PFM_DEBUG, " val ", 0);"
+.fi
+If
+.I val
+is nonzero, enable debugging mode, otherwise disable.
+.TP
+.B PFM_GET_PMC_RESET_VAL
+.\" pfm_get_pmc_reset()
+.nf
+.BI  "perfmonctl(int " fd ", PFM_GET_PMC_RESET_VAL, pfarg_reg_t *" req  ", n);"
+.fi
+Reset PMC registers to default values.
+.\"
+.\"
+.\" .TP
+.\" .B PFM_CREATE_EVTSETS
+.\"
+.\" create or modify event sets
+.\" .nf
+.\" .BI  "perfmonctl(int " fd ", PFM_CREATE_EVTSETS, pfarg_setdesc_t *desc , n);
+.\" .fi
+.\" .TP
+.\" .B PFM_DELETE_EVTSETS
+.\" delete event sets
+.\" .nf
+.\" .BI  "perfmonctl(int " fd ", PFM_DELETE_EVTSET, pfarg_setdesc_t *desc , n);
+.\" .fi
+.\" .TP
+.\" .B PFM_GETINFO_EVTSETS
+.\" get information about event sets
+.\" .nf
+.\" .BI  "perfmonctl(int " fd ", PFM_GETINFO_EVTSETS, pfarg_setinfo_t *info, n);
+.\" .fi
+.SH RETURN VALUE
+.BR perfmonctl ()
+returns zero when the operation is successful.
+On error, \-1 is returned and
+.I errno
+is set to indicate the error.
+.SH STANDARDS
+Linux on IA-64.
+.SH HISTORY
+Added in Linux 2.4;
+.\" commit ecf5b72d5f66af843f189dfe9ce31598c3e48ad7
+removed in Linux 5.10.
+.P
+This system call was broken for many years,
+and ultimately removed in Linux 5.10.
+.P
+glibc does not provide a wrapper for this system call;
+on kernels where it exists, call it using
+.BR syscall (2).
+.SH SEE ALSO
+.BR gprof (1)
+.P
+The perfmon2 interface specification

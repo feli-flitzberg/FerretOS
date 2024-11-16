@@ -1,0 +1,94 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\" and Copyright 2008, Linux Foundation, written by Michael Kerrisk
+.\"     <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified 1993-07-24 by Rik Faith (faith@cs.unc.edu)
+.\" Modified 1995-08-14 by Arnt Gulbrandsen <agulbra@troll.no>
+.\" Modified 2002-07-27 by Walter Harms
+.\" 	(walter.harms@informatik.uni-oldenburg.de)
+.\"
+.TH log10 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+log10, log10f, log10l \-  base-10 logarithmic function
+.SH LIBRARY
+Math library
+.RI ( libm ", " \-lm )
+.SH SYNOPSIS
+.nf
+.B #include <math.h>
+.P
+.BI "double log10(double " x );
+.BI "float log10f(float " x );
+.BI "long double log10l(long double " x );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR log10f (),
+.BR log10l ():
+.nf
+    _ISOC99_SOURCE || _POSIX_C_SOURCE >= 200112L
+        || /* Since glibc 2.19: */ _DEFAULT_SOURCE
+        || /* glibc <= 2.19: */ _BSD_SOURCE || _SVID_SOURCE
+.fi
+.SH DESCRIPTION
+These functions return the base-10 logarithm of
+.IR x .
+.SH RETURN VALUE
+On success, these functions return the base-10 logarithm of
+.IR x .
+.P
+For special cases, including where
+.I x
+is 0, 1, negative, infinity, or NaN, see
+.BR log (3).
+.SH ERRORS
+See
+.BR math_error (7)
+for information on how to determine whether an error has occurred
+when calling these functions.
+.P
+For a discussion of the errors that can occur for these functions, see
+.BR log (3).
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR log10 (),
+.BR log10f (),
+.BR log10l ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+C99, POSIX.1-2001.
+.P
+The variant returning
+.I double
+also conforms to
+SVr4, 4.3BSD, C89.
+.SH SEE ALSO
+.BR cbrt (3),
+.BR clog10 (3),
+.BR exp10 (3),
+.BR log (3),
+.BR log2 (3),
+.BR sqrt (3)

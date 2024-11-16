@@ -1,0 +1,204 @@
+'\" t
+.\" Copyright 2022 Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH strcpy 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+stpcpy, strcpy, strcat \- copy or catenate a string
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <string.h>
+.P
+.BI "char *stpcpy(char *restrict " dst ", const char *restrict " src );
+.BI "char *strcpy(char *restrict " dst ", const char *restrict " src );
+.BI "char *strcat(char *restrict " dst ", const char *restrict " src );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR stpcpy ():
+.nf
+    Since glibc 2.10:
+        _POSIX_C_SOURCE >= 200809L
+    Before glibc 2.10:
+        _GNU_SOURCE
+.fi
+.SH DESCRIPTION
+.TP
+.BR stpcpy ()
+.TQ
+.BR strcpy ()
+These functions copy the string pointed to by
+.IR src ,
+into a string
+at the buffer pointed to by
+.IR dst .
+The programmer is responsible for allocating a destination buffer large enough,
+that is,
+.IR "strlen(src) + 1" .
+For the difference between the two functions, see RETURN VALUE.
+.TP
+.BR strcat ()
+This function catenates the string pointed to by
+.IR src ,
+after the string pointed to by
+.I dst
+(overwriting its terminating null byte).
+The programmer is responsible for allocating a destination buffer large enough,
+that is,
+.IR "strlen(dst) + strlen(src) + 1" .
+.P
+An implementation of these functions might be:
+.P
+.in +4n
+.EX
+char *
+stpcpy(char *restrict dst, const char *restrict src)
+{
+    char  *p;
+\&
+    p = mempcpy(dst, src, strlen(src));
+    *p = \[aq]\[rs]0\[aq];
+\&
+    return p;
+}
+\&
+char *
+strcpy(char *restrict dst, const char *restrict src)
+{
+    stpcpy(dst, src);
+    return dst;
+}
+\&
+char *
+strcat(char *restrict dst, const char *restrict src)
+{
+    stpcpy(dst + strlen(dst), src);
+    return dst;
+}
+.EE
+.in
+.SH RETURN VALUE
+.TP
+.BR stpcpy ()
+This function returns
+a pointer to the terminating null byte of the copied string.
+.TP
+.BR strcpy ()
+.TQ
+.BR strcat ()
+These functions return
+.IR dst .
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR stpcpy (),
+.BR strcpy (),
+.BR strcat ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+.TP
+.BR stpcpy ()
+POSIX.1-2008.
+.TP
+.BR strcpy ()
+.TQ
+.BR strcat ()
+C11, POSIX.1-2008.
+.SH STANDARDS
+.TP
+.BR stpcpy ()
+POSIX.1-2008.
+.TP
+.BR strcpy ()
+.TQ
+.BR strcat ()
+POSIX.1-2001, C89, SVr4, 4.3BSD.
+.SH CAVEATS
+The strings
+.I src
+and
+.I dst
+may not overlap.
+.P
+If the destination buffer is not large enough,
+the behavior is undefined.
+See
+.B _FORTIFY_SOURCE
+in
+.BR feature_test_macros (7).
+.P
+.BR strcat ()
+can be very inefficient.
+Read about
+.UR https://www.joelonsoftware.com/\:2001/12/11/\:back\-to\-basics/
+Shlemiel the painter
+.UE .
+.SH EXAMPLES
+.\" SRC BEGIN (strcpy.c)
+.EX
+#include <err.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+\&
+int
+main(void)
+{
+    char    *p;
+    char    *buf1;
+    char    *buf2;
+    size_t  len, maxsize;
+\&
+    maxsize = strlen("Hello ") + strlen("world") + strlen("!") + 1;
+    buf1 = malloc(sizeof(*buf1) * maxsize);
+    if (buf1 == NULL)
+        err(EXIT_FAILURE, "malloc()");
+    buf2 = malloc(sizeof(*buf2) * maxsize);
+    if (buf2 == NULL)
+        err(EXIT_FAILURE, "malloc()");
+\&
+    p = buf1;
+    p = stpcpy(p, "Hello ");
+    p = stpcpy(p, "world");
+    p = stpcpy(p, "!");
+    len = p \- buf1;
+\&
+    printf("[len = %zu]: ", len);
+    puts(buf1);  // "Hello world!"
+    free(buf1);
+\&
+    strcpy(buf2, "Hello ");
+    strcat(buf2, "world");
+    strcat(buf2, "!");
+    len = strlen(buf2);
+\&
+    printf("[len = %zu]: ", len);
+    puts(buf2);  // "Hello world!"
+    free(buf2);
+\&
+    exit(EXIT_SUCCESS);
+}
+.EE
+.\" SRC END
+.SH SEE ALSO
+.BR strdup (3),
+.BR string (3),
+.BR wcscpy (3),
+.BR string_copying (7)

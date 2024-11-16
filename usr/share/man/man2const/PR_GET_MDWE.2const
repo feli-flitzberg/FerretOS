@@ -1,0 +1,40 @@
+.\" Copyright 2023, Florent Revest <revest@chromium.org>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_GET_MDWE 2const 2024-06-01 "Linux man-pages 6.9.1"
+.SH NAME
+PR_GET_MDWE
+\-
+get the Memory-Deny-Write-Execute protection mask for the calling process
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.B int prctl(PR_GET_MDWE, 0L, 0L, 0L, 0L);
+.fi
+.SH DESCRIPTION
+Return the Memory-Deny-Write-Execute protection mask
+of the calling process.
+See
+.BR PR_SET_MDWE (2const)
+for information on the protection mask bits.
+.SH RETURN VALUE
+On success,
+a nonnegative value is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 6.3.
+.\" commit b507808ebce23561d4ff8c2aa1fb949fe402bc61
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_SET_MDWE (2const)

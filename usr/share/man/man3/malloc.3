@@ -1,0 +1,460 @@
+'\" t
+.\" Copyright (c) 1993 by Thomas Koenig (ig25@rz.uni-karlsruhe.de)
+.\" and Copyright 2007, 2012, 2018, Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" Modified Sat Jul 24 19:00:59 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Clarification concerning realloc, iwj10@cus.cam.ac.uk (Ian Jackson), 950701
+.\" Documented MALLOC_CHECK_, Wolfram Gloger (wmglo@dent.med.uni-muenchen.de)
+.\" 2007-09-15 mtk: added notes on malloc()'s use of sbrk() and mmap().
+.\"
+.\" FIXME . Review http://austingroupbugs.net/view.php?id=374
+.\" to see what changes are required on this page.
+.\"
+.TH malloc 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+malloc, free, calloc, realloc, reallocarray \- allocate and free dynamic memory
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdlib.h>
+.P
+.BI "void *malloc(size_t " size );
+.BI "void free(void *_Nullable " ptr );
+.BI "void *calloc(size_t " nmemb ", size_t " size );
+.BI "void *realloc(void *_Nullable " ptr ", size_t "  size );
+.BI "void *reallocarray(void *_Nullable " ptr ", size_t " nmemb ", size_t " size );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR reallocarray ():
+.nf
+    Since glibc 2.29:
+        _DEFAULT_SOURCE
+    glibc 2.28 and earlier:
+        _GNU_SOURCE
+.fi
+.SH DESCRIPTION
+.SS malloc()
+The
+.BR malloc ()
+function allocates
+.I size
+bytes and returns a pointer to the allocated memory.
+.IR "The memory is not initialized" .
+If
+.I size
+is 0, then
+.BR malloc ()
+returns a unique pointer value that can later be successfully passed to
+.BR free ().
+(See "Nonportable behavior" for portability issues.)
+.SS free()
+The
+.BR free ()
+function frees the memory space pointed to by
+.IR ptr ,
+which must have been returned by a previous call to
+.BR malloc ()
+or related functions.
+Otherwise, or if
+.I ptr
+has already been freed, undefined behavior occurs.
+If
+.I ptr
+is NULL, no operation is performed.
+.SS calloc()
+The
+.BR calloc ()
+function allocates memory for an array of
+.I nmemb
+elements of
+.I size
+bytes each and returns a pointer to the allocated memory.
+The memory is set to zero.
+If
+.I nmemb
+or
+.I size
+is 0, then
+.BR calloc ()
+returns a unique pointer value that can later be successfully passed to
+.BR free ().
+.P
+If the multiplication of
+.I nmemb
+and
+.I size
+would result in integer overflow, then
+.BR calloc ()
+returns an error.
+By contrast,
+an integer overflow would not be detected in the following call to
+.BR malloc (),
+with the result that an incorrectly sized block of memory would be allocated:
+.P
+.in +4n
+.EX
+malloc(nmemb * size);
+.EE
+.in
+.SS realloc()
+The
+.BR realloc ()
+function changes the size of the memory block pointed to by
+.I ptr
+to
+.I size
+bytes.
+The contents of the memory
+will be unchanged in the range from the start of the region
+up to the minimum of the old and new sizes.
+If the new size is larger than the old size, the added memory will
+.I not
+be initialized.
+.P
+If
+.I ptr
+is NULL, then the call is equivalent to
+.IR malloc(size) ,
+for all values of
+.IR size .
+.P
+If
+.I size
+is equal to zero,
+and
+.I ptr
+is not NULL, then the call is equivalent to
+.I free(ptr)
+(but see "Nonportable behavior" for portability issues).
+.P
+Unless
+.I ptr
+is NULL, it must have been returned by an earlier call to
+.B malloc
+or related functions.
+If the area pointed to was moved, a
+.I free(ptr)
+is done.
+.SS reallocarray()
+The
+.BR reallocarray ()
+function changes the size of (and possibly moves)
+the memory block pointed to by
+.I ptr
+to be large enough for an array of
+.I nmemb
+elements, each of which is
+.I size
+bytes.
+It is equivalent to the call
+.P
+.in +4n
+.EX
+realloc(ptr, nmemb * size);
+.EE
+.in
+.P
+However, unlike that
+.BR realloc ()
+call,
+.BR reallocarray ()
+fails safely in the case where the multiplication would overflow.
+If such an overflow occurs,
+.BR reallocarray ()
+returns an error.
+.SH RETURN VALUE
+The
+.BR malloc (),
+.BR calloc (),
+.BR realloc (),
+and
+.BR reallocarray ()
+functions return a pointer to the allocated memory,
+which is suitably aligned for any type that fits into
+the requested size or less.
+On error, these functions return NULL and set
+.IR errno .
+Attempting to allocate more than
+.B PTRDIFF_MAX
+bytes is considered an error, as an object that large
+could cause later pointer subtraction to overflow.
+.P
+The
+.BR free ()
+function returns no value, and preserves
+.IR errno .
+.P
+The
+.BR realloc ()
+and
+.BR reallocarray ()
+functions return NULL if
+.I ptr
+is not NULL and the requested size is zero;
+this is not considered an error.
+(See "Nonportable behavior" for portability issues.)
+Otherwise, the returned pointer may be the same as
+.I ptr
+if the allocation was not moved
+(e.g., there was room to expand the allocation in-place), or different from
+.I ptr
+if the allocation was moved to a new address.
+If these functions fail,
+the original block is left untouched; it is not freed or moved.
+.SH ERRORS
+.BR calloc (),
+.BR malloc (),
+.BR realloc (),
+and
+.BR reallocarray ()
+can fail with the following error:
+.TP
+.B ENOMEM
+Out of memory.
+Possibly, the application hit the
+.B RLIMIT_AS
+or
+.B RLIMIT_DATA
+limit described in
+.BR getrlimit (2).
+Another reason could be that
+the number of mappings created by the caller process
+exceeded the limit specified by
+.IR /proc/sys/vm/max_map_count .
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR malloc (),
+.BR free (),
+.BR calloc (),
+.BR realloc ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+.TP
+.BR malloc ()
+.TQ
+.BR free ()
+.TQ
+.BR calloc ()
+.TQ
+.BR realloc ()
+C11, POSIX.1-2008.
+.TP
+.BR reallocarray ()
+None.
+.SH HISTORY
+.TP
+.BR malloc ()
+.TQ
+.BR free ()
+.TQ
+.BR calloc ()
+.TQ
+.BR realloc ()
+POSIX.1-2001, C89.
+.TP
+.BR reallocarray ()
+glibc 2.26.
+OpenBSD 5.6, FreeBSD 11.0.
+.P
+.BR malloc ()
+and related functions rejected sizes greater than
+.B PTRDIFF_MAX
+starting in glibc 2.30.
+.P
+.BR free ()
+preserved
+.I errno
+starting in glibc 2.33.
+.SH NOTES
+By default, Linux follows an optimistic memory allocation strategy.
+This means that when
+.BR malloc ()
+returns non-NULL there is no guarantee that the memory really
+is available.
+In case it turns out that the system is out of memory,
+one or more processes will be killed by the OOM killer.
+For more information, see the description of
+.I /proc/sys/vm/overcommit_memory
+and
+.I /proc/sys/vm/oom_adj
+in
+.BR proc (5),
+and the Linux kernel source file
+.IR Documentation/vm/overcommit\-accounting.rst .
+.P
+Normally,
+.BR malloc ()
+allocates memory from the heap, and adjusts the size of the heap
+as required, using
+.BR sbrk (2).
+When allocating blocks of memory larger than
+.B MMAP_THRESHOLD
+bytes, the glibc
+.BR malloc ()
+implementation allocates the memory as a private anonymous mapping using
+.BR mmap (2).
+.B MMAP_THRESHOLD
+is 128\ kB by default, but is adjustable using
+.BR mallopt (3).
+Prior to Linux 4.7
+allocations performed using
+.BR mmap (2)
+were unaffected by the
+.B RLIMIT_DATA
+resource limit;
+since Linux 4.7, this limit is also enforced for allocations performed using
+.BR mmap (2).
+.P
+To avoid corruption in multithreaded applications,
+mutexes are used internally to protect the memory-management
+data structures employed by these functions.
+In a multithreaded application in which threads simultaneously
+allocate and free memory,
+there could be contention for these mutexes.
+To scalably handle memory allocation in multithreaded applications,
+glibc creates additional
+.I memory allocation arenas
+if mutex contention is detected.
+Each arena is a large region of memory that is internally allocated
+by the system
+(using
+.BR brk (2)
+or
+.BR mmap (2)),
+and managed with its own mutexes.
+.P
+If your program uses a private memory allocator,
+it should do so by replacing
+.BR malloc (),
+.BR free (),
+.BR calloc (),
+and
+.BR realloc ().
+The replacement functions must implement the documented glibc behaviors,
+including
+.I errno
+handling, size-zero allocations, and overflow checking;
+otherwise, other library routines may crash or operate incorrectly.
+For example, if the replacement
+.IR free ()
+does not preserve
+.IR errno ,
+then seemingly unrelated library routines may
+fail without having a valid reason in
+.IR errno .
+Private memory allocators may also need to replace other glibc functions;
+see "Replacing malloc" in the glibc manual for details.
+.P
+Crashes in memory allocators
+are almost always related to heap corruption, such as overflowing
+an allocated chunk or freeing the same pointer twice.
+.P
+The
+.BR malloc ()
+implementation is tunable via environment variables; see
+.BR mallopt (3)
+for details.
+.SS Nonportable behavior
+The behavior of
+these functions when the requested size is zero
+is glibc specific;
+other implementations may return NULL without setting
+.IR errno ,
+and portable POSIX programs should tolerate such behavior.
+See
+.BR realloc (3p).
+.P
+POSIX requires memory allocators
+to set
+.I errno
+upon failure.
+However, the C standard does not require this, and applications
+portable to non-POSIX platforms should not assume this.
+.P
+Portable programs should not use private memory allocators,
+as POSIX and the C standard do not allow replacement of
+.BR malloc (),
+.BR free (),
+.BR calloc (),
+and
+.BR realloc ().
+.SH EXAMPLES
+.EX
+#include <err.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+\&
+#define MALLOCARRAY(n, type)  ((type *) my_mallocarray(n, sizeof(type)))
+#define MALLOC(type)          MALLOCARRAY(1, type)
+\&
+static inline void *my_mallocarray(size_t nmemb, size_t size);
+\&
+int
+main(void)
+{
+    char  *p;
+\&
+    p = MALLOCARRAY(32, char);
+    if (p == NULL)
+        err(EXIT_FAILURE, "malloc");
+\&
+    strlcpy(p, "foo", 32);
+    puts(p);
+}
+\&
+static inline void *
+my_mallocarray(size_t nmemb, size_t size)
+{
+    return reallocarray(NULL, nmemb, size);
+}
+.EE
+.SH SEE ALSO
+.\" http://g.oswego.edu/dl/html/malloc.html
+.\" A Memory Allocator - by Doug Lea
+.\"
+.\" http://www.bozemanpass.com/info/linux/malloc/Linux_Heap_Contention.html
+.\" Linux Heap, Contention in free() - David Boreham
+.\"
+.\" http://www.citi.umich.edu/projects/linux-scalability/reports/malloc.html
+.\" malloc() Performance in a Multithreaded Linux Environment -
+.\"     Check Lever, David Boreham
+.\"
+.ad l
+.nh
+.BR valgrind (1),
+.BR brk (2),
+.BR mmap (2),
+.BR alloca (3),
+.BR malloc_get_state (3),
+.BR malloc_info (3),
+.BR malloc_trim (3),
+.BR malloc_usable_size (3),
+.BR mallopt (3),
+.BR mcheck (3),
+.BR mtrace (3),
+.BR posix_memalign (3)
+.P
+For details of the GNU C library implementation, see
+.UR https://sourceware.org/glibc/wiki/MallocInternals
+.UE .

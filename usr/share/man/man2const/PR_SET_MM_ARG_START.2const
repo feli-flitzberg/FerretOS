@@ -1,0 +1,69 @@
+.\" Copyright 2012, Cyrill Gorcunov <gorcunov@openvz.org>
+.\" Copyright 2012, 2013, 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_SET_MM_ARG_START 2const 2024-06-01 "Linux man-pages 6.9.1"
+.SH NAME
+PR_SET_MM_ARG_START,
+PR_SET_MM_ARG_END,
+PR_SET_MM_ENV_START,
+PR_SET_MM_ENV_END
+\-
+modify kernel memory map descriptor fields
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.BI "int prctl(PR_SET_MM, PR_SET_MM_ARG_START, unsigned long " addr ", 0L, 0L);"
+.BI "int prctl(PR_SET_MM, PR_SET_MM_ARG_END, unsigned long " addr ", 0L, 0L);"
+.BI "int prctl(PR_SET_MM, PR_SET_MM_ENV_START, unsigned long " addr ", 0L, 0L);"
+.BI "int prctl(PR_SET_MM, PR_SET_MM_ENV_END, unsigned long " addr ", 0L, 0L);"
+.fi
+.SH DESCRIPTION
+.TP
+.B PR_SET_MM_ARG_START
+Set the address above which the program command line is placed.
+.TP
+.B PR_SET_MM_ARG_END
+Set the address below which the program command line is placed.
+.TP
+.B PR_SET_MM_ENV_START
+Set the address above which the program environment is placed.
+.TP
+.B PR_SET_MM_ENV_END
+Set the address below which the program environment is placed.
+.P
+The address passed with these calls
+should belong to a process stack area.
+Thus, the corresponding memory area must be readable, writable, and
+(depending on the kernel configuration) have the
+.B MAP_GROWSDOWN
+attribute set (see
+.BR mmap (2)).
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+.I addr
+is greater than
+.B TASK_SIZE
+(the limit on the size of the user address space for this architecture).
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 3.5.
+.\" commit fe8c7f5cbf91124987106faa3bdf0c8b955c4cf7
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_SET_MM (2const)

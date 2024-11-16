@@ -1,0 +1,133 @@
+'\" t
+.\" Copyright (C) 2001 Andries Brouwer <aeb@cwi.nl>.
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH flockfile 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+flockfile, ftrylockfile, funlockfile \- lock FILE for stdio
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdio.h>
+.P
+.BI "void flockfile(FILE *" filehandle );
+.BI "int ftrylockfile(FILE *" filehandle );
+.BI "void funlockfile(FILE *" filehandle );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+All functions shown above:
+.nf
+    /* Since glibc 2.24: */ _POSIX_C_SOURCE >= 199309L
+        || /* glibc <= 2.23: */ _POSIX_C_SOURCE
+        || /* glibc <= 2.19: */ _BSD_SOURCE || _SVID_SOURCE
+.fi
+.SH DESCRIPTION
+The stdio functions are thread-safe.
+This is achieved by assigning
+to each
+.I FILE
+object a lockcount and (if the lockcount is nonzero)
+an owning thread.
+For each library call, these functions wait until the
+.I FILE
+object
+is no longer locked by a different thread, then lock it, do the
+requested I/O, and unlock the object again.
+.P
+(Note: this locking has nothing to do with the file locking done
+by functions like
+.BR flock (2)
+and
+.BR lockf (3).)
+.P
+All this is invisible to the C-programmer, but there may be two
+reasons to wish for more detailed control.
+On the one hand, maybe
+a series of I/O actions by one thread belongs together, and should
+not be interrupted by the I/O of some other thread.
+On the other hand, maybe the locking overhead should be avoided
+for greater efficiency.
+.P
+To this end, a thread can explicitly lock the
+.I FILE
+object,
+then do its series of I/O actions, then unlock.
+This prevents
+other threads from coming in between.
+If the reason for doing
+this was to achieve greater efficiency, one does the I/O with
+the nonlocking versions of the stdio functions: with
+.BR getc_unlocked (3)
+and
+.BR putc_unlocked (3)
+instead of
+.BR getc (3)
+and
+.BR putc (3).
+.P
+The
+.BR flockfile ()
+function waits for
+.I *filehandle
+to be
+no longer locked by a different thread, then makes the
+current thread owner of
+.IR *filehandle ,
+and increments
+the lockcount.
+.P
+The
+.BR funlockfile ()
+function decrements the lock count.
+.P
+The
+.BR ftrylockfile ()
+function is a nonblocking version
+of
+.BR flockfile ().
+It does nothing in case some other thread
+owns
+.IR *filehandle ,
+and it obtains ownership and increments
+the lockcount otherwise.
+.SH RETURN VALUE
+The
+.BR ftrylockfile ()
+function returns zero for success
+(the lock was obtained), and nonzero for failure.
+.SH ERRORS
+None.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR flockfile (),
+.BR ftrylockfile (),
+.BR funlockfile ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001.
+.P
+These functions are available when
+.B _POSIX_THREAD_SAFE_FUNCTIONS
+is defined.
+.SH SEE ALSO
+.BR unlocked_stdio (3)

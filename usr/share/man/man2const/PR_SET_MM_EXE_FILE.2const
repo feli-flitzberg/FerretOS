@@ -1,0 +1,81 @@
+.\" Copyright 2012, Cyrill Gorcunov <gorcunov@openvz.org>
+.\" Copyright 2012, 2013, 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_SET_MM_EXE_FILE 2const 2024-06-01 "Linux man-pages 6.9.1"
+.SH NAME
+PR_SET_MM_EXE_FILE
+\-
+modify kernel memory map descriptor fields
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.BI "int prctl(PR_SET_MM, PR_SET_MM_EXE_FILE, long " fd ", 0L, 0L);"
+.fi
+.SH DESCRIPTION
+Supersede the
+.IR /proc/ pid /exe
+symbolic link with a new one pointing to a new executable file
+identified by the file descriptor provided in the
+.I fd
+argument.
+The file descriptor should be obtained with a regular
+.BR open (2)
+call.
+.P
+To change the symbolic link, one needs to unmap all existing
+executable memory areas, including those created by the kernel itself
+(for example the kernel usually creates at least one executable
+memory area for the ELF
+.I .text
+section).
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EACCES
+The file is not executable.
+.TP
+.B EBADF
+The file descriptor passed in
+.I fd
+is not valid.
+.TP
+.B EBUSY
+This the second attempt to change the
+.IR /proc/ pid /exe
+symbolic link.
+.SH FILES
+.TP
+.IR /proc/ pid /exe
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 3.5.
+.\" commit b32dfe377102ce668775f8b6b1461f7ad428f8b6
+.P
+In Linux 4.9 and earlier, the
+.\" commit 3fb4afd9a504c2386b8435028d43283216bf588e
+.B PR_SET_MM_EXE_FILE
+operation can be performed only once in a process's lifetime;
+attempting to perform the operation a second time results in the error
+.BR EPERM .
+This restriction was enforced for security reasons that were subsequently
+deemed specious,
+and the restriction was removed in Linux 4.10 because some
+user-space applications needed to perform this operation more than once.
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_SET_MM (2const),
+.BR proc_pid_exe (5)

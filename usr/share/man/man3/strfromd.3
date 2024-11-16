@@ -1,0 +1,231 @@
+'\" t
+.\" Copyright (c) 2016, IBM Corporation.
+.\" Written by Wainer dos Santos Moschetta <wainersm@linux.vnet.ibm.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"   glibc 2.25 source code and manual.
+.\"   C99 standard document.
+.\"   ISO/IEC TS 18661-1 technical specification.
+.\"   snprintf and other man.3 pages.
+.\"
+.TH strfromd 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+strfromd, strfromf, strfroml \- convert a floating-point value into
+a string
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdlib.h>
+.P
+.BI "int strfromd(char " str "[restrict ." n "], size_t " n ,
+.BI "             const char *restrict " format ", double " fp ");"
+.BI "int strfromf(char " str "[restrict ." n "], size_t " n ,
+.BI "             const char *restrict " format ", float "fp ");"
+.BI "int strfroml(char " str "[restrict ." n "], size_t " n ,
+.BI "             const char *restrict " format ", long double " fp ");"
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR strfromd (),
+.BR strfromf (),
+.BR strfroml ():
+.nf
+    __STDC_WANT_IEC_60559_BFP_EXT__
+.fi
+.SH DESCRIPTION
+These functions convert a floating-point value,
+.IR fp ,
+into a string of characters,
+.IR str ,
+with a configurable
+.I format
+string.
+At most
+.I n
+characters are stored into
+.IR str .
+.P
+The terminating null byte ('\[rs]0') is written if and only if
+.I n
+is sufficiently large, otherwise the written string is truncated at
+.I n
+characters.
+.P
+The
+.BR strfromd (),
+.BR strfromf (),
+and
+.BR strfroml ()
+functions are equivalent to
+.P
+.in +4n
+.EX
+snprintf(str, n, format, fp);
+.EE
+.in
+.P
+except for the
+.I format
+string.
+.SS Format of the format string
+The
+.I format
+string must start with the character \[aq]%\[aq].
+This is followed by an optional precision which starts with the period
+character (.), followed by an optional decimal integer.
+If no integer is specified after the period character,
+a precision of zero is used.
+Finally, the format string should have one of the conversion specifiers
+.BR a ,
+.BR A ,
+.BR e ,
+.BR E ,
+.BR f ,
+.BR F ,
+.BR g ,
+or
+.BR G .
+.P
+The conversion specifier is applied based on the floating-point type
+indicated by the function suffix.
+Therefore, unlike
+.BR snprintf (),
+the format string does not have a length modifier character.
+See
+.BR snprintf (3)
+for a detailed description of these conversion specifiers.
+.P
+The implementation conforms to the C99 standard on conversion of NaN and
+infinity values:
+.P
+.RS
+If
+.I fp
+is a NaN, +NaN, or \-NaN, and
+.B f
+(or
+.BR a ,
+.BR e ,
+.BR g )
+is the conversion specifier, the conversion is to "nan", "nan", or "\-nan",
+respectively.
+If
+.B F
+(or
+.BR A ,
+.BR E ,
+.BR G )
+is the conversion specifier, the conversion is to "NAN" or "\-NAN".
+.P
+Likewise if
+.I fp
+is infinity, it is converted to [\-]inf or [\-]INF.
+.RE
+.P
+A malformed
+.I format
+string results in undefined behavior.
+.SH RETURN VALUE
+The
+.BR strfromd (),
+.BR strfromf (),
+and
+.BR strfroml ()
+functions return the number of characters that would have been written in
+.I str
+if
+.I n
+had enough space,
+not counting the terminating null byte.
+Thus, a return value of
+.I n
+or greater means that the output was truncated.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7)
+and the
+.B POSIX Safety Concepts
+section in GNU C Library manual.
+.P
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR strfromd (),
+.BR strfromf (),
+.BR strfroml ()
+T}	Thread safety	MT-Safe locale
+\^	Async-signal safety	AS-Unsafe heap
+\^	Async-cancel safety	AC-Unsafe mem
+.TE
+.P
+Note: these attributes are preliminary.
+.SH STANDARDS
+ISO/IEC TS 18661-1.
+.SH VERSIONS
+.TP
+.BR strfromd ()
+.TQ
+.BR strfromf ()
+.TQ
+.BR strfroml ()
+glibc 2.25.
+.SH NOTES
+These functions take account of the
+.B LC_NUMERIC
+category of the current locale.
+.SH EXAMPLES
+To convert the value 12.1 as a float type to a string using decimal
+notation, resulting in "12.100000":
+.P
+.in +4n
+.EX
+#define __STDC_WANT_IEC_60559_BFP_EXT__
+#include <stdlib.h>
+int ssize = 10;
+char s[ssize];
+strfromf(s, ssize, "%f", 12.1);
+.EE
+.in
+.P
+To convert the value 12.3456 as a float type to a string using
+decimal notation with two digits of precision, resulting in "12.35":
+.P
+.in +4n
+.EX
+#define __STDC_WANT_IEC_60559_BFP_EXT__
+#include <stdlib.h>
+int ssize = 10;
+char s[ssize];
+strfromf(s, ssize, "%.2f", 12.3456);
+.EE
+.in
+.P
+To convert the value 12.345e19 as a double type to a string using
+scientific notation with zero digits of precision, resulting in "1E+20":
+.P
+.in +4n
+.EX
+#define __STDC_WANT_IEC_60559_BFP_EXT__
+#include <stdlib.h>
+int ssize = 10;
+char s[ssize];
+strfromd(s, ssize, "%.E", 12.345e19);
+.EE
+.in
+.SH SEE ALSO
+.BR atof (3),
+.BR snprintf (3),
+.BR strtod (3)

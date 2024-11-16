@@ -1,0 +1,28 @@
+.\" Copyright (C) 1994, 1995, Daniel Quinlan <quinlan@yggdrasil.com>
+.\" Copyright (C) 2002-2008, 2017, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright (C) 2023, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-3.0-or-later
+.\"
+.TH proc_kmsg 5 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+/proc/kmsg \- kernel messages
+.SH DESCRIPTION
+.TP
+.I /proc/kmsg
+This file can be used instead of the
+.BR syslog (2)
+system call to read kernel messages.
+A process must have superuser
+privileges to read this file, and only one process should read this
+file.
+This file should not be read if a syslog process is running
+which uses the
+.BR syslog (2)
+system call facility to log kernel messages.
+.IP
+Information in this file is retrieved with the
+.BR dmesg (1)
+program.
+.SH SEE ALSO
+.BR proc (5)

@@ -1,0 +1,71 @@
+'\" t
+.\" Copyright (c) 1989, 1991, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" SPDX-License-Identifier: BSD-3-Clause
+.\"
+.\"     @(#)getloadavg.3	8.1 (Berkeley) 6/4/93
+.\"
+.\" 2007-12-08, mtk, Converted from mdoc to man macros
+.\"
+.TH getloadavg 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+getloadavg \- get system load averages
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdlib.h>
+.P
+.BI "int getloadavg(double " loadavg[] ", int " nelem );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR getloadavg ():
+.nf
+    Since glibc 2.19:
+        _DEFAULT_SOURCE
+    In glibc up to and including 2.19:
+        _BSD_SOURCE
+.fi
+.SH DESCRIPTION
+The
+.BR getloadavg ()
+function returns the number of processes in the system run queue
+averaged over various periods of time.
+Up to
+.I nelem
+samples are retrieved and assigned to successive elements of
+.IR loadavg[] .
+The system imposes a maximum of 3 samples, representing averages
+over the last 1, 5, and 15 minutes, respectively.
+.SH RETURN VALUE
+If the load average was unobtainable, \-1 is returned; otherwise,
+the number of samples actually retrieved is returned.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR getloadavg ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+BSD.
+.SH HISTORY
+4.3BSD-Reno, Solaris.
+glibc 2.2.
+.SH SEE ALSO
+.BR uptime (1),
+.BR proc (5)

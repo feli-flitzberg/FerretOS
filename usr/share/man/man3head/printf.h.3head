@@ -1,0 +1,582 @@
+.\" Copyright (C) 2022 Alejandro Colomar <alx.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH printf.h 3head 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+printf.h,
+\%register_printf_specifier,
+\%register_printf_modifier,
+\%register_printf_type,
+\%printf_function,
+\%printf_arginfo_size_function,
+\%printf_va_arg_function,
+\%printf_info,
+\%PA_INT,
+\%PA_CHAR,
+\%PA_WCHAR,
+\%PA_STRING,
+\%PA_WSTRING,
+\%PA_POINTER,
+\%PA_FLOAT,
+\%PA_DOUBLE,
+\%PA_LAST,
+\%PA_FLAG_LONG_LONG,
+\%PA_FLAG_LONG_DOUBLE,
+\%PA_FLAG_LONG,
+\%PA_FLAG_SHORT,
+\%PA_FLAG_PTR
+\- define custom behavior for printf-like functions
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <printf.h>
+.P
+.BI "int register_printf_specifier(int " spec ", printf_function " func ,
+.BI "                              printf_arginfo_size_function " arginfo );
+.BI "int register_printf_modifier(const wchar_t *" str );
+.BI "int register_printf_type(printf_va_arg_function " fct );
+.fi
+.SS Callbacks
+.nf
+.BI "typedef int printf_function(FILE *" stream ", const struct printf_info *" info ,
+.BI "                              const void *const " args []);
+.BI "typedef int printf_arginfo_size_function(const struct printf_info *" info ,
+.BI "                              size_t " n ", int " argtypes [ n "], int " size [ n ]);
+.BI "typedef void printf_va_arg_function(void *" mem ", va_list *" ap );
+.fi
+.SS Types
+.EX
+.B struct printf_info {
+.BR "    int            prec;            " "// Precision"
+.BR "    int            width;           " "// Width"
+.BR "    wchar_t        spec;            " "// Format letter"
+.BR "    unsigned int   is_long_double:1;" "// " L " or " ll " flag"
+.BR "    unsigned int   is_short:1;      " "// " h " flag"
+.BR "    unsigned int   is_long:1;       " "// " l " flag"
+.BR "    unsigned int   alt:1;           " "// " # " flag"
+.BR "    unsigned int   space:1;         " "// Space flag"
+.BR "    unsigned int   left:1;          " "// " - " flag"
+.BR "    unsigned int   showsign:1;      " "// " + " flag"
+.BR "    unsigned int   group:1;         " "// " \[aq] " flag"
+.BR "    unsigned int   extra:1;         " "// For special use"
+.BR "    unsigned int   is_char:1;       " "// " hh " flag"
+.BR "    unsigned int   wide:1;          " "// True for wide character streams"
+.BR "    unsigned int   i18n:1;          " "// " I " flag"
+.BR "    unsigned int   is_binary128:1;  " "/* Floating-point argument is"
+.BR "                                    " "   ABI-compatible with"
+.BR "                                    " "   IEC 60559 binary128 */"
+.BR "    unsigned short user;            " "// Bits for user-installed modifiers"
+.BR "    wchar_t        pad;             " "// Padding character"
+.B };
+.EE
+.SS Constants
+.EX
+.BR "#define PA_FLAG_LONG_LONG    " "/* ... */"
+.BR "#define PA_FLAG_LONG_DOUBLE  " "/* ... */"
+.BR "#define PA_FLAG_LONG         " "/* ... */"
+.BR "#define PA_FLAG_SHORT        " "/* ... */"
+.BR "#define PA_FLAG_PTR          " "/* ... */"
+.EE
+.SH DESCRIPTION
+These functions serve to extend and/or modify the behavior of the
+.BR printf (3)
+family of functions.
+.SS register_printf_specifier()
+This function registers a custom conversion specifier for the
+.BR printf (3)
+family of functions.
+.TP
+.I spec
+The character which will be used as a conversion specifier in the format string.
+.TP
+.I func
+Callback function that will be executed by the
+.BR printf (3)
+family of functions
+to format the input arguments into the output
+.IR stream .
+.RS
+.TP
+.I stream
+Output stream where the formatted output should be printed.
+This stream transparently represents the output,
+even in the case of functions that write to a string.
+.TP
+.I info
+Structure that holds context information,
+including the modifiers specified in the format string.
+This holds the same contents as in
+.IR arginfo .
+.TP
+.I args
+Array of pointers to the arguments to the
+.BR printf (3)\c
+-like function.
+.RE
+.TP
+.I arginfo
+Callback function that will be executed by the
+.BR printf (3)
+family of functions
+to know how many arguments should be parsed for the custom specifier
+and also their types.
+.RS
+.TP
+.I info
+Structure that holds context information,
+including the modifiers specified in the format string.
+This holds the same contents as in
+.IR func .
+.TP
+.I n
+Number of arguments remaining to be parsed.
+.TP
+.I argtypes
+This array should be set to
+define the type of each of the arguments that will be parsed.
+Each element in the array represents one of the arguments to be parsed,
+in the same order that they are passed to the
+.BR printf (3)\c
+-like function.
+Each element should be set to a base type
+.RB ( PA_ *)
+from the enum above,
+or a custom one,
+and optionally ORed with an appropriate length modifier
+.RB ( PA_FLAG_ *).
+.RS
+.P
+The type is determined by using one of the following constants:
+.TP
+.B PA_INT
+.IR int .
+.TP
+.B PA_CHAR
+.IR int ,
+cast to
+.IR char .
+.TP
+.B PA_WCHAR
+.IR wchar_t .
+.TP
+.B PA_STRING
+.IR "const char\~*" ,
+a \(aq\[rs]0\(aq-terminated string.
+.TP
+.B PA_WSTRING
+.IR "const wchar_t\~*" ,
+a wide character L\(aq\[rs]0\(aq-terminated string.
+.TP
+.B PA_POINTER
+.IR void\~* .
+.TP
+.B PA_FLOAT
+.IR float .
+.TP
+.B PA_DOUBLE
+.IR double .
+.TP
+.B PA_LAST
+TODO.
+.RE
+.TP
+.I size
+For user-defined types,
+the size of the type (in bytes) should also be specified through this array.
+Otherwise, leave it unused.
+.RE
+.P
+.I arginfo
+is called before
+.IR func ,
+and prepares some information needed to call
+.IR func .
+.SS register_printf_modifier()
+TODO
+.SS register_printf_type()
+TODO
+.SH RETURN VALUE
+.BR \%register_printf_specifier (),
+.BR \%register_printf_modifier (),
+and
+.BR \%register_printf_type ()
+return zero on success, or \-1 on error.
+.SS Callbacks
+The callback of type
+.I printf_function
+should return the number of characters written,
+or \-1 on error.
+.P
+The callback of type
+.I \%printf_arginfo_size_function
+should return the number of arguments to be parsed by this specifier.
+It also passes information about the type of those arguments
+to the caller through
+.IR argtypes .
+On error, it should return \-1.
+.SH ERRORS
+.TP
+.B EINVAL
+The specifier was not a valid character.
+.SH STANDARDS
+GNU.
+.SH HISTORY
+.BR \%register_printf_function (3)
+is an older function similar to
+.BR \%register_printf_specifier (),
+and is now deprecated.
+That function can't handle user-defined types.
+.P
+.BR \%register_printf_specifier ()
+supersedes
+.BR \%register_printf_function (3).
+.SH EXAMPLES
+The following example program registers the 'b' and 'B' specifiers
+to print integers in binary format,
+mirroring rules for other unsigned conversion specifiers like 'x' and 'u'.
+This can be used to print in binary prior to C23.
+.P
+.\" SRC BEGIN (register_printf_specifier.c)
+.EX
+/* This code is in the public domain */
+\&
+#include <err.h>
+#include <limits.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/param.h>
+\&
+#include <printf.h>
+\&
+#define GROUP_SEP  \[aq]\[rs]\[aq]\[aq]
+\&
+struct Printf_Pad {
+    char    ch;
+    size_t  len;
+};
+\&
+static int b_printf(FILE *stream, const struct printf_info *info,
+                    const void *const args[]);
+static int b_arginf_sz(const struct printf_info *info,
+                    size_t n, int argtypes[n], int size[n]);
+\&
+static uintmax_t b_value(const struct printf_info *info,
+                    const void *arg);
+static size_t b_bin_repr(char bin[UINTMAX_WIDTH],
+                    const struct printf_info *info, const void *arg);
+static size_t b_bin_len(const struct printf_info *info,
+                    ptrdiff_t min_len);
+static size_t b_pad_len(const struct printf_info *info,
+                    ptrdiff_t bin_len);
+static ssize_t b_print_prefix(FILE *stream,
+                    const struct printf_info *info);
+static ssize_t b_pad_zeros(FILE *stream, const struct printf_info *info,
+                    ptrdiff_t min_len);
+static ssize_t b_print_number(FILE *stream,
+                    const struct printf_info *info,
+                    const char bin[UINTMAX_WIDTH],
+                    size_t min_len, size_t bin_len);
+static char pad_ch(const struct printf_info *info);
+static ssize_t pad_spaces(FILE *stream, size_t pad_len);
+\&
+int
+main(void)
+{
+    if (register_printf_specifier(\[aq]b\[aq], b_printf, b_arginf_sz) == \-1)
+        err(EXIT_FAILURE, "register_printf_specifier(\[aq]b\[aq], ...)");
+    if (register_printf_specifier(\[aq]B\[aq], b_printf, b_arginf_sz) == \-1)
+        err(EXIT_FAILURE, "register_printf_specifier(\[aq]B\[aq], ...)");
+\&
+    printf("....----....----....----....----\[rs]n");
+    printf("%llb;\[rs]n", 0x5Ellu);
+    printf("%lB;\[rs]n", 0x5Elu);
+    printf("%b;\[rs]n", 0x5Eu);
+    printf("%hB;\[rs]n", 0x5Eu);
+    printf("%hhb;\[rs]n", 0x5Eu);
+    printf("%jb;\[rs]n", (uintmax_t)0x5E);
+    printf("%zb;\[rs]n", (size_t)0x5E);
+    printf("....----....----....----....----\[rs]n");
+    printf("%#b;\[rs]n", 0x5Eu);
+    printf("%#B;\[rs]n", 0x5Eu);
+    printf("....----....----....----....----\[rs]n");
+    printf("%10b;\[rs]n", 0x5Eu);
+    printf("%010b;\[rs]n", 0x5Eu);
+    printf("%.10b;\[rs]n", 0x5Eu);
+    printf("....----....----....----....----\[rs]n");
+    printf("%\-10B;\[rs]n", 0x5Eu);
+    printf("....----....----....----....----\[rs]n");
+    printf("%\[aq]B;\[rs]n", 0x5Eu);
+    printf("....----....----....----....----\[rs]n");
+    printf("....----....----....----....----\[rs]n");
+    printf("%#16.12b;\[rs]n", 0xAB);
+    printf("%\-#\[aq]20.12b;\[rs]n", 0xAB);
+    printf("%#\[aq]020B;\[rs]n", 0xAB);
+    printf("....----....----....----....----\[rs]n");
+    printf("%#020B;\[rs]n", 0xAB);
+    printf("%\[aq]020B;\[rs]n", 0xAB);
+    printf("%020B;\[rs]n", 0xAB);
+    printf("....----....----....----....----\[rs]n");
+    printf("%#021B;\[rs]n", 0xAB);
+    printf("%\[aq]021B;\[rs]n", 0xAB);
+    printf("%021B;\[rs]n", 0xAB);
+    printf("....----....----....----....----\[rs]n");
+    printf("%#022B;\[rs]n", 0xAB);
+    printf("%\[aq]022B;\[rs]n", 0xAB);
+    printf("%022B;\[rs]n", 0xAB);
+    printf("....----....----....----....----\[rs]n");
+    printf("%#023B;\[rs]n", 0xAB);
+    printf("%\[aq]023B;\[rs]n", 0xAB);
+    printf("%023B;\[rs]n", 0xAB);
+    printf("....----....----....----....----\[rs]n");
+    printf("%\-#\[aq]19.11b;\[rs]n", 0xAB);
+    printf("%#\[aq]019B;\[rs]n", 0xAB);
+    printf("%#019B;\[rs]n", 0xAB);
+    printf("....----....----....----....----\[rs]n");
+    printf("%\[aq]019B;\[rs]n", 0xAB);
+    printf("%019B;\[rs]n", 0xAB);
+    printf("%#016b;\[rs]n", 0xAB);
+    printf("....----....----....----....----\[rs]n");
+\&
+    return 0;
+}
+\&
+static int
+b_printf(FILE *stream, const struct printf_info *info,
+         const void *const args[])
+{
+    char               bin[UINTMAX_WIDTH];
+    size_t             min_len, bin_len;
+    ssize_t            len, tmp;
+    struct Printf_Pad  pad = {0};
+\&
+    len = 0;
+\&
+    min_len = b_bin_repr(bin, info, args[0]);
+    bin_len = b_bin_len(info, min_len);
+\&
+    pad.ch = pad_ch(info);
+    if (pad.ch == \[aq] \[aq])
+        pad.len = b_pad_len(info, bin_len);
+\&
+    /* Padding with \[aq] \[aq] (right aligned) */
+    if ((pad.ch == \[aq] \[aq]) && !info->left) {
+        tmp = pad_spaces(stream, pad.len);
+        if (tmp == EOF)
+            return EOF;
+        len += tmp;
+    }
+\&
+    /* "0b"/"0B" prefix */
+    if (info->alt) {
+        tmp = b_print_prefix(stream, info);
+        if (tmp == EOF)
+            return EOF;
+        len += tmp;
+    }
+\&
+    /* Padding with \[aq]0\[aq] */
+    if (pad.ch == \[aq]0\[aq]) {
+        tmp = b_pad_zeros(stream, info, min_len);
+        if (tmp == EOF)
+            return EOF;
+        len += tmp;
+    }
+\&
+    /* Print number (including leading 0s to fill precision) */
+    tmp = b_print_number(stream, info, bin, min_len, bin_len);
+    if (tmp == EOF)
+        return EOF;
+    len += tmp;
+\&
+    /* Padding with \[aq] \[aq] (left aligned) */
+    if (info\->left) {
+        tmp = pad_spaces(stream, pad.len);
+        if (tmp == EOF)
+            return EOF;
+        len += tmp;
+    }
+\&
+    return len;
+}
+\&
+static int
+b_arginf_sz(const struct printf_info *info, size_t n, int argtypes[n],
+            [[maybe_unused]] int size[n])
+{
+    if (n < 1)
+        return \-1;
+\&
+    if (info\->is_long_double)
+        argtypes[0] = PA_INT | PA_FLAG_LONG_LONG;
+    else if (info\->is_long)
+        argtypes[0] = PA_INT | PA_FLAG_LONG;
+    else
+        argtypes[0] = PA_INT;
+\&
+    return 1;
+}
+\&
+static uintmax_t
+b_value(const struct printf_info *info, const void *arg)
+{
+    if (info\->is_long_double)
+        return *(const unsigned long long *)arg;
+    if (info\->is_long)
+        return *(const unsigned long *)arg;
+\&
+    /* short and char are both promoted to int */
+    return *(const unsigned int *)arg;
+}
+\&
+static size_t
+b_bin_repr(char bin[UINTMAX_WIDTH],
+           const struct printf_info *info, const void *arg)
+{
+    size_t     min_len;
+    uintmax_t  val;
+\&
+    val = b_value(info, arg);
+\&
+    bin[0] = \[aq]0\[aq];
+    for (min_len = 0; val; min_len++) {
+        bin[min_len] = \[aq]0\[aq] + (val % 2);
+        val >>= 1;
+    }
+\&
+    return MAX(min_len, 1);
+}
+\&
+static size_t
+b_bin_len(const struct printf_info *info, ptrdiff_t min_len)
+{
+    return MAX(info\->prec, min_len);
+}
+\&
+static size_t
+b_pad_len(const struct printf_info *info, ptrdiff_t bin_len)
+{
+    ptrdiff_t  pad_len;
+\&
+    pad_len = info\->width \- bin_len;
+    if (info\->alt)
+        pad_len \-= 2;
+    if (info\->group)
+        pad_len \-= (bin_len \- 1) / 4;
+\&
+    return MAX(pad_len, 0);
+}
+\&
+static ssize_t
+b_print_prefix(FILE *stream, const struct printf_info *info)
+{
+    ssize_t len;
+\&
+    len = 0;
+    if (fputc(\[aq]0\[aq], stream) == EOF)
+        return EOF;
+    len++;
+    if (fputc(info\->spec, stream) == EOF)
+        return EOF;
+    len++;
+\&
+    return len;
+}
+\&
+static ssize_t
+b_pad_zeros(FILE *stream, const struct printf_info *info,
+            ptrdiff_t min_len)
+{
+    ssize_t    len;
+    ptrdiff_t  tmp;
+\&
+    len = 0;
+    tmp = info\->width \- (info\->alt * 2);
+    if (info\->group)
+        tmp \-= tmp / 5 \- !(tmp % 5);
+    for (ptrdiff_t i = tmp \- 1; i > min_len \- 1; i\-\-) {
+        if (fputc(\[aq]0\[aq], stream) == EOF)
+            return EOF;
+        len++;
+\&
+        if (!info\->group || (i % 4))
+            continue;
+        if (fputc(GROUP_SEP, stream) == EOF)
+            return EOF;
+        len++;
+    }
+\&
+    return len;
+}
+\&
+static ssize_t
+b_print_number(FILE *stream, const struct printf_info *info,
+               const char bin[UINTMAX_WIDTH],
+               size_t min_len, size_t bin_len)
+{
+    ssize_t  len;
+\&
+    len = 0;
+\&
+    /* Print leading zeros to fill precision */
+    for (size_t i = bin_len \- 1; i > min_len \- 1; i\-\-) {
+        if (fputc(\[aq]0\[aq], stream) == EOF)
+            return EOF;
+        len++;
+\&
+        if (!info\->group || (i % 4))
+            continue;
+        if (fputc(GROUP_SEP, stream) == EOF)
+            return EOF;
+        len++;
+    }
+\&
+    /* Print number */
+    for (size_t i = min_len \- 1; i < min_len; i\-\-) {
+        if (fputc(bin[i], stream) == EOF)
+            return EOF;
+        len++;
+\&
+        if (!info\->group || (i % 4) || !i)
+            continue;
+        if (fputc(GROUP_SEP, stream) == EOF)
+            return EOF;
+        len++;
+    }
+\&
+    return len;
+}
+\&
+static char
+pad_ch(const struct printf_info *info)
+{
+    if ((info\->prec != \-1) || (info\->pad == \[aq] \[aq]) || info\->left)
+        return \[aq] \[aq];
+    return \[aq]0\[aq];
+}
+\&
+static ssize_t
+pad_spaces(FILE *stream, size_t pad_len)
+{
+    ssize_t  len;
+\&
+    len = 0;
+    for (size_t i = pad_len - 1; i < pad_len; i\-\-) {
+        if (fputc(\[aq] \[aq], stream) == EOF)
+            return EOF;
+        len++;
+    }
+\&
+    return len;
+}
+.EE
+.\" SRC END
+.SH SEE ALSO
+.BR asprintf (3),
+.BR printf (3),
+.BR wprintf (3)

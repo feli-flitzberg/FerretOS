@@ -1,0 +1,268 @@
+.\" Copyright 2002, Walter Harms <walter.harms@informatik.uni-oldenburg.de>
+.\" Copyright 2002, Andries Brouwer <aeb@cwi.nl>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-1.0-or-later
+.\"
+.TH TCSETS 2const 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+TCGETS,
+TCSETS,
+TCSETSW,
+TCSETSF,
+TCGETS2,
+TCSETS2,
+TCSETSW2,
+TCSETSF2,
+TCGETA,
+TCSETA,
+TCSETAW,
+TCSETAF
+\-
+get and set terminal attributes
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <asm/termbits.h>" "  /* Definition of " TC* " constants */"
+.B #include <sys/ioctl.h>
+.P
+.BI "int ioctl(int " fd ", TCGETS, struct termios *" argp );
+.BI "int ioctl(int " fd ", TCSETS, const struct termios *" argp );
+.BI "int ioctl(int " fd ", TCSETSW, const struct termios *" argp );
+.BI "int ioctl(int " fd ", TCSETSF, const struct termios *" argp );
+.P
+.BI "int ioctl(int " fd ", TCGETS2, struct termios2 *" argp );
+.BI "int ioctl(int " fd ", TCSETS2, const struct termios2 *" argp );
+.BI "int ioctl(int " fd ", TCSETSW2, const struct termios2 *" argp );
+.BI "int ioctl(int " fd ", TCSETSF2, const struct termios2 *" argp );
+.P
+.BI "int ioctl(int " fd ", TCGETA, struct termio *" argp );
+.BI "int ioctl(int " fd ", TCSETA, const struct termio *" argp );
+.BI "int ioctl(int " fd ", TCSETAW, const struct termio *" argp );
+.BI "int ioctl(int " fd ", TCSETAF, const struct termio *" argp );
+.P
+.B #include <asm/termbits.h>
+.P
+.B struct termios;
+.B struct termios2;
+.B struct termio;
+.fi
+.SH DESCRIPTION
+.TP
+.B TCGETS
+Equivalent to
+.IR "tcgetattr(fd, argp)" .
+.IP
+Get the current serial port settings.
+.TP
+.B TCSETS
+Equivalent to
+.IR "tcsetattr(fd, TCSANOW, argp)" .
+.IP
+Set the current serial port settings.
+.TP
+.B TCSETSW
+Equivalent to
+.IR "tcsetattr(fd, TCSADRAIN, argp)" .
+.IP
+Allow the output buffer to drain, and
+set the current serial port settings.
+.TP
+.B TCSETSF
+Equivalent to
+.IR "tcsetattr(fd, TCSAFLUSH, argp)" .
+.IP
+Allow the output buffer to drain, discard pending input, and
+set the current serial port settings.
+.P
+The following four ioctls
+are just like
+.BR TCGETS ,
+.BR TCSETS ,
+.BR TCSETSW ,
+.BR TCSETSF ,
+except that they take a
+.I "struct termios2\~*"
+instead of a
+.IR "struct termios\~*" .
+If the structure member
+.B c_cflag
+contains the flag
+.BR BOTHER ,
+then the baud rate is stored in the structure members
+.B c_ispeed
+and
+.B c_ospeed
+as integer values.
+These ioctls are not supported on all architectures.
+.RS
+.TP
+.B TCGETS2
+.TQ
+.B TCSETS2
+.TQ
+.B TCSETSW2
+.TQ
+.B TCSETSF2
+.RE
+.P
+The following four ioctls are just like
+.BR TCGETS ,
+.BR TCSETS ,
+.BR TCSETSW ,
+.BR TCSETSF ,
+except that they take a
+.I "struct termio\~*"
+instead of a
+.IR "struct termios\~*" .
+.RS
+.TP
+.B TCGETA
+.TQ
+.B TCSETA
+.TQ
+.B TCSETAW
+.TQ
+.B TCSETAF
+.RE
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EPERM
+Insufficient permission.
+.SH HISTORY
+.TP
+.B TCGETS2
+.TQ
+.B TCSETS2
+.TQ
+.B TCSETSW2
+.TQ
+.B TCSETSF2
+.\" linux.git commit 64bb6c5e1ddcd47c951740485026ef08975ee2e6
+.\" linux.git commit 592ee3a5e5e2a981ef2829a0380093006d045661
+Linux 2.6.20.
+.SH CAVEATS
+.B struct termios
+from
+.I <asm/termbits.h>
+is different and incompatible with
+.B struct termios
+from
+.IR <termios.h> .
+These ioctl calls require
+.B struct termios
+from
+.IR <asm/termbits.h> .
+.SH EXAMPLES
+Get or set arbitrary baudrate on the serial port.
+.P
+.\" SRC BEGIN (tcgets.c)
+.EX
+/* SPDX-License-Identifier: GPL-2.0-or-later */
+\&
+#include <asm/termbits.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
+\&
+int
+main(int argc, char *argv[])
+{
+#if !defined BOTHER
+    fprintf(stderr, "BOTHER is unsupported\[rs]n");
+    /* Program may fallback to TCGETS/TCSETS with Bnnn constants */
+    exit(EXIT_FAILURE);
+#else
+    /* Declare tio structure, its type depends on supported ioctl */
+# if defined TCGETS2
+    struct termios2 tio;
+# else
+    struct termios tio;
+# endif
+    int fd, rc;
+\&
+    if (argc != 2 && argc != 3 && argc != 4) {
+        fprintf(stderr, "Usage: %s device [output [input] ]\[rs]n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+\&
+    fd = open(argv[1], O_RDWR | O_NONBLOCK | O_NOCTTY);
+    if (fd < 0) {
+        perror("open");
+        exit(EXIT_FAILURE);
+    }
+\&
+    /* Get the current serial port settings via supported ioctl */
+# if defined TCGETS2
+    rc = ioctl(fd, TCGETS2, &tio);
+# else
+    rc = ioctl(fd, TCGETS, &tio);
+# endif
+    if (rc) {
+        perror("TCGETS");
+        close(fd);
+        exit(EXIT_FAILURE);
+    }
+\&
+    /* Change baud rate when more arguments were provided */
+    if (argc == 3 || argc == 4) {
+        /* Clear the current output baud rate and fill a new value */
+        tio.c_cflag &= \[ti]CBAUD;
+        tio.c_cflag |= BOTHER;
+        tio.c_ospeed = atoi(argv[2]);
+\&
+        /* Clear the current input baud rate and fill a new value */
+        tio.c_cflag &= \[ti](CBAUD << IBSHIFT);
+        tio.c_cflag |= BOTHER << IBSHIFT;
+        /* When 4th argument is not provided reuse output baud rate */
+        tio.c_ispeed = (argc == 4) ? atoi(argv[3]) : atoi(argv[2]);
+\&
+        /* Set new serial port settings via supported ioctl */
+# if defined TCSETS2
+        rc = ioctl(fd, TCSETS2, &tio);
+# else
+        rc = ioctl(fd, TCSETS, &tio);
+# endif
+        if (rc) {
+            perror("TCSETS");
+            close(fd);
+            exit(EXIT_FAILURE);
+        }
+\&
+        /* And get new values which were really configured */
+# if defined TCGETS2
+        rc = ioctl(fd, TCGETS2, &tio);
+# else
+        rc = ioctl(fd, TCGETS, &tio);
+# endif
+        if (rc) {
+            perror("TCGETS");
+            close(fd);
+            exit(EXIT_FAILURE);
+        }
+    }
+\&
+    close(fd);
+\&
+    printf("output baud rate: %u\[rs]n", tio.c_ospeed);
+    printf("input baud rate: %u\[rs]n", tio.c_ispeed);
+\&
+    exit(EXIT_SUCCESS);
+#endif
+}
+.EE
+.\" SRC END
+.SH SEE ALSO
+.BR ioctl (2),
+.BR ioctl_tty (2),
+.BR termios (3)

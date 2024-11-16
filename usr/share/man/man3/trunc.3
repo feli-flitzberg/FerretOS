@@ -1,0 +1,83 @@
+'\" t
+.\" Copyright (C) 2001 Andries Brouwer <aeb@cwi.nl>.
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH trunc 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+trunc, truncf, truncl \- round to integer, toward zero
+.SH LIBRARY
+Math library
+.RI ( libm ", " \-lm )
+.SH SYNOPSIS
+.nf
+.B #include <math.h>
+.P
+.BI "double trunc(double " x );
+.BI "float truncf(float " x );
+.BI "long double truncl(long double " x );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR trunc (),
+.BR truncf (),
+.BR truncl ():
+.nf
+    _ISOC99_SOURCE || _POSIX_C_SOURCE >= 200112L
+.fi
+.SH DESCRIPTION
+These functions round
+.I x
+to the nearest integer value that is not larger in magnitude than
+.IR x .
+.SH RETURN VALUE
+These functions return the rounded integer value, in floating format.
+.P
+If
+.I x
+is integral, infinite, or NaN,
+.I x
+itself is returned.
+.SH ERRORS
+No errors occur.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR trunc (),
+.BR truncf (),
+.BR truncl ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+glibc 2.1.
+C99, POSIX.1-2001.
+.SH NOTES
+The integral value returned by these functions may be too large
+to store in an integer type
+.RI ( int ,
+.IR long ,
+etc.).
+To avoid an overflow, which will produce undefined results,
+an application should perform a range check on the returned value
+before assigning it to an integer type.
+.SH SEE ALSO
+.BR ceil (3),
+.BR floor (3),
+.BR lrint (3),
+.BR nearbyint (3),
+.BR rint (3),
+.BR round (3)

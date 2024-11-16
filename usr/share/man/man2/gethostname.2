@@ -1,0 +1,176 @@
+.\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" Modified 1995-07-22 by Michael Chastain <mec@duracef.shout.net>:
+.\"   'gethostname' is real system call on Linux/Alpha.
+.\" Modified 1997-01-31 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified 2000-06-04, 2001-12-15 by aeb
+.\" Modified 2004-06-17 by mtk
+.\" Modified 2008-11-27 by mtk
+.\"
+.TH gethostname 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+gethostname, sethostname \- get/set hostname
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <unistd.h>
+.P
+.BI "int gethostname(char *" name ", size_t " len );
+.BI "int sethostname(const char *" name ", size_t " len );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR gethostname ():
+.nf
+    _XOPEN_SOURCE >= 500 || _POSIX_C_SOURCE >= 200112L
+        || /* glibc 2.19 and earlier */ _BSD_SOURCE
+.\" The above is something of a simplification
+.\" also before glibc 2.3 there was a bit churn
+.fi
+.P
+.BR sethostname ():
+.nf
+    Since glibc 2.21:
+.\"		commit 266865c0e7b79d4196e2cc393693463f03c90bd8
+        _DEFAULT_SOURCE
+    In glibc 2.19 and 2.20:
+        _DEFAULT_SOURCE || (_XOPEN_SOURCE && _XOPEN_SOURCE < 500)
+    Up to and including glibc 2.19:
+        _BSD_SOURCE || (_XOPEN_SOURCE && _XOPEN_SOURCE < 500)
+.fi
+.SH DESCRIPTION
+These system calls are used to access or to change the system hostname.
+More precisely, they operate on the hostname associated with the calling
+process's UTS namespace.
+.P
+.BR sethostname ()
+sets the hostname to the value given in the character array
+.IR name .
+The
+.I len
+argument specifies the number of bytes in
+.IR name .
+(Thus,
+.I name
+does not require a terminating null byte.)
+.P
+.BR gethostname ()
+returns the null-terminated hostname in the character array
+.IR name ,
+which has a length of
+.I len
+bytes.
+If the null-terminated hostname is too large to fit,
+then the name is truncated, and no error is returned (but see NOTES below).
+POSIX.1 says that if such truncation occurs,
+then it is unspecified whether the returned buffer
+includes a terminating null byte.
+.SH RETURN VALUE
+On success, zero is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EFAULT
+.I name
+is an invalid address.
+.TP
+.B EINVAL
+.I len
+is negative
+.\" Can't occur for gethostbyname() wrapper, since 'len' has an
+.\" unsigned type; can occur for the underlying system call.
+or, for
+.BR sethostname (),
+.I len
+is larger than the maximum allowed size.
+.TP
+.B ENAMETOOLONG
+.RB "(glibc " gethostname ())
+.I len
+is smaller than the actual size.
+(Before glibc 2.1, glibc uses
+.B EINVAL
+for this case.)
+.TP
+.B EPERM
+For
+.BR sethostname (),
+the caller did not have the
+.B CAP_SYS_ADMIN
+capability in the user namespace associated with its UTS namespace (see
+.BR namespaces (7)).
+.SH VERSIONS
+SUSv2 guarantees that "Host names are limited to 255 bytes".
+POSIX.1 guarantees that "Host names (not including
+the terminating null byte) are limited to
+.B HOST_NAME_MAX
+bytes".
+On Linux,
+.B HOST_NAME_MAX
+is defined with the value 64, which has been the limit since Linux 1.0
+(earlier kernels imposed a limit of 8 bytes).
+.SS C library/kernel differences
+The GNU C library does not employ the
+.BR gethostname ()
+system call; instead, it implements
+.BR gethostname ()
+as a library function that calls
+.BR uname (2)
+and copies up to
+.I len
+bytes from the returned
+.I nodename
+field into
+.IR name .
+Having performed the copy, the function then checks if the length of the
+.I nodename
+was greater than or equal to
+.IR len ,
+and if it is, then the function returns \-1 with
+.I errno
+set to
+.BR ENAMETOOLONG ;
+in this case, a terminating null byte is not included in the returned
+.IR name .
+.SH STANDARDS
+.TP
+.BR gethostname ()
+POSIX.1-2008.
+.TP
+.BR sethostname ()
+None.
+.SH HISTORY
+SVr4, 4.4BSD (these interfaces first appeared in 4.2BSD).
+POSIX.1-2001 and POSIX.1-2008 specify
+.BR gethostname ()
+but not
+.BR sethostname ().
+.P
+Versions of glibc before glibc 2.2
+.\" At least glibc 2.0 and glibc 2.1, older versions not checked
+handle the case where the length of the
+.I nodename
+was greater than or equal to
+.I len
+differently: nothing is copied into
+.I name
+and the function returns \-1 with
+.I errno
+set to
+.BR ENAMETOOLONG .
+.SH SEE ALSO
+.BR hostname (1),
+.BR getdomainname (2),
+.BR setdomainname (2),
+.BR uname (2),
+.BR uts_namespaces (7)

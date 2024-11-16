@@ -1,0 +1,62 @@
+.\" Copyright 2010, Andi Kleen <andi@firstfloor.org>
+.\" Copyright 2012, 2013, 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_MCE_KILL_SET 2const 2024-06-01 "Linux man-pages 6.9.1"
+.SH NAME
+PR_MCE_KILL_SET
+\-
+set the machine check memory corruption kill policy
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.BI "int prctl(PR_MCE_KILL, PR_MCE_KILL_SET, long " pol ", 0L, 0L);"
+.fi
+.SH DESCRIPTION
+Use a thread-specific memory corruption kill policy.
+.P
+.I pol
+defines whether the policy is
+.I early kill
+.RB ( PR_MCE_KILL_EARLY ),
+.I late kill
+.RB ( PR_MCE_KILL_LATE ),
+or the system-wide default
+.RB ( PR_MCE_KILL_DEFAULT ).
+.P
+Early kill means that the thread receives a
+.B SIGBUS
+signal as soon as hardware memory corruption is detected inside
+its address space.
+.P
+In late kill mode, the process is killed only when it accesses a corrupted page.
+See
+.BR sigaction (2)
+for more information on the
+.B SIGBUS
+signal.
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+.I pol
+is not a valid value.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 2.6.32.
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_MCE_KILL (2const)

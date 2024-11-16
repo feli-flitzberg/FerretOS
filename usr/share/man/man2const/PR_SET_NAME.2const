@@ -1,0 +1,81 @@
+.\" Copyright Guillem Jover <guillem@hadrons.org>
+.\" Copyright 2006, 2008, 2012, 2013, 2015 Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_SET_NAME 2const 2024-06-02 "Linux man-pages 6.9.1"
+.SH NAME
+PR_SET_NAME,
+PR_GET_NAME
+\-
+operations on a process or thread
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.BI "int prctl(PR_SET_NAME, char " name [16]);
+.BI "int prctl(PR_GET_NAME, const char " name [16]);
+.fi
+.SH DESCRIPTION
+.TP
+.B PR_SET_NAME
+Set the name of the calling thread,
+using the value in the location pointed to by
+.IR name .
+.IP
+The name can be up to 16 bytes long,
+.\" TASK_COMM_LEN in include/linux/sched.h
+including the terminating null byte.
+If the length of the string, including the terminating null byte,
+exceeds 16 bytes, the string is silently truncated.
+.TP
+.BR PR_GET_NAME " (since Linux 2.6.11)"
+Return the name of the calling thread,
+in the buffer pointed to by
+.IR name .
+The returned string will be null-terminated.
+.P
+This is the same attribute that can be set via
+.BR pthread_setname_np (3)
+and retrieved using
+.BR pthread_getname_np (3).
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EFAULT
+.I name
+is an invalid address.
+.SH FILES
+.TP
+.IR /proc/self/task/\: tid /\:comm
+The attribute is likewise accessible via this file
+(see
+.BR proc_pid_comm (5)),
+where
+.I tid
+is the thread ID of the calling thread, as returned by
+.BR gettid (2).
+.SH STANDARDS
+Linux.
+.SH HISTORY
+.TP
+.B PR_SET_NAME
+Linux 2.6.9.
+.TP
+.B PR_GET_NAME
+Linux 2.6.11.
+.SH SEE ALSO
+.BR prctl (2),
+.BR pthread_setname_np (3),
+.BR pthread_getname_np (3),
+.BR proc_pid_comm (5)

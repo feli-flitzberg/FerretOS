@@ -1,0 +1,125 @@
+'\" t
+.\" Copyright 2002, Walter Harms <walter.harms@informatik.uni-oldenburg.de>
+.\" Copyright 2002, Andries Brouwer <aeb@cwi.nl>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-1.0-or-later
+.\"
+.TH TIOCMSET 2const 2024-06-13 "Linux man-pages 6.9.1"
+.SH NAME
+TIOCMGET,
+TIOCMSET,
+TIOCMBIC,
+TIOCMBIS,
+TIOCMIWAIT,
+TIOCGICOUNT
+\-
+modem control
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <asm/termbits.h>" "  /* Definition of " TIOC* " constants */"
+.B #include <sys/ioctl.h>
+.P
+.BI "int ioctl(int " fd ", TIOCMGET, int *" argp );
+.BI "int ioctl(int " fd ", TIOCMSET, const int *" argp );
+.BI "int ioctl(int " fd ", TIOCMBIC, const int *" argp );
+.BI "int ioctl(int " fd ", TIOCMBIS, const int *" argp );
+.BI "int ioctl(int " fd ", TIOCMIWAIT, int " arg );
+.BI "int ioctl(int " fd ", TIOCGICOUNT, struct serial_icounter_struct *" argp );
+.P
+.B #include <linux/serial.h>
+.P
+.B struct serial_icounter_struct;
+.fi
+.SH DESCRIPTION
+.TP
+.B TIOCMGET
+Get the status of modem bits.
+.TP
+.B TIOCMSET
+Set the status of modem bits.
+.TP
+.B TIOCMBIC
+Clear the indicated modem bits.
+.TP
+.B TIOCMBIS
+Set the indicated modem bits.
+.P
+The following bits are used by the above ioctls:
+.P
+.TS
+lb l.
+TIOCM_LE	DSR (data set ready/line enable)
+TIOCM_DTR	DTR (data terminal ready)
+TIOCM_RTS	RTS (request to send)
+TIOCM_ST	Secondary TXD (transmit)
+TIOCM_SR	Secondary RXD (receive)
+TIOCM_CTS	CTS (clear to send)
+TIOCM_CAR	DCD (data carrier detect)
+TIOCM_CD	see TIOCM_CAR
+TIOCM_RNG	RNG (ring)
+TIOCM_RI	see TIOCM_RNG
+TIOCM_DSR	DSR (data set ready)
+.TE
+.TP
+.B TIOCMIWAIT
+Wait for any of the 4 modem bits (DCD, RI, DSR, CTS) to change.
+The bits of interest are specified as a bit mask in
+.IR arg ,
+by ORing together any of the bit values,
+.BR TIOCM_RNG ,
+.BR TIOCM_DSR ,
+.BR TIOCM_CD ,
+and
+.BR TIOCM_CTS .
+The caller should use
+.B TIOCGICOUNT
+to see which bit has changed.
+.TP
+.B TIOCGICOUNT
+Get counts of input serial line interrupts (DCD, RI, DSR, CTS).
+The counts are written to the
+.I serial_icounter_struct
+structure pointed to by
+.IR argp .
+.IP
+Note: both 1->0 and 0->1 transitions are counted, except for
+RI, where only 0->1 transitions are counted.
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error,
+\-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH EXAMPLES
+Check the condition of DTR on the serial port.
+.P
+.\" SRC BEGIN (tiocmget.c)
+.EX
+#include <fcntl.h>
+#include <stdio.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
+\&
+int
+main(void)
+{
+    int fd, serial;
+\&
+    fd = open("/dev/ttyS0", O_RDONLY);
+    ioctl(fd, TIOCMGET, &serial);
+    if (serial & TIOCM_DTR)
+        puts("TIOCM_DTR is set");
+    else
+        puts("TIOCM_DTR is not set");
+    close(fd);
+}
+.EE
+.\" SRC END
+.SH SEE ALSO
+.BR ioctl (2),
+.BR ioctl_tty (2)

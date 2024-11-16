@@ -1,0 +1,105 @@
+'\" t
+.\" Copyright (c) 2008 Linux Foundation, written by Michael Kerrisk
+.\"     <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH pthread_detach 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+pthread_detach \- detach a thread
+.SH LIBRARY
+POSIX threads library
+.RI ( libpthread ", " \-lpthread )
+.SH SYNOPSIS
+.nf
+.B #include <pthread.h>
+.P
+.BI "int pthread_detach(pthread_t " thread );
+.fi
+.SH DESCRIPTION
+The
+.BR pthread_detach ()
+function marks the thread identified by
+.I thread
+as detached.
+When a detached thread terminates,
+its resources are automatically released back to the system without
+the need for another thread to join with the terminated thread.
+.P
+Attempting to detach an already detached thread results
+in unspecified behavior.
+.SH RETURN VALUE
+On success,
+.BR pthread_detach ()
+returns 0;
+on error, it returns an error number.
+.SH ERRORS
+.TP
+.B EINVAL
+.I thread
+is not a joinable thread.
+.TP
+.B ESRCH
+No thread with the ID
+.I thread
+could be found.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR pthread_detach ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001.
+.SH NOTES
+Once a thread has been detached, it can't be joined with
+.BR pthread_join (3)
+or be made joinable again.
+.P
+A new thread can be created in a detached state using
+.BR pthread_attr_setdetachstate (3)
+to set the detached attribute of the
+.I attr
+argument of
+.BR pthread_create (3).
+.P
+The detached attribute merely determines the behavior of the system
+when the thread terminates;
+it does not prevent the thread from being terminated
+if the process terminates using
+.BR exit (3)
+(or equivalently, if the main thread returns).
+.P
+Either
+.BR pthread_join (3)
+or
+.BR pthread_detach ()
+should be called for each thread that an application creates,
+so that system resources for the thread can be released.
+(But note that the resources of any threads for which one of these
+actions has not been done will be freed when the process terminates.)
+.SH EXAMPLES
+The following statement detaches the calling thread:
+.P
+.in +4n
+.EX
+pthread_detach(pthread_self());
+.EE
+.in
+.SH SEE ALSO
+.BR pthread_attr_setdetachstate (3),
+.BR pthread_cancel (3),
+.BR pthread_create (3),
+.BR pthread_exit (3),
+.BR pthread_join (3),
+.BR pthreads (7)

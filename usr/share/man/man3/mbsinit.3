@@ -1,0 +1,73 @@
+'\" t
+.\" Copyright, Bruno Haible <haible@clisp.cons.org>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" References consulted:
+.\"   GNU glibc-2 source code and manual
+.\"   Dinkumware C library reference http://www.dinkumware.com/
+.\"   OpenGroup's Single UNIX specification http://www.UNIX-systems.org/online.html
+.\"   ISO/IEC 9899:1999
+.\"
+.TH mbsinit 3 2024-05-03 "Linux man-pages 6.9.1"
+.SH NAME
+mbsinit
+\-
+test for initial shift state
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <wchar.h>
+.P
+.BI "int mbsinit(const mbstate_t *" ps );
+.fi
+.SH DESCRIPTION
+The function
+.BR mbsinit ()
+tests whether
+.I *ps
+corresponds to an
+initial state.
+.SH RETURN VALUE
+.BR mbsinit ()
+returns nonzero if
+.I *ps
+is an initial state, or if
+.I ps
+is NULL.
+Otherwise, it returns 0.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR mbsinit ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, C99.
+.SH NOTES
+The behavior of
+.BR mbsinit ()
+depends on the
+.B LC_CTYPE
+category of the
+current locale.
+.SH SEE ALSO
+.BR mbstate_t (3type),
+.BR mbrlen (3),
+.BR mbrtowc (3),
+.BR mbsrtowcs (3),
+.BR wcrtomb (3),
+.BR wcsrtombs (3)

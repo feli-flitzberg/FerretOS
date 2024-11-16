@@ -1,0 +1,82 @@
+.\" Copyright (c) 1993 Michael Haardt (michael@moria.de),
+.\"     Fri Apr  2 11:32:09 MET DST 1993
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" Modified Sat Jul 24 16:56:20 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Mon Oct 21 21:38:51 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" (and some more by aeb)
+.\"
+.TH hd 4 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+hd \- MFM/IDE hard disk devices
+.SH DESCRIPTION
+The
+.B hd*
+devices are block devices to access MFM/IDE hard disk drives
+in raw mode.
+The master drive on the primary IDE controller (major device
+number 3) is
+.BR hda ;
+the slave drive is
+.BR hdb .
+The master drive of the second controller (major device number 22)
+is
+.B hdc
+and the slave is
+.BR hdd .
+.P
+General IDE block device names have the form
+.BI hd X\c
+, or
+.BI hd XP\c
+, where
+.I X
+is a letter denoting the physical drive, and
+.I P
+is a number denoting the partition on that physical drive.
+The first form,
+.BI hd X\c
+, is used to address the whole drive.
+Partition numbers are assigned in the order the partitions
+are discovered, and only nonempty, nonextended partitions
+get a number.
+However, partition numbers 1\[en]4 are given to the
+four partitions described in the MBR (the "primary" partitions),
+regardless of whether they are unused or extended.
+Thus, the first logical partition will be
+.BI hd X 5\c
+\&.
+Both DOS-type partitioning and BSD-disklabel partitioning are supported.
+You can have at most 63 partitions on an IDE disk.
+.P
+For example,
+.I /dev/hda
+refers to all of the first IDE drive in the system; and
+.I /dev/hdb3
+refers to the third DOS "primary" partition on the second one.
+.P
+They are typically created by:
+.P
+.in +4n
+.EX
+mknod \-m 660 /dev/hda b 3 0
+mknod \-m 660 /dev/hda1 b 3 1
+mknod \-m 660 /dev/hda2 b 3 2
+\&...
+mknod \-m 660 /dev/hda8 b 3 8
+mknod \-m 660 /dev/hdb b 3 64
+mknod \-m 660 /dev/hdb1 b 3 65
+mknod \-m 660 /dev/hdb2 b 3 66
+\&...
+mknod \-m 660 /dev/hdb8 b 3 72
+chown root:disk /dev/hd*
+.EE
+.in
+.SH FILES
+.I /dev/hd*
+.SH SEE ALSO
+.BR chown (1),
+.BR mknod (1),
+.BR sd (4),
+.BR mount (8)

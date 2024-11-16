@@ -1,0 +1,46 @@
+.\" Copyright 2002, Walter Harms <walter.harms@informatik.uni-oldenburg.de>
+.\" Copyright 2002, Andries Brouwer <aeb@cwi.nl>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-1.0-or-later
+.\"
+.TH TIOCSTI 2const 2024-06-13 "Linux man-pages 6.9.1"
+.SH NAME
+TIOCSTI
+\-
+faking input
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <asm/termbits.h>" "  /* Definition of " TIOCSTI " */"
+.B #include <sys/ioctl.h>
+.P
+.BI "int ioctl(int " fd ", TIOCSTI, const char *" argp );
+.fi
+.SH DESCRIPTION
+Insert the given byte in the input queue.
+.P
+Since Linux 6.2,
+.\" linux.git commit 690c8b804ad2eafbd35da5d3c95ad325ca7d5061
+.\" linux.git commit 83efeeeb3d04b22aaed1df99bc70a48fe9d22c4d
+this operation may require the
+.B CAP_SYS_ADMIN
+capability (if the
+.I dev.tty.legacy_tiocsti
+sysctl variable is set to false).
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error,
+\-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EPERM
+Insufficient permission.
+.SH SEE ALSO
+.BR ioctl (2),
+.BR ioctl_tty (2)

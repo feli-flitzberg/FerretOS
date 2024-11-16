@@ -1,0 +1,79 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 18:57:24 1993 by Rik Faith (faith@cs.unc.edu)
+.TH memccpy 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+memccpy \- copy memory area
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <string.h>
+.P
+.BI "void *memccpy(void " dest "[restrict ." n "], const void " src "[restrict ." n ],
+.BI "              int " c ", size_t " n );
+.fi
+.SH DESCRIPTION
+The
+.BR memccpy ()
+function copies no more than
+.I n
+bytes from
+memory area
+.I src
+to memory area
+.IR dest ,
+stopping when the
+character
+.I c
+is found.
+.P
+If the memory areas overlap, the results are undefined.
+.SH RETURN VALUE
+The
+.BR memccpy ()
+function returns a pointer to the next character
+in
+.I dest
+after
+.IR c ,
+or NULL if
+.I c
+was not found in the
+first
+.I n
+characters of
+.IR src .
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR memccpy ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, SVr4, 4.3BSD.
+.SH SEE ALSO
+.BR bcopy (3),
+.BR bstring (3),
+.BR memcpy (3),
+.BR memmove (3),
+.BR strcpy (3),
+.BR strncpy (3)

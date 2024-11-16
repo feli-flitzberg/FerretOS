@@ -1,0 +1,324 @@
+'\" t
+.\" Copyright (C) 1993 David Metcalfe (david@prism.demon.co.uk)
+.\" and Copyright (C) 2005, 2014, 2020 Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 18:05:30 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Fri Feb 16 14:25:17 1996 by Andries Brouwer <aeb@cwi.nl>
+.\" Modified Sun Jul 21 20:55:44 1996 by Andries Brouwer <aeb@cwi.nl>
+.\" Modified Mon Oct 15 21:16:25 2001 by John Levon <moz@compsoc.man.ac.uk>
+.\" Modified Tue Oct 16 00:04:43 2001 by Andries Brouwer <aeb@cwi.nl>
+.\" Modified Fri Jun 20 03:04:30 2003 by Andries Brouwer <aeb@cwi.nl>
+.\" 2005-12-13, mtk, Substantial rewrite of strerror_r() description
+.\"         Addition of extra material on portability and standards.
+.\"
+.TH strerror 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+strerror, strerrorname_np, strerrordesc_np, strerror_r, strerror_l \-
+return string describing error number
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <string.h>
+.P
+.BI "char *strerror(int " errnum );
+.BI "const char *strerrorname_np(int " errnum );
+.BI "const char *strerrordesc_np(int " errnum );
+.P
+.BI "int strerror_r(int " errnum ", char " buf [. buflen "], size_t " buflen );
+               /* XSI-compliant */
+.P
+.BI "char *strerror_r(int " errnum ", char " buf [. buflen "], size_t " buflen );
+               /* GNU-specific */
+.P
+.BI "char *strerror_l(int " errnum ", locale_t " locale );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR strerrorname_np (),
+.BR strerrordesc_np ():
+.nf
+    _GNU_SOURCE
+.fi
+.P
+.BR strerror_r ():
+.nf
+    The XSI-compliant version is provided if:
+        (_POSIX_C_SOURCE >= 200112L) && ! _GNU_SOURCE
+    Otherwise, the GNU-specific version is provided.
+.fi
+.SH DESCRIPTION
+The
+.BR strerror ()
+function returns a pointer to a string that describes the error
+code passed in the argument
+.IR errnum ,
+possibly using the
+.B LC_MESSAGES
+part of the current locale to select the appropriate language.
+(For example, if
+.I errnum
+is
+.BR EINVAL ,
+the returned description will be "Invalid argument".)
+This string must not be modified by the application,
+and the returned pointer will be invalidated on a subsequent call to
+.BR strerror ()
+or
+.BR strerror_l (),
+or if the thread that obtained the string exits.
+No other library function, including
+.BR perror (3),
+will modify this string.
+.P
+Like
+.BR strerror (),
+the
+.BR strerrordesc_np ()
+function returns a pointer to a string that describes the error
+code passed in the argument
+.IR errnum ,
+with the difference that the returned string is not translated
+according to the current locale.
+.P
+The
+.BR strerrorname_np ()
+function returns a pointer to a string containing the name of the error
+code passed in the argument
+.IR errnum .
+For example, given
+.B EPERM
+as an argument, this function returns a pointer to the string "EPERM".
+Given
+.B 0
+as an argument,
+this function returns a pointer to the string "0".
+.\"
+.SS strerror_r()
+.BR strerror_r ()
+is like
+.BR strerror (),
+but might use the supplied buffer
+.I buf
+instead of allocating one internally.
+This function is available in two versions:
+an XSI-compliant version specified in POSIX.1-2001
+(available since glibc 2.3.4, but not POSIX-compliant until glibc 2.13),
+and a GNU-specific version (available since glibc 2.0).
+The XSI-compliant version is provided with the feature test macros
+settings shown in the SYNOPSIS;
+otherwise the GNU-specific version is provided.
+If no feature test macros are explicitly defined,
+then (since glibc 2.4)
+.B _POSIX_C_SOURCE
+is defined by default with the value
+200112L, so that the XSI-compliant version of
+.BR strerror_r ()
+is provided by default.
+.P
+The XSI-compliant
+.BR strerror_r ()
+is preferred for portable applications.
+It returns the error string in the user-supplied buffer
+.I buf
+of length
+.IR buflen .
+.P
+The GNU-specific
+.BR strerror_r ()
+returns a pointer to a string containing the error message.
+This may be either a pointer to a string that the function stores in
+.IR buf ,
+or a pointer to some (immutable) static string
+(in which case
+.I buf
+is unused).
+If the function stores a string in
+.IR buf ,
+then at most
+.I buflen
+bytes are stored (the string may be truncated if
+.I buflen
+is too small and
+.I errnum
+is unknown).
+The string always includes a terminating null byte (\[aq]\[rs]0\[aq]).
+.\"
+.SS strerror_l()
+.BR strerror_l ()
+is like
+.BR strerror (),
+but maps
+.I errnum
+to a locale-dependent error message in the locale specified by
+.IR locale .
+The behavior of
+.BR strerror_l ()
+is undefined if
+.I locale
+is the special locale object
+.B LC_GLOBAL_LOCALE
+or is not a valid locale object handle.
+.SH RETURN VALUE
+The
+.BR strerror (),
+.BR strerror_l (),
+and the GNU-specific
+.BR strerror_r ()
+functions return
+the appropriate error description string,
+or an "Unknown error nnn" message if the error number is unknown.
+.P
+On success,
+.BR strerrorname_np ()
+and
+.BR strerrordesc_np ()
+return the appropriate error description string.
+If
+.I errnum
+is an invalid error number, these functions return NULL.
+.P
+The XSI-compliant
+.BR strerror_r ()
+function returns 0 on success.
+On error,
+a (positive) error number is returned (since glibc 2.13),
+or \-1 is returned and
+.I errno
+is set to indicate the error (before glibc 2.13).
+.P
+POSIX.1-2001 and POSIX.1-2008 require that a successful call to
+.BR strerror ()
+or
+.BR strerror_l ()
+shall leave
+.I errno
+unchanged, and note that,
+since no function return value is reserved to indicate an error,
+an application that wishes to check for errors should initialize
+.I errno
+to zero before the call,
+and then check
+.I errno
+after the call.
+.SH ERRORS
+.TP
+.B EINVAL
+The value of
+.I errnum
+is not a valid error number.
+.TP
+.B ERANGE
+Insufficient storage was supplied to contain the error description string.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lb lb lbx
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR strerror ()
+T}	Thread safety	T{
+.na
+.nh
+MT-Safe
+T}
+T{
+.na
+.nh
+.BR strerrorname_np (),
+.BR strerrordesc_np ()
+T}	Thread safety	MT-Safe
+T{
+.na
+.nh
+.BR strerror_r (),
+.BR strerror_l ()
+T}	Thread safety	MT-Safe
+.TE
+.P
+Before glibc 2.32,
+.BR strerror ()
+is not MT-Safe.
+.SH STANDARDS
+.TP
+.BR strerror ()
+C11, POSIX.1-2008.
+.TP
+.BR strerror_r ()
+.\" FIXME . for later review when Issue 8 is one day released...
+.\" A future POSIX.1 may remove strerror_r()
+.\" http://austingroupbugs.net/tag_view_page.php?tag_id=8
+.\" http://austingroupbugs.net/view.php?id=508
+.TQ
+.BR strerror_l ()
+POSIX.1-2008.
+.TP
+.BR strerrorname_np ()
+.TQ
+.BR strerrordesc_np ()
+GNU.
+.P
+POSIX.1-2001 permits
+.BR strerror ()
+to set
+.I errno
+if the call encounters an error, but does not specify what
+value should be returned as the function result in the event of an error.
+On some systems,
+.\" e.g., Solaris 8, HP-UX 11
+.BR strerror ()
+returns NULL if the error number is unknown.
+On other systems,
+.\" e.g., FreeBSD 5.4, Tru64 5.1B
+.BR strerror ()
+returns a string something like "Error nnn occurred" and sets
+.I errno
+to
+.B EINVAL
+if the error number is unknown.
+C99 and POSIX.1-2008 require the return value to be non-NULL.
+.SH HISTORY
+.TP
+.BR strerror ()
+POSIX.1-2001, C89.
+.TP
+.BR strerror_r ()
+POSIX.1-2001.
+.TP
+.BR strerror_l ()
+glibc 2.6.
+POSIX.1-2008.
+.TP
+.BR strerrorname_np ()
+.TQ
+.BR strerrordesc_np ()
+glibc 2.32.
+.SH NOTES
+.BR strerrorname_np ()
+and
+.BR strerrordesc_np ()
+are thread-safe and async-signal-safe.
+.SH SEE ALSO
+.BR err (3),
+.BR errno (3),
+.BR error (3),
+.BR perror (3),
+.BR strsignal (3),
+.BR locale (7),
+.BR signal-safety (7)

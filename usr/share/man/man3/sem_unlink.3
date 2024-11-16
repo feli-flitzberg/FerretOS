@@ -1,0 +1,66 @@
+'\" t
+.\" Copyright (C) 2006 Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH sem_unlink 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+sem_unlink \- remove a named semaphore
+.SH LIBRARY
+POSIX threads library
+.RI ( libpthread ", " \-lpthread )
+.SH SYNOPSIS
+.nf
+.B #include <semaphore.h>
+.P
+.BI "int sem_unlink(const char *" name );
+.fi
+.SH DESCRIPTION
+.BR sem_unlink ()
+removes the named semaphore referred to by
+.IR name .
+The semaphore name is removed immediately.
+The semaphore is destroyed once all other processes that have
+the semaphore open close it.
+.SH RETURN VALUE
+On success
+.BR sem_unlink ()
+returns 0; on error, \-1 is returned, with
+.I errno
+set to indicate the error.
+.SH ERRORS
+.TP
+.B EACCES
+The caller does not have permission to unlink this semaphore.
+.TP
+.B ENAMETOOLONG
+.I name
+was too long.
+.TP
+.B ENOENT
+There is no semaphore with the given
+.IR name .
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR sem_unlink ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001.
+.SH SEE ALSO
+.BR sem_getvalue (3),
+.BR sem_open (3),
+.BR sem_post (3),
+.BR sem_wait (3),
+.BR sem_overview (7)

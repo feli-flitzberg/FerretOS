@@ -1,0 +1,92 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified 1993-07-24 by Rik Faith (faith@cs.unc.edu)
+.\" Modified 2002-08-10 by Walter Harms (walter.harms@informatik.uni-oldenburg.de)
+.TH copysign 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+copysign, copysignf, copysignl \- copy sign of a number
+.SH LIBRARY
+Math library
+.RI ( libm ", " \-lm )
+.SH SYNOPSIS
+.nf
+.B #include <math.h>
+.P
+.BI "double copysign(double " x ", double " y );
+.BI "float copysignf(float " x ", float " y );
+.BI "long double copysignl(long double " x ", long double " y );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR copysign (),
+.BR copysignf (),
+.BR copysignl ():
+.nf
+    _ISOC99_SOURCE || _POSIX_C_SOURCE >= 200112L
+        || /* Since glibc 2.19: */ _DEFAULT_SOURCE
+        || /* glibc <= 2.19: */ _BSD_SOURCE || _SVID_SOURCE
+.fi
+.SH DESCRIPTION
+These functions return a value whose absolute value matches that of
+.IR x ,
+but whose sign bit matches that of
+.IR y .
+.P
+For example,
+.I "copysign(42.0,\ \-1.0)"
+and
+.I "copysign(\-42.0, \-1.0)"
+both return \-42.0.
+.SH RETURN VALUE
+On success, these functions return a value whose magnitude is taken from
+.I x
+and whose sign is taken from
+.IR y .
+.P
+If
+.I x
+is a NaN,
+a NaN with the sign bit of
+.I y
+is returned.
+.SH ERRORS
+No errors occur.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR copysign (),
+.BR copysignf (),
+.BR copysignl ()
+T}	Thread safety	MT-Safe
+.TE
+.SH VERSIONS
+On architectures where the floating-point formats are not IEEE 754 compliant,
+these functions may treat a negative zero as positive.
+.SH STANDARDS
+C11, POSIX.1-2008.
+.P
+This function is defined in IEC 559 (and the appendix with
+recommended functions in IEEE 754/IEEE 854).
+.SH HISTORY
+C99, POSIX.1-2001, 4.3BSD.
+.SH SEE ALSO
+.BR signbit (3)

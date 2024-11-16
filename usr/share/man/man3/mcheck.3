@@ -1,0 +1,213 @@
+'\" t
+.\" Copyright (c) 2012 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH mcheck 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+mcheck, mcheck_check_all, mcheck_pedantic, mprobe \- heap consistency checking
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <mcheck.h>
+.P
+.BI "int mcheck(void (*" abortfunc ")(enum mcheck_status " mstatus ));
+.BI "int mcheck_pedantic(void (*" abortfunc ")(enum mcheck_status " mstatus ));
+.B void mcheck_check_all(void);
+.P
+.BI "enum mcheck_status mprobe(void *" ptr );
+.fi
+.SH DESCRIPTION
+The
+.BR mcheck ()
+function installs a set of debugging hooks for the
+.BR malloc (3)
+family of memory-allocation functions.
+These hooks cause certain consistency checks to be performed
+on the state of the heap.
+The checks can detect application errors such as freeing a block of memory
+more than once or corrupting the bookkeeping data structures
+that immediately precede a block of allocated memory.
+.P
+To be effective, the
+.BR mcheck ()
+function must be called before the first call to
+.BR malloc (3)
+or a related function.
+In cases where this is difficult to ensure, linking the program with
+.I \-lmcheck
+inserts an implicit call to
+.BR mcheck ()
+(with a NULL argument)
+before the first call to a memory-allocation function.
+.P
+The
+.BR mcheck_pedantic ()
+function is similar to
+.BR mcheck (),
+but performs checks on all allocated blocks whenever
+one of the memory-allocation functions is called.
+This can be very slow!
+.P
+The
+.BR mcheck_check_all ()
+function causes an immediate check on all allocated blocks.
+This call is effective only if
+.BR mcheck ()
+is called beforehand.
+.P
+If the system detects an inconsistency in the heap,
+the caller-supplied function pointed to by
+.I abortfunc
+is invoked with a single argument,
+.IR mstatus ,
+that indicates what type of inconsistency was detected.
+If
+.I abortfunc
+is NULL, a default function prints an error message on
+.I stderr
+and calls
+.BR abort (3).
+.P
+The
+.BR mprobe ()
+function performs a consistency check on
+the block of allocated memory pointed to by
+.IR ptr .
+The
+.BR mcheck ()
+function should be called beforehand (otherwise
+.BR mprobe ()
+returns
+.BR MCHECK_DISABLED ).
+.P
+The following list describes the values returned by
+.BR mprobe ()
+or passed as the
+.I mstatus
+argument when
+.I abortfunc
+is invoked:
+.TP
+.BR MCHECK_DISABLED " (" mprobe "() only)"
+.BR mcheck ()
+was not called before the first memory allocation function was called.
+Consistency checking is not possible.
+.TP
+.BR MCHECK_OK " (" mprobe "() only)"
+No inconsistency detected.
+.TP
+.B MCHECK_HEAD
+Memory preceding an allocated block was clobbered.
+.TP
+.B MCHECK_TAIL
+Memory following an allocated block was clobbered.
+.TP
+.B
+MCHECK_FREE
+A block of memory was freed twice.
+.SH RETURN VALUE
+.BR mcheck ()
+and
+.BR mcheck_pedantic ()
+return 0 on success, or \-1 on error.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR mcheck (),
+.BR mcheck_pedantic (),
+.BR mcheck_check_all (),
+.BR mprobe ()
+T}	Thread safety	T{
+.na
+.nh
+MT-Unsafe race:mcheck
+const:malloc_hooks
+T}
+.TE
+.SH STANDARDS
+GNU.
+.SH HISTORY
+.TP
+.BR mcheck_pedantic ()
+.TQ
+.BR mcheck_check_all ()
+glibc 2.2.
+.TP
+.BR mcheck ()
+.TQ
+.BR mprobe ()
+glibc 2.0.
+.SH NOTES
+Linking a program with
+.I \-lmcheck
+and using the
+.B MALLOC_CHECK_
+environment variable (described in
+.BR mallopt (3))
+cause the same kinds of errors to be detected.
+But, using
+.B MALLOC_CHECK_
+does not require the application to be relinked.
+.\" But is MALLOC_CHECK_ slower?
+.SH EXAMPLES
+The program below calls
+.BR mcheck ()
+with a NULL argument and then frees the same block of memory twice.
+The following shell session demonstrates what happens
+when running the program:
+.P
+.in +4n
+.EX
+.RB "$" " ./a.out"
+About to free
+\&
+About to free a second time
+block freed twice
+Aborted (core dumped)
+.EE
+.in
+.SS Program source
+\&
+.\" SRC BEGIN (mcheck.c)
+.EX
+#include <mcheck.h>
+#include <stdio.h>
+#include <stdlib.h>
+\&
+int
+main(void)
+{
+    char *p;
+\&
+    if (mcheck(NULL) != 0) {
+        fprintf(stderr, "mcheck() failed\[rs]n");
+\&
+        exit(EXIT_FAILURE);
+    }
+\&
+    p = malloc(1000);
+\&
+    fprintf(stderr, "About to free\[rs]n");
+    free(p);
+    fprintf(stderr, "\[rs]nAbout to free a second time\[rs]n");
+    free(p);
+\&
+    exit(EXIT_SUCCESS);
+}
+.EE
+.\" SRC END
+.SH SEE ALSO
+.BR malloc (3),
+.BR mallopt (3),
+.BR mtrace (3)

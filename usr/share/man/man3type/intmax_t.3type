@@ -1,0 +1,97 @@
+.\" Copyright (c) 2020-2022 by Alejandro Colomar <alx@kernel.org>
+.\" and Copyright (c) 2020 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\"
+.TH intmax_t 3type 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+intmax_t, uintmax_t \- greatest-width basic integer types
+.SH LIBRARY
+Standard C library
+.RI ( libc )
+.SH SYNOPSIS
+.nf
+.B #include <stdint.h>
+.P
+.BR typedef " /* ... */ " intmax_t;
+.BR typedef " /* ... */ " uintmax_t;
+.P
+.BR "#define INTMAX_WIDTH  " "/* ... */"
+.B "#define UINTMAX_WIDTH INTMAX_WIDTH"
+.P
+.BR "#define INTMAX_MAX    " "/*  2**(INTMAX_WIDTH - 1) - 1  */"
+.BR "#define INTMAX_MIN    " "/*  - 2**(INTMAX_WIDTH - 1)    */"
+.BR "#define UINTMAX_MAX   " "/*  2**UINTMAX_WIDTH - 1       */"
+.P
+.BI "#define INTMAX_C(" c ) "   c " ## " \fR/* ... */\fP"
+.BI "#define UINTMAX_C(" c ) "  c " ## " \fR/* ... */\fP"
+.fi
+.SH DESCRIPTION
+.I intmax_t
+is a signed integer type
+capable of representing any value of any basic signed integer type
+supported by the implementation.
+It is capable of storing values in the range
+.RB [ INTMAX_MIN ,
+.BR INTMAX_MAX ].
+.P
+.I uintmax_t
+is an unsigned integer type
+capable of representing any value of any basic unsigned integer type
+supported by the implementation.
+It is capable of storing values in the range
+.RB [ 0 ,
+.BR UINTMAX_MAX ].
+.P
+The macros
+.RB [ U ] INTMAX_WIDTH
+expand to the width in bits of these types.
+.P
+The macros
+.RB [ U ] INTMAX_MAX
+expand to the maximum value that these types can hold.
+.P
+The macro
+.B INTMAX_MIN
+expands to the minimum value that
+.I intmax_t
+can hold.
+.P
+The macros
+.RB [ U ] INTMAX_C ()
+expand their argument to an integer constant of type
+.RI [ u ] intmax_t .
+.P
+The length modifier for
+.RI [ u ] intmax_t
+for the
+.BR printf (3)
+and the
+.BR scanf (3)
+families of functions is
+.BR j ;
+resulting commonly in
+.BR %jd ,
+.BR %ji ,
+.BR %ju ,
+or
+.B %jx
+for printing
+.RI [ u ] intmax_t
+values.
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+C99, POSIX.1-2001.
+.SH NOTES
+The following header also provides these types:
+.IR <inttypes.h> .
+.SH BUGS
+These types may not be as large as extended integer types, such as
+.I __int128
+.SH SEE ALSO
+.BR int64_t (3type),
+.BR intptr_t (3type),
+.BR printf (3),
+.BR strtoimax (3)

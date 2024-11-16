@@ -1,0 +1,81 @@
+.\" Copyright 2012, Kees Cook <keescook@chromium.org>
+.\" Copyright 2012, 2013, 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_SET_NO_NEW_PRIVS 2const 2024-06-01 "Linux man-pages 6.9.1"
+.SH NAME
+PR_SET_NO_NEW_PRIVS
+\-
+set the calling thread's no_new_privs attribute
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.B int prctl(PR_SET_NO_NEW_PRIVS, 1L, 0L, 0L, 0L);
+.fi
+.SH DESCRIPTION
+Set the calling thread's
+.I no_new_privs
+attribute.
+With
+.I no_new_privs
+set to 1,
+.BR execve (2)
+promises not to grant privileges to do anything
+that could not have been done without the
+.BR execve (2)
+call (for example,
+rendering the set-user-ID and set-group-ID mode bits,
+and file capabilities non-functional).
+.P
+Once set, the
+.I no_new_privs
+attribute cannot be unset.
+The setting of this attribute is inherited by children created by
+.BR fork (2)
+and
+.BR clone (2),
+and preserved across
+.BR execve (2).
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+The second argument
+is not equal to
+.IR 1L .
+.SH FILES
+.TP
+.IR /proc/ pid /status
+Since Linux 4.10,
+the value of a thread's
+.I no_new_privs
+attribute can be viewed via the
+.I NoNewPrivs
+field in this file.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 3.5.
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_GET_NO_NEW_PRIVS (2const),
+.BR seccomp (2)
+.P
+For more information, see the kernel source file
+.I Documentation/\:userspace\-api/\:no_new_privs.rst
+.\" commit 40fde647ccb0ae8c11d256d271e24d385eed595b
+(or
+.I Documentation/\:prctl/\:no_new_privs.txt
+before Linux 4.13).

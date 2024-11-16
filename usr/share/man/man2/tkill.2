@@ -1,0 +1,130 @@
+.\" Copyright (C) 2008 Michael Kerrisk <tmk.manpages@gmail.com>
+.\" and Copyright 2003 Abhijit Menon-Sen <ams@wiw.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" 2004-05-31, added tgkill, ahu, aeb
+.\" 2008-01-15 mtk -- rewrote DESCRIPTION
+.\"
+.TH tkill 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+tkill, tgkill \- send a signal to a thread
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <signal.h>" "           /* Definition of " SIG* " constants */"
+.BR "#include <sys/syscall.h>" "      /* Definition of " SYS_* " constants */"
+.B #include <unistd.h>
+.P
+.BI "[[deprecated]] int syscall(SYS_tkill, pid_t " tid ", int " sig );
+.P
+.B #include <signal.h>
+.P
+.BI "int tgkill(pid_t " tgid ", pid_t " tid ", int " sig );
+.fi
+.P
+.IR Note :
+glibc provides no wrapper for
+.BR tkill (),
+necessitating the use of
+.BR syscall (2).
+.SH DESCRIPTION
+.BR tgkill ()
+sends the signal
+.I sig
+to the thread with the thread ID
+.I tid
+in the thread group
+.IR tgid .
+(By contrast,
+.BR kill (2)
+can be used to send a signal only to a process (i.e., thread group)
+as a whole, and the signal will be delivered to an arbitrary
+thread within that process.)
+.P
+.BR tkill ()
+is an obsolete predecessor to
+.BR tgkill ().
+It allows only the target thread ID to be specified,
+which may result in the wrong thread being signaled if a thread
+terminates and its thread ID is recycled.
+Avoid using this system call.
+.\" FIXME Maybe say something about the following:
+.\" http://sourceware.org/bugzilla/show_bug.cgi?id=12889
+.\"
+.\" Quoting Rich Felker <bugdal@aerifal.cx>:
+.\"
+.\" There is a race condition in pthread_kill: it is possible that,
+.\" between the time pthread_kill reads the pid/tid from the target
+.\" thread descriptor and the time it makes the tgkill syscall,
+.\" the target thread terminates and the same tid gets assigned
+.\" to a new thread in the same process.
+.\"
+.\" (The tgkill syscall was designed to eliminate a similar race
+.\" condition in tkill, but it only succeeded in eliminating races
+.\" where the tid gets reused in a different process, and does not
+.\" help if the same tid gets assigned to a new thread in the
+.\" same process.)
+.\"
+.\" The only solution I can see is to introduce a mutex that ensures
+.\" that a thread cannot exit while pthread_kill is being called on it.
+.\"
+.\" Note that in most real-world situations, like almost all race
+.\" conditions, this one will be extremely rare. To make it
+.\" measurable, one could exhaust all but 1-2 available pid values,
+.\" possibly by lowering the max pid parameter in /proc, forcing
+.\" the same tid to be reused rapidly.
+.P
+These are the raw system call interfaces, meant for internal
+thread library use.
+.SH RETURN VALUE
+On success, zero is returned.
+On error, \-1 is returned, and \fIerrno\fP
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EAGAIN
+The
+.B RLIMIT_SIGPENDING
+resource limit was reached and
+.I sig
+is a real-time signal.
+.TP
+.B EAGAIN
+Insufficient kernel memory was available and
+.I sig
+is a real-time signal.
+.TP
+.B EINVAL
+An invalid thread ID, thread group ID, or signal was specified.
+.TP
+.B EPERM
+Permission denied.
+For the required permissions, see
+.BR kill (2).
+.TP
+.B ESRCH
+No process with the specified thread ID (and thread group ID) exists.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+.TP
+.BR tkill ()
+Linux 2.4.19 / 2.5.4.
+.TP
+.BR tgkill ()
+Linux 2.5.75,
+glibc 2.30.
+.SH NOTES
+See the description of
+.B CLONE_THREAD
+in
+.BR clone (2)
+for an explanation of thread groups.
+.SH SEE ALSO
+.BR clone (2),
+.BR gettid (2),
+.BR kill (2),
+.BR rt_sigqueueinfo (2)

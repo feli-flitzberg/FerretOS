@@ -1,0 +1,20 @@
+.\" Copyright (C) 1994, 1995, Daniel Quinlan <quinlan@yggdrasil.com>
+.\" Copyright (C) 2002-2008, 2017, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright (C) 2023, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-3.0-or-later
+.\"
+.TH proc_pid_ns 5 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+/proc/pid/ns/ \- namespaces
+.SH DESCRIPTION
+.TP
+.IR /proc/ pid /ns/ " (since Linux 3.0)"
+.\" See commit 6b4e306aa3dc94a0545eb9279475b1ab6209a31f
+This is a subdirectory containing one entry for each namespace that
+supports being manipulated by
+.BR setns (2).
+For more information, see
+.BR namespaces (7).
+.SH SEE ALSO
+.BR proc (5)

@@ -1,0 +1,94 @@
+'\" t
+.\" Copyright 2002 Walter Harms (walter.harms@informatik.uni-oldenburg.de)
+.\" and Copyright (C) 2011 Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: GPL-1.0-or-later
+.\"
+.TH catanh 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+catanh, catanhf, catanhl \- complex arc tangents hyperbolic
+.SH LIBRARY
+Math library
+.RI ( libm ", " \-lm )
+.SH SYNOPSIS
+.nf
+.B #include <complex.h>
+.P
+.BI "double complex catanh(double complex " z );
+.BI "float complex catanhf(float complex " z );
+.BI "long double complex catanhl(long double complex " z );
+.fi
+.SH DESCRIPTION
+These functions calculate the complex arc hyperbolic tangent of
+.IR z .
+If \fIy\~=\~catanh(z)\fP, then \fIz\~=\~ctanh(y)\fP.
+The imaginary part of
+.I y
+is chosen in the interval [\-pi/2,pi/2].
+.P
+One has:
+.P
+.in +4n
+.EX
+catanh(z) = 0.5 * (clog(1 + z) \- clog(1 \- z))
+.EE
+.in
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR catanh (),
+.BR catanhf (),
+.BR catanhl ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+glibc 2.1.
+C99, POSIX.1-2001.
+.SH EXAMPLES
+.\" SRC BEGIN (catanh.c)
+.EX
+/* Link with "\-lm" */
+\&
+#include <complex.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+\&
+int
+main(int argc, char *argv[])
+{
+    double complex z, c, f;
+\&
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <real> <imag>\[rs]n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+\&
+    z = atof(argv[1]) + atof(argv[2]) * I;
+\&
+    c = catanh(z);
+    printf("catanh() = %6.3f %6.3f*i\[rs]n", creal(c), cimag(c));
+\&
+    f = 0.5 * (clog(1 + z) \- clog(1 \- z));
+    printf("formula  = %6.3f %6.3f*i\[rs]n", creal(f), cimag(f));
+\&
+    exit(EXIT_SUCCESS);
+}
+.EE
+.\" SRC END
+.SH SEE ALSO
+.BR atanh (3),
+.BR cabs (3),
+.BR cimag (3),
+.BR ctanh (3),
+.BR complex (7)

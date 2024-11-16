@@ -1,0 +1,39 @@
+.\" Copyright, Guillem Jover <guillem@hadrons.org>
+.\" Copyright 2006, 2008, 2012, 2013, 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_GET_TIMING 2const 2024-06-02 "Linux man-pages 6.9.1"
+.SH NAME
+PR_GET_TIMING
+\-
+get the process timing mode
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.B int prctl(PR_SET_TIMING);
+.fi
+.SH DESCRIPTION
+Return which process timing method is currently
+in use.
+.SH RETURN VALUE
+On success,
+.B PR_GET_TIMING
+returns the nonnegative value described above.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 2.6.0.
+.\" Precisely: Linux 2.6.0-test4
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_SET_TIMING (2const)

@@ -1,0 +1,137 @@
+.\" Copyright 2016, IBM Corporation.
+.\" Written by Mike Rapoport <rppt@linux.vnet.ibm.com>
+.\" Copyright 2016, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH UFFDIO_COPY 2const 2024-06-17 "Linux man-pages 6.9.1"
+.SH NAME
+UFFDIO_COPY
+\-
+atomically copy a continuous memory chunk into the userfault registered range
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/userfaultfd.h>" "  /* Definition of " UFFD* " constants */"
+.B #include <sys/ioctl.h>
+.P
+.BI "int ioctl(int " fd ", UFFDIO_COPY, struct uffdio_copy *" argp );
+.P
+.B #include <linux/userfaultfd.h>
+.P
+.fi
+.EX
+.B struct uffdio_copy {
+.BR "    __u64  dst;" "   /* Destination of copy */"
+.BR "    __u64  src;" "   /* Source of copy */"
+.BR "    __u64  len;" "   /* Number of bytes to copy */"
+.BR "    __u64  mode;" "  /* Flags controlling behavior of copy */"
+.BR "    __s64  copy;" "  /* Number of bytes copied, or negated error */"
+.B };
+.EE
+.SH DESCRIPTION
+Atomically copy a continuous memory chunk into the userfault registered
+range and optionally wake up the blocked thread.
+.P
+The following value may be bitwise ORed in
+.I mode
+to change the behavior of the
+.B UFFDIO_COPY
+operation:
+.TP
+.B UFFDIO_COPY_MODE_DONTWAKE
+Do not wake up the thread that waits for page-fault resolution
+.TP
+.B UFFDIO_COPY_MODE_WP
+Copy the page with read-only permission.
+This allows the user to trap the next write to the page,
+which will block and generate another write-protect userfault message.
+This is used only when both
+.B UFFDIO_REGISTER_MODE_MISSING
+and
+.B UFFDIO_REGISTER_MODE_WP
+modes are enabled for the registered range.
+.P
+The
+.I copy
+field is used by the kernel to return the number of bytes
+that was actually copied, or an error (a negated
+.IR errno -style
+value).
+.\" FIXME Above: Why is the 'copy' field used to return error values?
+.\" This should be explained in the manual page.
+The
+.I copy
+field is output-only;
+it is not read by the
+.B UFFDIO_COPY
+operation.
+.SH RETURN VALUE
+On success,
+0 is returned.
+In this case, the entire area was copied.
+.P
+On error, \-1 is returned and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EAGAIN
+The number of bytes copied (i.e., the value returned in the
+.I copy
+field)
+does not equal the value that was specified in the
+.I len
+field.
+.TP
+.B EINVAL
+Either
+.I dst
+or
+.I len
+was not a multiple of the system page size, or the range specified by
+.I src
+and
+.I len
+or
+.I dst
+and
+.I len
+was invalid.
+.TP
+.B EINVAL
+An invalid bit was specified in the
+.I mode
+field.
+.TP
+.BR ENOENT " (since Linux 4.11)"
+The faulting process has changed
+its virtual memory layout simultaneously with an outstanding
+.B UFFDIO_COPY
+operation.
+.TP
+.BR ENOSPC " (from Linux 4.11 until Linux 4.13)"
+The faulting process has exited at the time of a
+.B UFFDIO_COPY
+operation.
+.TP
+.BR ESRCH " (since Linux 4.13)"
+The faulting process has exited at the time of a
+.B UFFDIO_COPY
+operation.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 4.3.
+.SH EXAMPLES
+See
+.BR userfaultfd (2).
+.SH SEE ALSO
+.BR ioctl (2),
+.BR ioctl_userfaultfd (2),
+.BR userfaultfd (2)
+.P
+.I linux.git/\:Documentation/\:admin\-guide/\:mm/\:userfaultfd.rst

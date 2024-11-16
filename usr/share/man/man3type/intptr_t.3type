@@ -1,0 +1,107 @@
+.\" Copyright (c) 2020-2022 by Alejandro Colomar <alx@kernel.org>
+.\" and Copyright (c) 2020 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\"
+.TH intptr_t 3type 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+intptr_t, uintptr_t \- integer types wide enough to hold pointers
+.SH LIBRARY
+Standard C library
+.RI ( libc )
+.SH SYNOPSIS
+.nf
+.B #include <stdint.h>
+.P
+.BR typedef " /* ... */ " intptr_t;
+.BR typedef " /* ... */ " uintptr_t;
+.P
+.BR "#define INTPTR_WIDTH" "  /* ... */"
+.B #define UINTPTR_WIDTH INTPTR_WIDTH
+.P
+.BR "#define INTPTR_MAX" "    /*  2**(INTPTR_WIDTH \- 1) \- 1  */"
+.BR "#define INTPTR_MIN" "    /*  \- 2**(INTPTR_WIDTH \- 1)    */"
+.BR "#define UINTPTR_MAX" "   /*  2**UINTPTR_WIDTH \- 1       */"
+.fi
+.SH DESCRIPTION
+.I intptr_t
+is a signed integer type
+such that any valid
+.RI ( "void *" )
+value can be converted to this type and then converted back.
+It is capable of storing values in the range
+.RB [ INTPTR_MIN ,
+.BR INTPTR_MAX ].
+.P
+.I uintptr_t
+is an unsigned integer type
+such that any valid
+.RI ( "void *" )
+value can be converted to this type and then converted back.
+It is capable of storing values in the range
+.RB [ 0 ,
+.BR INTPTR_MAX ].
+.P
+The macros
+.RB [ U ] INTPTR_WIDTH
+expand to the width in bits of these types.
+.P
+The macros
+.RB [ U ] INTPTR_MAX
+expand to the maximum value that these types can hold.
+.P
+The macro
+.B INTPTR_MIN
+expands to the minimum value that
+.I intptr_t
+can hold.
+.P
+The length modifiers for the
+.RI [ u ] intptr_t
+types
+for the
+.BR printf (3)
+family of functions
+are expanded by the macros
+.BR PRIdPTR ,
+.BR PRIiPTR ,
+and
+.B PRIuPTR
+(defined in
+.IR <inttypes.h> );
+resulting commonly in
+.B %"PRIdPTR"
+or
+.B %"PRIiPTR"
+for printing
+.I intptr_t
+values.
+The length modifiers for the
+.IR [ u ] intptr_t
+types
+for the
+.BR scanf (3)
+family of functions
+are expanded by the macros
+.BR SCNdPTR ,
+.BR SCNiPTR ,
+and
+.B SCNuPTR
+(defined in
+.IR <inttypes.h> );
+resulting commonly in
+.B %"SCNuPTR"
+for scanning
+.I uintptr_t
+values.
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+C99, POSIX.1-2001.
+.SH NOTES
+The following header also provides these types:
+.IR <inttypes.h> .
+.SH SEE ALSO
+.BR intmax_t (3type),
+.BR void (3)

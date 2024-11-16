@@ -1,0 +1,41 @@
+.\" Copyright 2002, 2006, 2008, 2012, 2013, 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_GET_DUMPABLE 2const 2024-06-02 "Linux man-pages 6.9.1"
+.SH NAME
+PR_GET_DUMPABLE
+\-
+get the "dumpable" attribute of the calling process
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.B int prctl(PR_GET_DUMPABLE);
+.fi
+.SH DESCRIPTION
+Return the current state of the calling
+process's "dumpable" attribute.
+.\" Since Linux 2.6.13, the dumpable flag can have the value 2,
+.\" but in Linux 2.6.13 PR_GET_DUMPABLE simply returns 1 if the dumpable
+.\" flags has a nonzero value.  This was fixed in Linux 2.6.14.
+See
+.BR PR_SET_DUMPABLE (2const).
+.SH RETURN VALUE
+On success,
+return the value described above.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 2.3.20.
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_SET_DUMPABLE (2const)

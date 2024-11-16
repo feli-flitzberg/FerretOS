@@ -1,0 +1,129 @@
+'\" t
+.\" Copyright (c) 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" SPDX-License-Identifier: BSD-4-Clause-UC
+.\"
+.\"	@(#)daemon.3	8.1 (Berkeley) 6/9/93
+.\" Added mentioning of glibc weirdness wrt unistd.h. 5/11/98, Al Viro
+.TH daemon 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+daemon \- run in the background
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <unistd.h>
+.P
+.BI "int daemon(int " nochdir ", int " noclose );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR daemon ():
+.nf
+    Since glibc 2.21:
+.\"             commit 266865c0e7b79d4196e2cc393693463f03c90bd8
+        _DEFAULT_SOURCE
+    In glibc 2.19 and 2.20:
+        _DEFAULT_SOURCE || (_XOPEN_SOURCE && _XOPEN_SOURCE < 500)
+    Up to and including glibc 2.19:
+        _BSD_SOURCE || (_XOPEN_SOURCE && _XOPEN_SOURCE < 500)
+.fi
+.SH DESCRIPTION
+The
+.BR daemon ()
+function is for programs wishing to detach themselves from the
+controlling terminal and run in the background as system daemons.
+.P
+If
+.I nochdir
+is zero,
+.BR daemon ()
+changes the process's current working directory
+to the root directory ("/");
+otherwise, the current working directory is left unchanged.
+.P
+If
+.I noclose
+is zero,
+.BR daemon ()
+redirects standard input, standard output, and standard error
+to
+.IR /dev/null ;
+otherwise, no changes are made to these file descriptors.
+.SH RETURN VALUE
+(This function forks, and if the
+.BR fork (2)
+succeeds, the parent calls
+.\" not .IR in order not to underline _
+.BR _exit (2),
+so that further errors are seen by the child only.)
+On success
+.BR daemon ()
+returns zero.
+If an error occurs,
+.BR daemon ()
+returns \-1 and sets
+.I errno
+to any of the errors specified for the
+.BR fork (2)
+and
+.BR setsid (2).
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR daemon ()
+T}	Thread safety	MT-Safe
+.TE
+.SH VERSIONS
+A similar function appears on the BSDs.
+.P
+The glibc implementation can also return \-1 when
+.I /dev/null
+exists but is not a character device with the expected
+major and minor numbers.
+In this case,
+.I errno
+need not be set.
+.SH STANDARDS
+None.
+.SH HISTORY
+4.4BSD.
+.SH BUGS
+The GNU C library implementation of this function was taken from BSD,
+and does not employ the double-fork technique (i.e.,
+.BR fork (2),
+.BR setsid (2),
+.BR fork (2))
+that is necessary to ensure that the resulting daemon process is
+not a session leader.
+Instead, the resulting daemon
+.I is
+a session leader.
+.\" FIXME . https://sourceware.org/bugzilla/show_bug.cgi?id=19144
+.\" Tested using a program that uses daemon() and then opens an
+.\" otherwise unused console device (/dev/ttyN) that does not
+.\" have an associated getty process.
+On systems that follow System V semantics (e.g., Linux),
+this means that if the daemon opens a terminal that is not
+already a controlling terminal for another session,
+then that terminal will inadvertently become
+the controlling terminal for the daemon.
+.SH SEE ALSO
+.BR fork (2),
+.BR setsid (2),
+.BR daemon (7),
+.BR logrotate (8)

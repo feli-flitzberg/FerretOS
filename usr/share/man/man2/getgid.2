@@ -1,0 +1,70 @@
+.\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH getgid 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+getgid, getegid \- get group identity
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <unistd.h>
+.P
+.B gid_t getgid(void);
+.B gid_t getegid(void);
+.fi
+.SH DESCRIPTION
+.BR getgid ()
+returns the real group ID of the calling process.
+.P
+.BR getegid ()
+returns the effective group ID of the calling process.
+.SH ERRORS
+These functions are always successful
+and never modify
+.\" https://www.austingroupbugs.net/view.php?id=511
+.\" 0000511: getuid and friends should not modify errno
+.IR errno .
+.SH VERSIONS
+On Alpha, instead of a pair of
+.BR getgid ()
+and
+.BR getegid ()
+system calls, a single
+.BR getxgid ()
+system call is provided, which returns a pair of real and effective GIDs.
+The glibc
+.BR getgid ()
+and
+.BR getegid ()
+wrapper functions transparently deal with this.
+See
+.BR syscall (2)
+for details regarding register mapping.
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, 4.3BSD.
+.P
+The original Linux
+.BR getgid ()
+and
+.BR getegid ()
+system calls supported only 16-bit group IDs.
+Subsequently, Linux 2.4 added
+.BR getgid32 ()
+and
+.BR getegid32 (),
+supporting 32-bit IDs.
+The glibc
+.BR getgid ()
+and
+.BR getegid ()
+wrapper functions transparently deal with the variations across kernel versions.
+.SH SEE ALSO
+.BR getresgid (2),
+.BR setgid (2),
+.BR setregid (2),
+.BR credentials (7)

@@ -1,0 +1,78 @@
+.\" Copyright 2012, 2013, 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_SET_CHILD_SUBREAPER 2const 2024-06-02 "Linux man-pages 6.9.1"
+.SH NAME
+PR_SET_CHILD_SUBREAPER
+\-
+set/unset the "child subreaper" attribute of the calling process
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.BI "int prctl(PR_SET_CHILD_SUBREAPER, long " set );
+.fi
+.SH DESCRIPTION
+If
+.I set
+is nonzero,
+set the "child subreaper" attribute of the calling process;
+if
+.I set
+is zero, unset the attribute.
+.P
+A subreaper fulfills the role of
+.BR init (1)
+for its descendant processes.
+When a process becomes orphaned
+(i.e., its immediate parent terminates),
+then that process will be reparented to
+the nearest still living ancestor subreaper.
+Subsequently, calls to
+.BR getppid (2)
+in the orphaned process will now return the PID of the subreaper process,
+and when the orphan terminates, it is the subreaper process that
+will receive a
+.B SIGCHLD
+signal and will be able to
+.BR wait (2)
+on the process to discover its termination status.
+.P
+The setting of the "child subreaper" attribute
+is not inherited by children created by
+.BR fork (2)
+and
+.BR clone (2).
+The setting is preserved across
+.BR execve (2).
+.P
+Establishing a subreaper process is useful in session management frameworks
+where a hierarchical group of processes is managed by a subreaper process
+that needs to be informed when one of the processes\[em]for example,
+a double-forked daemon\[em]terminates
+(perhaps so that it can restart that process).
+Some
+.BR init (1)
+frameworks (e.g.,
+.BR systemd (1))
+employ a subreaper process for similar reasons.
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 3.4.
+.\" commit ebec18a6d3aa1e7d84aab16225e87fd25170ec2b
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_GET_CHILD_SUBREAPER (2const)

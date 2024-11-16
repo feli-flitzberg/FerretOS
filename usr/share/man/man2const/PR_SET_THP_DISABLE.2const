@@ -1,0 +1,50 @@
+.\" Copyright 2014, 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_SET_THP_DISABLE 2const 2024-06-01 "Linux man-pages 6.9.1"
+.SH NAME
+PR_SET_THP_DISABLE
+\-
+set the state of the "THP disable" flag for the calling thread
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.BI "int prctl(PR_SET_THP_DISABLE, long " flag ", 0L, 0L, 0L);"
+.fi
+.SH DESCRIPTION
+Set the state of the "THP disable" flag for the calling thread.
+If
+.I flag
+has a nonzero value, the flag is set, otherwise it is cleared.
+.P
+Setting this flag provides a method
+for disabling transparent huge pages
+for jobs where the code cannot be modified,
+and using a malloc hook with
+.BR madvise (2)
+is not an option (i.e., statically allocated data).
+The setting of the "THP disable" flag is inherited by a child created via
+.BR fork (2)
+and is preserved across
+.BR execve (2).
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 3.15.
+.\" commit a0715cc22601e8830ace98366c0c2bd8da52af52
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_GET_THP_DISABLE (2const)

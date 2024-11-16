@@ -1,0 +1,78 @@
+'\" t
+.\" Copyright 1995 Yggdrasil Computing, Incorporated.
+.\" and Copyright 2015 Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.TH dlerror 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+dlerror \- obtain error diagnostic for functions in the dlopen API
+.SH LIBRARY
+Dynamic linking library
+.RI ( libdl ", " \-ldl )
+.SH SYNOPSIS
+.nf
+.B #include <dlfcn.h>
+.P
+.B "char *dlerror(void);"
+.fi
+.SH DESCRIPTION
+The
+.BR dlerror ()
+function returns a human-readable,
+null-terminated string describing the most recent error
+that occurred from a call to one of the functions in the dlopen API
+since the last call to
+.BR dlerror ().
+The returned string does
+.I not
+include a trailing newline.
+.P
+.BR dlerror ()
+returns NULL if no errors have occurred since initialization or since
+it was last called.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR dlerror ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+glibc 2.0.
+POSIX.1-2001.
+.P
+SunOS.
+.SH NOTES
+The message returned by
+.BR dlerror ()
+may reside in a statically allocated buffer that is
+overwritten by subsequent
+.BR dlerror ()
+calls.
+.\" .P
+.\" The string returned by
+.\" .BR dlerror ()
+.\" should not be modified.
+.\" Some systems give the prototype as
+.\" .sp
+.\" .in +5
+.\" .B "const char *dlerror(void);"
+.\" .in
+.SH EXAMPLES
+See
+.BR dlopen (3).
+.SH SEE ALSO
+.BR dladdr (3),
+.BR dlinfo (3),
+.BR dlopen (3),
+.BR dlsym (3)

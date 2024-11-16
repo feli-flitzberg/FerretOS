@@ -1,0 +1,49 @@
+.\" Copyright (c) 2022 by Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\"
+.TH iovec 3type 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+iovec \- Vector I/O data structure
+.SH LIBRARY
+Standard C library
+.RI ( libc )
+.SH SYNOPSIS
+.EX
+.B #include <sys/uio.h>
+.P
+.B struct iovec {
+.BR "    void   *iov_base;" "  /* Starting address */"
+.BR "    size_t  iov_len;" "   /* Size of the memory pointed to by "\c
+.IR iov_base ". */"
+.B };
+.EE
+.SH DESCRIPTION
+Describes a region of memory, beginning at
+.I iov_base
+address and with the size of
+.I iov_len
+bytes.
+System calls use arrays of this structure,
+where each element of the array represents a memory region,
+and the whole array represents a vector of memory regions.
+The maximum number of
+.I iovec
+structures in that array
+is limited by
+.B IOV_MAX
+(defined in
+.IR <limits.h> ,
+or accessible via the call
+.IR sysconf(_SC_IOV_MAX) ).
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001.
+.SH NOTES
+The following header also provides this type:
+.IR <sys/socket.h> .
+.SH SEE ALSO
+.BR process_madvise (2),
+.BR readv (2)

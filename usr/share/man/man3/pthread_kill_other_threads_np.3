@@ -1,0 +1,69 @@
+'\" t
+.\" Copyright (c) 2009 Linux Foundation, written by Michael Kerrisk
+.\"     <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH pthread_kill_other_threads_np 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+pthread_kill_other_threads_np \- terminate all other threads in process
+.SH LIBRARY
+POSIX threads library
+.RI ( libpthread ", " \-lpthread )
+.SH SYNOPSIS
+.nf
+.B #include <pthread.h>
+.P
+.B void pthread_kill_other_threads_np(void);
+.fi
+.SH DESCRIPTION
+.BR pthread_kill_other_threads_np ()
+has an effect only in the LinuxThreads threading implementation.
+On that implementation,
+calling this function causes the immediate termination of
+all threads in the application,
+except the calling thread.
+The cancelation state and cancelation type of the
+to-be-terminated threads are ignored,
+and the cleanup handlers are not called in those threads.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR pthread_kill_other_threads_np ()
+T}	Thread safety	MT-Safe
+.TE
+.SH VERSIONS
+In the NPTL threading implementation,
+.BR pthread_kill_other_threads_np ()
+exists, but does nothing.
+(Nothing needs to be done,
+because the implementation does the right thing during an
+.BR execve (2).)
+.SH STANDARDS
+GNU;
+hence the suffix "_np" (nonportable) in the name.
+.SH HISTORY
+glibc 2.0
+.SH NOTES
+.BR pthread_kill_other_threads_np ()
+is intended to be called just before a thread calls
+.BR execve (2)
+or a similar function.
+This function is designed to address a limitation in the obsolete
+LinuxThreads implementation whereby the other threads of an application
+are not automatically terminated (as POSIX.1-2001 requires) during
+.BR execve (2).
+.SH SEE ALSO
+.BR execve (2),
+.BR pthread_cancel (3),
+.BR pthread_setcancelstate (3),
+.BR pthread_setcanceltype (3),
+.BR pthreads (7)

@@ -1,0 +1,24 @@
+.\" Copyright (C) 1994, 1995, Daniel Quinlan <quinlan@yggdrasil.com>
+.\" Copyright (C) 2002-2008, 2017, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright (C) 2023, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-3.0-or-later
+.\"
+.TH proc_cpuinfo 5 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+/proc/cpuinfo \- CPU and system architecture information
+.SH DESCRIPTION
+.TP
+.I /proc/cpuinfo
+This is a collection of CPU and system architecture dependent items,
+for each supported architecture a different list.
+Two common entries are \fIprocessor\fP which gives CPU number and
+\fIbogomips\fP; a system constant that is calculated
+during kernel initialization.
+SMP machines have information for
+each CPU.
+The
+.BR lscpu (1)
+command gathers its information from this file.
+.SH SEE ALSO
+.BR proc (5)

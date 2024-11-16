@@ -1,0 +1,50 @@
+.\" Copyright 2002, Walter Harms <walter.harms@informatik.uni-oldenburg.de>
+.\" Copyright 2002, Andries Brouwer <aeb@cwi.nl>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-1.0-or-later
+.\"
+.TH TIOCTTYGSTRUCT 2const 2024-06-13 "Linux man-pages 6.9.1"
+.SH NAME
+TIOCTTYGSTRUCT
+\-
+kernel debugging
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <sys/ioctl.h>
+.P
+.BI "int ioctl(int " fd ", TIOCTTYGSTRUCT, struct tty_struct *" argp );
+.P
+.B #include <linux/tty.h>
+.P
+.B struct tty_struct;
+.fi
+.SH DESCRIPTION
+Get the
+.I tty_struct
+corresponding to
+.IR fd .
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error,
+\-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH HISTORY
+This operation was removed in Linux 2.5.67.
+.\"     commit b3506a09d15dc5aee6d4bb88d759b157016e1864
+.\"     Author: Andries E. Brouwer <andries.brouwer@cwi.nl>
+.\"     Date:   Tue Apr 1 04:42:46 2003 -0800
+.\"
+.\"     [PATCH] kill TIOCTTYGSTRUCT
+.\"
+.\"     Only used for (dubious) debugging purposes, and exposes
+.\"     internal kernel state.
+.\"
+.SH SEE ALSO
+.BR ioctl (2),
+.BR ioctl_tty (2)

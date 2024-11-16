@@ -1,0 +1,134 @@
+.\" Copyright (c) 2009 Linux Foundation, written by Michael Kerrisk
+.\"     <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH timer_getoverrun 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+timer_getoverrun \- get overrun count for a POSIX per-process timer
+.SH LIBRARY
+Real-time library
+.RI ( librt ", " \-lrt )
+.SH SYNOPSIS
+.nf
+.B  #include <time.h>
+.P
+.BI "int timer_getoverrun(timer_t " timerid );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR timer_getoverrun ():
+.nf
+    _POSIX_C_SOURCE >= 199309L
+.fi
+.SH DESCRIPTION
+.BR timer_getoverrun ()
+returns the "overrun count" for the timer referred to by
+.IR timerid .
+An application can use the overrun count to accurately calculate the number
+of timer expirations that would have occurred over a given time interval.
+Timer overruns can occur both when receiving expiration notifications
+via signals
+.RB ( SIGEV_SIGNAL ),
+and via threads
+.RB ( SIGEV_THREAD ).
+.P
+When expiration notifications are delivered via a signal,
+overruns can occur as follows.
+Regardless of whether or not a real-time signal is used for
+timer notifications,
+the system queues at most one signal per timer.
+(This is the behavior specified by POSIX.1.
+The alternative, queuing one signal for each timer expiration,
+could easily result in overflowing the allowed limits for
+queued signals on the system.)
+Because of system scheduling delays,
+or because the signal may be temporarily blocked,
+there can be a delay between the time when the notification
+signal is generated and the time when it
+is delivered (e.g., caught by a signal handler) or accepted (e.g., using
+.BR sigwaitinfo (2)).
+In this interval, further timer expirations may occur.
+The timer overrun count is the number of additional
+timer expirations that occurred between the time when the signal
+was generated and when it was delivered or accepted.
+.P
+Timer overruns can also occur when expiration notifications
+are delivered via invocation of a thread,
+since there may be an arbitrary delay between an expiration of the timer
+and the invocation of the notification thread,
+and in that delay interval, additional timer expirations may occur.
+.SH RETURN VALUE
+On success,
+.BR timer_getoverrun ()
+returns the overrun count of the specified timer;
+this count may be 0 if no overruns have occurred.
+On failure, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+.I timerid
+is not a valid timer ID.
+.SH VERSIONS
+When timer notifications are delivered via signals
+.RB ( SIGEV_SIGNAL ),
+on Linux it is also possible to obtain the overrun count via the
+.I si_overrun
+field of the
+.I siginfo_t
+structure (see
+.BR sigaction (2)).
+This allows an application to avoid the overhead of making
+a system call to obtain the overrun count,
+but is a nonportable extension to POSIX.1.
+.P
+POSIX.1 discusses timer overruns only in the context of
+timer notifications using signals.
+.\" FIXME . Austin bug filed, 11 Feb 09
+.\" https://www.austingroupbugs.net/view.php?id=95
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+Linux 2.6.
+POSIX.1-2001.
+.SH BUGS
+POSIX.1 specifies that if the timer overrun count
+is equal to or greater than an implementation-defined maximum,
+.BR DELAYTIMER_MAX ,
+then
+.BR timer_getoverrun ()
+should return
+.BR DELAYTIMER_MAX .
+However, before Linux 4.19,
+.\" http://bugzilla.kernel.org/show_bug.cgi?id=12665
+if the timer overrun value exceeds the maximum representable integer,
+the counter cycles, starting once more from low values.
+Since Linux 4.19,
+.\" commit 78c9c4dfbf8c04883941445a195276bb4bb92c76
+.BR timer_getoverrun ()
+returns
+.B DELAYTIMER_MAX
+(defined as
+.B INT_MAX
+in
+.IR <limits.h> )
+in this case (and the overrun value is reset to 0).
+.SH EXAMPLES
+See
+.BR timer_create (2).
+.SH SEE ALSO
+.BR clock_gettime (2),
+.BR sigaction (2),
+.BR signalfd (2),
+.BR sigwaitinfo (2),
+.BR timer_create (2),
+.BR timer_delete (2),
+.BR timer_settime (2),
+.BR signal (7),
+.BR time (7)

@@ -1,0 +1,125 @@
+'\" t
+.\" Copyright (c) 2008 Linux Foundation, written by Michael Kerrisk
+.\"     <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH pthread_attr_setschedparam 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+pthread_attr_setschedparam, pthread_attr_getschedparam \- set/get
+scheduling parameter attributes in thread attributes object
+.SH LIBRARY
+POSIX threads library
+.RI ( libpthread ", " \-lpthread )
+.SH SYNOPSIS
+.nf
+.B #include <pthread.h>
+.P
+.BI "int pthread_attr_setschedparam(pthread_attr_t *restrict " attr ,
+.BI "                              const struct sched_param *restrict " param );
+.BI "int pthread_attr_getschedparam(const pthread_attr_t *restrict " attr ,
+.BI "                              struct sched_param *restrict " param );
+.fi
+.SH DESCRIPTION
+The
+.BR pthread_attr_setschedparam ()
+function sets the scheduling parameter attributes of the
+thread attributes object referred to by
+.I attr
+to the values specified in the buffer pointed to by
+.IR param .
+These attributes determine the scheduling parameters of
+a thread created using the thread attributes object
+.IR attr .
+.P
+The
+.BR pthread_attr_getschedparam ()
+returns the scheduling parameter attributes of the thread attributes object
+.I attr
+in the buffer pointed to by
+.IR param .
+.P
+Scheduling parameters are maintained in the following structure:
+.P
+.in +4n
+.EX
+struct sched_param {
+    int sched_priority;     /* Scheduling priority */
+};
+.EE
+.in
+.P
+As can be seen, only one scheduling parameter is supported.
+For details of the permitted ranges for scheduling priorities
+in each scheduling policy, see
+.BR sched (7).
+.P
+In order for the parameter setting made by
+.BR pthread_attr_setschedparam ()
+to have effect when calling
+.BR pthread_create (3),
+the caller must use
+.BR pthread_attr_setinheritsched (3)
+to set the inherit-scheduler attribute of the attributes object
+.I attr
+to
+.BR PTHREAD_EXPLICIT_SCHED .
+.SH RETURN VALUE
+On success, these functions return 0;
+on error, they return a nonzero error number.
+.SH ERRORS
+.BR pthread_attr_setschedparam ()
+can fail with the following error:
+.TP
+.B EINVAL
+The priority specified in
+.I param
+does not make sense for the current scheduling policy of
+.IR attr .
+.P
+POSIX.1 also documents an
+.B ENOTSUP
+error for
+.BR pthread_attr_setschedparam ().
+This value is never returned on Linux
+(but portable and future-proof applications should nevertheless
+handle this error return value).
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR pthread_attr_setschedparam (),
+.BR pthread_attr_getschedparam ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001.
+glibc 2.0.
+.SH NOTES
+See
+.BR pthread_attr_setschedpolicy (3)
+for a list of the thread scheduling policies supported on Linux.
+.SH EXAMPLES
+See
+.BR pthread_setschedparam (3).
+.SH SEE ALSO
+.ad l
+.nh
+.BR sched_get_priority_min (2),
+.BR pthread_attr_init (3),
+.BR pthread_attr_setinheritsched (3),
+.BR pthread_attr_setschedpolicy (3),
+.BR pthread_create (3),
+.BR pthread_setschedparam (3),
+.BR pthread_setschedprio (3),
+.BR pthreads (7),
+.BR sched (7)

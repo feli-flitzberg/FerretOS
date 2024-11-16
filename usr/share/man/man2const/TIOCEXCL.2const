@@ -1,0 +1,61 @@
+.\" Copyright 2002, Walter Harms <walter.harms@informatik.uni-oldenburg.de>
+.\" Copyright 2002, Andries Brouwer <aeb@cwi.nl>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-1.0-or-later
+.\"
+.TH TIOCEXCL 2const 2024-06-13 "Linux man-pages 6.9.1"
+.SH NAME
+TIOCEXCL,
+TIOCGEXCL,
+TIOCNXCL
+\-
+exclusive mode
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <asm/termbits.h>" "  /* Definition of " TIOC*XCL " constants */"
+.B #include <sys/ioctl.h>
+.P
+.BI "int ioctl(int " fd ", TIOCEXCL);"
+.BI "int ioctl(int " fd ", TIOCGEXCL, int *" argp );
+.BI "int ioctl(int " fd ", TIOCNXCL);"
+.fi
+.SH DESCRIPTION
+.TP
+.B TIOCEXCL
+Put the terminal into exclusive mode.
+No further
+.BR open (2)
+operations on the terminal are permitted.
+(They fail with
+.BR EBUSY ,
+except for a process with the
+.B CAP_SYS_ADMIN
+capability.)
+.TP
+.B TIOCGEXCL
+If the terminal is currently in exclusive mode,
+place a nonzero value in the location pointed to by
+.IR argp ;
+otherwise, place zero in
+.IR *argp .
+.TP
+.B TIOCNXCL
+Disable exclusive mode.
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error,
+\-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH HISTORY
+.TP
+.B TIOCGEXCL
+Linux 3.8.
+.SH SEE ALSO
+.BR ioctl (2),
+.BR ioctl_tty (2)

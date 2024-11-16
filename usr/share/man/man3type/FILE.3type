@@ -1,0 +1,36 @@
+.\" Copyright (c) 2020-2022 by Alejandro Colomar <alx@kernel.org>
+.\" and Copyright (c) 2020 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\"
+.TH FILE 3type 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+FILE \- input/output stream
+.SH LIBRARY
+Standard C library
+.RI ( libc )
+.SH SYNOPSIS
+.nf
+.B #include <stdio.h>
+.P
+.BR typedef " /* ... */  " FILE;
+.fi
+.SH DESCRIPTION
+An object type used for streams.
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+C89, POSIX.1-2001.
+.SH NOTES
+The following header also provides this type:
+.IR <wchar.h> .
+.SH SEE ALSO
+.BR fclose (3),
+.BR flockfile (3),
+.BR fopen (3),
+.BR fprintf (3),
+.BR fread (3),
+.BR fscanf (3),
+.BR stdin (3),
+.BR stdio (3)

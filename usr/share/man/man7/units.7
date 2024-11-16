@@ -1,0 +1,108 @@
+'\" t
+.\" Copyright (C) 2001 Andries Brouwer <aeb@cwi.nl>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH units 7 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+units \- decimal and binary prefixes
+.SH DESCRIPTION
+.SS Decimal prefixes
+The SI system of units uses prefixes that indicate powers of ten.
+A kilometer is 1000 meter, and a megawatt is 1000000 watt.
+Below the standard prefixes.
+.RS
+.TS
+l l l.
+Prefix	Name	Value
+q	quecto	10\[ha]\-30 = 0.000000000000000000000000000001
+r	ronto	10\[ha]\-27 = 0.000000000000000000000000001
+y	yocto	10\[ha]\-24 = 0.000000000000000000000001
+z	zepto	10\[ha]\-21 = 0.000000000000000000001
+a	atto	10\[ha]\-18 = 0.000000000000000001
+f	femto	10\[ha]\-15 = 0.000000000000001
+p	pico	10\[ha]\-12 = 0.000000000001
+n	nano	10\[ha]\-9  = 0.000000001
+\[mc]	micro	10\[ha]\-6  = 0.000001
+m	milli	10\[ha]\-3  = 0.001
+c	centi	10\[ha]\-2  = 0.01
+d	deci	10\[ha]\-1  = 0.1
+da	deka	10\[ha] 1  = 10
+h	hecto	10\[ha] 2  = 100
+k	kilo	10\[ha] 3  = 1000
+M	mega	10\[ha] 6  = 1000000
+G	giga	10\[ha] 9  = 1000000000
+T	tera	10\[ha]12  = 1000000000000
+P	peta	10\[ha]15  = 1000000000000000
+E	exa	10\[ha]18  = 1000000000000000000
+Z	zetta	10\[ha]21  = 1000000000000000000000
+Y	yotta	10\[ha]24  = 1000000000000000000000000
+R	ronna	10\[ha]27  = 1000000000000000000000000000
+Q	quetta	10\[ha]30  = 1000000000000000000000000000000
+.TE
+.RE
+.P
+The symbol for micro is the Greek letter mu, often written u
+in an ASCII context where this Greek letter is not available.
+.SS Binary prefixes
+The binary prefixes resemble the decimal ones,
+but have an additional \[aq]i\[aq]
+(and "Ki" starts with a capital \[aq]K\[aq]).
+The names are formed by taking the
+first syllable of the names of the decimal prefix with roughly the same
+size, followed by "bi" for "binary".
+.RS
+.TS
+l l l.
+Prefix	Name	Value
+Ki	kibi	2\[ha]10 = 1024
+Mi	mebi	2\[ha]20 = 1048576
+Gi	gibi	2\[ha]30 = 1073741824
+Ti	tebi	2\[ha]40 = 1099511627776
+Pi	pebi	2\[ha]50 = 1125899906842624
+Ei	exbi	2\[ha]60 = 1152921504606846976
+Zi	zebi	2\[ha]70 = 1180591620717411303424
+Yi	yobi	2\[ha]80 = 1208925819614629174706176
+.TE
+.RE
+.SS Discussion
+Before these binary prefixes were introduced, it was fairly
+common to use k=1000 and K=1024, just like b=bit, B=byte.
+Unfortunately, the M is capital already, and cannot be
+capitalized to indicate binary-ness.
+.P
+At first that didn't matter too much, since memory modules
+and disks came in sizes that were powers of two, so everyone
+knew that in such contexts "kilobyte" and "megabyte" meant
+1024 and 1048576 bytes, respectively.
+What originally was a
+sloppy use of the prefixes "kilo" and "mega" started to become
+regarded as the "real true meaning" when computers were involved.
+But then disk technology changed, and disk sizes became arbitrary numbers.
+After a period of uncertainty all disk manufacturers settled on the
+standard, namely k=1000, M=1000\ k, G=1000\ M.
+.P
+The situation was messy: in the 14k4 modems, k=1000; in the 1.44\ MB
+.\" also common: 14.4k modem
+diskettes, M=1024000; and so on.
+In 1998 the IEC approved the standard
+that defines the binary prefixes given above, enabling people
+to be precise and unambiguous.
+.P
+Thus, today, MB = 1000000\ B and MiB = 1048576\ B.
+.P
+In the free software world programs are slowly
+being changed to conform.
+When the Linux kernel boots and says
+.P
+.in +4n
+.EX
+hda: 120064896 sectors (61473 MB) w/2048KiB Cache
+.EE
+.in
+.P
+the MB are megabytes and the KiB are kibibytes.
+.SH SEE ALSO
+.UR https://www.bipm.org/\:documents/\:20126/\:41483022/\:SI\-Brochure\-9.pdf
+The International System of Units
+.UE .

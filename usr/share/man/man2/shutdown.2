@@ -1,0 +1,98 @@
+.\" Copyright (c) 1983, 1991 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" SPDX-License-Identifier: BSD-4-Clause-UC
+.\"
+.\"     $Id: shutdown.2,v 1.1.1.1 1999/03/21 22:52:23 freitag Exp $
+.\"
+.\" Modified Sat Jul 24 09:57:55 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Tue Oct 22 22:04:51 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified 1998 by Andi Kleen
+.\"
+.TH shutdown 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+shutdown \- shut down part of a full-duplex connection
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <sys/socket.h>
+.P
+.BI "int shutdown(int " sockfd ", int " how );
+.fi
+.SH DESCRIPTION
+The
+.BR shutdown ()
+call causes all or part of a full-duplex connection on the socket
+associated with
+.I sockfd
+to be shut down.
+If
+.I how
+is
+.BR SHUT_RD ,
+further receptions will be disallowed.
+If
+.I how
+is
+.BR SHUT_WR ,
+further transmissions will be disallowed.
+If
+.I how
+is
+.BR SHUT_RDWR ,
+further receptions and transmissions will be disallowed.
+.SH RETURN VALUE
+On success, zero is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EBADF
+.I sockfd
+is not a valid file descriptor.
+.TP
+.B EINVAL
+An invalid value was specified in
+.I how
+(but see BUGS).
+.TP
+.B ENOTCONN
+The specified socket is not connected.
+.TP
+.B ENOTSOCK
+The file descriptor
+.I sockfd
+does not refer to a socket.
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, 4.4BSD
+(first appeared in 4.2BSD).
+.SH NOTES
+The constants
+.BR SHUT_RD ,
+.BR SHUT_WR ,
+.B SHUT_RDWR
+have the value 0, 1, 2,
+respectively, and are defined in
+.I <sys/socket.h>
+since glibc-2.1.91.
+.SH BUGS
+Checks for the validity of
+.I how
+are done in domain-specific code,
+and before Linux 3.7 not all domains performed these checks.
+.\" https://bugzilla.kernel.org/show_bug.cgi?id=47111
+Most notably, UNIX domain sockets simply ignored invalid values.
+This problem was fixed for UNIX domain sockets
+.\" commit fc61b928dc4d72176cf4bd4d30bf1d22e599aefc
+.\" and for DECnet sockets in commit 46b66d7077b89fb4917ceef19b3f7dd86055c94a
+in Linux 3.7.
+.SH SEE ALSO
+.BR close (2),
+.BR connect (2),
+.BR socket (2),
+.BR socket (7)

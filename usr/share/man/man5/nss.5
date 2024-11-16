@@ -1,0 +1,101 @@
+.\" Copyright (C) 2006 Red Hat, Inc. All rights reserved.
+.\" Author: Ulrich Drepper <drepper@redhat.com>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-only
+.\"
+.TH nss 5 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+nss \- Name Service Switch configuration file
+.SH DESCRIPTION
+Each call to a function which retrieves data from a system database
+like the password or group database is handled by the Name Service
+Switch implementation in the GNU C library.
+The various services
+provided are implemented by independent modules, each of which
+naturally varies widely from the other.
+.P
+The default implementations coming with the GNU C library are by
+default conservative and do not use unsafe data.
+This might be very costly in some situations, especially when the databases
+are large.
+Some modules allow the system administrator to request
+taking shortcuts if these are known to be safe.
+It is then the system administrator's responsibility to ensure the assumption
+is correct.
+.P
+There are other modules where the implementation changed over time.
+If an implementation used to sacrifice speed for memory consumption,
+it might create problems if the preference is switched.
+.P
+The
+.I /etc/default/nss
+file contains a number of variable assignments.
+Each variable controls the behavior of one or more
+NSS modules.
+White spaces are ignored.
+Lines beginning with \[aq]#\[aq]
+are treated as comments.
+.P
+The variables currently recognized are:
+.TP
+\fBNETID_AUTHORITATIVE =\fR \fITRUE\fR|\fIFALSE\fR
+If set to TRUE, the NIS backend for the
+.BR initgroups (3)
+function will accept the information
+from the
+.I netid.byname
+NIS map as authoritative.
+This can speed up the function significantly if the
+.I group.byname
+map is large.
+The content of the
+.I netid.byname
+map is used \fBas is\fR.
+The system administrator has to make sure it is correctly generated.
+.TP
+\fBSERVICES_AUTHORITATIVE =\fR \fITRUE\fR|\fIFALSE\fR
+If set to TRUE, the NIS backend for the
+.BR getservbyname (3)
+and
+.BR getservbyname_r (3)
+functions will assume that the
+.I services.byservicename
+NIS map exists and is authoritative, particularly
+that it contains both keys with /proto and without /proto for both
+primary service names and service aliases.
+The system administrator has to make sure it is correctly generated.
+.TP
+\fBSETENT_BATCH_READ =\fR \fITRUE\fR|\fIFALSE\fR
+If set to TRUE, the NIS backend for the
+.BR setpwent (3)
+and
+.BR setgrent (3)
+functions will read the entire database at once and then
+hand out the requests one by one from memory with every corresponding
+.BR getpwent (3)
+or
+.BR getgrent (3)
+call respectively.
+Otherwise, each
+.BR getpwent (3)
+or
+.BR getgrent (3)
+call might result in a network communication with the server to get
+the next entry.
+.SH FILES
+\fI/etc/default/nss\fR
+.SH EXAMPLES
+The default configuration corresponds to the following configuration file:
+.P
+.in +4n
+.EX
+NETID_AUTHORITATIVE=FALSE
+SERVICES_AUTHORITATIVE=FALSE
+SETENT_BATCH_READ=FALSE
+.EE
+.in
+.\" .SH AUTHOR
+.\" Ulrich Drepper <drepper@redhat.com>
+.\"
+.SH SEE ALSO
+\fInsswitch.conf\fR

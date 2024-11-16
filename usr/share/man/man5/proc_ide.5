@@ -1,0 +1,37 @@
+.\" Copyright (C) 1994, 1995, Daniel Quinlan <quinlan@yggdrasil.com>
+.\" Copyright (C) 2002-2008, 2017, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright (C) 2023, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-3.0-or-later
+.\"
+.TH proc_ide 5 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+/proc/ide/ \- IDE channels and attached devices
+.SH DESCRIPTION
+.TP
+.I /proc/ide
+This directory
+exists on systems with the IDE bus.
+There are directories for each IDE channel and attached device.
+Files include:
+.IP
+.in +4n
+.EX
+cache              buffer size in KB
+capacity           number of sectors
+driver             driver version
+geometry           physical and logical geometry
+identify           in hexadecimal
+media              media type
+model              manufacturer\[aq]s model number
+settings           drive settings
+smart_thresholds   IDE disk management thresholds (in hex)
+smart_values       IDE disk management values (in hex)
+.EE
+.in
+.IP
+The
+.BR hdparm (8)
+utility provides access to this information in a friendly format.
+.SH SEE ALSO
+.BR proc (5)

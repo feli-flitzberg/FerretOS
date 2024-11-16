@@ -1,0 +1,25 @@
+.\" Copyright (C) 1994, 1995, Daniel Quinlan <quinlan@yggdrasil.com>
+.\" Copyright (C) 2002-2008, 2017, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright (C) 2023, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-3.0-or-later
+.\"
+.TH proc_pid_stack 5 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+/proc/pid/stack \- kernel stack
+.SH DESCRIPTION
+.TP
+.IR /proc/ pid /stack " (since Linux 2.6.29)"
+.\" 2ec220e27f5040aec1e88901c1b6ea3d135787ad
+This file provides a symbolic trace of the function calls in this
+process's kernel stack.
+This file is provided only if the kernel was built with the
+.B CONFIG_STACKTRACE
+configuration option.
+.IP
+Permission to access this file is governed by a ptrace access mode
+.B PTRACE_MODE_ATTACH_FSCREDS
+check; see
+.BR ptrace (2).
+.SH SEE ALSO
+.BR proc (5)

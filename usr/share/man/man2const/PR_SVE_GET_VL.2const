@@ -1,0 +1,65 @@
+.\" Copyright 2020, Dave Martin <Dave.Martin@arm.com>
+.\" Copyright 2020, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_SVE_GET_VL 2const 2024-06-02 "Linux man-pages 6.9.1"
+.SH NAME
+PR_SVE_GET_VL
+\-
+get the thread's SVE vector length
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.B int prctl(PR_SVE_GET_VL);
+.fi
+.SH DESCRIPTION
+Get the thread's current SVE vector length configuration.
+.P
+This operation returns
+a nonnegative value that describes the
+.I current
+configuration.
+The bits corresponding to
+.B PR_SVE_VL_LEN_MASK
+contain the currently configured vector length in bytes.
+The bit corresponding to
+.B PR_SVE_VL_INHERIT
+indicates whether the vector length will be inherited
+across
+.BR execve (2).
+.SH RETURN VALUE
+On success,
+.BR PR_SVE_GET_VL ,
+return the nonnegative values described above.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+SVE is not available on this platform.
+.SH STANDARDS
+Linux.
+arm64 only.
+.SH HISTORY
+Linux 4.15 (arm64).
+.SH CAVEATS
+There is no way to determine whether there is
+a pending vector length change that has not yet taken effect.
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_SVE_SET_VL (2const)
+.P
+For more information, see the kernel source file
+.I Documentation/arm64/sve.rst
+.\"commit b693d0b372afb39432e1c49ad7b3454855bc6bed
+(or
+.I Documentation/arm64/sve.txt
+before Linux 5.3).

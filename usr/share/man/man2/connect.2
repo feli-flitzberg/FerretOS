@@ -1,0 +1,253 @@
+.\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" Portions extracted from /usr/include/sys/socket.h, which does not have
+.\" any authorship information in it.  It is probably available under the GPL.
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\"
+.\" Other portions are from the 6.9 (Berkeley) 3/10/91 man page:
+.\"
+.\" Copyright (c) 1983 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" SPDX-License-Identifier: BSD-4-Clause-UC
+.\"
+.\" Modified 1997-01-31 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified 1998, 1999 by Andi Kleen
+.\" Modified 2004-06-23 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.TH connect 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+connect \- initiate a connection on a socket
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <sys/socket.h>
+.P
+.BI "int connect(int " sockfd ", const struct sockaddr *" addr ,
+.BI "            socklen_t " addrlen );
+.fi
+.SH DESCRIPTION
+The
+.BR connect ()
+system call connects the socket referred to by the file descriptor
+.I sockfd
+to the address specified by
+.IR addr .
+The
+.I addrlen
+argument specifies the size of
+.IR addr .
+The format of the address in
+.I addr
+is determined by the address space of the socket
+.IR sockfd ;
+see
+.BR socket (2)
+for further details.
+.P
+If the socket
+.I sockfd
+is of type
+.BR SOCK_DGRAM ,
+then
+.I addr
+is the address to which datagrams are sent by default, and the only
+address from which datagrams are received.
+If the socket is of type
+.B SOCK_STREAM
+or
+.BR SOCK_SEQPACKET ,
+this call attempts to make a connection to the socket that is bound
+to the address specified by
+.IR addr .
+.P
+Some protocol sockets (e.g., UNIX domain stream sockets)
+may successfully
+.BR connect ()
+only once.
+.P
+Some protocol sockets
+(e.g., datagram sockets in the UNIX and Internet domains)
+may use
+.BR connect ()
+multiple times to change their association.
+.P
+Some protocol sockets
+(e.g., TCP sockets as well as datagram sockets in the UNIX and
+Internet domains)
+may dissolve the association by connecting to an address with the
+.I sa_family
+member of
+.I sockaddr
+set to
+.BR AF_UNSPEC ;
+thereafter, the socket can be connected to another address.
+.RB ( AF_UNSPEC
+is supported since Linux 2.2.)
+.SH RETURN VALUE
+If the connection or binding succeeds, zero is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+The following are general socket errors only.
+There may be other domain-specific error codes.
+.TP
+.B EACCES
+For UNIX domain sockets, which are identified by pathname:
+Write permission is denied on the socket file,
+or search permission is denied for one of the directories
+in the path prefix.
+(See also
+.BR path_resolution (7).)
+.TP
+.B EACCES
+.TQ
+.B EPERM
+The user tried to connect to a broadcast address without having the socket
+broadcast flag enabled or the connection request failed because of a local
+firewall rule.
+.TP
+.B EACCES
+It can also be returned if an SELinux policy denied a connection (for
+example, if there is a policy saying that an HTTP proxy can only
+connect to ports associated with HTTP servers, and the proxy tries to
+connect to a different port).
+.TP
+.B EADDRINUSE
+Local address is already in use.
+.TP
+.B EADDRNOTAVAIL
+(Internet domain sockets)
+The socket referred to by
+.I sockfd
+had not previously been bound to an address and,
+upon attempting to bind it to an ephemeral port,
+it was determined that all port numbers in the ephemeral port range
+are currently in use.
+See the discussion of
+.I /proc/sys/net/ipv4/ip_local_port_range
+in
+.BR ip (7).
+.TP
+.B EAFNOSUPPORT
+The passed address didn't have the correct address family in its
+.I sa_family
+field.
+.TP
+.B EAGAIN
+For nonblocking UNIX domain sockets, the socket is nonblocking, and the
+connection cannot be completed immediately.
+For other socket families, there are insufficient entries in the routing cache.
+.TP
+.B EALREADY
+The socket is nonblocking and a previous connection attempt has not yet
+been completed.
+.TP
+.B EBADF
+.I sockfd
+is not a valid open file descriptor.
+.TP
+.B ECONNREFUSED
+A
+.BR connect ()
+on a stream socket found no one listening on the remote address.
+.TP
+.B EFAULT
+The socket structure address is outside the user's address space.
+.TP
+.B EINPROGRESS
+The socket is nonblocking and the connection cannot be completed immediately.
+(UNIX domain sockets failed with
+.B EAGAIN
+instead.)
+It is possible to
+.BR select (2)
+or
+.BR poll (2)
+for completion by selecting the socket for writing.
+After
+.BR select (2)
+indicates writability, use
+.BR getsockopt (2)
+to read the
+.B SO_ERROR
+option at level
+.B SOL_SOCKET
+to determine whether
+.BR connect ()
+completed successfully
+.RB ( SO_ERROR
+is zero) or unsuccessfully
+.RB ( SO_ERROR
+is one of the usual error codes listed here,
+explaining the reason for the failure).
+.TP
+.B EINTR
+The system call was interrupted by a signal that was caught; see
+.BR signal (7).
+.\" For TCP, the connection will complete asynchronously.
+.\" See http://lkml.org/lkml/2005/7/12/254
+.TP
+.B EISCONN
+The socket is already connected.
+.TP
+.B ENETUNREACH
+Network is unreachable.
+.TP
+.B ENOTSOCK
+The file descriptor
+.I sockfd
+does not refer to a socket.
+.TP
+.B EPROTOTYPE
+The socket type does not support the requested communications protocol.
+This error can occur, for example,
+on an attempt to connect a UNIX domain datagram socket to a stream socket.
+.TP
+.B ETIMEDOUT
+Timeout while attempting connection.
+The server may be too
+busy to accept new connections.
+Note that for IP sockets the timeout may
+be very long when syncookies are enabled on the server.
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, SVr4, 4.4BSD,
+.RB ( connect ()
+first appeared in 4.2BSD).
+.\" SVr4 documents the additional
+.\" general error codes
+.\" .BR EADDRNOTAVAIL ,
+.\" .BR EINVAL ,
+.\" .BR EAFNOSUPPORT ,
+.\" .BR EALREADY ,
+.\" .BR EINTR ,
+.\" .BR EPROTOTYPE ,
+.\" and
+.\" .BR ENOSR .
+.\" It also
+.\" documents many additional error conditions not described here.
+.SH NOTES
+If
+.BR connect ()
+fails, consider the state of the socket as unspecified.
+Portable applications should close the socket and create a new one for
+reconnecting.
+.SH EXAMPLES
+An example of the use of
+.BR connect ()
+is shown in
+.BR getaddrinfo (3).
+.SH SEE ALSO
+.BR accept (2),
+.BR bind (2),
+.BR getsockname (2),
+.BR listen (2),
+.BR socket (2),
+.BR path_resolution (7),
+.BR selinux (8)

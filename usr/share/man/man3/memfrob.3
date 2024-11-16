@@ -1,0 +1,60 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 18:54:45 1993 by Rik Faith (faith@cs.unc.edu)
+.TH memfrob 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+memfrob \- frobnicate (obfuscate) a memory area
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#define _GNU_SOURCE" "             /* See feature_test_macros(7) */"
+.B #include <string.h>
+.P
+.BI "void *memfrob(void " s [. n "], size_t " n );
+.fi
+.SH DESCRIPTION
+The
+.BR memfrob ()
+function obfuscates the first \fIn\fP bytes of the
+memory area \fIs\fP by exclusive-ORing each character with the number
+42.
+The effect can be reversed by using
+.BR memfrob ()
+on the
+obfuscated memory area.
+.P
+Note that this function is not a proper encryption routine as the XOR
+constant is fixed, and is suitable only for hiding strings.
+.SH RETURN VALUE
+The
+.BR memfrob ()
+function returns a pointer to the obfuscated memory
+area.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR memfrob ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+GNU.
+.SH SEE ALSO
+.BR bstring (3),
+.BR strfry (3)

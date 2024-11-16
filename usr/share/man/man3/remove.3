@@ -1,0 +1,93 @@
+'\" t
+.\" This file is derived from unlink.2, which has the following copyright:
+.\"
+.\" This manpage is Copyright (C) 1992 Drew Eckhardt;
+.\"             and Copyright (C) 1993 Ian Jackson.
+.\"
+.\" Edited into remove.3 shape by:
+.\" Graeme W. Wilford (G.Wilford@ee.surrey.ac.uk) on 13th July 1994
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH remove 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+remove \- remove a file or directory
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdio.h>
+.P
+.BI "int remove(const char *" pathname );
+.fi
+.SH DESCRIPTION
+.BR remove ()
+deletes a name from the filesystem.
+It calls
+.BR unlink (2)
+for files, and
+.BR rmdir (2)
+for directories.
+.P
+If the removed name was the
+last link to a file and no processes have the file open, the file is
+deleted and the space it was using is made available for reuse.
+.P
+If the name was the last link to a file,
+but any processes still have the file open,
+the file will remain in existence until the last file
+descriptor referring to it is closed.
+.P
+If the name referred to a symbolic link, the link is removed.
+.P
+If the name referred to a socket, FIFO, or device, the name is removed,
+but processes which have the object open may continue to use it.
+.SH RETURN VALUE
+On success, zero is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+The errors that occur are those for
+.BR unlink (2)
+and
+.BR rmdir (2).
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR remove ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, C89, 4.3BSD.
+.\" .SH NOTES
+.\" Under libc4 and libc5,
+.\" .BR remove ()
+.\" was an alias for
+.\" .BR unlink (2)
+.\" (and hence would not remove directories).
+.SH BUGS
+Infelicities in the protocol underlying NFS can cause the unexpected
+disappearance of files which are still being used.
+.SH SEE ALSO
+.BR rm (1),
+.BR unlink (1),
+.BR link (2),
+.BR mknod (2),
+.BR open (2),
+.BR rename (2),
+.BR rmdir (2),
+.BR unlink (2),
+.BR mkfifo (3),
+.BR symlink (7)

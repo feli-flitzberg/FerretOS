@@ -1,0 +1,76 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 17:52:15 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified 2001-12-15, aeb
+.TH swab 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+swab \- swap adjacent bytes
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#define _XOPEN_SOURCE" "       /* See feature_test_macros(7) */"
+.B #include <unistd.h>
+.P
+.BI "void swab(const void " from "[restrict ." n "], void " to "[restrict ." n ],
+.BI "          ssize_t " n );
+.fi
+.SH DESCRIPTION
+The
+.BR swab ()
+function copies
+.I n
+bytes from the array pointed
+to by
+.I from
+to the array pointed to by
+.IR to ,
+exchanging
+adjacent even and odd bytes.
+This function is used to exchange data
+between machines that have different low/high byte ordering.
+.P
+This function does nothing when
+.I n
+is negative.
+When
+.I n
+is positive and odd, it handles
+.I n\-1
+bytes
+as above, and does something unspecified with the last byte.
+(In other words,
+.I n
+should be even.)
+.SH RETURN VALUE
+The
+.BR swab ()
+function returns no value.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR swab ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, SVr4, 4.3BSD.
+.SH SEE ALSO
+.BR bstring (3)

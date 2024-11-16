@@ -1,0 +1,98 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 17:56:43 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Added history, aeb, 980113.
+.\" 2005-05-05 mtk: added strcasestr()
+.\"
+.TH strstr 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+strstr, strcasestr \- locate a substring
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <string.h>
+.P
+.BI "char *strstr(const char *" haystack ", const char *" needle );
+.P
+.BR "#define _GNU_SOURCE" "         /* See feature_test_macros(7) */"
+.B #include <string.h>
+.P
+.BI "char *strcasestr(const char *" haystack ", const char *" needle );
+.fi
+.SH DESCRIPTION
+The
+.BR strstr ()
+function finds the first occurrence of the substring
+.I needle
+in the string
+.IR haystack .
+The terminating null bytes (\[aq]\[rs]0\[aq]) are not compared.
+.P
+The
+.BR strcasestr ()
+function is like
+.BR strstr (),
+but ignores the case of both arguments.
+.SH RETURN VALUE
+These functions return a pointer to the beginning of the
+located substring, or NULL if the substring is not found.
+.P
+If
+.I needle
+is the empty string,
+the return value is always
+.I haystack
+itself.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR strstr ()
+T}	Thread safety	MT-Safe
+T{
+.na
+.nh
+.BR strcasestr ()
+T}	Thread safety	MT-Safe locale
+.TE
+.SH STANDARDS
+.TP
+.BR strstr ()
+C11, POSIX.1-2008.
+.TP
+.BR strcasestr ()
+GNU.
+.SH HISTORY
+.TP
+.BR strstr ()
+POSIX.1-2001, C89.
+.TP
+.BR strcasestr ()
+GNU.
+.SH SEE ALSO
+.BR memchr (3),
+.BR memmem (3),
+.BR strcasecmp (3),
+.BR strchr (3),
+.BR string (3),
+.BR strpbrk (3),
+.BR strsep (3),
+.BR strspn (3),
+.BR strtok (3),
+.BR wcsstr (3)

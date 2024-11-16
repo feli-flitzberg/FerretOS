@@ -1,0 +1,119 @@
+'\" t
+.\" Copyright (c) Bruno Haible <haible@clisp.cons.org>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" References consulted:
+.\"   GNU glibc-2 source code and manual
+.\"   Dinkumware C library reference http://www.dinkumware.com/
+.\"   OpenGroup's Single UNIX specification http://www.UNIX-systems.org/online.html
+.\"   ISO/IEC 9899:1999
+.\"
+.TH wctomb 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+wctomb \- convert a wide character to a multibyte sequence
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdlib.h>
+.P
+.BI "int wctomb(char *" s ", wchar_t " wc );
+.fi
+.SH DESCRIPTION
+If
+.I s
+is not NULL,
+the
+.BR wctomb ()
+function converts the wide character
+.I wc
+to its multibyte representation and stores it at the beginning of
+the character array pointed to by
+.IR s .
+It updates the shift state, which
+is stored in a static anonymous variable
+known only to the
+.BR wctomb ()
+function,
+and returns the length of said multibyte representation,
+that is, the number of
+bytes written at
+.IR s .
+.P
+The programmer must ensure that there is
+room for at least
+.B MB_CUR_MAX
+bytes at
+.IR s .
+.P
+If
+.I s
+is NULL, the
+.BR wctomb ()
+function
+.\" The Dinkumware doc and the Single UNIX specification say this, but
+.\" glibc doesn't implement this.
+resets the shift state, known only to this function,
+to the initial state, and
+returns nonzero if the encoding has nontrivial shift state,
+or zero if the encoding is stateless.
+.SH RETURN VALUE
+If
+.I s
+is not NULL, the
+.BR wctomb ()
+function
+returns the number of bytes
+that have been written to the byte array at
+.IR s .
+If
+.I wc
+can not be
+represented as a multibyte sequence (according
+to the current locale), \-1 is returned.
+.P
+If
+.I s
+is NULL, the
+.BR wctomb ()
+function returns nonzero if the
+encoding has nontrivial shift state, or zero if the encoding is stateless.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR wctomb ()
+T}	Thread safety	MT-Unsafe race
+.TE
+.SH VERSIONS
+The function
+.BR wcrtomb (3)
+provides
+a better interface to the same functionality.
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, C99.
+.SH NOTES
+The behavior of
+.BR wctomb ()
+depends on the
+.B LC_CTYPE
+category of the
+current locale.
+.SH SEE ALSO
+.BR MB_CUR_MAX (3),
+.BR mblen (3),
+.BR mbstowcs (3),
+.BR mbtowc (3),
+.BR wcrtomb (3),
+.BR wcstombs (3)

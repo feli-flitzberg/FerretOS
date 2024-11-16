@@ -1,0 +1,207 @@
+'\" t
+.\" Copyright (c) 2008 Linux Foundation, written by Michael Kerrisk
+.\"     <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH pthread_setaffinity_np 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+pthread_setaffinity_np, pthread_getaffinity_np \- set/get
+CPU affinity of a thread
+.SH LIBRARY
+POSIX threads library
+.RI ( libpthread ", " \-lpthread )
+.SH SYNOPSIS
+.nf
+.BR "#define _GNU_SOURCE" "             /* See feature_test_macros(7) */"
+.B #include <pthread.h>
+.P
+.BI "int pthread_setaffinity_np(pthread_t " thread ", size_t " cpusetsize ,
+.BI "                           const cpu_set_t *" cpuset );
+.BI "int pthread_getaffinity_np(pthread_t " thread ", size_t " cpusetsize ,
+.BI "                           cpu_set_t *" cpuset );
+.fi
+.SH DESCRIPTION
+The
+.BR pthread_setaffinity_np ()
+function
+sets the CPU affinity mask of the thread
+.I thread
+to the CPU set pointed to by
+.IR cpuset .
+If the call is successful,
+and the thread is not currently running on one of the CPUs in
+.IR cpuset ,
+then it is migrated to one of those CPUs.
+.P
+The
+.BR pthread_getaffinity_np ()
+function returns the CPU affinity mask of the thread
+.I thread
+in the buffer pointed to by
+.IR cpuset .
+.P
+For more details on CPU affinity masks, see
+.BR sched_setaffinity (2).
+For a description of a set of macros
+that can be used to manipulate and inspect CPU sets, see
+.BR CPU_SET (3).
+.P
+The argument
+.I cpusetsize
+is the length (in bytes) of the buffer pointed to by
+.IR cpuset .
+Typically, this argument would be specified as
+.IR sizeof(cpu_set_t) .
+(It may be some other value, if using the macros described in
+.BR CPU_SET (3)
+for dynamically allocating a CPU set.)
+.SH RETURN VALUE
+On success, these functions return 0;
+on error, they return a nonzero error number.
+.SH ERRORS
+.TP
+.B EFAULT
+A supplied memory address was invalid.
+.TP
+.B EINVAL
+.RB ( pthread_setaffinity_np ())
+The affinity bit mask
+.I mask
+contains no processors that are currently physically on the system
+and permitted to the thread according to any restrictions that
+may be imposed by the "cpuset" mechanism described in
+.BR cpuset (7).
+.TP
+.B EINVAL
+.RB ( pthread_setaffinity_np ())
+.I cpuset
+specified a CPU that was outside the set supported by the kernel.
+(The kernel configuration option
+.B CONFIG_NR_CPUS
+defines the range of the set supported by the kernel data type
+.\" cpumask_t
+used to represent CPU sets.)
+.\" The raw sched_getaffinity() system call returns the size (in bytes)
+.\" of the cpumask_t type.
+.TP
+.B EINVAL
+.RB ( pthread_getaffinity_np ())
+.I cpusetsize
+is smaller than the size of the affinity mask used by the kernel.
+.TP
+.B ESRCH
+No thread with the ID
+.I thread
+could be found.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR pthread_setaffinity_np (),
+.BR pthread_getaffinity_np ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+GNU;
+hence the suffix "_np" (nonportable) in the names.
+.SH HISTORY
+glibc 2.3.4.
+.P
+In glibc 2.3.3 only,
+versions of these functions were provided that did not have a
+.I cpusetsize
+argument.
+Instead the CPU set size given to the underlying system calls was always
+.IR sizeof(cpu_set_t) .
+.SH NOTES
+After a call to
+.BR pthread_setaffinity_np (),
+the set of CPUs on which the thread will actually run is
+the intersection of the set specified in the
+.I cpuset
+argument and the set of CPUs actually present on the system.
+The system may further restrict the set of CPUs on which the thread
+runs if the "cpuset" mechanism described in
+.BR cpuset (7)
+is being used.
+These restrictions on the actual set of CPUs on which the thread
+will run are silently imposed by the kernel.
+.P
+These functions are implemented on top of the
+.BR sched_setaffinity (2)
+and
+.BR sched_getaffinity (2)
+system calls.
+.P
+A new thread created by
+.BR pthread_create (3)
+inherits a copy of its creator's CPU affinity mask.
+.SH EXAMPLES
+In the following program, the main thread uses
+.BR pthread_setaffinity_np ()
+to set its CPU affinity mask to include CPUs 0 to 7
+(which may not all be available on the system),
+and then calls
+.BR pthread_getaffinity_np ()
+to check the resulting CPU affinity mask of the thread.
+.P
+.\" SRC BEGIN (pthread_setaffinity_np.c)
+.EX
+#define _GNU_SOURCE
+#include <err.h>
+#include <errno.h>
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+\&
+int
+main(void)
+{
+    int s;
+    cpu_set_t cpuset;
+    pthread_t thread;
+\&
+    thread = pthread_self();
+\&
+    /* Set affinity mask to include CPUs 0 to 7. */
+\&
+    CPU_ZERO(&cpuset);
+    for (size_t j = 0; j < 8; j++)
+        CPU_SET(j, &cpuset);
+\&
+    s = pthread_setaffinity_np(thread, sizeof(cpuset), &cpuset);
+    if (s != 0)
+        errc(EXIT_FAILURE, s, "pthread_setaffinity_np");
+\&
+    /* Check the actual affinity mask assigned to the thread. */
+\&
+    s = pthread_getaffinity_np(thread, sizeof(cpuset), &cpuset);
+    if (s != 0)
+        errc(EXIT_FAILURE, s, "pthread_getaffinity_np");
+\&
+    printf("Set returned by pthread_getaffinity_np() contained:\[rs]n");
+    for (size_t j = 0; j < CPU_SETSIZE; j++)
+        if (CPU_ISSET(j, &cpuset))
+            printf("    CPU %zu\[rs]n", j);
+\&
+    exit(EXIT_SUCCESS);
+}
+.EE
+.\" SRC END
+.SH SEE ALSO
+.BR sched_setaffinity (2),
+.BR CPU_SET (3),
+.BR pthread_attr_setaffinity_np (3),
+.BR pthread_self (3),
+.BR sched_getcpu (3),
+.BR cpuset (7),
+.BR pthreads (7),
+.BR sched (7)

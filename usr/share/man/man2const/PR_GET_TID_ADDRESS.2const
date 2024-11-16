@@ -1,0 +1,59 @@
+.\" Copyright 2013, 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_GET_TID_ADDRESS 2const 2024-06-02 "Linux man-pages 6.9.1"
+.SH NAME
+PR_GET_TID_ADDRESS
+\-
+get the clear_child_tid address
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.BI "int prctl(PR_GET_TID_ADDRESS, int **" addrp );
+.fi
+.SH DESCRIPTION
+Return the
+.I clear_child_tid
+address set by
+.BR set_tid_address (2)
+and the
+.BR clone (2)
+.B CLONE_CHILD_CLEARTID
+flag, in the location pointed to by
+.IR addrp .
+.P
+This feature is available only if the kernel is built with the
+.B CONFIG_CHECKPOINT_RESTORE
+option enabled.
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EFAULT
+.I addrp
+is an invalid address.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 3.5.
+.\" commit 300f786b2683f8bb1ec0afb6e1851183a479c86d
+.SH CAVEATS
+Note that since the
+.BR prctl ()
+system call does not have a compat implementation for
+the AMD64 x32 and MIPS n32 ABIs,
+and the kernel writes out a pointer using the kernel's pointer size,
+this operation expects a user-space buffer of 8 (not 4) bytes on these ABIs.
+.SH SEE ALSO
+.BR prctl (2)

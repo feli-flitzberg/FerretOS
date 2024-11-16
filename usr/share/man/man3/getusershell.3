@@ -1,0 +1,98 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 19:17:53 1993 by Rik Faith (faith@cs.unc.edu)
+.TH getusershell 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+getusershell, setusershell, endusershell \- get permitted user shells
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <unistd.h>
+.P
+.B char *getusershell(void);
+.B void setusershell(void);
+.B void endusershell(void);
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR getusershell (),
+.BR setusershell (),
+.BR endusershell ():
+.nf
+    Since glibc 2.21:
+.\"             commit 266865c0e7b79d4196e2cc393693463f03c90bd8
+        _DEFAULT_SOURCE
+    In glibc 2.19 and 2.20:
+        _DEFAULT_SOURCE || (_XOPEN_SOURCE && _XOPEN_SOURCE < 500)
+    Up to and including glibc 2.19:
+        _BSD_SOURCE || (_XOPEN_SOURCE && _XOPEN_SOURCE < 500)
+.fi
+.SH DESCRIPTION
+The
+.BR getusershell ()
+function returns the next line from the file
+.IR /etc/shells ,
+opening the file if necessary.
+The line should contain
+the pathname of a valid user shell.
+If
+.I /etc/shells
+does not exist or
+is unreadable,
+.BR getusershell ()
+behaves as if
+.I /bin/sh
+and
+.I /bin/csh
+were listed in the file.
+.P
+The
+.BR setusershell ()
+function rewinds
+.IR /etc/shells .
+.P
+The
+.BR endusershell ()
+function closes
+.IR /etc/shells .
+.SH RETURN VALUE
+The
+.BR getusershell ()
+function returns NULL on end-of-file.
+.SH FILES
+.I /etc/shells
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR getusershell (),
+.BR setusershell (),
+.BR endusershell ()
+T}	Thread safety	MT-Unsafe
+.TE
+.SH STANDARDS
+None.
+.SH HISTORY
+4.3BSD.
+.SH SEE ALSO
+.BR shells (5)

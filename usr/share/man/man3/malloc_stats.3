@@ -1,0 +1,65 @@
+'\" t
+.\" Copyright (c) 2012 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH malloc_stats 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+malloc_stats \- print memory allocation statistics
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <malloc.h>
+.P
+.B void malloc_stats(void);
+.fi
+.SH DESCRIPTION
+The
+.BR malloc_stats ()
+function prints (on standard error) statistics about memory allocated by
+.BR malloc (3)
+and related functions.
+For each arena (allocation area), this function prints
+the total amount of memory allocated
+and the total number of bytes consumed by in-use allocations.
+(These two values correspond to the
+.I arena
+and
+.I uordblks
+fields retrieved by
+.BR mallinfo (3).)
+In addition,
+the function prints the sum of these two statistics for all arenas,
+and the maximum number of blocks and bytes that were ever simultaneously
+allocated using
+.BR mmap (2).
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR malloc_stats ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+GNU.
+.SH HISTORY
+glibc 2.0.
+.SH NOTES
+More detailed information about memory allocations in the main arena
+can be obtained using
+.BR mallinfo (3).
+.SH SEE ALSO
+.BR mmap (2),
+.BR mallinfo (3),
+.BR malloc (3),
+.BR malloc_info (3),
+.BR mallopt (3)

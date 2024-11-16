@@ -1,0 +1,146 @@
+'\" t
+.\" %%%LICENSE_START(PUBLIC_DOMAIN)
+.\" This page is in the public domain. - aeb
+.\" %%%LICENSE_END
+.\"
+.\" 2004-12-17, mtk, added description of ptsname_r() + ERRORS
+.\"
+.TH ptsname 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+ptsname, ptsname_r \- get the name of the slave pseudoterminal
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdlib.h>
+.P
+.BI "char *ptsname(int " fd );
+.BI "int ptsname_r(int " fd ", char " buf [. buflen "], size_t " buflen );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR ptsname ():
+.nf
+    Since glibc 2.24:
+        _XOPEN_SOURCE >= 500
+.\"        || (_XOPEN_SOURCE && _XOPEN_SOURCE_EXTENDED)
+    glibc 2.23 and earlier:
+        _XOPEN_SOURCE
+.fi
+.P
+.BR ptsname_r ():
+.nf
+    _GNU_SOURCE
+.fi
+.SH DESCRIPTION
+The
+.BR ptsname ()
+function returns the name of the slave pseudoterminal device
+corresponding to the master referred to by the file descriptor
+.IR fd .
+.P
+The
+.BR ptsname_r ()
+function is the reentrant equivalent of
+.BR ptsname ().
+It returns the name of the slave pseudoterminal device as a
+null-terminated string in the buffer pointed to by
+.IR buf .
+The
+.I buflen
+argument specifies the number of bytes available in
+.IR buf .
+.SH RETURN VALUE
+On success,
+.BR ptsname ()
+returns a pointer to a string in static storage which will be
+overwritten by subsequent calls.
+This pointer must not be freed.
+On failure, NULL is returned.
+.P
+On success,
+.BR ptsname_r ()
+returns 0.
+On failure, an error number is returned to indicate the error.
+.\" In glibc, the error number is not only returned as the return value
+.\" but also stored in errno. But this is not true for musl libc.
+.SH ERRORS
+.TP
+.B EINVAL
+.RB ( ptsname_r ()
+only)
+.I buf
+is NULL.
+(This error is returned only for
+.\" glibc commit 8f0a947cf55f3b0c4ebdf06953c57eff67a22fa9
+glibc 2.25 and earlier.)
+.TP
+.B ENOTTY
+.I fd
+does not refer to a pseudoterminal master device.
+.TP
+.B ERANGE
+.RB ( ptsname_r ()
+only)
+.I buf
+is too small.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR ptsname ()
+T}	Thread safety	MT-Unsafe race:ptsname
+T{
+.na
+.nh
+.BR ptsname_r ()
+T}	Thread safety	MT-Safe
+.TE
+.SH VERSIONS
+A version of
+.BR ptsname_r ()
+is documented on Tru64 and HP-UX,
+but on those implementations,
+\-1 is returned on error, with
+.I errno
+set to indicate the error.
+Avoid using this function in portable programs.
+.SH STANDARDS
+.TP
+.BR ptsname ():
+POSIX.1-2008.
+.P
+.BR ptsname_r ()
+is a Linux extension, that is proposed for inclusion
+.\" FIXME . for later review when Issue 8 is one day released
+.\" http://austingroupbugs.net/tag_view_page.php?tag_id=8
+.\" http://austingroupbugs.net/view.php?id=508
+in the next major revision of POSIX.1 (Issue 8).
+.SH HISTORY
+.TP
+.BR ptsname ():
+POSIX.1-2001.
+glibc 2.1.
+.P
+.BR ptsname ()
+is part of the UNIX 98 pseudoterminal support (see
+.BR pts (4)).
+.SH SEE ALSO
+.BR grantpt (3),
+.BR posix_openpt (3),
+.BR ttyname (3),
+.BR unlockpt (3),
+.BR pts (4),
+.BR pty (7)

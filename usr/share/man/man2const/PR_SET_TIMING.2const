@@ -1,0 +1,57 @@
+.\" Copyright, Guillem Jover <guillem@hadrons.org>
+.\" Copyright 2006, 2008, 2012, 2013, 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_SET_TIMING 2const 2024-06-02 "Linux man-pages 6.9.1"
+.SH NAME
+PR_SET_TIMING
+\-
+set the process timing mode
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.BI "int prctl(PR_SET_TIMING, long " mode );
+.fi
+.SH DESCRIPTION
+Set whether to use (normal, traditional) statistical process timing or
+accurate timestamp-based process timing, by passing
+.B PR_TIMING_STATISTICAL
+or
+.B PR_TIMING_TIMESTAMP
+to
+.IR mode .
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+.I mode
+is not
+.BR PR_TIMING_STATISTICAL .
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 2.6.0.
+.\" Precisely: Linux 2.6.0-test4
+.SH CAVEATS
+.B PR_TIMING_TIMESTAMP
+is not currently implemented
+(attempting to set this mode will yield the error
+.BR EINVAL ).
+.\" PR_TIMING_TIMESTAMP doesn't do anything in Linux 2.6.26-rc8,
+.\" and looking at the patch history, it appears
+.\" that it never did anything.
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_GET_TIMING (2const)

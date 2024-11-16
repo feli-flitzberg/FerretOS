@@ -1,0 +1,124 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Mon Mar 29 22:31:13 1993, David Metcalfe
+.\" Modified Sun Jun  6 23:27:50 1993, David Metcalfe
+.\" Modified Sat Jul 24 21:45:37 1993, Rik Faith (faith@cs.unc.edu)
+.\" Modified Sat Dec 16 15:02:59 2000, Joseph S. Myers
+.\"
+.TH abs 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+abs, labs, llabs, imaxabs \- compute the absolute value of an integer
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdlib.h>
+.P
+.BI "int abs(int " j );
+.BI "long labs(long " j );
+.BI "long long llabs(long long " j );
+.P
+.B #include <inttypes.h>
+.P
+.BI "intmax_t imaxabs(intmax_t " j );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR llabs ():
+.nf
+    _ISOC99_SOURCE || _POSIX_C_SOURCE >= 200112L
+.fi
+.SH DESCRIPTION
+The
+.BR abs ()
+function computes the absolute value of the integer
+argument \fIj\fP.
+The
+.BR labs (),
+.BR llabs (),
+and
+.BR imaxabs ()
+functions compute the absolute value of the argument \fIj\fP of the
+appropriate integer type for the function.
+.SH RETURN VALUE
+Returns the absolute value of the integer argument, of the appropriate
+integer type for the function.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR abs (),
+.BR labs (),
+.BR llabs (),
+.BR imaxabs ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, C99, SVr4, 4.3BSD.
+.\" POSIX.1 (1996 edition) requires only the
+.\" .BR abs ()
+.\" function.
+.P
+C89 only
+includes the
+.BR abs ()
+and
+.BR labs ()
+functions; the functions
+.BR llabs ()
+and
+.BR imaxabs ()
+were added in C99.
+.SH NOTES
+Trying to take the absolute value of the most negative integer
+is not defined.
+.P
+The
+.BR llabs ()
+function is included since glibc 2.0.
+The
+.BR imaxabs ()
+function is included since glibc 2.1.1.
+.P
+For
+.BR llabs ()
+to be declared, it may be necessary to define
+\fB_ISOC99_SOURCE\fP or \fB_ISOC9X_SOURCE\fP (depending on the
+version of glibc) before including any standard headers.
+.P
+By default,
+GCC handles
+.BR abs (),
+.BR labs (),
+and (since GCC 3.0)
+.BR llabs ()
+and
+.BR imaxabs ()
+as built-in functions.
+.SH SEE ALSO
+.BR cabs (3),
+.BR ceil (3),
+.BR fabs (3),
+.BR floor (3),
+.BR rint (3)

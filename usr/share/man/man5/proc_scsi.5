@@ -1,0 +1,66 @@
+.\" Copyright (C) 1994, 1995, Daniel Quinlan <quinlan@yggdrasil.com>
+.\" Copyright (C) 2002-2008, 2017, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright (C) , Michael Neuffer <neuffer@mail.uni-mainz.de>
+.\" Copyright (C) 2023, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-3.0-or-later
+.\"
+.TH proc_scsi 5 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+/proc/scsi/ \- SCSI
+.SH DESCRIPTION
+.TP
+.I /proc/scsi/
+A directory with the
+.I scsi
+mid-level pseudo-file and various SCSI low-level
+driver directories,
+which contain a file for each SCSI host in this system, all of
+which give the status of some part of the SCSI IO subsystem.
+These files contain ASCII structures and are, therefore, readable with
+.BR cat (1).
+.IP
+You can also write to some of the files to reconfigure the subsystem or
+switch certain features on or off.
+.TP
+.I /proc/scsi/scsi
+This is a listing of all SCSI devices known to the kernel.
+The listing is similar to the one seen during bootup.
+scsi currently supports only the \fIadd\-single\-device\fP command which
+allows root to add a hotplugged device to the list of known devices.
+.IP
+The command
+.IP
+.in +4n
+.EX
+echo \[aq]scsi add\-single\-device 1 0 5 0\[aq] > /proc/scsi/scsi
+.EE
+.in
+.IP
+will cause
+host scsi1 to scan on SCSI channel 0 for a device on ID 5 LUN 0.
+If there
+is already a device known on this address or the address is invalid, an
+error will be returned.
+.TP
+.IR /proc/scsi/ drivername /
+\fIdrivername\fP can currently be NCR53c7xx, aha152x, aha1542, aha1740,
+aic7xxx, buslogic, eata_dma, eata_pio, fdomain, in2000, pas16, qlogic,
+scsi_debug, seagate, t128, u15\-24f, ultrastore, or wd7000.
+These directories show up for all drivers that registered at least one
+SCSI HBA.
+Every directory contains one file per registered host.
+Every host-file is named after the number the host was assigned during
+initialization.
+.IP
+Reading these files will usually show driver and host configuration,
+statistics, and so on.
+.IP
+Writing to these files allows different things on different hosts.
+For example, with the \fIlatency\fP and \fInolatency\fP commands,
+root can switch on and off command latency measurement code in the
+eata_dma driver.
+With the \fIlockup\fP and \fIunlock\fP commands,
+root can control bus lockups simulated by the scsi_debug driver.
+.SH SEE ALSO
+.BR proc (5)

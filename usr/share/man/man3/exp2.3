@@ -1,0 +1,92 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\" and Copyright 2008, Linux Foundation, written by Michael Kerrisk
+.\"     <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified 1993-07-24 by Rik Faith (faith@cs.unc.edu)
+.\" Modified 1995-08-14 by Arnt Gulbrandsen <agulbra@troll.no>
+.\" Modified 2002-07-27 by Walter Harms
+.\" 	(walter.harms@informatik.uni-oldenburg.de)
+.\"
+.TH exp2 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+exp2, exp2f, exp2l \- base-2 exponential function
+.SH LIBRARY
+Math library
+.RI ( libm ", " \-lm )
+.SH SYNOPSIS
+.nf
+.B #include <math.h>
+.P
+.BI "double exp2(double " x );
+.BI "float exp2f(float " x );
+.BI "long double exp2l(long double " x );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR exp2 (),
+.BR exp2f (),
+.BR exp2l ():
+.nf
+    _ISOC99_SOURCE || _POSIX_C_SOURCE >= 200112L
+.fi
+.SH DESCRIPTION
+These functions return the value of 2 raised to the power of
+.IR x .
+.SH RETURN VALUE
+On success, these functions return the base-2 exponential value of
+.IR x .
+.P
+For various special cases, including the handling of infinity and NaN,
+as well as overflows and underflows, see
+.BR exp (3).
+.SH ERRORS
+See
+.BR math_error (7)
+for information on how to determine whether an error has occurred
+when calling these functions.
+.P
+For a discussion of the errors that can occur for these functions, see
+.BR exp (3).
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR exp2 (),
+.BR exp2f (),
+.BR exp2l ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+glibc 2.1.
+C99, POSIX.1-2001.
+.P
+The variant returning
+.I double
+also conforms to
+SVr4, 4.3BSD.
+.SH SEE ALSO
+.BR cbrt (3),
+.BR cexp2 (3),
+.BR exp (3),
+.BR exp10 (3),
+.BR sqrt (3)

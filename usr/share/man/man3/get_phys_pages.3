@@ -1,0 +1,90 @@
+.\" Copyright (c) 2015 William Woodruff (william@tuffbizz.com)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH get_phys_pages 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+get_phys_pages, get_avphys_pages \- get total and available physical
+page counts
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B "#include <sys/sysinfo.h>"
+.P
+.B long get_phys_pages(void);
+.B long get_avphys_pages(void);
+.fi
+.SH DESCRIPTION
+The function
+.BR get_phys_pages ()
+returns the total number of physical pages of memory available on the system.
+.P
+The function
+.BR get_avphys_pages ()
+returns the number of currently available physical pages of memory on the
+system.
+.SH RETURN VALUE
+On success,
+these functions return a nonnegative value as given in DESCRIPTION.
+On failure, they return \-1 and set
+.I errno
+to indicate the error.
+.SH ERRORS
+.TP
+.B ENOSYS
+The system could not provide the required information
+(possibly because the
+.I /proc
+filesystem was not mounted).
+.SH STANDARDS
+GNU.
+.SH HISTORY
+Before glibc 2.23,
+these functions obtained the required information by scanning the
+.I MemTotal
+and
+.I MemFree
+fields of
+.IR /proc/meminfo .
+Since glibc 2.23,
+these functions obtain the required information by calling
+.BR sysinfo (2).
+.SH NOTES
+The following
+.BR sysconf (3)
+calls provide a portable means of obtaining the same information as the
+functions described on this page.
+.P
+.in +4n
+.EX
+total_pages = sysconf(_SC_PHYS_PAGES);    /* total pages */
+avl_pages = sysconf(_SC_AVPHYS_PAGES);    /* available pages */
+.EE
+.in
+.SH EXAMPLES
+The following example shows how
+.BR get_phys_pages ()
+and
+.BR get_avphys_pages ()
+can be used.
+.P
+.\" SRC BEGIN (get_phys_pages.c)
+.EX
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/sysinfo.h>
+\&
+int
+main(void)
+{
+    printf("This system has %ld pages of physical memory and "
+            "%ld pages of physical memory available.\[rs]n",
+            get_phys_pages(), get_avphys_pages());
+    exit(EXIT_SUCCESS);
+}
+.EE
+.\" SRC END
+.SH SEE ALSO
+.BR sysconf (3)

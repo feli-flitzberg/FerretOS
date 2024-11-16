@@ -1,0 +1,181 @@
+'\" t
+.\" Copyright (c) 2006, Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH posix_fallocate 3 2024-06-16 "Linux man-pages 6.9.1"
+.SH NAME
+posix_fallocate \- allocate file space
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <fcntl.h>
+.P
+.BI "int posix_fallocate(int " fd ", off_t " offset ", off_t " len );
+.fi
+.P
+.ad l
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR posix_fallocate ():
+.nf
+    _POSIX_C_SOURCE >= 200112L
+.fi
+.SH DESCRIPTION
+The function
+.BR posix_fallocate ()
+ensures that disk space is allocated for the file referred to by the
+file descriptor
+.I fd
+for the bytes in the range starting at
+.I offset
+and continuing for
+.I len
+bytes.
+After a successful call to
+.BR posix_fallocate (),
+subsequent writes to bytes in the specified range are
+guaranteed not to fail because of lack of disk space.
+.P
+If the size of the file is less than
+.IR offset + len ,
+then the file is increased to this size;
+otherwise the file size is left unchanged.
+.SH RETURN VALUE
+.BR posix_fallocate ()
+returns zero on success, or an error number on failure.
+Note that
+.I errno
+is not set.
+.SH ERRORS
+.TP
+.B EBADF
+.I fd
+is not a valid file descriptor, or is not opened for writing.
+.TP
+.B EFBIG
+.I offset+len
+exceeds the maximum file size.
+.TP
+.B EINTR
+A signal was caught during execution.
+.TP
+.B EINVAL
+.I offset
+was less than 0, or
+.I len
+was less than or equal to 0, or the underlying filesystem does not
+support the operation.
+.TP
+.B ENODEV
+.I fd
+does not refer to a regular file.
+.TP
+.B ENOSPC
+There is not enough space left on the device containing the file
+referred to by
+.IR fd .
+.TP
+.B EOPNOTSUPP
+The filesystem containing the file referred to by
+.I fd
+does not support this operation.
+This error code can be returned by C libraries that don't perform the
+emulation shown in CAVEATS, such as musl libc.
+.TP
+.B ESPIPE
+.I fd
+refers to a pipe.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lb lb lbx
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR posix_fallocate ()
+T}	Thread safety	T{
+.na
+.nh
+MT-Safe (but see CAVEATS)
+T}
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+glibc 2.1.94.
+POSIX.1-2001
+.P
+POSIX.1-2008 says that an implementation
+.I shall
+give the
+.B EINVAL
+error if
+.I len
+was 0, or
+.I offset
+was less than 0.
+POSIX.1-2001 says that an implementation
+.I shall
+give the
+.B EINVAL
+error if
+.I len
+is less than 0, or
+.I offset
+was less than 0, and
+.I may
+give the error if
+.I len
+equals zero.
+.SH CAVEATS
+In the glibc implementation,
+.BR posix_fallocate ()
+is implemented using the
+.BR fallocate (2)
+system call, which is MT-safe.
+If the underlying filesystem does not support
+.BR fallocate (2),
+then the operation is emulated with the following caveats:
+.IP \[bu] 3
+The emulation is inefficient.
+.IP \[bu]
+There is a race condition where concurrent writes from another thread or
+process could be overwritten with null bytes.
+.IP \[bu]
+There is a race condition where concurrent file size increases by
+another thread or process could result in a file whose size is smaller
+than expected.
+.IP \[bu]
+If
+.I fd
+has been opened with the
+.B O_APPEND
+or
+.B O_WRONLY
+flags, the function fails with the error
+.BR EBADF .
+.P
+In general, the emulation is not MT-safe.
+On Linux, applications may use
+.BR fallocate (2)
+if they cannot tolerate the emulation caveats.
+In general, this is
+only recommended if the application plans to terminate the operation if
+.B EOPNOTSUPP
+is returned, otherwise the application itself will need to implement a
+fallback with all the same problems as the emulation provided by glibc.
+.SH SEE ALSO
+.BR fallocate (1),
+.BR fallocate (2),
+.BR lseek (2),
+.BR posix_fadvise (2)

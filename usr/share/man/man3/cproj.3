@@ -1,0 +1,59 @@
+'\" t
+.\" Copyright 2002 Walter Harms (walter.harms@informatik.uni-oldenburg.de)
+.\"
+.\" SPDX-License-Identifier: GPL-1.0-or-later
+.\"
+.TH cproj 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+cproj, cprojf, cprojl \- project into Riemann Sphere
+.SH LIBRARY
+Math library
+.RI ( libm ", " \-lm )
+.SH SYNOPSIS
+.nf
+.B #include <complex.h>
+.P
+.BI "double complex cproj(double complex " z ");"
+.BI "float complex cprojf(float complex " z ");"
+.BI "long double complex cprojl(long double complex " z ");"
+.fi
+.SH DESCRIPTION
+These functions project a point in the plane onto the surface of a
+Riemann Sphere, the one-point compactification of the complex plane.
+Each finite point
+.I z
+projects to
+.I z
+itself.
+Every complex infinite value is projected to a single infinite value,
+namely to positive infinity on the real axis.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR cproj (),
+.BR cprojf (),
+.BR cprojl ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+glibc 2.1.
+C99, POSIX.1-2001.
+.P
+In glibc 2.11 and earlier, the implementation does something different
+(a
+.I stereographic
+projection onto a Riemann Sphere).
+.\" https://www.sourceware.org/bugzilla/show_bug.cgi?id=10401
+.SH SEE ALSO
+.BR cabs (3),
+.BR complex (7)

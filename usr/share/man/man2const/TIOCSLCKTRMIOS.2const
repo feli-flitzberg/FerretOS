@@ -1,0 +1,76 @@
+.\" Copyright 2002, Walter Harms <walter.harms@informatik.uni-oldenburg.de>
+.\" Copyright 2002, Andries Brouwer <aeb@cwi.nl>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-1.0-or-later
+.\"
+.TH TIOCSLCKTRMIOS 2const 2024-06-13 "Linux man-pages 6.9.1"
+.SH NAME
+TIOCGLCKTRMIOS,
+TIOCSLCKTRMIOS
+\-
+locking the termios structre
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <asm/termbits.h>" "  /* Definition of " TIOC*CLKTRMIOS " constants */"
+.B #include <sys/ioctl.h>
+.P
+.BI "int ioctl(int " fd ", TIOCGLCKTRMIOS, struct termios *" argp );
+.BI "int ioctl(int " fd ", TIOCSLCKTRMIOS, const struct termios *" argp );
+.P
+.B #include <asm/termbits.h>
+.P
+.B struct termios;
+.fi
+.SH DESCRIPTION
+The
+.I termios
+structure of a terminal can be locked.
+The lock is itself a
+.I termios
+structure, with nonzero bits or fields indicating a
+locked value.
+.TP
+.B TIOCGLCKTRMIOS
+Gets the locking status of the
+.I termios
+structure of the terminal.
+.TP
+.B TIOCSLCKTRMIOS
+Sets the locking status of the
+.I termios
+structure of the terminal.
+Only a process with the
+.B CAP_SYS_ADMIN
+capability can do this.
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error,
+\-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EPERM
+Insufficient permission.
+.SH CAVEATS
+Please note that
+.B struct termios
+from
+.I <asm/termbits.h>
+is different and incompatible with
+.B struct termios
+from
+.IR <termios.h> .
+These ioctl calls require
+.B struct termios
+from
+.IR <asm/termbits.h> .
+.SH SEE ALSO
+.BR ioctl (2),
+.BR ioctl_tty (2),
+.BR TCSETS (2const)

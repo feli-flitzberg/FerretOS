@@ -1,0 +1,182 @@
+'\" t
+.\" Copyright (c) 2001 John Levon <moz@compsoc.man.ac.uk>
+.\" Based in part on GNU libc documentation
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH getline 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+getline, getdelim \- delimited string input
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdio.h>
+.P
+.BI "ssize_t getline(char **restrict " lineptr ", size_t *restrict " n ,
+.BI "                FILE *restrict " stream );
+.BI "ssize_t getdelim(char **restrict " lineptr ", size_t *restrict " n ,
+.BI "                int " delim ", FILE *restrict " stream );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR getline (),
+.BR getdelim ():
+.nf
+    Since glibc 2.10:
+        _POSIX_C_SOURCE >= 200809L
+    Before glibc 2.10:
+        _GNU_SOURCE
+.fi
+.SH DESCRIPTION
+.BR getline ()
+reads an entire line from \fIstream\fP,
+storing the address of the buffer containing the text into
+.IR *lineptr .
+The buffer is null-terminated and includes the newline character, if
+one was found.
+.P
+If
+.I *lineptr
+is set to NULL before the call, then
+.BR getline ()
+will allocate a buffer for storing the line.
+This buffer should be freed by the user program
+even if
+.BR getline ()
+failed.
+.P
+Alternatively, before calling
+.BR getline (),
+.I *lineptr
+can contain a pointer to a
+.BR malloc (3)\-allocated
+buffer
+.I *n
+bytes in size.
+If the buffer is not large enough to hold the line,
+.BR getline ()
+resizes it with
+.BR realloc (3),
+updating
+.I *lineptr
+and
+.I *n
+as necessary.
+.P
+In either case, on a successful call,
+.I *lineptr
+and
+.I *n
+will be updated to reflect the buffer address and allocated size respectively.
+.P
+.BR getdelim ()
+works like
+.BR getline (),
+except that a line delimiter other than newline can be specified as the
+.I delimiter
+argument.
+As with
+.BR getline (),
+a delimiter character is not added if one was not present
+in the input before end of file was reached.
+.SH RETURN VALUE
+On success,
+.BR getline ()
+and
+.BR getdelim ()
+return the number of characters read, including the delimiter character,
+but not including the terminating null byte (\[aq]\[rs]0\[aq]).
+This value can be used
+to handle embedded null bytes in the line read.
+.P
+Both functions return \-1 on failure to read a line (including end-of-file
+condition).
+In the event of a failure,
+.I errno
+is set to indicate the error.
+.P
+If
+.I *lineptr
+was set to NULL before the call, then the buffer should be freed by the
+user program even on failure.
+.SH ERRORS
+.TP
+.B EINVAL
+Bad arguments
+.RI ( n
+or
+.I lineptr
+is NULL, or
+.I stream
+is not valid).
+.TP
+.B ENOMEM
+Allocation or reallocation of the line buffer failed.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR getline (),
+.BR getdelim ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+GNU, POSIX.1-2008.
+.SH EXAMPLES
+.\" SRC BEGIN (getline.c)
+.EX
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+\&
+int
+main(int argc, char *argv[])
+{
+    FILE *stream;
+    char *line = NULL;
+    size_t len = 0;
+    ssize_t nread;
+\&
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <file>\[rs]n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+\&
+    stream = fopen(argv[1], "r");
+    if (stream == NULL) {
+        perror("fopen");
+        exit(EXIT_FAILURE);
+    }
+\&
+    while ((nread = getline(&line, &len, stream)) != \-1) {
+        printf("Retrieved line of length %zd:\[rs]n", nread);
+        fwrite(line, nread, 1, stdout);
+    }
+\&
+    free(line);
+    fclose(stream);
+    exit(EXIT_SUCCESS);
+}
+.EE
+.\" SRC END
+.SH SEE ALSO
+.BR read (2),
+.BR fgets (3),
+.BR fopen (3),
+.BR fread (3),
+.BR scanf (3)

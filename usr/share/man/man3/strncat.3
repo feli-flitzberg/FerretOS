@@ -1,0 +1,132 @@
+'\" t
+.\" Copyright 2022 Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH strncat 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+strncat
+\-
+append non-null bytes from a source array to a string,
+and null-terminate the result
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <string.h>
+.P
+.BI "char *strncat(char *restrict " dst ", const char " src "[restrict ." ssize ],
+.BI "              size_t " ssize );
+.fi
+.SH DESCRIPTION
+This function appends at most
+.I ssize
+non-null bytes from the array pointed to by
+.IR src ,
+followed by a null character,
+to the end of the string pointed to by
+.IR dst .
+.I dst
+must point to a string contained in a buffer that is large enough,
+that is, the buffer size must be at least
+.IR "strlen(dst) + strnlen(src, ssize) + 1" .
+.P
+An implementation of this function might be:
+.P
+.in +4n
+.EX
+char *
+strncat(char *restrict dst, const char *restrict src, size_t ssize)
+{
+    #define strnul(s)  (s + strlen(s))
+\&
+    stpcpy(mempcpy(strnul(dst), src, strnlen(src, ssize)), "");
+    return dst;
+}
+.EE
+.in
+.SH RETURN VALUE
+.BR strncat ()
+returns
+.IR dst .
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR strncat ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, C89, SVr4, 4.3BSD.
+.SH CAVEATS
+The name of this function is confusing;
+it has no relation to
+.BR strncpy (3).
+.P
+If the destination buffer does not already contain a string,
+or is not large enough,
+the behavior is undefined.
+See
+.B _FORTIFY_SOURCE
+in
+.BR feature_test_macros (7).
+.SH BUGS
+This function can be very inefficient.
+Read about
+.UR https://www.joelonsoftware.com/\:2001/12/11/\:back\-to\-basics/
+Shlemiel the painter
+.UE .
+.SH EXAMPLES
+.\" SRC BEGIN (strncat.c)
+.EX
+#include <err.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+\&
+#define nitems(arr)  (sizeof((arr)) / sizeof((arr)[0]))
+\&
+int
+main(void)
+{
+    size_t  n;
+\&
+    // Null-padded fixed-size character sequences
+    char    pre[4] = "pre.";
+    char    new_post[50] = ".foo.bar";
+\&
+    // Strings
+    char    post[] = ".post";
+    char    src[] = "some_long_body.post";
+    char    *dest;
+\&
+    n = nitems(pre) + strlen(src) \- strlen(post) + nitems(new_post) + 1;
+    dest = malloc(sizeof(*dest) * n);
+    if (dest == NULL)
+        err(EXIT_FAILURE, "malloc()");
+\&
+    dest[0] = \[aq]\[rs]0\[aq];  // There's no 'cpy' function to this 'cat'.
+    strncat(dest, pre, nitems(pre));
+    strncat(dest, src, strlen(src) \- strlen(post));
+    strncat(dest, new_post, nitems(new_post));
+\&
+    puts(dest);  // "pre.some_long_body.foo.bar"
+    free(dest);
+    exit(EXIT_SUCCESS);
+}
+.EE
+.\" SRC END
+.in
+.SH SEE ALSO
+.BR string (3),
+.BR string_copying (7)

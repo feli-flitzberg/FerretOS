@@ -1,0 +1,70 @@
+.\" Copyright (c) 2007 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH sgetmask 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+sgetmask, ssetmask \- manipulation of signal mask (obsolete)
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <sys/syscall.h>" "      /* Definition of " SYS_* " constants */"
+.B #include <unistd.h>
+.P
+.B [[deprecated]] long syscall(SYS_sgetmask, void);
+.BI "[[deprecated]] long syscall(SYS_ssetmask, long " newmask );
+.fi
+.SH DESCRIPTION
+These system calls are obsolete.
+.IR "Do not use them" ;
+use
+.BR sigprocmask (2)
+instead.
+.P
+.BR sgetmask ()
+returns the signal mask of the calling process.
+.P
+.BR ssetmask ()
+sets the signal mask of the calling process to the value given in
+.IR newmask .
+The previous signal mask is returned.
+.P
+The signal masks dealt with by these two system calls
+are plain bit masks (unlike the
+.I sigset_t
+used by
+.BR sigprocmask (2));
+use
+.BR sigmask (3)
+to create and inspect these masks.
+.SH RETURN VALUE
+.BR sgetmask ()
+always successfully returns the signal mask.
+.BR ssetmask ()
+always succeeds, and returns the previous signal mask.
+.SH ERRORS
+These system calls always succeed.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Since Linux 3.16,
+.\" f6187769dae48234f3877df3c4d99294cc2254fa
+support for these system calls is optional,
+depending on whether the kernel was built with the
+.B CONFIG_SGETMASK_SYSCALL
+option.
+.SH NOTES
+These system calls are unaware of signal numbers greater than 31
+(i.e., real-time signals).
+.P
+These system calls do not exist on x86-64.
+.P
+It is not possible to block
+.B SIGSTOP
+or
+.BR SIGKILL .
+.SH SEE ALSO
+.BR sigprocmask (2),
+.BR signal (7)

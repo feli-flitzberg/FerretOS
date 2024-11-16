@@ -1,0 +1,30 @@
+.\" Copyright 2022 Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH bcmp 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+bcmp \- compare byte sequences
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <strings.h>
+.P
+.BI "[[deprecated]] int bcmp(const void " s1 [. n "], const void " s2 [. n "], \
+size_t " n );
+.fi
+.SH DESCRIPTION
+.BR bcmp ()
+is identical to
+.BR memcmp (3);
+use the latter instead.
+.SH STANDARDS
+None.
+.SH HISTORY
+4.3BSD.
+Marked as LEGACY in POSIX.1-2001;
+removed in POSIX.1-2008.
+.SH SEE ALSO
+.BR memcmp (3)

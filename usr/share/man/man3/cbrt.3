@@ -1,0 +1,90 @@
+'\" t
+.\" Copyright 1995 Jim Van Zandt <jrv@vanzandt.mv.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" changed `square root' into `cube root' - aeb, 950919
+.\"
+.\" Modified 2002-07-27 Walter Harms
+.\" (walter.harms@informatik.uni-oldenburg.de)
+.\"
+.TH cbrt 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+cbrt, cbrtf, cbrtl \- cube root function
+.SH LIBRARY
+Math library
+.RI ( libm ", " \-lm )
+.SH SYNOPSIS
+.nf
+.B #include <math.h>
+.P
+.BI "double cbrt(double " x );
+.BI "float cbrtf(float " x );
+.BI "long double cbrtl(long double " x );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR cbrt ():
+.nf
+    _ISOC99_SOURCE || _POSIX_C_SOURCE >= 200112L
+        || _XOPEN_SOURCE >= 500
+.\"    || _XOPEN_SOURCE && _XOPEN_SOURCE_EXTENDED
+        || /* Since glibc 2.19: */ _DEFAULT_SOURCE
+        || /* glibc <= 2.19: */ _BSD_SOURCE || _SVID_SOURCE
+.fi
+.P
+.BR cbrtf (),
+.BR cbrtl ():
+.nf
+    _ISOC99_SOURCE || _POSIX_C_SOURCE >= 200112L
+        || /* Since glibc 2.19: */ _DEFAULT_SOURCE
+        || /* glibc <= 2.19: */ _BSD_SOURCE || _SVID_SOURCE
+.fi
+.SH DESCRIPTION
+These functions return the (real) cube root of
+.IR x .
+This function cannot fail;
+every representable real value
+has a real cube root,
+and rounding it to a representable value
+never causes overflow nor underflow.
+.SH RETURN VALUE
+These functions return the cube root of
+.IR x .
+.P
+If
+.I x
+is +0, \-0, positive infinity, negative infinity, or NaN,
+.I x
+is returned.
+.SH ERRORS
+No errors occur.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR cbrt (),
+.BR cbrtf (),
+.BR cbrtl ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+C99, POSIX.1-2001.
+.\" .BR cbrt ()
+.\" was a GNU extension. It is now a C99 requirement.
+.SH SEE ALSO
+.BR pow (3),
+.BR sqrt (3)

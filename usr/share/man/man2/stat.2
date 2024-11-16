@@ -1,0 +1,539 @@
+.\" Copyright (c) 1992 Drew Eckhardt (drew@cs.colorado.edu), March 28, 1992
+.\" Parts Copyright (c) 1995 Nicolai Langfeldt (janl@ifi.uio.no), 1/1/95
+.\" and Copyright (c) 2006, 2007, 2014 Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" Modified by Michael Haardt <michael@moria.de>
+.\" Modified 1993-07-24 by Rik Faith <faith@cs.unc.edu>
+.\" Modified 1995-05-18 by Todd Larason <jtl@molehill.org>
+.\" Modified 1997-01-31 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified 1995-01-09 by Richard Kettlewell <richard@greenend.org.uk>
+.\" Modified 1998-05-13 by Michael Haardt <michael@cantor.informatik.rwth-aachen.de>
+.\" Modified 1999-07-06 by aeb & Albert Cahalan
+.\" Modified 2000-01-07 by aeb
+.\" Modified 2004-06-23 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\" 2007-06-08 mtk: Added example program
+.\" 2007-07-05 mtk: Added details on underlying system call interfaces
+.\"
+.TH stat 2 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+stat, fstat, lstat, fstatat \- get file status
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <sys/stat.h>
+.P
+.BI "int stat(const char *restrict " pathname ,
+.BI "         struct stat *restrict " statbuf );
+.BI "int fstat(int " fd ", struct stat *" statbuf );
+.BI "int lstat(const char *restrict " pathname ,
+.BI "         struct stat *restrict " statbuf );
+.P
+.BR "#include <fcntl.h>           " "/* Definition of " AT_* " constants */"
+.B #include <sys/stat.h>
+.P
+.BI "int fstatat(int " dirfd ", const char *restrict " pathname ,
+.BI "         struct stat *restrict " statbuf ", int " flags );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR lstat ():
+.nf
+    /* Since glibc 2.20 */ _DEFAULT_SOURCE
+        || _XOPEN_SOURCE >= 500
+.\"   _XOPEN_SOURCE && _XOPEN_SOURCE_EXTENDED
+        || /* Since glibc 2.10: */ _POSIX_C_SOURCE >= 200112L
+        || /* glibc 2.19 and earlier */ _BSD_SOURCE
+.fi
+.P
+.BR fstatat ():
+.nf
+    Since glibc 2.10:
+        _POSIX_C_SOURCE >= 200809L
+    Before glibc 2.10:
+        _ATFILE_SOURCE
+.fi
+.SH DESCRIPTION
+These functions return information about a file, in the buffer pointed to by
+.IR statbuf .
+No permissions are required on the file itself, but\[em]in the case of
+.BR stat (),
+.BR fstatat (),
+and
+.BR lstat ()\[em]execute
+(search) permission is required on all of the directories in
+.I pathname
+that lead to the file.
+.P
+.BR stat ()
+and
+.BR fstatat ()
+retrieve information about the file pointed to by
+.IR pathname ;
+the differences for
+.BR fstatat ()
+are described below.
+.P
+.BR lstat ()
+is identical to
+.BR stat (),
+except that if
+.I pathname
+is a symbolic link, then it returns information about the link itself,
+not the file that the link refers to.
+.P
+.BR fstat ()
+is identical to
+.BR stat (),
+except that the file about which information is to be retrieved
+is specified by the file descriptor
+.IR fd .
+.\"
+.SS The stat structure
+All of these system calls return a
+.I stat
+structure (see
+.BR stat (3type)).
+.P
+.\" Background: inode attributes are modified with i_mutex held, but
+.\" read by stat() without taking the mutex.
+.IR Note :
+for performance and simplicity reasons, different fields in the
+.I stat
+structure may contain state information from different moments
+during the execution of the system call.
+For example, if
+.I st_mode
+or
+.I st_uid
+is changed by another process by calling
+.BR chmod (2)
+or
+.BR chown (2),
+.BR stat ()
+might return the old
+.I st_mode
+together with the new
+.IR st_uid ,
+or the old
+.I st_uid
+together with the new
+.IR st_mode .
+.SS fstatat()
+The
+.BR fstatat ()
+system call is a more general interface for accessing file information
+which can still provide exactly the behavior of each of
+.BR stat (),
+.BR lstat (),
+and
+.BR fstat ().
+.P
+If the pathname given in
+.I pathname
+is relative, then it is interpreted relative to the directory
+referred to by the file descriptor
+.I dirfd
+(rather than relative to the current working directory of
+the calling process, as is done by
+.BR stat ()
+and
+.BR lstat ()
+for a relative pathname).
+.P
+If
+.I pathname
+is relative and
+.I dirfd
+is the special value
+.BR AT_FDCWD ,
+then
+.I pathname
+is interpreted relative to the current working
+directory of the calling process (like
+.BR stat ()
+and
+.BR lstat ()).
+.P
+If
+.I pathname
+is absolute, then
+.I dirfd
+is ignored.
+.P
+.I flags
+can either be 0, or include one or more of the following flags ORed:
+.TP
+.BR AT_EMPTY_PATH " (since Linux 2.6.39)"
+.\" commit 65cfc6722361570bfe255698d9cd4dccaf47570d
+If
+.I pathname
+is an empty string, operate on the file referred to by
+.I dirfd
+(which may have been obtained using the
+.BR open (2)
+.B O_PATH
+flag).
+In this case,
+.I dirfd
+can refer to any type of file, not just a directory, and
+the behavior of
+.BR fstatat ()
+is similar to that of
+.BR fstat ().
+If
+.I dirfd
+is
+.BR AT_FDCWD ,
+the call operates on the current working directory.
+This flag is Linux-specific; define
+.B _GNU_SOURCE
+.\" Before glibc 2.16, defining _ATFILE_SOURCE sufficed
+to obtain its definition.
+.TP
+.BR AT_NO_AUTOMOUNT " (since Linux 2.6.38)"
+Don't automount the terminal ("basename") component of
+.I pathname.
+Since Linux 3.1 this flag is ignored.
+Since Linux 4.11 this flag is implied.
+.TP
+.B AT_SYMLINK_NOFOLLOW
+If
+.I pathname
+is a symbolic link, do not dereference it:
+instead return information about the link itself, like
+.BR lstat ().
+(By default,
+.BR fstatat ()
+dereferences symbolic links, like
+.BR stat ().)
+.P
+See
+.BR openat (2)
+for an explanation of the need for
+.BR fstatat ().
+.SH RETURN VALUE
+On success, zero is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EACCES
+Search permission is denied for one of the directories
+in the path prefix of
+.IR pathname .
+(See also
+.BR path_resolution (7).)
+.TP
+.B EBADF
+.I fd
+is not a valid open file descriptor.
+.TP
+.B EBADF
+.RB ( fstatat ())
+.I pathname
+is relative but
+.I dirfd
+is neither
+.B AT_FDCWD
+nor a valid file descriptor.
+.TP
+.B EFAULT
+Bad address.
+.TP
+.B EINVAL
+.RB ( fstatat ())
+Invalid flag specified in
+.IR flags .
+.TP
+.B ELOOP
+Too many symbolic links encountered while traversing the path.
+.TP
+.B ENAMETOOLONG
+.I pathname
+is too long.
+.TP
+.B ENOENT
+A component of
+.I pathname
+does not exist or is a dangling symbolic link.
+.TP
+.B ENOENT
+.I pathname
+is an empty string and
+.B AT_EMPTY_PATH
+was not specified in
+.IR flags .
+.TP
+.B ENOMEM
+Out of memory (i.e., kernel memory).
+.TP
+.B ENOTDIR
+A component of the path prefix of
+.I pathname
+is not a directory.
+.TP
+.B ENOTDIR
+.RB ( fstatat ())
+.I pathname
+is relative and
+.I dirfd
+is a file descriptor referring to a file other than a directory.
+.TP
+.B EOVERFLOW
+.I pathname
+or
+.I fd
+refers to a file whose size, inode number,
+or number of blocks cannot be represented in, respectively, the types
+.IR off_t ,
+.IR ino_t ,
+or
+.IR blkcnt_t .
+This error can occur when, for example,
+an application compiled on a 32-bit platform without
+.I \-D_FILE_OFFSET_BITS=64
+calls
+.BR stat ()
+on a file whose size exceeds
+.I (1<<31)\-1
+bytes.
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+.TP
+.BR stat ()
+.TQ
+.BR fstat ()
+.TQ
+.BR lstat ()
+SVr4, 4.3BSD, POSIX.1-2001.
+.\" SVr4 documents additional
+.\" .BR fstat ()
+.\" error conditions EINTR, ENOLINK, and EOVERFLOW.  SVr4
+.\" documents additional
+.\" .BR stat ()
+.\" and
+.\" .BR lstat ()
+.\" error conditions EINTR, EMULTIHOP, ENOLINK, and EOVERFLOW.
+.TP
+.BR fstatat ()
+POSIX.1-2008.
+Linux 2.6.16,
+glibc 2.4.
+.P
+According to POSIX.1-2001,
+.BR lstat ()
+on a symbolic link need return valid information only in the
+.I st_size
+field and the file type of the
+.I st_mode
+field of the
+.I stat
+structure.
+POSIX.1-2008 tightens the specification, requiring
+.BR lstat ()
+to return valid information in all fields except the mode bits in
+.IR st_mode .
+.P
+Use of the
+.I st_blocks
+and
+.I st_blksize
+fields may be less portable.
+(They were introduced in BSD.
+The interpretation differs between systems,
+and possibly on a single system when NFS mounts are involved.)
+.SS C library/kernel differences
+Over time, increases in the size of the
+.I stat
+structure have led to three successive versions of
+.BR stat ():
+.IR sys_stat ()
+(slot
+.IR __NR_oldstat ),
+.IR sys_newstat ()
+(slot
+.IR __NR_stat ),
+and
+.I sys_stat64()
+(slot
+.IR __NR_stat64 )
+on 32-bit platforms such as i386.
+The first two versions were already present in Linux 1.0
+(albeit with different names);
+.\" See include/asm-i386/stat.h in the Linux 2.4 source code for the
+.\" various versions of the structure definitions
+the last was added in Linux 2.4.
+Similar remarks apply for
+.BR fstat ()
+and
+.BR lstat ().
+.P
+The kernel-internal versions of the
+.I stat
+structure dealt with by the different versions are, respectively:
+.TP
+.I __old_kernel_stat
+The original structure, with rather narrow fields, and no padding.
+.TP
+.I stat
+Larger
+.I st_ino
+field and padding added to various parts of the structure to
+allow for future expansion.
+.TP
+.I stat64
+Even larger
+.I st_ino
+field,
+larger
+.I st_uid
+and
+.I st_gid
+fields to accommodate the Linux-2.4 expansion of UIDs and GIDs to 32 bits,
+and various other enlarged fields and further padding in the structure.
+(Various padding bytes were eventually consumed in Linux 2.6,
+with the advent of 32-bit device IDs and nanosecond components
+for the timestamp fields.)
+.P
+The glibc
+.BR stat ()
+wrapper function hides these details from applications,
+invoking the most recent version of the system call provided by the kernel,
+and repacking the returned information if required for old binaries.
+.\"
+.\" A note from Andries Brouwer, July 2007
+.\"
+.\" > Is the story not rather more complicated for some calls like
+.\" > stat(2)?
+.\"
+.\" Yes and no, mostly no. See /usr/include/sys/stat.h .
+.\"
+.\" The idea is here not so much that syscalls change, but that
+.\" the definitions of struct stat and of the types dev_t and mode_t change.
+.\" This means that libc (even if it does not call the kernel
+.\" but only calls some internal function) must know what the
+.\" format of dev_t or of struct stat is.
+.\" The communication between the application and libc goes via
+.\" the include file <sys/stat.h> that defines a _STAT_VER and
+.\" _MKNOD_VER describing the layout of the data that user space
+.\" uses. Each (almost each) occurrence of stat() is replaced by
+.\" an occurrence of xstat() where the first parameter of xstat()
+.\" is this version number _STAT_VER.
+.\"
+.\" Now, also the definitions used by the kernel change.
+.\" But glibc copes with this in the standard way, and the
+.\" struct stat as returned by the kernel is repacked into
+.\" the struct stat as expected by the application.
+.\" Thus, _STAT_VER and this setup cater for the application-libc
+.\" interface, rather than the libc-kernel interface.
+.\"
+.\" (Note that the details depend on gcc being used as c compiler.)
+.P
+On modern 64-bit systems, life is simpler: there is a single
+.BR stat ()
+system call and the kernel deals with a
+.I stat
+structure that contains fields of a sufficient size.
+.P
+The underlying system call employed by the glibc
+.BR fstatat ()
+wrapper function is actually called
+.BR fstatat64 ()
+or, on some architectures,
+.\" strace(1) shows the name "newfstatat" on x86-64
+.BR newfstatat ().
+.SH EXAMPLES
+The following program calls
+.BR lstat ()
+and displays selected fields in the returned
+.I stat
+structure.
+.P
+.\" SRC BEGIN (stat.c)
+.EX
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/sysmacros.h>
+#include <time.h>
+\&
+int
+main(int argc, char *argv[])
+{
+    struct stat sb;
+\&
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <pathname>\[rs]n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+\&
+    if (lstat(argv[1], &sb) == \-1) {
+        perror("lstat");
+        exit(EXIT_FAILURE);
+    }
+\&
+    printf("ID of containing device:  [%x,%x]\[rs]n",
+           major(sb.st_dev),
+           minor(sb.st_dev));
+\&
+    printf("File type:                ");
+\&
+    switch (sb.st_mode & S_IFMT) {
+    case S_IFBLK:  printf("block device\[rs]n");            break;
+    case S_IFCHR:  printf("character device\[rs]n");        break;
+    case S_IFDIR:  printf("directory\[rs]n");               break;
+    case S_IFIFO:  printf("FIFO/pipe\[rs]n");               break;
+    case S_IFLNK:  printf("symlink\[rs]n");                 break;
+    case S_IFREG:  printf("regular file\[rs]n");            break;
+    case S_IFSOCK: printf("socket\[rs]n");                  break;
+    default:       printf("unknown?\[rs]n");                break;
+    }
+\&
+    printf("I\-node number:            %ju\[rs]n", (uintmax_t) sb.st_ino);
+\&
+    printf("Mode:                     %jo (octal)\[rs]n",
+           (uintmax_t) sb.st_mode);
+\&
+    printf("Link count:               %ju\[rs]n", (uintmax_t) sb.st_nlink);
+    printf("Ownership:                UID=%ju   GID=%ju\[rs]n",
+           (uintmax_t) sb.st_uid, (uintmax_t) sb.st_gid);
+\&
+    printf("Preferred I/O block size: %jd bytes\[rs]n",
+           (intmax_t) sb.st_blksize);
+    printf("File size:                %jd bytes\[rs]n",
+           (intmax_t) sb.st_size);
+    printf("Blocks allocated:         %jd\[rs]n",
+           (intmax_t) sb.st_blocks);
+\&
+    printf("Last status change:       %s", ctime(&sb.st_ctime));
+    printf("Last file access:         %s", ctime(&sb.st_atime));
+    printf("Last file modification:   %s", ctime(&sb.st_mtime));
+\&
+    exit(EXIT_SUCCESS);
+}
+.EE
+.\" SRC END
+.SH SEE ALSO
+.BR ls (1),
+.BR stat (1),
+.BR access (2),
+.BR chmod (2),
+.BR chown (2),
+.BR readlink (2),
+.BR statx (2),
+.BR utime (2),
+.BR stat (3type),
+.BR capabilities (7),
+.BR inode (7),
+.BR symlink (7)

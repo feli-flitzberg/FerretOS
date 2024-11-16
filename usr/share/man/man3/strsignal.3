@@ -1,0 +1,169 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\" and Copyright (C) 2020 Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 17:59:03 1993 by Rik Faith (faith@cs.unc.edu)
+.TH strsignal 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+strsignal, sigabbrev_np, sigdescr_np, sys_siglist \-
+return string describing signal
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <string.h>
+.P
+.BI "char *strsignal(int " sig );
+.BI "const char *sigdescr_np(int " sig );
+.BI "const char *sigabbrev_np(int " sig );
+.P
+.BI "[[deprecated]] extern const char *const " sys_siglist [];
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR sigabbrev_np (),
+.BR sigdescr_np ():
+.nf
+    _GNU_SOURCE
+.fi
+.P
+.BR strsignal ():
+.nf
+    From glibc 2.10 to glibc 2.31:
+        _POSIX_C_SOURCE >= 200809L
+    Before glibc 2.10:
+        _GNU_SOURCE
+.fi
+.P
+.IR sys_siglist :
+.nf
+    Since glibc 2.19:
+        _DEFAULT_SOURCE
+    glibc 2.19 and earlier:
+        _BSD_SOURCE
+.fi
+.SH DESCRIPTION
+The
+.BR strsignal ()
+function returns a string describing the signal
+number passed in the argument
+.IR sig .
+The string can be used only until the next call to
+.BR strsignal ().
+The string returned by
+.BR strsignal ()
+is localized according to the
+.B LC_MESSAGES
+category in the current locale.
+.P
+The
+.BR sigdescr_np ()
+function returns a string describing the signal
+number passed in the argument
+.IR sig .
+Unlike
+.BR strsignal ()
+this string is not influenced by the current locale.
+.P
+The
+.BR sigabbrev_np ()
+function returns the abbreviated name of the signal,
+.IR sig .
+For example, given the value
+.BR SIGINT ,
+it returns the string "INT".
+.P
+The (deprecated) array
+.I sys_siglist
+holds the signal description strings
+indexed by signal number.
+The
+.BR strsignal ()
+or the
+.BR sigdescr_np ()
+function should be used instead of this array; see also VERSIONS.
+.SH RETURN VALUE
+The
+.BR strsignal ()
+function returns the appropriate description
+string, or an unknown signal message if the signal number is invalid.
+On some systems (but not on Linux), NULL may instead be
+returned for an invalid signal number.
+.P
+The
+.BR sigdescr_np ()
+and
+.BR sigabbrev_np ()
+functions return the appropriate description string.
+The returned string is statically allocated and valid for
+the lifetime of the program.
+These functions return NULL for an invalid signal number.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lb lb lbx
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR strsignal ()
+T}	Thread safety	T{
+.na
+.nh
+MT-Unsafe race:strsignal locale
+T}
+T{
+.na
+.nh
+.BR sigdescr_np (),
+.BR sigabbrev_np ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+.TP
+.BR strsignal ()
+POSIX.1-2008.
+.TP
+.BR sigdescr_np ()
+.TQ
+.BR sigabbrev_np ()
+GNU.
+.TP
+.I sys_siglist
+None.
+.\" glibc commit b1ccfc061feee9ce616444ded8e1cd5acf9fa97f
+.SH HISTORY
+.TP
+.BR strsignal ()
+POSIX.1-2008.
+Solaris, BSD.
+.TP
+.BR sigdescr_np ()
+.TQ
+.BR sigabbrev_np ()
+glibc 2.32.
+.TP
+.I sys_siglist
+Removed in glibc 2.32.
+.SH NOTES
+.BR sigdescr_np ()
+and
+.BR sigabbrev_np ()
+are thread-safe and async-signal-safe.
+.SH SEE ALSO
+.BR psignal (3),
+.BR strerror (3)

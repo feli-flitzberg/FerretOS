@@ -1,0 +1,50 @@
+.\" Copyright 2012, Cyrill Gorcunov <gorcunov@openvz.org>
+.\" Copyright 2012, 2013, 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_SET_MM_AUXV 2const 2024-06-01 "Linux man-pages 6.9.1"
+.SH NAME
+PR_SET_MM_AUXV
+\-
+set a new auxiliary vector
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <sys/prctl.h>
+.P
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B int prctl(PR_SET_MM, PR_SET_MM_AUXV,
+.BI "          unsigned long " addr ", unsigned long " size ", 0L);"
+.fi
+.SH DESCRIPTION
+Set a new auxiliary vector.
+.P
+.I addr
+should provide the address of the vector.
+.I size
+is the size of the vector.
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+.I addr
+is greater than
+.B TASK_SIZE
+(the limit on the size of the user address space for this architecture).
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 3.5.
+.\" commit fe8c7f5cbf91124987106faa3bdf0c8b955c4cf7
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_SET_MM (2const)

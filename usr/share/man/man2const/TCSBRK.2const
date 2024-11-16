@@ -1,0 +1,85 @@
+.\" Copyright 2002, Walter Harms <walter.harms@informatik.uni-oldenburg.de>
+.\" Copyright 2002, Andries Brouwer <aeb@cwi.nl>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-1.0-or-later
+.\"
+.TH TCSBRK 2const 2024-06-13 "Linux man-pages 6.9.1"
+.SH NAME
+TCSBRK,
+TCSBRKP,
+TIOCSBRK,
+TIOCCBRK
+\-
+sending a break
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <asm/termbits.h>" "  /* Definition of " T*BRK* " constants */"
+.B #include <sys/ioctl.h>
+.P
+.BI "int ioctl(int " fd ", TCSBRK, int " arg );
+.BI "int ioctl(int " fd ", TCSBRKP, int " arg );
+.BI "int ioctl(int " fd ", TIOCSBRK);"
+.BI "int ioctl(int " fd ", TIOCCBRK);"
+.fi
+.SH DESCRIPTION
+.TP
+.B TCSBRK
+Equivalent to
+.IR "tcsendbreak(fd, arg)" .
+.IP
+If the terminal is using asynchronous serial data transmission, and
+.I arg
+is zero, then send a break (a stream of zero bits) for between
+0.25 and 0.5 seconds.
+If the terminal is not using asynchronous
+serial data transmission, then either a break is sent, or the function
+returns without doing anything.
+When
+.I arg
+is nonzero, nobody knows what will happen.
+.IP
+(SVr4, UnixWare, Solaris, and Linux treat
+.I "tcsendbreak(fd,arg)"
+with nonzero
+.I arg
+like
+.IR "tcdrain(fd)" .
+SunOS treats
+.I arg
+as a multiplier, and sends a stream of bits
+.I arg
+times as long as done for zero
+.IR arg .
+DG/UX and AIX treat
+.I arg
+(when nonzero) as a time interval measured in milliseconds.
+HP-UX ignores
+.IR arg .)
+.TP
+.B TCSBRKP
+So-called "POSIX version" of
+.BR TCSBRK .
+It treats nonzero
+.I arg
+as a time interval measured in deciseconds, and does nothing
+when the driver does not support breaks.
+.TP
+.B TIOCSBRK
+Turn break on, that is, start sending zero bits.
+.TP
+.B TIOCCBRK
+Turn break off, that is, stop sending zero bits.
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error,
+\-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH SEE ALSO
+.BR ioctl (2),
+.BR ioctl_tty (2)

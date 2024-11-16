@@ -1,0 +1,158 @@
+.\" Copyright 2020, Dave Martin <Dave.Martin@arm.com>
+.\" Copyright 2020, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_SVE_SET_VL 2const 2024-06-02 "Linux man-pages 6.9.1"
+.SH NAME
+PR_SVE_SET_VL
+\-
+set the thread's SVE vector length
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.BI "int prctl(PR_SVE_SET_VL, unsigned long " val );
+.fi
+.SH DESCRIPTION
+Configure the thread's SVE vector length,
+as specified by
+.IR val .
+.P
+The bits of
+.I val
+corresponding to
+.B PR_SVE_VL_LEN_MASK
+must be set to the desired vector length in bytes.
+This is interpreted as an upper bound:
+the kernel will select the greatest available vector length
+that does not exceed the value specified.
+In particular, specifying
+.B SVE_VL_MAX
+(defined in
+.I <asm/sigcontext.h>)
+for the
+.B PR_SVE_VL_LEN_MASK
+bits requests the maximum supported vector length.
+.P
+In addition, the other bits of
+.I val
+must be set to one of the following combinations of flags:
+.TP
+.B 0L
+Perform the change immediately.
+At the next
+.BR execve (2)
+in the thread,
+the vector length will be reset to the value configured in
+.IR /proc/\:sys/\:abi/\:sve_default_vector_length .
+.TP
+.B PR_SVE_VL_INHERIT
+Perform the change immediately.
+Subsequent
+.BR execve (2)
+calls will preserve the new vector length.
+.TP
+.B PR_SVE_SET_VL_ONEXEC
+Defer the change, so that it is performed at the next
+.BR execve (2)
+in the thread.
+Further
+.BR execve (2)
+calls will reset the vector length to the value configured in
+.IR /proc/\:sys/\:abi/\:sve_default_vector_length .
+.TP
+.B PR_SVE_SET_VL_ONEXEC | PR_SVE_VL_INHERIT
+Defer the change, so that it is performed at the next
+.BR execve (2)
+in the thread.
+Further
+.BR execve (2)
+calls will preserve the new vector length.
+.P
+In all cases,
+any previously pending deferred change is canceled.
+.P
+On success,
+a nonnegative value is returned that describes the
+.I selected
+configuration.
+If
+.B PR_SVE_SET_VL_ONEXEC
+was included in
+.IR val ,
+then the configuration described by the return value
+will take effect at the next
+.BR execve (2).
+Otherwise, the configuration is already in effect when the
+.B PR_SVE_SET_VL
+call returns.
+In either case, the value is encoded in the same way as the return value of
+.BR PR_SVE_GET_VL .
+Note that there is no explicit flag in the return value
+corresponding to
+.BR PR_SVE_SET_VL_ONEXEC .
+.P
+The configuration (including any pending deferred change)
+is inherited across
+.BR fork (2)
+and
+.BR clone (2).
+.SH RETURN VALUE
+On success,
+.B PR_SVE_SET_VL
+returns the nonnegative value described above.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+SVE is not available on this platform.
+.TP
+.B EINVAL
+The value in the bits of
+.I val
+corresponding to
+.B PR_SVE_VL_LEN_MASK
+is outside the range
+.RB [ SVE_VL_MIN ,
+.BR SVE_VL_MAX ]
+or is not a multiple of 16.
+.TP
+.B EINVAL
+The other bits of
+.I val
+are invalid or unsupported.
+.SH FILES
+.TP
+.I /proc/\:sys/\:abi/\:sve_default_vector_length
+.SH STANDARDS
+Linux.
+arm64 only.
+.SH HISTORY
+.\" commit 2d2123bc7c7f843aa9db87720de159a049839862
+.\" linux-5.6/Documentation/arm64/sve.rst
+Linux 4.15 (arm64).
+.SH CAVEATS
+Because the compiler or run-time environment
+may be using SVE, using this call without the
+.B PR_SVE_SET_VL_ONEXEC
+flag may crash the calling process.
+The conditions for using it safely are complex and system-dependent.
+Don't use it unless you really know what you are doing.
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_SVE_GET_VL (2const)
+.P
+For more information, see the kernel source file
+.I Documentation/arm64/sve.rst
+.\"commit b693d0b372afb39432e1c49ad7b3454855bc6bed
+(or
+.I Documentation/arm64/sve.txt
+before Linux 5.3).

@@ -1,0 +1,77 @@
+.\" Copyright (C) 2014 Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH isfdtype 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+isfdtype \- test file type of a file descriptor
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <sys/stat.h>
+.B #include <sys/socket.h>
+.P
+.BI "int isfdtype(int " fd ", int " fdtype );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR isfdtype ():
+.nf
+    Since glibc 2.20:
+        _DEFAULT_SOURCE
+    Before glibc 2.20:
+        _BSD_SOURCE || _SVID_SOURCE
+.fi
+.SH DESCRIPTION
+The
+.BR isfdtype ()
+function tests whether the file descriptor
+.I fd
+refers to a file of type
+.IR fdtype .
+The
+.I fdtype
+argument specifies one of the
+.B S_IF*
+constants defined in
+.I <sys/stat.h>
+and documented in
+.BR stat (2)
+(e.g.,
+.BR S_IFREG ).
+.SH RETURN VALUE
+The
+.BR isfdtype ()
+function returns 1 if the file descriptor
+.I fd
+is of type
+.I fdtype
+and 0 if it is not.
+On failure, \-1 is returned and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+The
+.BR isfdtype ()
+function can fail with any of the same errors as
+.BR fstat (2).
+.SH VERSIONS
+Portable applications should use
+.BR fstat (2)
+instead.
+.SH STANDARDS
+None.
+.SH HISTORY
+It appeared in the draft POSIX.1g standard.
+It is present on OpenBSD and Tru64 UNIX
+(where the required header file in both cases is just
+.IR <sys/stat.h> ,
+as shown in the POSIX.1g draft).
+.SH SEE ALSO
+.BR fstat (2)

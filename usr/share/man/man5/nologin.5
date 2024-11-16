@@ -1,0 +1,22 @@
+.\" Copyright (c) 1993 Michael Haardt (michael@moria.de),
+.\"     Fri Apr  2 11:32:09 MET DST 1993
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" Modified Sun Jul 25 11:06:34 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Corrected Mon Oct 21 17:47:19 EDT 1996 by Eric S. Raymond (esr@thyrsus.com)
+.TH nologin 5 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+nologin \- prevent unprivileged users from logging into the system
+.SH DESCRIPTION
+If the file \fI/etc/nologin\fP exists and is readable,
+.BR login (1)
+will allow access only to root.
+Other users will
+be shown the contents of this file and their logins will be refused.
+This provides a simple way of temporarily disabling all unprivileged logins.
+.SH FILES
+.I /etc/nologin
+.SH SEE ALSO
+.BR login (1),
+.BR shutdown (8)

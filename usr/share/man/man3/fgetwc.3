@@ -1,0 +1,106 @@
+'\" t
+.\" Copyright (c) Bruno Haible <haible@clisp.cons.org>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" References consulted:
+.\"   GNU glibc-2 source code and manual
+.\"   Dinkumware C library reference http://www.dinkumware.com/
+.\"   OpenGroup's Single UNIX specification
+.\"      http://www.UNIX-systems.org/online.html
+.\"   ISO/IEC 9899:1999
+.\"
+.\" Modified Tue Oct 16 23:18:40 BST 2001 by John Levon <moz@compsoc.man.ac.uk>
+.TH fgetwc 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+fgetwc, getwc \- read a wide character from a FILE stream
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdio.h>
+.B #include <wchar.h>
+.P
+.BI "wint_t fgetwc(FILE *" stream );
+.BI "wint_t getwc(FILE *" stream );
+.fi
+.SH DESCRIPTION
+The
+.BR fgetwc ()
+function is the wide-character equivalent
+of the
+.BR fgetc (3)
+function.
+It reads a wide character from \fIstream\fP and returns it.
+If the end of stream is reached, or if \fIferror(stream)\fP becomes true,
+it returns
+.BR WEOF .
+If a wide-character conversion error occurs, it sets
+\fIerrno\fP to \fBEILSEQ\fP and returns
+.BR WEOF .
+.P
+The
+.BR getwc ()
+function or macro functions identically to
+.BR fgetwc ().
+It may be implemented as a macro, and may evaluate its argument
+more than once.
+There is no reason ever to use it.
+.P
+For nonlocking counterparts, see
+.BR unlocked_stdio (3).
+.SH RETURN VALUE
+On success,
+.BR fgetwc ()
+returns the next wide-character from the stream.
+Otherwise,
+.B WEOF
+is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+Apart from the usual ones, there is
+.TP
+.B EILSEQ
+The data obtained from the input stream does not
+form a valid character.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR fgetwc (),
+.BR getwc ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, C99.
+.SH NOTES
+The behavior of
+.BR fgetwc ()
+depends on the
+.B LC_CTYPE
+category of the
+current locale.
+.P
+In the absence of additional information passed to the
+.BR fopen (3)
+call, it is
+reasonable to expect that
+.BR fgetwc ()
+will actually read a multibyte sequence
+from the stream and then convert it to a wide character.
+.SH SEE ALSO
+.BR fgetws (3),
+.BR fputwc (3),
+.BR ungetwc (3),
+.BR unlocked_stdio (3)

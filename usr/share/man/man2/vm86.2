@@ -1,0 +1,58 @@
+.\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" Copyright 1997 Andries E. Brouwer (aeb@cwi.nl)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH vm86 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+vm86old, vm86 \- enter virtual 8086 mode
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <sys/vm86.h>
+.P
+.BI "int vm86old(struct vm86_struct *" info );
+.BI "int vm86(unsigned long " fn ", struct vm86plus_struct *" v86 );
+.fi
+.SH DESCRIPTION
+The system call
+.BR vm86 ()
+was introduced in Linux 0.97p2.
+In Linux 2.1.15 and 2.0.28, it was renamed to
+.BR vm86old (),
+and a new
+.BR vm86 ()
+was introduced.
+The definition of
+.I struct vm86_struct
+was changed
+in 1.1.8 and 1.1.9.
+.P
+These calls cause the process to enter VM86 mode (virtual-8086 in Intel
+literature), and are used by
+.BR dosemu .
+.P
+VM86 mode is an emulation of real mode within a protected mode task.
+.SH RETURN VALUE
+On success, zero is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EFAULT
+This return value is specific to i386 and indicates a problem with getting
+user-space data.
+.TP
+.B ENOSYS
+This return value indicates the call is not implemented on the present
+architecture.
+.TP
+.B EPERM
+Saved kernel stack exists.
+(This is a kernel sanity check; the saved
+stack should exist only within vm86 mode itself.)
+.SH STANDARDS
+Linux on 32-bit Intel processors.

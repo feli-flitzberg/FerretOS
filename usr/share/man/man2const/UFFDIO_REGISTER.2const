@@ -1,0 +1,168 @@
+.\" Copyright 2016, IBM Corporation.
+.\" Written by Mike Rapoport <rppt@linux.vnet.ibm.com>
+.\" Copyright 2016, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH UFFDIO_REGISTER 2const 2024-06-17 "Linux man-pages 6.9.1"
+.SH NAME
+UFFDIO_REGISTER
+\-
+register a memory address range with the userfaultfd object
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/userfaultfd.h>" "  /* Definition of " UFFD* " constants */"
+.B #include <sys/ioctl.h>
+.P
+.BI "int ioctl(int " fd ", UFFDIO_REGISTER, struct uffdio_register *" argp );
+.P
+.B #include <linux/userfaultfd.h>
+.P
+.fi
+.EX
+.B struct uffdio_range {
+.BR "    __u64  start;" "   /* Start of range */"
+.BR "    __u64  len;" "     /* Length of range (bytes) */"
+.B };
+\&
+.B struct uffdio_register {
+.B "    struct uffdio_range  range;"
+.BR "    __u64                mode;" "    /* Desired mode of operation (input) */"
+.BR "    __u64                ioctls;" "  /* Available ioctl()s (output) */"
+.B };
+.EE
+.SH DESCRIPTION
+Register a memory address range with the userfaultfd object.
+The pages in the range must be \[lq]compatible\[rq].
+Please refer to the list of register modes below
+for the compatible memory backends for each mode.
+.P
+The
+.I argp->range
+field defines a memory range starting at
+.I argp->range.start
+and continuing for
+.I argp->range.len
+bytes that should be handled by the userfaultfd.
+.P
+The
+.I argp->mode
+field defines the mode of operation desired for this memory region.
+The following values may be bitwise ORed to set the userfaultfd mode for
+the specified range:
+.TP
+.B UFFDIO_REGISTER_MODE_MISSING
+Track page faults on missing pages.
+Since Linux 4.3,
+only private anonymous ranges are compatible.
+Since Linux 4.11,
+hugetlbfs and shared memory ranges are also compatible.
+.TP
+.B UFFDIO_REGISTER_MODE_WP
+Track page faults on write-protected pages.
+Since Linux 5.7,
+only private anonymous ranges are compatible.
+.TP
+.B UFFDIO_REGISTER_MODE_MINOR
+Track minor page faults.
+Since Linux 5.13,
+only hugetlbfs ranges are compatible.
+Since Linux 5.14,
+compatibility with shmem ranges was added.
+.P
+If the operation is successful, the kernel modifies the
+.I argp->ioctls
+bit-mask field to indicate which
+.BR ioctl (2)
+operations are available for the specified range.
+This returned bit mask can contain the following bits:
+.TP
+.B 1 << _UFFDIO_COPY
+The
+.B UFFDIO_COPY
+operation is supported.
+.TP
+.B 1 << _UFFDIO_WAKE
+The
+.B UFFDIO_WAKE
+operation is supported.
+.TP
+.B 1 << _UFFDIO_WRITEPROTECT
+The
+.B UFFDIO_WRITEPROTECT
+operation is supported.
+.TP
+.B 1 << _UFFDIO_ZEROPAGE
+The
+.B UFFDIO_ZEROPAGE
+operation is supported.
+.TP
+.B 1 << _UFFDIO_CONTINUE
+The
+.B UFFDIO_CONTINUE
+operation is supported.
+.TP
+.B 1 << _UFFDIO_POISON
+The
+.B UFFDIO_POISON
+operation is supported.
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.\" FIXME Is the following error list correct?
+.\"
+.TP
+.B EBUSY
+A mapping in the specified range is registered with another
+userfaultfd object.
+.TP
+.B EFAULT
+.I argp
+refers to an address that is outside the calling process's
+accessible address space.
+.TP
+.B EINVAL
+An invalid or unsupported bit was specified in the
+.I mode
+field; or the
+.I mode
+field was zero.
+.TP
+.B EINVAL
+There is no mapping in the specified address range.
+.TP
+.B EINVAL
+.I range.start
+or
+.I range.len
+is not a multiple of the system page size; or,
+.I range.len
+is zero; or these fields are otherwise invalid.
+.TP
+.B EINVAL
+There as an incompatible mapping in the specified address range.
+.\" Mike Rapoport:
+.\" ENOMEM if the process is exiting and the
+.\" mm_struct has gone by the time userfault grabs it.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 4.3.
+.SH EXAMPLES
+See
+.BR userfaultfd (2).
+.SH SEE ALSO
+.BR ioctl (2),
+.BR ioctl_userfaultfd (2),
+.BR UFFDIO_UNREGISTER (2const),
+.BR userfaultfd (2)
+.P
+.I linux.git/\:Documentation/\:admin\-guide/\:mm/\:userfaultfd.rst

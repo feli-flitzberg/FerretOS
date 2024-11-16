@@ -1,0 +1,79 @@
+'\" t
+.\" Copyright (c) 1993 by Thomas Koenig (ig25@rz.uni-karlsruhe.de)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" Modified Sat Jul 24 18:16:02 1993 by Rik Faith (faith@cs.unc.edu)
+.TH sleep 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+sleep \- sleep for a specified number of seconds
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <unistd.h>
+.P
+.BI "unsigned int sleep(unsigned int " "seconds" );
+.fi
+.SH DESCRIPTION
+.BR sleep ()
+causes the calling thread to sleep either until
+the number of real-time seconds specified in
+.I seconds
+have elapsed or until a signal arrives which is not ignored.
+.SH RETURN VALUE
+Zero if the requested time has elapsed,
+or the number of seconds left to sleep,
+if the call was interrupted by a signal handler.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR sleep ()
+T}	Thread safety	MT-Unsafe sig:SIGCHLD/linux
+.TE
+.SH VERSIONS
+On Linux,
+.BR sleep ()
+is implemented via
+.BR nanosleep (2).
+See the
+.BR nanosleep (2)
+man page for a discussion of the clock used.
+.P
+On some systems,
+.BR sleep ()
+may be implemented using
+.BR alarm (2)
+and
+.B SIGALRM
+(POSIX.1 permits this);
+mixing calls to
+.BR alarm (2)
+and
+.BR sleep ()
+is a bad idea.
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001.
+.SH CAVEATS
+Using
+.BR longjmp (3)
+from a signal handler or modifying the handling of
+.B SIGALRM
+while sleeping will cause undefined results.
+.SH SEE ALSO
+.BR sleep (1),
+.BR alarm (2),
+.BR nanosleep (2),
+.BR signal (2),
+.BR signal (7)

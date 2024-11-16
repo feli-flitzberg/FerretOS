@@ -1,0 +1,110 @@
+'\" t
+.\" Copyright (C) 2002 Andries Brouwer <aeb@cwi.nl>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" This replaces an earlier man page written by Walter Harms
+.\" <walter.harms@informatik.uni-oldenburg.de>.
+.\"
+.TH qecvt 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+qecvt, qfcvt, qgcvt \- convert a floating-point number to a string
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdlib.h>
+.P
+.BI "[[deprecated]] char *qecvt(long double " number ", int " ndigits ,
+.BI "                           int *restrict " decpt ", int *restrict " sign );
+.BI "[[deprecated]] char *qfcvt(long double " number ", int " ndigits ,
+.BI "                           int *restrict " decpt ", int *restrict " sign );
+.BI "[[deprecated]] char *qgcvt(long double " number ", int " ndigit ", char *" buf );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR qecvt (),
+.BR qfcvt (),
+.BR qgcvt ():
+.nf
+    Since glibc 2.19:
+        _DEFAULT_SOURCE
+    In glibc up to and including 2.19:
+        _SVID_SOURCE
+.fi
+.\" FIXME . The full FTM picture looks to have been something like the
+.\" following mess:
+.\"    glibc 2.20 onward
+.\"        _DEFAULT_SOURCE
+.\"    glibc 2.18 to glibc 2.19
+.\"        _BSD_SOURCE || _SVID_SOURCE
+.\"    glibc 2.10 to glibc 2.17
+.\"        _SVID_SOURCE || (_XOPEN_SOURCE >= 500 ||
+.\"            (_XOPEN_SOURCE && _XOPEN_SOURCE_EXTENDED) &&
+.\"                ! (_POSIX_C_SOURCE >= 200809L))
+.\"    Before glibc 2.10:
+.\"        _SVID_SOURCE || _XOPEN_SOURCE >= 500 ||
+.\"            (_XOPEN_SOURCE && _XOPEN_SOURCE_EXTENDED)
+.SH DESCRIPTION
+The functions
+.BR qecvt (),
+.BR qfcvt (),
+and
+.BR qgcvt ()
+are identical to
+.BR ecvt (3),
+.BR fcvt (3),
+and
+.BR gcvt (3)
+respectively, except that they use a
+.I "long double"
+argument
+.IR number .
+See
+.BR ecvt (3)
+and
+.BR gcvt (3).
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR qecvt ()
+T}	Thread safety	MT-Unsafe race:qecvt
+T{
+.na
+.nh
+.BR qfcvt ()
+T}	Thread safety	MT-Unsafe race:qfcvt
+T{
+.na
+.nh
+.BR qgcvt ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+None.
+.SH HISTORY
+SVr4, SunOS, GNU.
+.\" Not supported by libc4 and libc5.
+.P
+These functions are obsolete.
+Instead,
+.BR snprintf (3)
+is recommended.
+.SH SEE ALSO
+.BR ecvt (3),
+.BR ecvt_r (3),
+.BR gcvt (3),
+.BR sprintf (3)

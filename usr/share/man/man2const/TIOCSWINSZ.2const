@@ -1,0 +1,58 @@
+.\" Copyright 2002, Walter Harms <walter.harms@informatik.uni-oldenburg.de>
+.\" Copyright 2002, Andries Brouwer <aeb@cwi.nl>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-1.0-or-later
+.\"
+.TH TIOCSWINSZ 2const 2024-06-13 "Linux man-pages 6.9.1"
+.SH NAME
+TIOCGWINSZ,
+TIOCSWINSZ
+\-
+get and set window size
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <asm/termbits.h>" "  /* Definition of " TIOC*WINSZ " constants */"
+.B #include <sys/ioctl.h>
+.P
+.BI "int ioctl(int " fd ", TIOCGWINSZ, struct winsize *" argp );
+.BI "int ioctl(int " fd ", TIOCSWINSZ, const struct winsize *" argp );
+.P
+.B #include <asm/termios.h>
+.P
+.B struct winsize {
+.B "    unsigned short ws_row;"
+.B "    unsigned short ws_col;"
+.BR "    unsigned short ws_xpixel;" "  /* unused */"
+.BR "    unsigned short ws_ypixel;" "  /* unused */"
+.B };
+.fi
+.SH DESCRIPTION
+Window sizes are kept in the kernel, but not used by the kernel
+(except in the case of virtual consoles, where the kernel will
+update the window size when the size of the virtual console changes,
+for example, by loading a new font).
+.TP
+.B TIOCGWINSZ
+Get window size.
+.TP
+.B TIOCSWINSZ
+Set window size.
+.P
+When the window size changes, a
+.B SIGWINCH
+signal is sent to the
+foreground process group.
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error,
+\-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH SEE ALSO
+.BR ioctl (2),
+.BR ioctl_tty (2const)

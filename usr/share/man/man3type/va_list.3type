@@ -1,0 +1,44 @@
+.\" Copyright (c) 2020-2022 by Alejandro Colomar <alx@kernel.org>
+.\" and Copyright (c) 2020 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\"
+.TH va_list 3type 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+va_list \- variable argument list
+.SH LIBRARY
+Standard C library
+.RI ( libc )
+.SH SYNOPSIS
+.nf
+.B #include <stdarg.h>
+.P
+.BR typedef " /* ... */  " va_list;
+.fi
+.SH DESCRIPTION
+Used by functions with a varying number of arguments of varying types.
+The function must declare an object of type
+.I va_list
+which is used by the macros
+.BR va_start (3),
+.BR va_arg (3),
+.BR va_copy (3),
+and
+.BR va_end (3)
+to traverse the list of arguments.
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+C89, POSIX.1-2001.
+.SH NOTES
+The following headers also provide
+.IR va_list :
+.I <stdio.h>
+and
+.IR <wchar.h> .
+.SH SEE ALSO
+.BR va_start (3),
+.BR va_arg (3),
+.BR va_copy (3),
+.BR va_end (3)

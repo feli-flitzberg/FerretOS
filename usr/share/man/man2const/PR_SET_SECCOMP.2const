@@ -1,0 +1,121 @@
+.\" Copyright 2008, 2012, 2013, 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2012, Kees Cook <keescook@chromium.org>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_SET_SECCOMP 2const 2024-06-02 "Linux man-pages 6.9.1"
+.SH NAME
+PR_SET_SECCOMP
+\-
+set the secure computing mode
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.B [[deprecated]]
+.BI "int prctl(PR_SET_SECCOMP, long " mode ", ...);"
+.P
+.B [[deprecated]]
+.B int prctl(PR_SET_SECCOMP, SECCOMP_MODE_STRICT);
+.B [[deprecated]]
+.B int prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER,
+.BI "          struct sock_fprog *" filter );
+.fi
+.SH DESCRIPTION
+Set the secure computing (seccomp) mode for the calling thread,
+to limit the available system calls.
+The more recent
+.BR seccomp (2)
+system call provides a superset of the functionality of
+.BR PR_SET_SECCOMP ,
+and is the preferred interface for new applications.
+.P
+The seccomp mode is selected via
+.IR mode .
+The seccomp constants are defined in
+.IR <linux/seccomp.h> .
+The following values can be specified:
+.TP
+.BR SECCOMP_MODE_STRICT " (since Linux 2.6.23)"
+See the description of
+.B SECCOMP_SET_MODE_STRICT
+in
+.BR seccomp (2).
+.IP
+This operation is available only
+if the kernel is configured with
+.B CONFIG_SECCOMP
+enabled.
+.TP
+.BR SECCOMP_MODE_FILTER " (since Linux 3.5)"
+The allowed system calls are defined by a pointer
+to a Berkeley Packet Filter passed in
+.IR filter .
+It can be designed to filter
+arbitrary system calls and system call arguments.
+See the description of
+.B SECCOMP_SET_MODE_FILTER
+in
+.BR seccomp (2).
+.IP
+This operation is available only
+if the kernel is configured with
+.B CONFIG_SECCOMP_FILTER
+enabled.
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EACCES
+.I mode
+is
+.BR SECCOMP_MODE_FILTER ,
+but the process does not have the
+.B CAP_SYS_ADMIN
+capability or has not set the
+.I no_new_privs
+attribute (see
+.BR PR_SET_NO_NEW_PRIVS (2const)).
+.TP
+.B EFAULT
+.I mode
+is
+.BR SECCOMP_MODE_FILTER ,
+and
+.I filter
+is an invalid address.
+.TP
+.B EINVAL
+.I mode
+is not a valid value.
+.TP
+.B EINVAL
+The kernel was not configured with
+.BR CONFIG_SECCOMP .
+.TP
+.B EINVAL
+.I mode
+is
+.BR SECCOMP_MODE_FILTER ,
+and the kernel was not configured with
+.BR CONFIG_SECCOMP_FILTER .
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 2.6.23.
+.\" See http://thread.gmane.org/gmane.linux.kernel/542632
+.\" [PATCH 0 of 2] seccomp updates
+.\" andrea@cpushare.com
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_GET_SECCOMP (2const),
+.BR seccomp (2)

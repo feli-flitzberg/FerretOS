@@ -1,0 +1,84 @@
+.\" Copyright, Bruno Haible <haible@clisp.cons.org>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" References consulted:
+.\"   GNU glibc-2 source code and manual
+.\"   Dinkumware C library reference http://www.dinkumware.com/
+.\"   OpenGroup's Single UNIX specification http://www.UNIX-systems.org/online.html
+.\"   ISO/IEC 9899:1999
+.\"
+.TH mbstate_t 3type 2024-05-03 "Linux man-pages 6.9.1"
+.SH NAME
+mbstate_t
+\-
+multi-byte-character conversion state
+.SH LIBRARY
+Standard C library
+.RI ( libc )
+.SH SYNOPSIS
+.nf
+.B #include <wchar.h>
+.P
+.BR typedef " /* ... */  " mbstate_t;
+.fi
+.SH DESCRIPTION
+Character conversion between the multibyte representation and the wide
+character representation uses conversion state, of type
+.IR mbstate_t .
+Conversion of a string uses a finite-state machine; when it is interrupted
+after the complete conversion of a number of characters, it may need to
+save a state for processing the remaining characters.
+Such a conversion
+state is needed for the sake of encodings such as ISO/IEC\~2022 and UTF-7.
+.P
+The initial state is the state at the beginning of conversion of a string.
+There are two kinds of state: the one used by multibyte to wide character
+conversion functions, such as
+.BR mbsrtowcs (3),
+and the one used by wide
+character to multibyte conversion functions, such as
+.BR wcsrtombs (3),
+but they both fit in a
+.IR mbstate_t ,
+and they both have the same
+representation for an initial state.
+.P
+For 8-bit encodings, all states are equivalent to the initial state.
+For multibyte encodings like UTF-8, EUC-*, BIG5, or SJIS, the wide character
+to multibyte conversion functions never produce non-initial states, but the
+multibyte to wide-character conversion functions like
+.BR mbrtowc (3)
+do
+produce non-initial states when interrupted in the middle of a character.
+.P
+One possible way to create an
+.I mbstate_t
+in initial state is to set it to zero:
+.P
+.in +4n
+.EX
+mbstate_t state;
+memset(&state, 0, sizeof(state));
+.EE
+.in
+.P
+On Linux, the following works as well, but might generate compiler warnings:
+.P
+.in +4n
+.EX
+mbstate_t state = { 0 };
+.EE
+.in
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+C99, POSIX.1-2001.
+.SH SEE ALSO
+.BR mbrlen (3),
+.BR mbrtowc (3),
+.BR mbsinit (3),
+.BR mbsrtowcs (3),
+.BR wcrtomb (3),
+.BR wcsrtombs (3)

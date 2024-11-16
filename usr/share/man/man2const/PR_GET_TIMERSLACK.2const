@@ -1,0 +1,41 @@
+.\" Copyright 2012, 2013, 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_GET_TIMERSLACK 2const 2024-06-02 "Linux man-pages 6.9.1"
+.SH NAME
+PR_GET_TIMERSLACK
+\-
+get the "current" timer slack value for the calling thread
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.B int prctl(PR_GET_TIMERSLACK);
+.fi
+.SH DESCRIPTION
+Return
+the "current" timer slack value of the calling thread.
+.SH RETURN VALUE
+On success,
+this call
+returns the nonnegative value described above.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH FILES
+.TP
+.IR /proc/\: pid /\:timerslack_ns
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 2.6.28.
+.SH SEE ALSO
+.BR signal (2),
+.BR PR_SET_TIMERSLACK (2const),
+.BR proc_pid_timerslack_ns (5)

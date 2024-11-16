@@ -1,0 +1,38 @@
+.\" Copyright 2014, 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_GET_THP_DISABLE 2const 2024-06-01 "Linux man-pages 6.9.1"
+.SH NAME
+PR_GET_THP_DISABLE
+\-
+get the state of the "THP disable" flag for the calling thread
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.B int prctl(PR_GET_THP_DISABLE, 0L, 0L, 0L, 0L);
+.fi
+.SH DESCRIPTION
+Return the current setting of
+the "THP disable" flag for the calling thread:
+either 1, if the flag is set, or 0, if it is not.
+.SH RETURN VALUE
+On success,
+.BR PR_GET_THP_DISABLE ,
+returns the boolean value described above.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 3.15.
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_SET_THP_DISABLE (2const)

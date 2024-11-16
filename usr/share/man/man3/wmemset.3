@@ -1,0 +1,61 @@
+'\" t
+.\" Copyright (c) Bruno Haible <haible@clisp.cons.org>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" References consulted:
+.\"   GNU glibc-2 source code and manual
+.\"   Dinkumware C library reference http://www.dinkumware.com/
+.\"   OpenGroup's Single UNIX specification http://www.UNIX-systems.org/online.html
+.\"   ISO/IEC 9899:1999
+.\"
+.TH wmemset 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+wmemset \- fill an array of wide-characters with a constant wide character
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <wchar.h>
+.P
+.BI "wchar_t *wmemset(wchar_t " wcs [. n "], wchar_t " wc ", size_t " n );
+.fi
+.SH DESCRIPTION
+The
+.BR wmemset ()
+function is the wide-character equivalent of the
+.BR memset (3)
+function.
+It fills the array of
+.I n
+wide-characters starting at
+.I wcs
+with
+.I n
+copies of the wide character
+.IR wc .
+.SH RETURN VALUE
+.BR wmemset ()
+returns
+.IR wcs .
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR wmemset ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, C99.
+.SH SEE ALSO
+.BR memset (3)

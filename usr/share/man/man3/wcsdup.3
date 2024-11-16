@@ -1,0 +1,83 @@
+'\" t
+.\" Copyright (c) Bruno Haible <haible@clisp.cons.org>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" References consulted:
+.\"   GNU glibc-2 source code and manual
+.\"   Dinkumware C library reference http://www.dinkumware.com/
+.\"   OpenGroup's Single UNIX specification http://www.UNIX-systems.org/online.html
+.\"
+.TH wcsdup 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+wcsdup \- duplicate a wide-character string
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <wchar.h>
+.P
+.BI "wchar_t *wcsdup(const wchar_t *" s );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR wcsdup ():
+.nf
+    Since glibc 2.10:
+        _POSIX_C_SOURCE >= 200809L
+    Before glibc 2.10:
+        _GNU_SOURCE
+.fi
+.SH DESCRIPTION
+The
+.BR wcsdup ()
+function is the wide-character equivalent
+of the
+.BR strdup (3)
+function.
+It allocates and returns a new wide-character string whose initial
+contents is a duplicate of the wide-character string pointed to by
+.IR s .
+.P
+Memory for the new wide-character string is
+obtained with
+.BR malloc (3),
+and should be freed with
+.BR free (3).
+.SH RETURN VALUE
+On success,
+.BR wcsdup ()
+returns a pointer to the new wide-character string.
+On error, it returns NULL, with
+.I errno
+set to indicate the error.
+.SH ERRORS
+.TP
+.B ENOMEM
+Insufficient memory available to allocate duplicate string.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR wcsdup ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+libc5, glibc 2.0.
+.SH SEE ALSO
+.BR strdup (3),
+.BR wcscpy (3)

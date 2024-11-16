@@ -1,0 +1,93 @@
+'\" t
+.\" Copyright (C) 2002 Andries Brouwer (aeb@cwi.nl)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH dirfd 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+dirfd \- get directory stream file descriptor
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <sys/types.h>
+.B #include <dirent.h>
+.P
+.BI "int dirfd(DIR *" dirp );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR dirfd ():
+.nf
+    /* Since glibc 2.10: */ _POSIX_C_SOURCE >= 200809L
+        || /* glibc <= 2.19: */ _BSD_SOURCE || _SVID_SOURCE
+.fi
+.SH DESCRIPTION
+The function
+.BR dirfd ()
+returns the file descriptor associated with the directory stream
+.IR dirp .
+.P
+This file descriptor is the one used internally by the directory stream.
+As a result, it is useful only for functions which do not depend on
+or alter the file position, such as
+.BR fstat (2)
+and
+.BR fchdir (2).
+It will be automatically closed when
+.BR closedir (3)
+is called.
+.SH RETURN VALUE
+On success,
+.BR dirfd ()
+returns a file descriptor (a nonnegative integer).
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+POSIX.1-2008 specifies two errors,
+neither of which is returned by the current
+.\" glibc 2.8
+implementation.
+.TP
+.B EINVAL
+.I dirp
+does not refer to a valid directory stream.
+.TP
+.B ENOTSUP
+The implementation does not support the association of a file
+descriptor with a directory.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR dirfd ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+4.3BSD-Reno (not in 4.2BSD).
+.\" It is present in libc5 (since 5.1.2) and in glibc 2.
+.SH SEE ALSO
+.BR open (2),
+.BR openat (2),
+.BR closedir (3),
+.BR opendir (3),
+.BR readdir (3),
+.BR rewinddir (3),
+.BR scandir (3),
+.BR seekdir (3),
+.BR telldir (3)

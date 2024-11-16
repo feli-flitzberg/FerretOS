@@ -1,0 +1,84 @@
+'\" t
+.\" Copyright (c) 1995 by Jim Van Zandt <jrv@vanzandt.mv.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH getw 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+getw, putw \- input and output of words (ints)
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdio.h>
+.P
+.BI "int getw(FILE *" stream );
+.BI "int putw(int " w ", FILE *" stream );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR getw (),
+.BR putw ():
+.nf
+    Since glibc 2.3.3:
+        _XOPEN_SOURCE && ! (_POSIX_C_SOURCE >= 200112L)
+            || /* glibc >= 2.19: */ _DEFAULT_SOURCE
+            || /* glibc <= 2.19: */ _BSD_SOURCE || _SVID_SOURCE
+    Before glibc 2.3.3:
+        _SVID_SOURCE || _BSD_SOURCE || _XOPEN_SOURCE
+.fi
+.SH DESCRIPTION
+.BR getw ()
+reads a word (that is, an \fIint\fP) from \fIstream\fP.
+It's provided for compatibility with SVr4.
+We recommend you use
+.BR fread (3)
+instead.
+.P
+.BR putw ()
+writes the word \fIw\fP (that is,
+an \fIint\fP) to \fIstream\fP.
+It is provided for compatibility with SVr4, but we recommend you use
+.BR fwrite (3)
+instead.
+.SH RETURN VALUE
+Normally,
+.BR getw ()
+returns the word read, and
+.BR putw ()
+returns 0.
+On error, they return \fBEOF\fP.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR getw (),
+.BR putw ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+None.
+.SH HISTORY
+SVr4, SUSv2.
+.SH BUGS
+The value returned on error is also a legitimate data value.
+.BR ferror (3)
+can be used to distinguish between the two cases.
+.SH SEE ALSO
+.BR ferror (3),
+.BR fread (3),
+.BR fwrite (3),
+.BR getc (3),
+.BR putc (3)

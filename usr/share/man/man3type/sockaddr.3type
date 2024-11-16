@@ -1,0 +1,154 @@
+.\" Copyright (c) 2020-2022 by Alejandro Colomar <alx@kernel.org>
+.\" and Copyright (c) 2020 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\"
+.TH sockaddr 3type 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+sockaddr, sockaddr_storage, sockaddr_in, sockaddr_in6, sockaddr_un, socklen_t,
+in_addr, in6_addr, in_addr_t, in_port_t,
+\- socket address
+.SH LIBRARY
+Standard C library
+.RI ( libc )
+.SH SYNOPSIS
+.EX
+.B #include <sys/socket.h>
+.P
+.B struct sockaddr {
+.BR "    sa_family_t     sa_family;" "      /* Address family */"
+.BR "    char            sa_data[];" "      /* Socket address */"
+.B };
+.P
+.B struct sockaddr_storage {
+.BR "    sa_family_t     ss_family;" "      /* Address family */"
+.B };
+.P
+.BR typedef " /* ... */ " socklen_t;
+.BR typedef " /* ... */ " sa_family_t;
+.P
+.EE
+.SS Internet domain sockets
+.EX
+.B #include <netinet/in.h>
+.P
+.B struct sockaddr_in {
+.BR "    sa_family_t     sin_family;" "     /* " AF_INET " */"
+.BR "    in_port_t       sin_port;" "       /* Port number */"
+.BR "    struct in_addr  sin_addr;" "       /* IPv4 address */"
+.B };
+.P
+.B struct sockaddr_in6 {
+.BR "    sa_family_t     sin6_family;" "    /* " AF_INET6 " */"
+.BR "    in_port_t       sin6_port;" "      /* Port number */"
+.BR "    uint32_t        sin6_flowinfo;" "  /* IPv6 flow info */"
+.BR "    struct in6_addr sin6_addr;" "      /* IPv6 address */"
+.BR "    uint32_t        sin6_scope_id;" "  /* Set of interfaces for a scope */"
+.B };
+.P
+.B struct in_addr {
+.B "    in_addr_t s_addr;"
+.B };
+.P
+.B struct in6_addr {
+.B "    uint8_t   s6_addr[16];"
+.B };
+.P
+.B typedef uint32_t in_addr_t;
+.B typedef uint16_t in_port_t;
+.EE
+.SS UNIX domain sockets
+.EX
+.B #include <sys/un.h>
+.P
+.B struct sockaddr_un {
+.BR "    sa_family_t     sun_family;" "     /* Address family */"
+.BR "    char            sun_path[];" "     /* Socket pathname */"
+.B };
+.EE
+.SH DESCRIPTION
+.TP
+.I sockaddr
+Describes a socket address.
+.TP
+.I sockaddr_storage
+A structure at least as large as any other
+.IR sockaddr_ *
+address structures.
+It's aligned so that a pointer to it can be cast
+as a pointer to other
+.IR sockaddr_ *
+structures and used to access its fields.
+.TP
+.I socklen_t
+Describes the length of a socket address.
+This is an integer type of at least 32 bits.
+.TP
+.I sa_family_t
+Describes a socket's protocol family.
+This is an unsigned integer type.
+.SS Internet domain sockets
+.TP
+.I sockaddr_in
+Describes an IPv4 Internet domain socket address.
+The
+.I sin_port
+and
+.I sin_addr
+members are stored in network byte order.
+.TP
+.I sockaddr_in6
+Describes an IPv6 Internet domain socket address.
+The
+.I sin6_addr.s6_addr
+array is used to contain a 128-bit IPv6 address,
+stored in network byte order.
+.SS UNIX domain sockets
+.TP
+.I sockaddr_un
+Describes a UNIX domain socket address.
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001.
+.P
+.I socklen_t
+was invented by POSIX.
+See also
+.BR accept (2).
+.P
+These structures were invented before modern ISO C strict-aliasing rules.
+If aliasing rules are applied strictly,
+these structures would be extremely difficult to use
+without invoking Undefined Behavior.
+POSIX Issue 8 will fix this by requiring that implementations
+make sure that these structures
+can be safely used as they were designed.
+.SH NOTES
+.I socklen_t
+is also defined in
+.IR <netdb.h> .
+.P
+.I sa_family_t
+is also defined in
+.I <netinet/in.h>
+and
+.IR <sys/un.h> .
+.SH SEE ALSO
+.BR accept (2),
+.BR bind (2),
+.BR connect (2),
+.BR getpeername (2),
+.BR getsockname (2),
+.BR getsockopt (2),
+.BR sendto (2),
+.BR setsockopt (2),
+.BR socket (2),
+.BR socketpair (2),
+.BR getaddrinfo (3),
+.BR gethostbyaddr (3),
+.BR getnameinfo (3),
+.BR htonl (3),
+.BR ipv6 (7),
+.BR socket (7)

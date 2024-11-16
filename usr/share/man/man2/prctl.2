@@ -1,0 +1,271 @@
+.\" Copyright 1998, Andries Brouwer <aeb@cwi.nl>
+.\" Copyright 2002, 2006, 2008, 2012, 2013, 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright, Guillem Jover <guillem@hadrons.org>
+.\" Copyright 2010, Andi Kleen <andi@firstfloor.org>
+.\" Copyright 2012, Cyrill Gorcunov <gorcunov@openvz.org>
+.\" Copyright 2014, Dave Hansen / Intel
+.\" Copyright 2016, Eugene Syromyatnikov <evgsyr@gmail.com>
+.\" Copyright 2018, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+.\" Copyright 2020, Dave Martin <Dave.Martin@arm.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH prctl 2 2024-06-01 "Linux man-pages 6.9.1"
+.SH NAME
+prctl
+\-
+operations on a process or thread
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.BI "int prctl(int " op ", ...);"
+.fi
+.SH DESCRIPTION
+.BR prctl ()
+manipulates various aspects of the behavior
+of the calling thread or process.
+.P
+.BR prctl ()
+is called with a first argument describing what to do,
+and further arguments
+with a significance depending on the first one.
+The first argument can be:
+.\"
+.TP
+.B PR_CAP_AMBIENT
+.TQ
+.B PR_CAPBSET_READ
+.TQ
+.B PR_CAPBSET_DROP
+.TQ
+.B PR_SET_CHILD_SUBREAPER
+.TQ
+.B PR_GET_CHILD_SUBREAPER
+.TQ
+.B PR_SET_DUMPABLE
+.TQ
+.B PR_GET_DUMPABLE
+.TQ
+.B PR_SET_ENDIAN
+.TQ
+.B PR_GET_ENDIAN
+.TQ
+.B PR_SET_FP_MODE
+.TQ
+.B PR_GET_FP_MODE
+.TQ
+.B PR_SET_FPEMU
+.TQ
+.B PR_GET_FPEMU
+.TQ
+.B PR_SET_FPEXC
+.TQ
+.B PR_GET_FPEXC
+.TQ
+.B PR_SET_IO_FLUSHER
+.TQ
+.B PR_GET_IO_FLUSHER
+.TQ
+.B PR_SET_KEEPCAPS
+.TQ
+.B PR_GET_KEEPCAPS
+.TQ
+.B PR_MCE_KILL
+.TQ
+.B PR_MCE_KILL_GET
+.TQ
+.B PR_SET_MM
+.TQ
+.B PR_SET_VMA
+.TQ
+.B PR_MPX_ENABLE_MANAGEMENT
+.TQ
+.B PR_MPX_DISABLE_MANAGEMENT
+.TQ
+.B PR_SET_NAME
+.TQ
+.B PR_GET_NAME
+.TQ
+.B PR_SET_NO_NEW_PRIVS
+.TQ
+.B PR_GET_NO_NEW_PRIVS
+.TQ
+.B PR_PAC_RESET_KEYS
+.TQ
+.B PR_SET_PDEATHSIG
+.TQ
+.B PR_GET_PDEATHSIG
+.TQ
+.B PR_SET_PTRACER
+.TQ
+.B PR_SET_SECCOMP
+.TQ
+.B PR_GET_SECCOMP
+.TQ
+.B PR_SET_SECUREBITS
+.TQ
+.B PR_GET_SECUREBITS
+.TQ
+.B PR_GET_SPECULATION_CTRL
+.TQ
+.B PR_SET_SPECULATION_CTRL
+.TQ
+.B PR_SVE_SET_VL
+.TQ
+.B PR_SVE_GET_VL
+.TQ
+.B PR_SET_SYSCALL_USER_DISPATCH
+.TQ
+.B PR_SET_TAGGED_ADDR_CTRL
+.TQ
+.B PR_GET_TAGGED_ADDR_CTRL
+.TQ
+.B PR_TASK_PERF_EVENTS_DISABLE
+.TQ
+.B PR_TASK_PERF_EVENTS_ENABLE
+.TQ
+.B PR_SET_THP_DISABLE
+.TQ
+.B PR_GET_THP_DISABLE
+.TQ
+.B PR_GET_TID_ADDRESS
+.TQ
+.B PR_SET_TIMERSLACK
+.TQ
+.B PR_GET_TIMERSLACK
+.TQ
+.B PR_SET_TIMING
+.TQ
+.B PR_GET_TIMING
+.TQ
+.B PR_SET_TSC
+.TQ
+.B PR_GET_TSC
+.TQ
+.B PR_SET_UNALIGN
+.TQ
+.B PR_GET_UNALIGN
+.TQ
+.B PR_GET_AUXV
+.TQ
+.B PR_SET_MDWE
+.TQ
+.B PR_GET_MDWE
+.SH RETURN VALUE
+On success,
+a nonnegative value is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+The value of
+.I op
+is not recognized,
+or not supported on this system.
+.TP
+.B EINVAL
+An unused argument is nonzero.
+.SH VERSIONS
+IRIX has a
+.BR prctl ()
+system call (also introduced in Linux 2.1.44
+as irix_prctl on the MIPS architecture),
+with prototype
+.P
+.in +4n
+.EX
+.BI "ptrdiff_t prctl(int " op ", int " arg2 ", int " arg3 );
+.EE
+.in
+.P
+and operations to get the maximum number of processes per user,
+get the maximum number of processors the calling process can use,
+find out whether a specified process is currently blocked,
+get or set the maximum stack size, and so on.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 2.1.57,
+glibc 2.0.6
+.SH CAVEATS
+The prototype of the libc wrapper uses a variadic argument list.
+This makes it necessary to pass the arguments with the right width.
+When passing numeric constants, such as 0,
+use a suffix:
+.BR 0L .
+.P
+Careless use of some
+.BR prctl ()
+operations can confuse the user-space run-time environment,
+so these operations should be used with care.
+.SH SEE ALSO
+.BR signal (2),
+.BR PR_CAP_AMBIENT (2const),
+.BR PR_CAPBSET_READ (2const),
+.BR PR_CAPBSET_DROP (2const),
+.BR PR_SET_CHILD_SUBREAPER (2const),
+.BR PR_GET_CHILD_SUBREAPER (2const),
+.BR PR_SET_DUMPABLE (2const),
+.BR PR_GET_DUMPABLE (2const),
+.BR PR_SET_ENDIAN (2const),
+.BR PR_GET_ENDIAN (2const),
+.BR PR_SET_FP_MODE (2const),
+.BR PR_GET_FP_MODE (2const),
+.BR PR_SET_FPEMU (2const),
+.BR PR_GET_FPEMU (2const),
+.BR PR_SET_FPEXC (2const),
+.BR PR_GET_FPEXC (2const),
+.BR PR_SET_IO_FLUSHER (2const),
+.BR PR_GET_IO_FLUSHER (2const),
+.BR PR_SET_KEEPCAPS (2const),
+.BR PR_GET_KEEPCAPS (2const),
+.BR PR_MCE_KILL (2const),
+.BR PR_MCE_KILL_GET (2const),
+.BR PR_SET_MM (2const),
+.BR PR_SET_VMA (2const),
+.BR PR_MPX_ENABLE_MANAGEMENT (2const),
+.BR PR_MPX_DISABLE_MANAGEMENT (2const),
+.BR PR_SET_NAME (2const),
+.BR PR_GET_NAME (2const),
+.BR PR_SET_NO_NEW_PRIVS (2const),
+.BR PR_GET_NO_NEW_PRIVS (2const),
+.BR PR_PAC_RESET_KEYS (2const),
+.BR PR_SET_PDEATHSIG (2const),
+.BR PR_GET_PDEATHSIG (2const),
+.BR PR_SET_PTRACER (2const),
+.BR PR_SET_SECCOMP (2const),
+.BR PR_GET_SECCOMP (2const),
+.BR PR_SET_SECUREBITS (2const),
+.BR PR_GET_SECUREBITS (2const),
+.BR PR_SET_SPECULATION_CTRL (2const),
+.BR PR_GET_SPECULATION_CTRL (2const),
+.BR PR_SVE_SET_VL (2const),
+.BR PR_SVE_GET_VL (2const),
+.BR PR_SET_SYSCALL_USER_DISPATCH (2const),
+.BR PR_SET_TAGGED_ADDR_CTRL (2const),
+.BR PR_GET_TAGGED_ADDR_CTRL (2const),
+.BR PR_TASK_PERF_EVENTS_DISABLE (2const),
+.BR PR_TASK_PERF_EVENTS_ENABLE (2const),
+.BR PR_SET_THP_DISABLE (2const),
+.BR PR_GET_THP_DISABLE (2const),
+.BR PR_GET_TID_ADDRESS (2const),
+.BR PR_SET_TIMERSLACK (2const),
+.BR PR_GET_TIMERSLACK (2const),
+.BR PR_SET_TIMING (2const),
+.BR PR_GET_TIMING (2const),
+.BR PR_SET_TSC (2const),
+.BR PR_GET_TSC (2const),
+.BR PR_SET_UNALIGN (2const),
+.BR PR_GET_UNALIGN (2const),
+.BR PR_GET_AUXV (2const),
+.BR PR_SET_MDWE (2const),
+.BR PR_GET_MDWE (2const),
+.BR core (5)

@@ -1,0 +1,66 @@
+'\" t
+.\" Copyright 2003 Walter Harms (walter.harms@informatik.uni-oldenburg.de)
+.\"
+.\" SPDX-License-Identifier: GPL-1.0-or-later
+.\"
+.TH putgrent 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+putgrent \- write a group database entry to a file
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#define _GNU_SOURCE" "         /* See feature_test_macros(7) */"
+.B #include <grp.h>
+.P
+.BI "int putgrent(const struct group *restrict " grp \
+", FILE *restrict " stream );
+.fi
+.SH DESCRIPTION
+The
+.BR putgrent ()
+function is the counterpart for
+.BR fgetgrent (3).
+The function writes the content of the provided
+.I struct group
+into the
+.IR stream .
+The list of group members must be NULL-terminated or NULL-initialized.
+.P
+The
+.I struct group
+is defined as follows:
+.P
+.in +4n
+.EX
+struct group {
+    char   *gr_name;      /* group name */
+    char   *gr_passwd;    /* group password */
+    gid_t   gr_gid;       /* group ID */
+    char  **gr_mem;       /* group members */
+};
+.EE
+.in
+.SH RETURN VALUE
+The function returns zero on success, and a nonzero value on error.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR putgrent ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+GNU.
+.SH SEE ALSO
+.BR fgetgrent (3),
+.BR getgrent (3),
+.BR group (5)

@@ -1,0 +1,128 @@
+.\" This manpage is Copyright (C) 2006, Michael Kerrisk
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH futimesat 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+futimesat \- change timestamps of a file relative to a \
+directory file descriptor
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <fcntl.h>" "            /* Definition of " AT_* " constants */"
+.B #include <sys/time.h>
+.P
+.BI "[[deprecated]] int futimesat(int " dirfd ", const char *" pathname ,
+.BI "                             const struct timeval " times [2]);
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR futimesat ():
+.nf
+    _GNU_SOURCE
+.fi
+.SH DESCRIPTION
+This system call is obsolete.
+Use
+.BR utimensat (2)
+instead.
+.P
+The
+.BR futimesat ()
+system call operates in exactly the same way as
+.BR utimes (2),
+except for the differences described in this manual page.
+.P
+If the pathname given in
+.I pathname
+is relative, then it is interpreted relative to the directory
+referred to by the file descriptor
+.I dirfd
+(rather than relative to the current working directory of
+the calling process, as is done by
+.BR utimes (2)
+for a relative pathname).
+.P
+If
+.I pathname
+is relative and
+.I dirfd
+is the special value
+.BR AT_FDCWD ,
+then
+.I pathname
+is interpreted relative to the current working
+directory of the calling process (like
+.BR utimes (2)).
+.P
+If
+.I pathname
+is absolute, then
+.I dirfd
+is ignored.
+(See
+.BR openat (2)
+for an explanation of why the
+.I dirfd
+argument is useful.)
+.SH RETURN VALUE
+On success,
+.BR futimesat ()
+returns a 0.
+On error, \-1 is returned and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+The same errors that occur for
+.BR utimes (2)
+can also occur for
+.BR futimesat ().
+The following additional errors can occur for
+.BR futimesat ():
+.TP
+.B EBADF
+.I pathname
+is relative but
+.I dirfd
+is neither
+.B AT_FDCWD
+nor a valid file descriptor.
+.TP
+.B ENOTDIR
+.I pathname
+is relative and
+.I dirfd
+is a file descriptor referring to a file other than a directory.
+.SH VERSIONS
+.SS glibc
+If
+.I pathname
+is NULL, then the glibc
+.BR futimesat ()
+wrapper function updates the times for the file referred to by
+.IR dirfd .
+.\" The Solaris futimesat() also has this strangeness.
+.SH STANDARDS
+None.
+.SH HISTORY
+Linux 2.6.16,
+glibc 2.4.
+.P
+It was implemented from a specification that was proposed for POSIX.1,
+but that specification was replaced by the one for
+.BR utimensat (2).
+.P
+A similar system call exists on Solaris.
+.SH NOTES
+.SH SEE ALSO
+.BR stat (2),
+.BR utimensat (2),
+.BR utimes (2),
+.BR futimes (3),
+.BR path_resolution (7)

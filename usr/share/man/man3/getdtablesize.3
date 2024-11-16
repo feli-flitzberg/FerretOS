@@ -1,0 +1,88 @@
+'\" t
+.\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" Modified 2002-04-15 by Roger Luethi <rl@hellgate.ch> and aeb
+.\"
+.TH getdtablesize 3 2024-06-16 "Linux man-pages 6.9.1"
+.SH NAME
+getdtablesize \- get file descriptor table size
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <unistd.h>
+.P
+.B int getdtablesize(void);
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR getdtablesize ():
+.nf
+    Since glibc 2.20:
+        _DEFAULT_SOURCE || ! (_POSIX_C_SOURCE >= 200112L)
+    glibc 2.12 to glibc 2.19:
+        _BSD_SOURCE || ! (_POSIX_C_SOURCE >= 200112L)
+    Before glibc 2.12:
+        _BSD_SOURCE || _XOPEN_SOURCE >= 500
+.\"        || _XOPEN_SOURCE && _XOPEN_SOURCE_EXTENDED
+.fi
+.SH DESCRIPTION
+.BR getdtablesize ()
+returns the maximum number of files a process can have open,
+one more than the largest possible value for a file descriptor.
+.SH RETURN VALUE
+The current limit on the number of open files per process.
+.SH ERRORS
+On Linux,
+.BR getdtablesize ()
+can return any of the errors described for
+.BR getrlimit (2);
+see VERSIONS below.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR getdtablesize ()
+T}	Thread safety	MT-Safe
+.TE
+.SH VERSIONS
+The glibc version of
+.BR getdtablesize ()
+calls
+.BR getrlimit (2)
+and returns the current
+.B RLIMIT_NOFILE
+limit, or
+.B OPEN_MAX
+when that fails.
+.\" The libc4 and libc5 versions return
+.\" .B OPEN_MAX
+.\" (set to 256 since Linux 0.98.4).
+.P
+Portable applications should employ
+.I sysconf(_SC_OPEN_MAX)
+instead of this call.
+.SH STANDARDS
+None.
+.SH HISTORY
+SVr4, 4.4BSD
+(first appeared in 4.2BSD).
+.SH SEE ALSO
+.BR close (2),
+.BR dup (2),
+.BR getrlimit (2),
+.BR open (2)

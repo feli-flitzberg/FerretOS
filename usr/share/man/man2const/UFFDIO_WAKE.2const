@@ -1,0 +1,78 @@
+.\" Copyright 2016, IBM Corporation.
+.\" Written by Mike Rapoport <rppt@linux.vnet.ibm.com>
+.\" Copyright 2016, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH UFFDIO_WAKE 2const 2024-06-14 "Linux man-pages 6.9.1"
+.SH NAME
+UFFDIO_WAKE
+\-
+wake up a thread waiting for page-fault resolution
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/userfaultfd.h>" "  /* Definition of " UFFD* " constants */"
+.B #include <sys/ioctl.h>
+.P
+.BI "int ioctl(int " fd ", UFFDIO_WAKE, const struct uffdio_range *" argp );
+.fi
+.SH DESCRIPTION
+Wake up the thread waiting for page-fault resolution on
+a specified memory address range.
+.P
+The
+.B UFFDIO_WAKE
+operation is used in conjunction with
+.B UFFDIO_COPY
+and
+.B UFFDIO_ZEROPAGE
+operations that have the
+.B UFFDIO_COPY_MODE_DONTWAKE
+or
+.B UFFDIO_ZEROPAGE_MODE_DONTWAKE
+bit set in the
+.I mode
+field.
+The userfault monitor can perform several
+.B UFFDIO_COPY
+and
+.B UFFDIO_ZEROPAGE
+operations in a batch and then explicitly wake up the faulting thread using
+.BR UFFDIO_WAKE .
+.SH RETURN VALUE
+This
+.BR ioctl (2)
+operation returns 0 on success.
+On error, \-1 is returned and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+The
+.I start
+or the
+.I len
+field of the
+.I ufdio_range
+structure was not a multiple of the system page size; or
+.I len
+was zero; or the specified range was otherwise invalid.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 4.3.
+.SH EXAMPLES
+See
+.BR userfaultfd (2).
+.SH SEE ALSO
+.BR ioctl (2),
+.BR ioctl_userfaultfd (2),
+.BR UFFDIO_REGISTER (2const),
+.BR userfaultfd (2)
+.P
+.I linux.git/\:Documentation/\:admin\-guide/\:mm/\:userfaultfd.rst

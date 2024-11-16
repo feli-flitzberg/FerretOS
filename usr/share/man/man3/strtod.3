@@ -1,0 +1,207 @@
+'\" t
+.\" Copyright (c) 1990, 1991 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" This code is derived from software contributed to Berkeley by
+.\" the American National Standards Committee X3, on Information
+.\" Processing Systems.
+.\"
+.\" SPDX-License-Identifier: BSD-4-Clause-UC
+.\"
+.\"     @(#)strtod.3	5.3 (Berkeley) 6/29/91
+.\"
+.\" Modified Sun Aug 21 17:16:22 1994 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Sat May 04 19:34:31 MET DST 1996 by Michael Haardt
+.\"   (michael@cantor.informatik.rwth-aachen.de)
+.\" Added strof, strtold, aeb, 2001-06-07
+.\"
+.TH strtod 3 2024-06-16 "Linux man-pages 6.9.1"
+.SH NAME
+strtod, strtof, strtold \- convert ASCII string to floating-point number
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdlib.h>
+.P
+.BI "double strtod(const char *restrict " nptr ,
+.BI "              char **_Nullable restrict " endptr );
+.BI "float strtof(const char *restrict " nptr ,
+.BI "              char **_Nullable restrict " endptr );
+.BI "long double strtold(const char *restrict " nptr ,
+.BI "              char **_Nullable restrict " endptr );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR strtof (),
+.BR strtold ():
+.nf
+    _ISOC99_SOURCE || _POSIX_C_SOURCE >= 200112L
+.fi
+.SH DESCRIPTION
+The
+.BR strtod (),
+.BR strtof (),
+and
+.BR strtold ()
+functions convert the initial portion of the string pointed to by
+.I nptr
+to
+.IR double ,
+.IR float ,
+and
+.I long double
+representation, respectively.
+.P
+The expected form of the (initial portion of the) string is
+optional leading white space as recognized by
+.BR isspace (3),
+an optional plus (\[aq]+\[aq]) or minus sign (\[aq]\-\[aq]) and then either
+(i) a decimal number, or (ii) a hexadecimal number,
+or (iii) an infinity, or (iv) a NAN (not-a-number).
+.P
+A
+.I "decimal number"
+consists of a nonempty sequence of decimal digits
+possibly containing a radix character (decimal point, locale-dependent,
+usually \[aq].\[aq]), optionally followed by a decimal exponent.
+A decimal exponent consists of an \[aq]E\[aq] or \[aq]e\[aq], followed by an
+optional plus or minus sign, followed by a nonempty sequence of
+decimal digits, and indicates multiplication by a power of 10.
+.P
+A
+.I "hexadecimal number"
+consists of a "0x" or "0X" followed by a nonempty sequence of
+hexadecimal digits possibly containing a radix character,
+optionally followed by a binary exponent.
+A binary exponent
+consists of a \[aq]P\[aq] or \[aq]p\[aq], followed by an optional
+plus or minus sign, followed by a nonempty sequence of
+decimal digits, and indicates multiplication by a power of 2.
+At least one of radix character and binary exponent must be present.
+.P
+An
+.I infinity
+is either "INF" or "INFINITY", disregarding case.
+.P
+A
+.I NAN
+is "NAN" (disregarding case) optionally followed by a string,
+.IR (n-char-sequence) ,
+where
+.I n-char-sequence
+specifies in an implementation-dependent
+way the type of NAN (see VERSIONS).
+.SH RETURN VALUE
+These functions return the converted value, if any.
+.P
+If
+.I endptr
+is not NULL,
+a pointer to the character after the last character used in the conversion
+is stored in the location referenced by
+.IR endptr .
+.P
+If no conversion is performed, zero is returned and (unless
+.I endptr
+is null) the value of
+.I nptr
+is stored in the location referenced by
+.IR endptr .
+.P
+If the correct value would cause overflow, plus or minus
+.BR HUGE_VAL ,
+.BR HUGE_VALF ,
+or
+.B HUGE_VALL
+is returned (according to the return type and sign of the value),
+and
+.B ERANGE
+is stored in
+.IR errno .
+.P
+If the correct value would cause underflow,
+a value with magnitude no larger than
+.BR DBL_MIN ,
+.BR FLT_MIN ,
+or
+.B LDBL_MIN
+is returned and
+.B ERANGE
+is stored in
+.IR errno .
+.SH ERRORS
+.TP
+.B ERANGE
+Overflow or underflow occurred.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR strtod (),
+.BR strtof (),
+.BR strtold ()
+T}	Thread safety	MT-Safe locale
+.TE
+.SH VERSIONS
+In the glibc implementation, the
+.I n-char-sequence
+that optionally follows "NAN"
+is interpreted as an integer number
+(with an optional '0' or '0x' prefix to select base 8 or 16)
+that is to be placed in the
+mantissa component of the returned value.
+.\" From glibc 2.8's stdlib/strtod_l.c:
+.\"     We expect it to be a number which is put in the
+.\"     mantissa of the number.
+.\" It looks as though at least FreeBSD (according to the manual) does
+.\" something similar.
+.\" C11 says: "An implementation may use the n-char sequence to determine
+.\"	extra information to be represented in the NaN's significant."
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+.TP
+.BR strtod ()
+C89, POSIX.1-2001.
+.TP
+.BR strtof ()
+.TQ
+.BR strtold ()
+C99, POSIX.1-2001.
+.SH CAVEATS
+Since
+0 can legitimately be returned
+on both success and failure, the calling program should set
+.I errno
+to 0 before the call,
+and then determine if an error occurred by checking whether
+.I errno
+has a nonzero value after the call.
+.SH EXAMPLES
+See the example on the
+.BR strtol (3)
+manual page;
+the use of the functions described in this manual page is similar.
+.SH SEE ALSO
+.BR atof (3),
+.BR atoi (3),
+.BR atol (3),
+.BR nan (3),
+.BR nanf (3),
+.BR nanl (3),
+.BR strfromd (3),
+.BR strtol (3),
+.BR strtoul (3)

@@ -1,0 +1,34 @@
+.\" Copyright (C) 1994, 1995, Daniel Quinlan <quinlan@yggdrasil.com>
+.\" Copyright (C) 2002-2008, 2017, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright (C) , Andries Brouwer <aeb@cwi.nl>
+.\" Copyright (C) 2023, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-3.0-or-later
+.\"
+.TH proc_sys_net 5 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+/proc/sys/net/ \- networking
+.SH DESCRIPTION
+.TP
+.I /proc/sys/net/
+This directory contains networking stuff.
+Explanations for some of the files under this directory can be found in
+.BR tcp (7)
+and
+.BR ip (7).
+.TP
+.I /proc/sys/net/core/bpf_jit_enable
+See
+.BR bpf (2).
+.TP
+.I /proc/sys/net/core/somaxconn
+This file defines a ceiling value for the
+.I backlog
+argument of
+.BR listen (2);
+see the
+.BR listen (2)
+manual page for details.
+.SH SEE ALSO
+.BR proc (5),
+.BR proc_net (5)

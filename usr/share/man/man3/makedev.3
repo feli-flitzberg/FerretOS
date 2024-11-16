@@ -1,0 +1,92 @@
+'\" t
+.\" Copyright (c) 2008 Linux Foundation, written by Michael Kerrisk
+.\"     <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH makedev 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+makedev, major, minor \- manage a device number
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <sys/sysmacros.h>
+.P
+.BI "dev_t makedev(unsigned int " maj ", unsigned int " min );
+.P
+.BI "unsigned int major(dev_t " dev );
+.BI "unsigned int minor(dev_t " dev );
+.fi
+.SH DESCRIPTION
+A device ID consists of two parts:
+a major ID, identifying the class of the device,
+and a minor ID, identifying a specific instance of a device in that class.
+A device ID is represented using the type
+.IR dev_t .
+.P
+Given major and minor device IDs,
+.BR makedev ()
+combines these to produce a device ID, returned as the function result.
+This device ID can be given to
+.BR mknod (2),
+for example.
+.P
+The
+.BR major ()
+and
+.BR minor ()
+functions perform the converse task: given a device ID,
+they return, respectively, the major and minor components.
+These macros can be useful to, for example,
+decompose the device IDs in the structure returned by
+.BR stat (2).
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR makedev (),
+.BR major (),
+.BR minor ()
+T}	Thread safety	MT-Safe
+.TE
+.SH VERSIONS
+The BSDs expose the definitions for these macros via
+.IR <sys/types.h> .
+.SH STANDARDS
+None.
+.SH HISTORY
+BSD, HP-UX, Solaris, AIX, Irix.
+.\" The header location is inconsistent:
+.\" Could be sys/mkdev.h, sys/sysmacros.h, or sys/types.h.
+.P
+These interfaces are defined as macros.
+Since glibc 2.3.3,
+they have been aliases for three GNU-specific functions:
+.BR gnu_dev_makedev (),
+.BR gnu_dev_major (),
+and
+.BR gnu_dev_minor ().
+The latter names are exported, but the traditional names are more portable.
+.P
+Depending on the version,
+glibc also exposes definitions for these macros from
+.I <sys/types.h>
+if suitable feature test macros are defined.
+However, this behavior was deprecated in glibc 2.25,
+.\" glibc commit dbab6577c6684c62bd2521c1c29dc25c3cac966f
+and since glibc 2.28,
+.\" glibc commit e16deca62e16f645213dffd4ecd1153c37765f17
+.I <sys/types.h>
+no longer provides these definitions.
+.SH SEE ALSO
+.BR mknod (2),
+.BR stat (2)

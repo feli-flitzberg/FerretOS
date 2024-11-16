@@ -1,0 +1,127 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\"
+.\" Modified Sat Jul 24 19:37:37 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Mon May 27 22:40:48 1996 by Martin Schulze (joey@linux.de)
+.\"
+.TH fgetpwent 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+fgetpwent \- get password file entry
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdio.h>
+.B #include <sys/types.h>
+.B #include <pwd.h>
+.P
+.BI "struct passwd *fgetpwent(FILE *" stream );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR fgetpwent ():
+.nf
+    Since glibc 2.19:
+        _DEFAULT_SOURCE
+    glibc 2.19 and earlier:
+        _SVID_SOURCE
+.fi
+.SH DESCRIPTION
+The
+.BR fgetpwent ()
+function returns a pointer to a structure containing
+the broken out fields of a line in the file \fIstream\fP.
+The first time it is called it returns the first entry;
+thereafter, it returns successive entries.
+The file referred to by
+.I stream
+must have the same format as
+.I /etc/passwd
+(see
+.BR passwd (5)).
+.P
+The \fIpasswd\fP structure is defined in \fI<pwd.h>\fP as follows:
+.P
+.in +4n
+.EX
+struct passwd {
+    char   *pw_name;       /* username */
+    char   *pw_passwd;     /* user password */
+    uid_t   pw_uid;        /* user ID */
+    gid_t   pw_gid;        /* group ID */
+    char   *pw_gecos;      /* real name */
+    char   *pw_dir;        /* home directory */
+    char   *pw_shell;      /* shell program */
+};
+.EE
+.in
+.SH RETURN VALUE
+The
+.BR fgetpwent ()
+function returns a pointer to a
+.I passwd
+structure, or NULL if
+there are no more entries or an error occurs.
+In the event of an error,
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B ENOMEM
+Insufficient memory to allocate
+.I passwd
+structure.
+.SH FILES
+.TP
+.I /etc/passwd
+password database file
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR fgetpwent ()
+T}	Thread safety	MT-Unsafe race:fgetpwent
+.TE
+.\" FIXME: The marking is different from that in the glibc manual,
+.\" which has:
+.\"
+.\"    fgetpwent: MT-Unsafe race:fpwent
+.\"
+.\" We think race:fpwent in glibc maybe hard for users to understand,
+.\" and have sent a patch to the GNU libc community for changing it to
+.\" race:fgetpwent, however, something about the copyright impeded the
+.\" progress.
+.SH STANDARDS
+None.
+.SH HISTORY
+SVr4.
+.SH SEE ALSO
+.BR endpwent (3),
+.BR fgetpwent_r (3),
+.BR fopen (3),
+.BR getpw (3),
+.BR getpwent (3),
+.BR getpwnam (3),
+.BR getpwuid (3),
+.BR putpwent (3),
+.BR setpwent (3),
+.BR passwd (5)

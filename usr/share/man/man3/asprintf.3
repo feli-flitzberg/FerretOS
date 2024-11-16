@@ -1,0 +1,70 @@
+'\" t
+.\" Copyright (C) 2001 Andries Brouwer <aeb@cwi.nl>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" Text fragments inspired by Martin Schulze <joey@infodrom.org>.
+.\"
+.TH asprintf 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+asprintf, vasprintf \- print to allocated string
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#define _GNU_SOURCE" "         /* See feature_test_macros(7) */"
+.B #include <stdio.h>
+.P
+.BI "int asprintf(char **restrict " strp ", const char *restrict " fmt ", ...);"
+.BI "int vasprintf(char **restrict " strp ", const char *restrict " fmt ,
+.BI "              va_list " ap );
+.fi
+.SH DESCRIPTION
+The functions
+.BR asprintf ()
+and
+.BR vasprintf ()
+are analogs of
+.BR sprintf (3)
+and
+.BR vsprintf (3),
+except that they allocate a string large enough to hold the output
+including the terminating null byte (\[aq]\[rs]0\[aq]),
+and return a pointer to it via the first argument.
+This pointer should be passed to
+.BR free (3)
+to release the allocated storage when it is no longer needed.
+.SH RETURN VALUE
+When successful, these functions return the number of bytes printed,
+just like
+.BR sprintf (3).
+If memory allocation wasn't possible, or some other error occurs,
+these functions will return \-1, and the contents of
+.I strp
+are undefined.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR asprintf (),
+.BR vasprintf ()
+T}	Thread safety	MT-Safe locale
+.TE
+.SH VERSIONS
+The FreeBSD implementation sets
+.I strp
+to NULL on error.
+.SH STANDARDS
+GNU, BSD.
+.SH SEE ALSO
+.BR free (3),
+.BR malloc (3),
+.BR printf (3)

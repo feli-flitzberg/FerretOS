@@ -1,0 +1,87 @@
+'\" t
+.\"  Copyright 2002 walter harms (walter.harms@informatik.uni-oldenburg.de)
+.\"
+.\" SPDX-License-Identifier: GPL-1.0-or-later
+.\"  adapted glibc info page
+.\"
+.\"  polished a little, aeb
+.TH addseverity 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+addseverity \- introduce new severity classes
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.P
+.B #include <fmtmsg.h>
+.P
+.BI "int addseverity(int " severity ", const char *" s );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR addseverity ():
+.nf
+    Since glibc 2.19:
+        _DEFAULT_SOURCE
+    glibc 2.19 and earlier:
+        _SVID_SOURCE
+.fi
+.SH DESCRIPTION
+This function allows the introduction of new severity classes
+which can be addressed by the
+.I severity
+argument of the
+.BR fmtmsg (3)
+function.
+By default, that function knows only how to
+print messages for severity 0-4 (with strings (none), HALT,
+ERROR, WARNING, INFO).
+This call attaches the given string
+.I s
+to the given value
+.IR severity .
+If
+.I s
+is NULL, the severity class with the numeric value
+.I severity
+is removed.
+It is not possible to overwrite or remove one of the default
+severity classes.
+The severity value must be nonnegative.
+.SH RETURN VALUE
+Upon success, the value
+.B MM_OK
+is returned.
+Upon error, the return value is
+.BR MM_NOTOK .
+Possible errors include: out of memory, attempt to remove a
+nonexistent or default severity class.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR addseverity ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+GNU.
+.SH HISTORY
+glibc 2.1.
+System V.
+.SH NOTES
+New severity classes can also be added by setting the environment variable
+.BR SEV_LEVEL .
+.SH SEE ALSO
+.BR fmtmsg (3)

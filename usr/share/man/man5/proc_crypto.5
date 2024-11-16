@@ -1,0 +1,26 @@
+.\" Copyright (C) 1994, 1995, Daniel Quinlan <quinlan@yggdrasil.com>
+.\" Copyright (C) 2002-2008, 2017, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright (C) 2023, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-3.0-or-later
+.\"
+.TH proc_crypto 5 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+/proc/crypto \- ciphers provided by kernel crypto API
+.SH DESCRIPTION
+.TP
+.I /proc/crypto
+A list of the ciphers provided by the kernel crypto API.
+For details, see the kernel
+.I "Linux Kernel Crypto API"
+documentation available under the kernel source directory
+.I Documentation/crypto/
+.\" commit 3b72c814a8e8cd638e1ba0da4dfce501e9dff5af
+(or
+.I Documentation/DocBook
+before Linux 4.10;
+the documentation can be built using a command such as
+.I make htmldocs
+in the root directory of the kernel source tree).
+.SH SEE ALSO
+.BR proc (5)

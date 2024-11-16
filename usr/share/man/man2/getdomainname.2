@@ -1,0 +1,122 @@
+.\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" Modified 1997-08-25 by Nicolás Lichtmaier <nick@debian.org>
+.\" Modified 2004-06-17 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Modified 2008-11-27 by mtk
+.\"
+.TH getdomainname 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+getdomainname, setdomainname \- get/set NIS domain name
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <unistd.h>
+.P
+.BI "int getdomainname(char *" name ", size_t " len );
+.BI "int setdomainname(const char *" name ", size_t " len );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR getdomainname (),
+.BR setdomainname ():
+.nf
+    Since glibc 2.21:
+.\"		commit 266865c0e7b79d4196e2cc393693463f03c90bd8
+        _DEFAULT_SOURCE
+    In glibc 2.19 and 2.20:
+        _DEFAULT_SOURCE || (_XOPEN_SOURCE && _XOPEN_SOURCE < 500)
+    Up to and including glibc 2.19:
+        _BSD_SOURCE || (_XOPEN_SOURCE && _XOPEN_SOURCE < 500)
+.fi
+.SH DESCRIPTION
+These functions are used to access or to change the NIS domain name of the
+host system.
+More precisely, they operate on the NIS domain name associated with the calling
+process's UTS namespace.
+.P
+.BR setdomainname ()
+sets the domain name to the value given in the character array
+.IR name .
+The
+.I len
+argument specifies the number of bytes in
+.IR name .
+(Thus,
+.I name
+does not require a terminating null byte.)
+.P
+.BR getdomainname ()
+returns the null-terminated domain name in the character array
+.IR name ,
+which has a length of
+.I len
+bytes.
+If the null-terminated domain name requires more than \fIlen\fP bytes,
+.BR getdomainname ()
+returns the first \fIlen\fP bytes (glibc) or gives an error (libc).
+.SH RETURN VALUE
+On success, zero is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.BR setdomainname ()
+can fail with the following errors:
+.TP
+.B EFAULT
+.I name
+pointed outside of user address space.
+.TP
+.B EINVAL
+.I len
+was negative or too large.
+.TP
+.B EPERM
+The caller did not have the
+.B CAP_SYS_ADMIN
+capability in the user namespace associated with its UTS namespace (see
+.BR namespaces (7)).
+.P
+.BR getdomainname ()
+can fail with the following errors:
+.TP
+.B EINVAL
+For
+.BR getdomainname ()
+under libc:
+.I name
+is NULL or
+.I name
+is longer than
+.I len
+bytes.
+.SH VERSIONS
+On most Linux architectures (including x86),
+there is no
+.BR getdomainname ()
+system call; instead, glibc implements
+.BR getdomainname ()
+as a library function that returns a copy of the
+.I domainname
+field returned from a call to
+.BR uname (2).
+.SH STANDARDS
+None.
+.\" But they appear on most systems...
+.SH HISTORY
+Since Linux 1.0, the limit on the length of a domain name,
+including the terminating null byte, is 64 bytes.
+In older kernels, it was 8 bytes.
+.SH SEE ALSO
+.BR gethostname (2),
+.BR sethostname (2),
+.BR uname (2),
+.BR uts_namespaces (7)

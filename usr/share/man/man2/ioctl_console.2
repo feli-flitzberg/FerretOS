@@ -1,0 +1,174 @@
+.\" Copyright 1995, Jim Van Zandt <jrv@vanzandt.mv.com> and aeb
+.\" Copyright 1995, <faith@cs.unc.edu>
+.\" Copyright 1995, <jrv@vanzandt.mv.com>
+.\" Copyright 1995, "H. Peter Anvin" <hpa@storm.net>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.TH ioctl_console 2 2024-06-14 "Linux man-pages 6.9.1"
+.SH NAME
+ioctl_console \- ioctls for console terminal and virtual consoles
+.SH SYNOPSIS
+.nf
+.B #include <sys/ioctl.h>
+.P
+.BI "int ioctl(int " fd ", unsigned long " op ", ...);"
+.fi
+.SH DESCRIPTION
+The following Linux-specific
+.BR ioctl (2)
+operations are supported for console terminals and virtual consoles.
+.TP
+.BR KDGETLED (2const)
+.TQ
+.BR KDSETLED (2const)
+.TQ
+.BR KDGKBLED (2const)
+.TQ
+.BR KDSKBLED (2const)
+.TQ
+.BR KDGKBTYPE (2const)
+.TQ
+.BR KDADDIO (2const)
+.TQ
+.BR KDDELIO (2const)
+.TQ
+.BR KDENABIO (2const)
+.TQ
+.BR KDDISABIO (2const)
+.TQ
+.BR KDSETMODE (2const)
+.TQ
+.BR KDGETMODE (2const)
+.TQ
+.BR KDMKTONE (2const)
+.TQ
+.BR KIOCSOUND (2const)
+.TQ
+.BR GIO_CMAP (2const)
+.TQ
+.BR PIO_CMAP (2const)
+.TQ
+.BR GIO_FONT (2const)
+.TQ
+.BR GIO_FONTX (2const)
+.TQ
+.BR PIO_FONT (2const)
+.TQ
+.BR PIO_FONTX (2const)
+.TQ
+.BR PIO_FONTRESET (2const)
+.TQ
+.BR GIO_SCRNMAP (2const)
+.TQ
+.BR GIO_UNISCRNMAP (2const)
+.TQ
+.BR PIO_SCRNMAP (2const)
+.TQ
+.BR PIO_UNISCRNMAP (2const)
+.TQ
+.BR GIO_UNIMAP (2const)
+.TQ
+.BR PIO_UNIMAP (2const)
+.TQ
+.BR PIO_UNIMAPCLR (2const)
+.TQ
+.BR KDGKBMODE (2const)
+.TQ
+.BR KDSKBMODE (2const)
+.TQ
+.BR KDGKBMETA (2const)
+.TQ
+.BR KDSKBMETA (2const)
+.TQ
+.BR KDGKBENT (2const)
+.TQ
+.BR KDSKBENT (2const)
+.TQ
+.BR KDGKBSENT (2const)
+.TQ
+.BR KDSKBSENT (2const)
+.TQ
+.BR KDGKBDIACR (2const)
+.TQ
+.BR KDGETKEYCODE (2const)
+.TQ
+.BR KDSETKEYCODE (2const)
+.TQ
+.BR KDSIGACCEPT (2const)
+See
+.BR ioctl_kd (2).
+.TP
+.BR TIOCLINUX (2const)
+.TP
+.BR VT_OPENQRY (2const)
+.TQ
+.BR VT_GETMODE (2const)
+.TQ
+.BR VT_SETMODE (2const)
+.TQ
+.BR VT_GETSTATE (2const)
+.TQ
+.BR VT_RELDISP (2const)
+.TQ
+.BR VT_ACTIVATE (2const)
+.TQ
+.BR VT_WAITACTIVE (2const)
+.TQ
+.BR VT_DISALLOCATE (2const)
+.TQ
+.BR VT_RESIZE (2const)
+.TQ
+.BR VT_RESIZEX (2const)
+See
+.BR ioctl_vt (2).
+.SH RETURN VALUE
+On success, 0 is returned (except where indicated).
+On failure, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH STANDARDS
+Linux.
+.SH CAVEATS
+Do not regard this man page as documentation of the Linux console ioctls.
+This is provided for the curious only, as an alternative to reading the
+source.
+Ioctl's are undocumented Linux internals, liable to be changed
+without warning.
+(And indeed, this page more or less describes the
+situation as of kernel version 1.1.94;
+there are many minor and not-so-minor
+differences with earlier versions.)
+.P
+Very often, ioctls are introduced for communication between the
+kernel and one particular well-known program (fdisk, hdparm, setserial,
+tunelp, loadkeys, selection, setfont, etc.), and their behavior will be
+changed when required by this particular program.
+.SH SEE ALSO
+.BR ioctl (2),
+.BR TIOCLINUX (2const),
+.BR ioctl_kd (2),
+.BR ioctl_vt (2),
+.BR dumpkeys (1),
+.BR kbd_mode (1),
+.BR loadkeys (1),
+.BR mknod (1),
+.BR setleds (1),
+.BR setmetamode (1),
+.BR execve (2),
+.BR fcntl (2),
+.BR ioctl_tty (2),
+.BR ioperm (2),
+.BR termios (3),
+.BR console_codes (4),
+.BR mt (4),
+.BR sd (4),
+.BR tty (4),
+.BR ttyS (4),
+.BR vcs (4),
+.BR vcsa (4),
+.BR charsets (7),
+.BR mapscrn (8),
+.BR resizecons (8),
+.BR setfont (8)

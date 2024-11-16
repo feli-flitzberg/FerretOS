@@ -1,0 +1,58 @@
+'\" t
+.\" Copyright (c) 2003 Andries Brouwer (aeb@cwi.nl)
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.TH wcstoimax 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+wcstoimax, wcstoumax \- convert wide-character string to integer
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stddef.h>
+.B #include <inttypes.h>
+.P
+.BI "intmax_t wcstoimax(const wchar_t *restrict " nptr ,
+.BI "                   wchar_t **restrict " endptr ", int " base );
+.BI "uintmax_t wcstoumax(const wchar_t *restrict " nptr ,
+.BI "                   wchar_t **restrict " endptr ", int " base );
+.fi
+.SH DESCRIPTION
+These functions are just like
+.BR wcstol (3)
+and
+.BR wcstoul (3),
+except that they return a value of type
+.I intmax_t
+and
+.IR uintmax_t ,
+respectively.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR wcstoimax (),
+.BR wcstoumax ()
+T}	Thread safety	MT-Safe locale
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, C99.
+.SH SEE ALSO
+.BR imaxabs (3),
+.BR imaxdiv (3),
+.BR strtoimax (3),
+.BR strtoumax (3),
+.\" FIXME . the pages referred to by the following xrefs are not yet written
+.BR wcstol (3),
+.BR wcstoul (3)

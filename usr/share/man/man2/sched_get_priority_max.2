@@ -1,0 +1,112 @@
+.\" Copyright (C) Tom Bjorkholm & Markus Kuhn, 1996
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" 1996-04-01 Tom Bjorkholm <tomb@mydata.se>
+.\"            First version written
+.\" 1996-04-10 Markus Kuhn <mskuhn@cip.informatik.uni-erlangen.de>
+.\"            revision
+.\"
+.TH sched_get_priority_max 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+sched_get_priority_max, sched_get_priority_min  \- get static priority range
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <sched.h>
+.P
+.BI "int sched_get_priority_max(int " policy );
+.BI "int sched_get_priority_min(int " policy );
+.fi
+.SH DESCRIPTION
+.BR sched_get_priority_max ()
+returns the maximum priority value that can be used with the
+scheduling algorithm identified by
+.IR policy .
+.BR sched_get_priority_min ()
+returns the minimum priority value that can be used with the
+scheduling algorithm identified by
+.IR policy .
+Supported
+.I policy
+values are
+.BR SCHED_FIFO ,
+.BR SCHED_RR ,
+.BR SCHED_OTHER ,
+.BR SCHED_BATCH ,
+.BR SCHED_IDLE ,
+and
+.BR SCHED_DEADLINE .
+Further details about these policies can be found in
+.BR sched (7).
+.P
+Processes with numerically higher priority values are scheduled before
+processes with numerically lower priority values.
+Thus, the value
+returned by
+.BR sched_get_priority_max ()
+will be greater than the
+value returned by
+.BR sched_get_priority_min ().
+.P
+Linux allows the static priority range 1 to 99 for the
+.B SCHED_FIFO
+and
+.B SCHED_RR
+policies, and the priority 0 for the remaining policies.
+Scheduling priority ranges for the various policies
+are not alterable.
+.P
+The range of scheduling priorities may vary on other POSIX systems,
+thus it is a good idea for portable applications to use a virtual
+priority range and map it to the interval given by
+.BR sched_get_priority_max ()
+and
+.BR sched_get_priority_min ()
+POSIX.1 requires
+.\" POSIX.1-2001, POSIX.1-2008 (XBD 2.8.4)
+a spread of at least 32 between the maximum and the minimum values for
+.B SCHED_FIFO
+and
+.BR SCHED_RR .
+.P
+POSIX systems on which
+.BR sched_get_priority_max ()
+and
+.BR sched_get_priority_min ()
+are available define
+.B _POSIX_PRIORITY_SCHEDULING
+in
+.IR <unistd.h> .
+.SH RETURN VALUE
+On success,
+.BR sched_get_priority_max ()
+and
+.BR sched_get_priority_min ()
+return the maximum/minimum priority value for the named scheduling
+policy.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+The argument
+.I policy
+does not identify a defined scheduling policy.
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001.
+.SH SEE ALSO
+.ad l
+.nh
+.BR sched_getaffinity (2),
+.BR sched_getparam (2),
+.BR sched_getscheduler (2),
+.BR sched_setaffinity (2),
+.BR sched_setparam (2),
+.BR sched_setscheduler (2),
+.BR sched (7)

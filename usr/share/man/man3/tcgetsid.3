@@ -1,0 +1,73 @@
+'\" t
+.\" Copyright (C) 2002 Andries Brouwer <aeb@cwi.nl>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH tcgetsid 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+tcgetsid \- get session ID
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#define _XOPEN_SOURCE 500" "        /* See feature_test_macros(7) */"
+.B "#include <termios.h>"
+.P
+.BI "pid_t tcgetsid(int " fd );
+.fi
+.SH DESCRIPTION
+The function
+.BR tcgetsid ()
+returns the session ID of the current session that has the
+terminal associated to
+.I fd
+as controlling terminal.
+This terminal must be the controlling terminal of the calling process.
+.SH RETURN VALUE
+When
+.I fd
+refers to the controlling terminal of our session,
+the function
+.BR tcgetsid ()
+will return the session ID of this session.
+Otherwise, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EBADF
+.I fd
+is not a valid file descriptor.
+.TP
+.B ENOTTY
+The calling process does not have a controlling terminal, or
+it has one but it is not described by
+.IR fd .
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR tcgetsid ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+glibc 2.1.
+POSIX.1-2001.
+.P
+This function is implemented via the
+.B TIOCGSID
+.BR ioctl (2),
+present
+since Linux 2.1.71.
+.SH SEE ALSO
+.BR getsid (2)

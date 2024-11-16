@@ -1,0 +1,159 @@
+'\" t
+.\" Copyright (c) 2003 Andries Brouwer (aeb@cwi.nl)
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.TH aio_read 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+aio_read \- asynchronous read
+.SH LIBRARY
+Real-time library
+.RI ( librt ", " \-lrt )
+.SH SYNOPSIS
+.nf
+.B "#include <aio.h>"
+.P
+.BI "int aio_read(struct aiocb *" aiocbp );
+.fi
+.SH DESCRIPTION
+The
+.BR aio_read ()
+function queues the I/O request described by the buffer pointed to by
+.IR aiocbp .
+This function is the asynchronous analog of
+.BR read (2).
+The arguments of the call
+.P
+.in +4n
+.EX
+read(fd, buf, count)
+.EE
+.in
+.P
+correspond (in order) to the fields
+.IR aio_fildes ,
+.IR aio_buf ,
+and
+.I aio_nbytes
+of the structure pointed to by
+.IR aiocbp .
+(See
+.BR aio (7)
+for a description of the
+.I aiocb
+structure.)
+.P
+The data is read starting at the absolute position
+.IR aiocbp\->aio_offset ,
+regardless of the file offset.
+After the call,
+the value of the file offset is unspecified.
+.P
+The "asynchronous" means that this call returns as soon as the
+request has been enqueued; the read may or may not have completed
+when the call returns.
+One tests for completion using
+.BR aio_error (3).
+The return status of a completed I/O operation can be obtained by
+.BR aio_return (3).
+Asynchronous notification of I/O completion can be obtained by setting
+.I aiocbp\->aio_sigevent
+appropriately; see
+.BR sigevent (3type)
+for details.
+.P
+If
+.B _POSIX_PRIORITIZED_IO
+is defined, and this file supports it,
+then the asynchronous operation is submitted at a priority equal
+to that of the calling process minus
+.IR aiocbp\->aio_reqprio .
+.P
+The field
+.I aiocbp\->aio_lio_opcode
+is ignored.
+.P
+No data is read from a regular file beyond its maximum offset.
+.SH RETURN VALUE
+On success, 0 is returned.
+On error, the request is not enqueued, \-1
+is returned, and
+.I errno
+is set to indicate the error.
+If an error is detected only later, it will
+be reported via
+.BR aio_return (3)
+(returns status \-1) and
+.BR aio_error (3)
+(error status\[em]whatever one would have gotten in
+.IR errno ,
+such as
+.BR EBADF ).
+.SH ERRORS
+.TP
+.B EAGAIN
+Out of resources.
+.TP
+.B EBADF
+.I aio_fildes
+is not a valid file descriptor open for reading.
+.TP
+.B EINVAL
+One or more of
+.IR aio_offset ,
+.IR aio_reqprio ,
+or
+.I aio_nbytes
+are invalid.
+.TP
+.B ENOSYS
+.BR aio_read ()
+is not implemented.
+.TP
+.B EOVERFLOW
+The file is a regular file, we start reading before end-of-file
+and want at least one byte, but the starting position is past
+the maximum offset for this file.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR aio_read ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+glibc 2.1.
+POSIX.1-2001.
+.SH NOTES
+It is a good idea to zero out the control block before use.
+The control block must not be changed while the read operation
+is in progress.
+The buffer area being read into
+.\" or the control block of the operation
+must not be accessed during the operation or undefined results may occur.
+The memory areas involved must remain valid.
+.P
+Simultaneous I/O operations specifying the same
+.I aiocb
+structure produce undefined results.
+.SH EXAMPLES
+See
+.BR aio (7).
+.SH SEE ALSO
+.BR aio_cancel (3),
+.BR aio_error (3),
+.BR aio_fsync (3),
+.BR aio_return (3),
+.BR aio_suspend (3),
+.BR aio_write (3),
+.BR lio_listio (3),
+.BR aio (7)

@@ -1,0 +1,137 @@
+'\" t
+.\" Copyright 2001 John Levon <moz@compsoc.man.ac.uk>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" Additions, aeb, 2001-10-17.
+.TH clearenv 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+clearenv \- clear the environment
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdlib.h>
+.P
+.B "int clearenv(void);"
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR clearenv ():
+.nf
+    /* glibc >= 2.19: */ _DEFAULT_SOURCE
+        || /* glibc <= 2.19: */ _SVID_SOURCE || _BSD_SOURCE
+.fi
+.SH DESCRIPTION
+The
+.BR clearenv ()
+function clears the environment of all name-value
+pairs and sets the value of the external variable
+.I environ
+to NULL.
+After this call, new variables can be added to the environment using
+.BR putenv (3)
+and
+.BR setenv (3).
+.SH RETURN VALUE
+The
+.BR clearenv ()
+function returns zero on success, and a nonzero
+value on failure.
+.\" Most versions of UNIX return -1 on error, or do not even have errors.
+.\" glibc info and the Watcom C library document "a nonzero value".
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR clearenv ()
+T}	Thread safety	MT-Unsafe const:env
+.TE
+.SH STANDARDS
+.TP
+.BR putenv ()
+POSIX.1-2008.
+.TP
+.BR clearenv ()
+None.
+.SH HISTORY
+.TP
+.BR putenv ()
+glibc 2.0.
+POSIX.1-2001.
+.TP
+.BR clearenv ()
+glibc 2.0.
+.P
+Various UNIX variants (DG/UX, HP-UX, QNX, ...).
+POSIX.9 (bindings for FORTRAN77).
+POSIX.1-1996 did not accept
+.BR clearenv ()
+and
+.BR putenv (3),
+but changed its mind and scheduled these functions for some
+later issue of this standard (see \[sc]B.4.6.1).
+However, POSIX.1-2001
+adds only
+.BR putenv (3),
+and rejected
+.BR clearenv ().
+.SH NOTES
+On systems where
+.BR clearenv ()
+is unavailable, the assignment
+.P
+.in +4n
+.EX
+environ = NULL;
+.EE
+.in
+.P
+will probably do.
+.P
+The
+.BR clearenv ()
+function may be useful in security-conscious applications that want to
+precisely control the environment that is passed to programs
+executed using
+.BR exec (3).
+The application would do this by first clearing the environment
+and then adding select environment variables.
+.P
+Note that the main effect of
+.BR clearenv ()
+is to adjust the value of the pointer
+.BR environ (7);
+this function does not erase the contents of the buffers
+containing the environment definitions.
+.P
+The DG/UX and Tru64 man pages write: If
+.I environ
+has been modified by anything other than the
+.BR putenv (3),
+.BR getenv (3),
+or
+.BR clearenv ()
+functions, then
+.BR clearenv ()
+will return an error and the process environment will remain unchanged.
+.\" .P
+.\" HP-UX has a ENOMEM error return.
+.SH SEE ALSO
+.BR getenv (3),
+.BR putenv (3),
+.BR setenv (3),
+.BR unsetenv (3),
+.BR environ (7)

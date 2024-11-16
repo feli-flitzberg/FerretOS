@@ -1,0 +1,58 @@
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.TH repertoiremap 5 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+repertoiremap \- map symbolic character names to Unicode code points
+.SH DESCRIPTION
+A repertoire map defines mappings between symbolic character names
+(mnemonics) and Unicode code points when compiling a locale with
+.BR localedef (1).
+Using a repertoire map is optional, it is needed only when symbolic
+names are used instead of now preferred Unicode code points.
+.SS Syntax
+The repertoiremap file starts with a header that may consist of the
+following keywords:
+.TP
+.I comment_char
+is followed by a character that will be used as the
+comment character for the rest of the file.
+It defaults to the number sign (#).
+.TP
+.I escape_char
+is followed by a character that should be used as the escape character
+for the rest of the file to mark characters that should be interpreted
+in a special way.
+It defaults to the backslash (\[rs]).
+.P
+The mapping section starts with the keyword
+.I CHARIDS
+in the first column.
+.P
+The mapping lines have the following form:
+.TP
+.I <symbolic-name> <code-point> comment
+This defines exactly one mapping,
+.I comment
+being optional.
+.P
+The mapping section ends with the string
+.IR "END CHARIDS" .
+.SH FILES
+.TP
+.I /usr/share/i18n/repertoiremaps
+Usual default repertoire map path.
+.SH STANDARDS
+POSIX.2.
+.SH NOTES
+Repertoire maps are deprecated in favor of Unicode code points.
+.SH EXAMPLES
+A mnemonic for the Euro sign can be defined as follows:
+.P
+.nf
+<Eu> <U20AC> EURO SIGN
+.fi
+.SH SEE ALSO
+.BR locale (1),
+.BR localedef (1),
+.BR charmap (5),
+.BR locale (5)

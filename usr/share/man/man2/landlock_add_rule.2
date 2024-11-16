@@ -1,0 +1,131 @@
+.\" Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
+.\" Copyright © 2019-2020 ANSSI
+.\" Copyright © 2021 Microsoft Corporation
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH landlock_add_rule 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+landlock_add_rule \- add a new Landlock rule to a ruleset
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/landlock.h>" "  /* Definition of " LANDLOCK_* " constants */"
+.BR "#include <sys/syscall.h>" "     /* Definition of " SYS_* " constants */"
+.P
+.BI "int syscall(SYS_landlock_add_rule, int " ruleset_fd ,
+.BI "            enum landlock_rule_type " rule_type ,
+.BI "            const void *" rule_attr ", uint32_t " flags );
+.fi
+.SH DESCRIPTION
+A Landlock rule describes an action on an object.
+An object is currently a file hierarchy,
+and the related filesystem actions
+are defined with a set of access rights.
+This
+.BR landlock_add_rule ()
+system call enables adding a new Landlock rule to an existing ruleset
+created with
+.BR landlock_create_ruleset (2).
+See
+.BR landlock (7)
+for a global overview.
+.P
+.I ruleset_fd
+is a Landlock ruleset file descriptor obtained with
+.BR landlock_create_ruleset (2).
+.P
+.I rule_type
+identifies the structure type pointed to by
+.IR rule_attr .
+Currently, Linux supports the following
+.I rule_type
+value:
+.TP
+.B LANDLOCK_RULE_PATH_BENEATH
+This defines the object type as a file hierarchy.
+In this case,
+.I rule_attr
+points to the following structure:
+.IP
+.in +4n
+.EX
+struct landlock_path_beneath_attr {
+    __u64 allowed_access;
+    __s32 parent_fd;
+} __attribute__((packed));
+.EE
+.in
+.IP
+.I allowed_access
+contains a bitmask of allowed filesystem actions for this file hierarchy
+(see
+.B Filesystem actions
+in
+.BR landlock (7)).
+.IP
+.I parent_fd
+is an opened file descriptor, preferably with the
+.I O_PATH
+flag,
+which identifies the parent directory of the file hierarchy or
+just a file.
+.P
+.I flags
+must be 0.
+.SH RETURN VALUE
+On success,
+.BR landlock_add_rule ()
+returns 0.
+.SH ERRORS
+.BR landlock_add_rule ()
+can fail for the following reasons:
+.TP
+.B EOPNOTSUPP
+Landlock is supported by the kernel but disabled at boot time.
+.TP
+.B EINVAL
+.I flags
+is not 0, or the rule accesses are inconsistent (i.e.,
+.I rule_attr\->allowed_access
+is not a subset of the ruleset handled accesses).
+.TP
+.B ENOMSG
+Empty accesses (i.e.,
+.I rule_attr\->allowed_access
+is 0).
+.TP
+.B EBADF
+.I ruleset_fd
+is not a file descriptor for the current thread,
+or a member of
+.I rule_attr
+is not a file descriptor as expected.
+.TP
+.B EBADFD
+.I ruleset_fd
+is not a ruleset file descriptor,
+or a member of
+.I rule_attr
+is not the expected file descriptor type.
+.TP
+.B EPERM
+.I ruleset_fd
+has no write access to the underlying ruleset.
+.TP
+.B EFAULT
+.I rule_attr
+was not a valid address.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 5.13.
+.SH EXAMPLES
+See
+.BR landlock (7).
+.SH SEE ALSO
+.BR landlock_create_ruleset (2),
+.BR landlock_restrict_self (2),
+.BR landlock (7)

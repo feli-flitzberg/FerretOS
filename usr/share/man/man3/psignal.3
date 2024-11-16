@@ -1,0 +1,114 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 18:45:17 1993 by Rik Faith (faith@cs.unc.edu)
+.TH psignal 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+psignal, psiginfo \- print signal description
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <signal.h>
+.P
+.BI "void psignal(int " sig ", const char *" s );
+.BI "void psiginfo(const siginfo_t *" pinfo ", const char *" s );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR psignal ():
+.nf
+    Since glibc 2.19:
+            _DEFAULT_SOURCE
+    glibc 2.19 and earlier:
+        _BSD_SOURCE || _SVID_SOURCE
+.fi
+.P
+.BR psiginfo ():
+.nf
+    _POSIX_C_SOURCE >= 200809L
+.fi
+.SH DESCRIPTION
+The
+.BR psignal ()
+function displays a message on \fIstderr\fP
+consisting of the string \fIs\fP, a colon, a space, a string
+describing the signal number \fIsig\fP, and a trailing newline.
+If the string \fIs\fP is NULL or empty, the colon and space are omitted.
+If \fIsig\fP is invalid,
+the message displayed will indicate an unknown signal.
+.P
+The
+.BR psiginfo ()
+function is like
+.BR psignal (),
+except that it displays information about the signal described by
+.IR pinfo ,
+which should point to a valid
+.I siginfo_t
+structure.
+As well as the signal description,
+.BR psiginfo ()
+displays information about the origin of the signal,
+and other information relevant to the signal
+(e.g., the relevant memory address for hardware-generated signals,
+the child process ID for
+.BR SIGCHLD ,
+and the user ID and process ID of the sender, for signals set using
+.BR kill (2)
+or
+.BR sigqueue (3)).
+.SH RETURN VALUE
+The
+.BR psignal ()
+and
+.BR psiginfo ()
+functions return no value.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR psignal (),
+.BR psiginfo ()
+T}	Thread safety	MT-Safe locale
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+glibc 2.10.
+POSIX.1-2008, 4.3BSD.
+.SH BUGS
+Up to glibc 2.12,
+.BR psiginfo ()
+had the following bugs:
+.IP \[bu] 3
+In some circumstances, a trailing newline is not printed.
+.\" FIXME . http://sourceware.org/bugzilla/show_bug.cgi?id=12107
+.\" Reportedly now fixed; check glibc 2.13
+.IP \[bu]
+Additional details are not displayed for real-time signals.
+.\" FIXME . http://sourceware.org/bugzilla/show_bug.cgi?id=12108
+.\" Reportedly now fixed; check glibc 2.13
+.SH SEE ALSO
+.BR sigaction (2),
+.BR perror (3),
+.BR strsignal (3),
+.BR signal (7)

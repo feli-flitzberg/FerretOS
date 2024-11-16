@@ -1,0 +1,219 @@
+.\" Copyright 1995, Jim Van Zandt <jrv@vanzandt.mv.com> and aeb
+.\" Copyright 1995, <faith@cs.unc.edu>
+.\" Copyright 1995, <jrv@vanzandt.mv.com>
+.\" Copyright 1995, "H. Peter Anvin" <hpa@storm.net>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.TH TIOCLINUX 2const 2024-06-13 "Linux man-pages 6.9.1"
+.SH NAME
+TIOCLINUX
+\-
+ioctls for console terminal and virtual consoles
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/tiocl.h>" "  /* Definition of " TIOCL_* " constants */"
+.B #include <sys/ioctl.h>
+.P
+.BI "int ioctl(int " fd ", TIOCLINUX, void *" argp );
+.fi
+.SH DESCRIPTION
+The action of the following ioctls depends on the first byte in the struct
+pointed to by
+.IR argp ,
+referred to here as the
+.IR subcode .
+These are legal only for the superuser or the owner of the current terminal.
+.TP
+.BR subcode = 0
+Dump the screen.
+Disappeared in Linux 1.1.92.
+(With Linux 1.1.92 or later, read from
+.IR /dev/vcs N
+or
+.IR /dev/vcsa N
+instead.)
+.TP
+.BR subcode = 1
+Get task information.
+Disappeared in Linux 1.1.92.
+.TP
+.BR subcode = TIOCL_SETSEL
+Set selection.
+.I argp
+points to a
+.IP
+.in +4n
+.EX
+struct {
+    char  subcode;
+    short xs, ys, xe, ye;
+    short sel_mode;
+};
+.EE
+.in
+.IP
+.I xs
+and
+.I ys
+are the starting column and row.
+.I xe
+and
+.I ye
+are the ending
+column and row.
+(Upper left corner is row=column=1.)
+.I sel_mode
+is 0 for character-by-character selection,
+1 for word-by-word selection,
+or 2 for line-by-line selection.
+The indicated screen characters are highlighted and saved
+in a kernel buffer.
+.IP
+Since Linux 6.7, using this subcode requires the
+.B CAP_SYS_ADMIN
+capability.
+.TP
+.BR subcode = TIOCL_PASTESEL
+Paste selection.
+The characters in the selection buffer are
+written to
+.IR fd .
+.IP
+Since Linux 6.7, using this subcode requires the
+.B CAP_SYS_ADMIN
+capability.
+.TP
+.BR subcode = TIOCL_UNBLANKSCREEN
+Unblank the screen.
+.TP
+.BR subcode = TIOCL_SELLOADLUT
+Sets contents of a 256-bit look up table defining characters in a "word",
+for word-by-word selection.
+(Since Linux 1.1.32.)
+.IP
+Since Linux 6.7, using this subcode requires the
+.B CAP_SYS_ADMIN
+capability.
+.TP
+.BR subcode = TIOCL_GETSHIFTSTATE
+.I argp
+points to a char which is set to the value of the kernel
+variable
+.IR shift_state .
+(Since Linux 1.1.32.)
+.TP
+.BR subcode = TIOCL_GETMOUSEREPORTING
+.I argp
+points to a char which is set to the value of the kernel
+variable
+.IR report_mouse .
+(Since Linux 1.1.33.)
+.TP
+.BR subcode = 8
+Dump screen width and height, cursor position, and all the
+character-attribute pairs.
+(Linux 1.1.67 through Linux 1.1.91 only.
+With Linux 1.1.92 or later, read from
+.I /dev/vcsa*
+instead.)
+.TP
+.BR subcode = 9
+Restore screen width and height, cursor position, and all the
+character-attribute pairs.
+(Linux 1.1.67 through Linux 1.1.91 only.
+With Linux 1.1.92 or later, write to
+.I /dev/vcsa*
+instead.)
+.TP
+.BR subcode = TIOCL_SETVESABLANK
+Handles the Power Saving
+feature of the new generation of monitors.
+VESA screen blanking mode is set to
+.IR argp[1] ,
+which governs what
+screen blanking does:
+.RS
+.TP
+.B 0
+Screen blanking is disabled.
+.TP
+.B 1
+The current video adapter
+register settings are saved, then the controller is programmed to turn off
+the vertical synchronization pulses.
+This puts the monitor into "standby" mode.
+If your monitor has an Off_Mode timer, then
+it will eventually power down by itself.
+.TP
+.B 2
+The current settings are saved, then both the vertical and horizontal
+synchronization pulses are turned off.
+This puts the monitor into "off" mode.
+If your monitor has no Off_Mode timer,
+or if you want your monitor to power down immediately when the
+blank_timer times out, then you choose this option.
+.RI ( Caution:
+Powering down frequently will damage the monitor.)
+(Since Linux 1.1.76.)
+.RE
+.TP
+.BR subcode = TIOCL_SETKMSGREDIRECT
+Change target of kernel messages ("console"):
+by default, and if this is set to
+.BR 0 ,
+messages are written to the currently active VT.
+The VT to write to is a single byte following
+.BR subcode .
+(Since Linux 2.5.36.)
+.TP
+.BR subcode = TIOCL_GETFGCONSOLE
+Returns the number of VT currently in foreground.
+(Since Linux 2.5.36.)
+.TP
+.BR subcode = TIOCL_SCROLLCONSOLE
+Scroll the foreground VT by the specified amount of
+.I lines
+down,
+or half the screen if
+.BR 0 .
+.I lines
+is *(((int32_t *)&subcode) + 1).
+(Since Linux 2.5.67.)
+.TP
+.BR subcode = TIOCL_BLANKSCREEN
+Blank the foreground VT, ignoring "pokes" (typing):
+can only be unblanked explicitly (by switching VTs, to text mode, etc.).
+(Since Linux 2.5.71.)
+.TP
+.BR subcode = TIOCL_BLANKEDSCREEN
+Returns the number of VT currently blanked,
+.B 0
+if none.
+(Since Linux 2.5.71.)
+.TP
+.BR subcode = 16
+Never used.
+.TP
+.BR subcode = TIOCL_GETKMSGREDIRECT
+Returns target of kernel messages.
+(Since Linux 2.6.17.)
+.SH RETURN VALUE
+On success, 0 is returned (except where indicated).
+On failure, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+.I argp
+is invalid.
+.TP
+.B EPERM
+Insufficient permission.
+.SH STANDARDS
+Linux.
+.SH SEE ALSO
+.BR ioctl (2),
+.BR ioctl_console (2)

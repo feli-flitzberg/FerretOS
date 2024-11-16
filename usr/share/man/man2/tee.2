@@ -1,0 +1,200 @@
+.\" This manpage is Copyright (C) 2006 Jens Axboe
+.\" and Copyright (C) 2006 Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH tee 2 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+tee \- duplicating pipe content
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#define _GNU_SOURCE" "         /* See feature_test_macros(7) */"
+.B #include <fcntl.h>
+.P
+.BI "ssize_t tee(int " fd_in ", int " fd_out ", size_t " len \
+", unsigned int " flags );
+.fi
+.\" Return type was long before glibc 2.7
+.SH DESCRIPTION
+.\" Example programs http://brick.kernel.dk/snaps
+.\"
+.\"
+.\" add a "tee(in, out1, out2)" system call that duplicates the pages
+.\" (again, incrementing their reference count, not copying the data) from
+.\" one pipe to two other pipes.
+.BR tee ()
+duplicates up to
+.I len
+bytes of data from the pipe referred to by the file descriptor
+.I fd_in
+to the pipe referred to by the file descriptor
+.IR fd_out .
+It does not consume the data that is duplicated from
+.IR fd_in ;
+therefore, that data can be copied by a subsequent
+.BR splice (2).
+.P
+.I flags
+is a bit mask that is composed by ORing together
+zero or more of the following values:
+.TP 1.9i
+.B SPLICE_F_MOVE
+Currently has no effect for
+.BR tee ();
+see
+.BR splice (2).
+.TP
+.B SPLICE_F_NONBLOCK
+Do not block on I/O; see
+.BR splice (2)
+for further details.
+.TP
+.B SPLICE_F_MORE
+Currently has no effect for
+.BR tee (),
+but may be implemented in the future; see
+.BR splice (2).
+.TP
+.B SPLICE_F_GIFT
+Unused for
+.BR tee ();
+see
+.BR vmsplice (2).
+.SH RETURN VALUE
+Upon successful completion,
+.BR tee ()
+returns the number of bytes that were duplicated between the input
+and output.
+A return value of 0 means that there was no data to transfer,
+and it would not make sense to block, because there are no
+writers connected to the write end of the pipe referred to by
+.IR fd_in .
+.P
+On error,
+.BR tee ()
+returns \-1 and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EAGAIN
+.B SPLICE_F_NONBLOCK
+was specified in
+.I flags
+or one of the file descriptors had been marked as nonblocking
+.RB ( O_NONBLOCK ) ,
+and the operation would block.
+.TP
+.B EINVAL
+.I fd_in
+or
+.I fd_out
+does not refer to a pipe; or
+.I fd_in
+and
+.I fd_out
+refer to the same pipe.
+.TP
+.B ENOMEM
+Out of memory.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 2.6.17,
+glibc 2.5.
+.SH NOTES
+Conceptually,
+.BR tee ()
+copies the data between the two pipes.
+In reality no real data copying takes place though:
+under the covers,
+.BR tee ()
+assigns data to the output by merely grabbing
+a reference to the input.
+.SH EXAMPLES
+The example below implements a basic
+.BR tee (1)
+program using the
+.BR tee ()
+system call.
+Here is an example of its use:
+.P
+.in +4n
+.EX
+$ \fBdate | ./a.out out.log | cat\fP
+Tue Oct 28 10:06:00 CET 2014
+$ \fBcat out.log\fP
+Tue Oct 28 10:06:00 CET 2014
+.EE
+.in
+.SS Program source
+\&
+.\" SRC BEGIN (tee.c)
+.EX
+#define _GNU_SOURCE
+#include <errno.h>
+#include <fcntl.h>
+#include <limits.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <unistd.h>
+\&
+int
+main(int argc, char *argv[])
+{
+    int      fd;
+    ssize_t  len, slen;
+\&
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <file>\[rs]n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+\&
+    fd = open(argv[1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (fd == \-1) {
+        perror("open");
+        exit(EXIT_FAILURE);
+    }
+\&
+    for (;;) {
+        /*
+         * tee stdin to stdout.
+         */
+        len = tee(STDIN_FILENO, STDOUT_FILENO,
+                  INT_MAX, SPLICE_F_NONBLOCK);
+        if (len < 0) {
+            if (errno == EAGAIN)
+                continue;
+            perror("tee");
+            exit(EXIT_FAILURE);
+        }
+        if (len == 0)
+            break;
+\&
+        /*
+         * Consume stdin by splicing it to a file.
+         */
+        while (len > 0) {
+            slen = splice(STDIN_FILENO, NULL, fd, NULL,
+                          len, SPLICE_F_MOVE);
+            if (slen < 0) {
+                perror("splice");
+                exit(EXIT_FAILURE);
+            }
+            len \-= slen;
+        }
+    }
+\&
+    close(fd);
+    exit(EXIT_SUCCESS);
+}
+.EE
+.\" SRC END
+.SH SEE ALSO
+.BR splice (2),
+.BR vmsplice (2),
+.BR pipe (7)

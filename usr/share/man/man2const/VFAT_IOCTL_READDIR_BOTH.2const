@@ -1,0 +1,206 @@
+.\" Copyright 2014, Heinrich Schuchardt <xypron.glpk@gmx.de>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH VFAT_IOCTL_READDIR_BOTH 2const 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+VFAT_IOCTL_READDIR_BOTH,
+VFAT_IOCTL_READDIR_SHORT
+\-
+read filenames of a directory in a FAT filesystem
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/msdos_fs.h>" "  /* Definition of " VFAT_* " constants */"
+.B #include <sys/ioctl.h>
+.P
+.BI "int ioctl(int " fd ", VFAT_IOCTL_READDIR_BOTH,"
+.BI "          struct __fat_dirent " entry [2]);
+.BI "int ioctl(int " fd ", VFAT_IOCTL_READDIR_SHORT,"
+.BI "          struct __fat_dirent " entry [2]);
+.fi
+.SH DESCRIPTION
+A file or directory on a FAT filesystem always has a short filename
+consisting of up to 8 capital letters, optionally followed by a period
+and up to 3 capital letters for the file extension.
+If the actual filename does not fit into this scheme, it is stored
+as a long filename of up to 255 UTF-16 characters.
+.P
+The short filenames in a directory can be read with
+.BR VFAT_IOCTL_READDIR_SHORT .
+.B VFAT_IOCTL_READDIR_BOTH
+reads both the short and the long filenames.
+.P
+The
+.I fd
+argument must be a file descriptor for a directory.
+It is sufficient to create the file descriptor by calling
+.BR open (2)
+with the
+.B O_RDONLY
+flag.
+The file descriptor can be used only once to iterate over the directory
+entries by calling
+.BR ioctl (2)
+repeatedly.
+.P
+The
+.I entry
+argument is a two-element array of the following structures:
+.P
+.in +4n
+.EX
+struct __fat_dirent {
+    long            d_ino;
+    __kernel_off_t  d_off;
+    uint32_t short  d_reclen;
+    char            d_name[256];
+};
+.EE
+.in
+.P
+The first entry in the array is for the short filename.
+The second entry is for the long filename.
+.P
+The
+.I d_ino
+and
+.I d_off
+fields are filled only for long filenames.
+The
+.I d_ino
+field holds the inode number of the directory.
+The
+.I d_off
+field holds the offset of the file entry in the directory.
+As these values are not available for short filenames, the user code should
+simply ignore them.
+.P
+The field
+.I d_reclen
+contains the length of the filename in the field
+.IR d_name .
+To keep backward compatibility, a length of 0 for the short filename signals
+that the end of the directory has been reached.
+However, the preferred method for detecting the end of the directory
+is to test the
+.BR ioctl (2)
+return value.
+If no long filename exists, field
+.I d_reclen
+is set to 0 and
+.I d_name
+is a character string of length 0 for the long filename.
+.SH RETURN VALUE
+A return value of 1 signals that a new directory entry has been read and
+a return value of 0 signals that the end of the directory has been reached.
+.P
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B ENOENT
+.I fd
+refers to a removed, but still open directory.
+.TP
+.B ENOTDIR
+.I fd
+does not refer to a directory.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 2.0.
+.SH EXAMPLES
+The following program demonstrates the use of
+.BR ioctl (2)
+to list a directory.
+.P
+The following was recorded when applying the program to the directory
+.IR /mnt/user :
+.P
+.in +4n
+.EX
+$ \fB./fat_dir /mnt/user\fP
+\&. \-> \[aq]\[aq]
+\&.. \-> \[aq]\[aq]
+ALONGF\[ti]1.TXT \-> \[aq]a long filename.txt\[aq]
+UPPER.TXT \-> \[aq]\[aq]
+LOWER.TXT \-> \[aq]lower.txt\[aq]
+.EE
+.in
+.\"
+.SS Program source
+.\" SRC BEGIN (ioctl_fat.c)
+.EX
+#include <fcntl.h>
+#include <linux/msdos_fs.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
+\&
+int
+main(int argc, char *argv[])
+{
+    int                  fd;
+    int                  ret;
+    struct __fat_dirent  entry[2];
+\&
+    if (argc != 2) {
+        printf("Usage: %s DIRECTORY\[rs]n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+\&
+    /*
+     * Open file descriptor for the directory.
+     */
+    fd = open(argv[1], O_RDONLY | O_DIRECTORY);
+    if (fd == \-1) {
+        perror("open");
+        exit(EXIT_FAILURE);
+    }
+\&
+    for (;;) {
+\&
+        /*
+         * Read next directory entry.
+         */
+        ret = ioctl(fd, VFAT_IOCTL_READDIR_BOTH, entry);
+\&
+        /*
+         * If an error occurs, the return value is \-1.
+         * If the end of the directory list has been reached,
+         * the return value is 0.
+         * For backward compatibility the end of the directory
+         * list is also signaled by d_reclen == 0.
+         */
+        if (ret < 1)
+            break;
+\&
+        /*
+         * Write both the short name and the long name.
+         */
+        printf("%s \-> \[aq]%s\[aq]\[rs]n", entry[0].d_name, entry[1].d_name);
+    }
+\&
+    if (ret == \-1) {
+        perror("VFAT_IOCTL_READDIR_BOTH");
+        exit(EXIT_FAILURE);
+    }
+\&
+    /*
+     * Close the file descriptor.
+     */
+    close(fd);
+\&
+    exit(EXIT_SUCCESS);
+}
+.EE
+.\" SRC END
+.SH SEE ALSO
+.BR ioctl (2),
+.BR ioctl_fat (2)

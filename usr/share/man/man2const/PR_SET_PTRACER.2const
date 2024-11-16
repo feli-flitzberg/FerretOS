@@ -1,0 +1,75 @@
+.\" Copyright 2013, Kees Cook <keescook@chromium.org>
+.\" Copyright 2013, 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_SET_PTRACER 2const 2024-06-02 "Linux man-pages 6.9.1"
+.SH NAME
+PR_SET_PTRACER
+\-
+allow processes to ptrace(2) the calling process
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.BI "int prctl(PR_SET_PTRACER, long " pid );
+.fi
+.SH DESCRIPTION
+This is meaningful only when the Yama LSM is enabled and in mode 1
+("restricted ptrace", visible via
+.IR /proc/\:sys/\:kernel/\:yama/\:ptrace_scope ).
+.P
+When a "ptracer process ID" is passed in
+.IR pid ,
+the caller is declaring that the ptracer process can
+.BR ptrace (2)
+the calling process as if it were a direct process ancestor.
+.P
+Each
+.B PR_SET_PTRACER
+operation replaces the previous "ptracer process ID".
+.P
+Employing
+.B PR_SET_PTRACER
+with
+.I pid
+set to 0 clears the caller's "ptracer process ID".
+If
+.I pid
+is
+.BR PR_SET_PTRACER_ANY ,
+the ptrace restrictions introduced by Yama are
+effectively disabled for the calling process.
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+.I pid
+is not 0,
+.BR PR_SET_PTRACER_ANY ,
+nor the PID of an existing process.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 3.4.
+.\" commit 2d514487faf188938a4ee4fb3464eeecfbdcf8eb
+.\" commit bf06189e4d14641c0148bea16e9dd24943862215
+.SH SEE ALSO
+.BR prctl (2),
+.P
+For further information, see the kernel source file
+.I Documentation/\:admin\-guide/\:LSM/\:Yama.rst
+.\" commit 90bb766440f2147486a2acc3e793d7b8348b0c22
+(or
+.I Documentation/\:security/\:Yama.txt
+before Linux 4.13).

@@ -1,0 +1,123 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified 1993-07-24 by Rik Faith (faith@cs.unc.edu)
+.\" Modified 2001-04-01 by aeb
+.\" Modified 2003-07-23 by aeb
+.\"
+.TH usleep 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+usleep \- suspend execution for microsecond intervals
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B "#include <unistd.h>"
+.P
+.BI "int usleep(useconds_t " usec );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR usleep ():
+.nf
+    Since glibc 2.12:
+        (_XOPEN_SOURCE >= 500) && ! (_POSIX_C_SOURCE >= 200809L)
+            || /* glibc >= 2.19: */ _DEFAULT_SOURCE
+            || /* glibc <= 2.19: */ _BSD_SOURCE
+    Before glibc 2.12:
+        _BSD_SOURCE || _XOPEN_SOURCE >= 500
+.\"    || _XOPEN_SOURCE && _XOPEN_SOURCE_EXTENDED
+.fi
+.SH DESCRIPTION
+The
+.BR usleep ()
+function suspends execution of the calling thread for
+(at least) \fIusec\fP microseconds.
+The sleep may be lengthened slightly
+by any system activity or by the time spent processing the call or by the
+granularity of system timers.
+.SH RETURN VALUE
+The
+.BR usleep ()
+function returns 0 on success.
+On error, \-1 is returned, with
+.I errno
+set to indicate the error.
+.SH ERRORS
+.TP
+.B EINTR
+Interrupted by a signal; see
+.BR signal (7).
+.TP
+.B EINVAL
+\fIusec\fP is greater than or equal to 1000000.
+(On systems where that is considered an error.)
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR usleep ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+None.
+.SH HISTORY
+4.3BSD, POSIX.1-2001.
+POSIX.1-2001 declares it obsolete, suggesting
+.BR nanosleep (2)
+instead.
+Removed in POSIX.1-2008.
+.P
+On the original BSD implementation,
+and before glibc 2.2.2, the return type of this function is
+.IR void .
+The POSIX version returns
+.IR int ,
+and this is also the prototype used since glibc 2.2.2.
+.P
+Only the
+.B EINVAL
+error return is documented by SUSv2 and POSIX.1-2001.
+.SH CAVEATS
+The interaction of this function with the
+.B SIGALRM
+signal, and with other timer functions such as
+.BR alarm (2),
+.BR sleep (3),
+.BR nanosleep (2),
+.BR setitimer (2),
+.BR timer_create (2),
+.BR timer_delete (2),
+.BR timer_getoverrun (2),
+.BR timer_gettime (2),
+.BR timer_settime (2),
+.BR ualarm (3)
+is unspecified.
+.SH SEE ALSO
+.BR alarm (2),
+.BR getitimer (2),
+.BR nanosleep (2),
+.BR select (2),
+.BR setitimer (2),
+.BR sleep (3),
+.BR ualarm (3),
+.BR useconds_t (3type),
+.BR time (7)

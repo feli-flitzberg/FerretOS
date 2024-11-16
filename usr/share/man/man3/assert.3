@@ -1,0 +1,96 @@
+'\" t
+.\" Copyright (c) 1993 by Thomas Koenig (ig25@rz.uni-karlsruhe.de)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" Modified Sat Jul 24 21:42:42 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Tue Oct 22 23:44:11 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified Thu Jun  2 23:44:11 2016 by Nikos Mavrogiannopoulos <nmav@redhat.com>
+.TH assert 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+assert \- abort the program if assertion is false
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <assert.h>
+.P
+.BI "void assert(scalar " expression );
+.fi
+.SH DESCRIPTION
+This macro can help programmers find bugs in their programs,
+or handle exceptional cases
+via a crash that will produce limited debugging output.
+.P
+If
+.I expression
+is false (i.e., compares equal to zero),
+.BR assert ()
+prints an error message to standard error
+and terminates the program by calling
+.BR abort (3).
+The error message includes the name of the file and function containing the
+.BR assert ()
+call, the source code line number of the call, and the text of the argument;
+something like:
+.P
+.in +4n
+.EX
+prog: some_file.c:16: some_func: Assertion \`val == 0\[aq] failed.
+.EE
+.in
+.P
+If the macro
+.B NDEBUG
+is defined at the moment
+.I <assert.h>
+was last included, the macro
+.BR assert ()
+generates no code, and hence does nothing at all.
+It is not recommended to define
+.B NDEBUG
+if using
+.BR assert ()
+to detect error conditions since the software
+may behave non-deterministically.
+.SH RETURN VALUE
+No value is returned.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR assert ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+C89, C99, POSIX.1-2001.
+.P
+In C89,
+.I expression
+is required to be of type
+.I int
+and undefined behavior results if it is not, but in C99
+it may have any scalar type.
+.\" See Defect Report 107 for more details.
+.SH BUGS
+.BR assert ()
+is implemented as a macro; if the expression tested has side-effects,
+program behavior will be different depending on whether
+.B NDEBUG
+is defined.
+This may create Heisenbugs which go away when debugging
+is turned on.
+.SH SEE ALSO
+.BR abort (3),
+.BR assert_perror (3),
+.BR exit (3)

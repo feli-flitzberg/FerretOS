@@ -1,0 +1,92 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 19:42:04 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Added fabsl, fabsf, aeb, 2001-06-07
+.\"
+.TH fabs 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+fabs, fabsf, fabsl \- absolute value of floating-point number
+.SH LIBRARY
+Math library
+.RI ( libm ", " \-lm )
+.SH SYNOPSIS
+.nf
+.B #include <math.h>
+.P
+.BI "double fabs(double " x );
+.BI "float fabsf(float " x );
+.BI "long double fabsl(long double " x );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR fabsf (),
+.BR fabsl ():
+.nf
+    _ISOC99_SOURCE || _POSIX_C_SOURCE >= 200112L
+        || /* Since glibc 2.19: */ _DEFAULT_SOURCE
+        || /* glibc <= 2.19: */ _BSD_SOURCE || _SVID_SOURCE
+.fi
+.SH DESCRIPTION
+These functions return the absolute value of the floating-point
+number
+.IR x .
+.SH RETURN VALUE
+These functions return the absolute value of
+.IR x .
+.P
+If
+.I x
+is a NaN, a NaN is returned.
+.P
+If
+.I x
+is \-0, +0 is returned.
+.P
+If
+.I x
+is negative infinity or positive infinity, positive infinity is returned.
+.SH ERRORS
+No errors occur.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR fabs (),
+.BR fabsf (),
+.BR fabsl ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+C99, POSIX.1-2001.
+.P
+The variant returning
+.I double
+also conforms to
+SVr4, 4.3BSD, C89.
+.SH SEE ALSO
+.BR abs (3),
+.BR cabs (3),
+.BR ceil (3),
+.BR floor (3),
+.BR labs (3),
+.BR rint (3)

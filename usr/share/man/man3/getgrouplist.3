@@ -1,0 +1,205 @@
+'\" t
+.\" Copyright (C) 2008, Linux Foundation, written by Michael Kerrisk
+.\" <mtk.manpages@gmail.com>
+.\"
+.\" A few pieces remain from an earlier version written in
+.\" 2002 by Walter Harms (walter.harms@informatik.uni-oldenburg.de)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH getgrouplist 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+getgrouplist \- get list of groups to which a user belongs
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <grp.h>
+.P
+.BI "int getgrouplist(const char *" user ", gid_t " group ,
+.BI "                 gid_t *" groups ", int *" ngroups );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR getgrouplist ():
+.nf
+    Since glibc 2.19:
+        _DEFAULT_SOURCE
+    glibc 2.19 and earlier:
+        _BSD_SOURCE
+.fi
+.SH DESCRIPTION
+The
+.BR getgrouplist ()
+function scans the group database (see
+.BR group (5))
+to obtain the list of groups that
+.I user
+belongs to.
+Up to
+.I *ngroups
+of these groups are returned in the array
+.IR groups .
+.P
+If it was not among the groups defined for
+.I user
+in the group database, then
+.I group
+is included in the list of groups returned by
+.BR getgrouplist ();
+typically this argument is specified as the group ID from
+the password record for
+.IR user .
+.P
+The
+.I ngroups
+argument is a value-result argument:
+on return it always contains the number of groups found for
+.IR user ,
+including
+.IR group ;
+this value may be greater than the number of groups stored in
+.IR groups .
+.SH RETURN VALUE
+If the number of groups of which
+.I user
+is a member is less than or equal to
+.IR *ngroups ,
+then the value
+.I *ngroups
+is returned.
+.P
+If the user is a member of more than
+.I *ngroups
+groups, then
+.BR getgrouplist ()
+returns \-1.
+In this case, the value returned in
+.I *ngroups
+can be used to resize the buffer passed to a further call to
+.BR getgrouplist ().
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR getgrouplist ()
+T}	Thread safety	MT-Safe locale
+.TE
+.SH STANDARDS
+None.
+.SH HISTORY
+glibc 2.2.4.
+.SH BUGS
+Before glibc 2.3.3,
+the implementation of this function contains a buffer-overrun bug:
+it returns the complete list of groups for
+.I user
+in the array
+.IR groups ,
+even when the number of groups exceeds
+.IR *ngroups .
+.SH EXAMPLES
+The program below displays the group list for the user named in its
+first command-line argument.
+The second command-line argument specifies the
+.I ngroups
+value to be supplied to
+.BR getgrouplist ().
+The following shell session shows examples of the use of this program:
+.P
+.in +4n
+.EX
+.RB "$" " ./a.out cecilia 0"
+getgrouplist() returned \-1; ngroups = 3
+.RB "$" " ./a.out cecilia 3"
+ngroups = 3
+16 (dialout)
+33 (video)
+100 (users)
+.EE
+.in
+.SS Program source
+\&
+.\" SRC BEGIN (getgrouplist.c)
+.EX
+#include <errno.h>
+#include <grp.h>
+#include <pwd.h>
+#include <stdio.h>
+#include <stdlib.h>
+\&
+int
+main(int argc, char *argv[])
+{
+    int            ngroups;
+    gid_t          *groups;
+    struct group   *gr;
+    struct passwd  *pw;
+\&
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <user> <ngroups>\[rs]n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+\&
+    ngroups = atoi(argv[2]);
+\&
+    groups = malloc(sizeof(*groups) * ngroups);
+    if (groups == NULL) {
+        perror("malloc");
+        exit(EXIT_FAILURE);
+    }
+\&
+    /* Fetch passwd structure (contains first group ID for user). */
+\&
+    errno = 0;
+    pw = getpwnam(argv[1]);
+    if (pw == NULL) {
+        if (errno)
+            perror("getpwnam");
+        else
+            fprintf(stderr, "no such user\[rs]n");
+        exit(EXIT_FAILURE);
+    }
+\&
+    /* Retrieve group list. */
+\&
+    if (getgrouplist(argv[1], pw\->pw_gid, groups, &ngroups) == \-1) {
+        fprintf(stderr, "getgrouplist() returned \-1; ngroups = %d\[rs]n",
+                ngroups);
+        exit(EXIT_FAILURE);
+    }
+\&
+    /* Display list of retrieved groups, along with group names. */
+\&
+    fprintf(stderr, "ngroups = %d\[rs]n", ngroups);
+    for (int j = 0; j < ngroups; j++) {
+        printf("%d", groups[j]);
+        gr = getgrgid(groups[j]);
+        if (gr != NULL)
+            printf(" (%s)", gr\->gr_name);
+        printf("\[rs]n");
+    }
+\&
+    exit(EXIT_SUCCESS);
+}
+.EE
+.\" SRC END
+.SH SEE ALSO
+.BR getgroups (2),
+.BR setgroups (2),
+.BR getgrent (3),
+.BR group_member (3),
+.BR group (5),
+.BR passwd (5)

@@ -1,0 +1,138 @@
+'\" t
+.\" Copyright (c) 2006, Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH sockatmark 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+sockatmark \- determine whether socket is at out-of-band mark
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <sys/socket.h>
+.P
+.BI "int sockatmark(int " sockfd );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR sockatmark ():
+.nf
+    _POSIX_C_SOURCE >= 200112L
+.fi
+.SH DESCRIPTION
+.BR sockatmark ()
+returns a value indicating whether or not the socket referred
+to by the file descriptor
+.I sockfd
+is at the out-of-band mark.
+If the socket is at the mark, then 1 is returned;
+if the socket is not at the mark, 0 is returned.
+This function does not remove the out-of-band mark.
+.SH RETURN VALUE
+A successful call to
+.BR sockatmark ()
+returns 1 if the socket is at the out-of-band mark, or 0 if it is not.
+On error, \-1 is returned and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EBADF
+.I sockfd
+is not a valid file descriptor.
+.TP
+.B EINVAL
+.\" POSIX.1 says ENOTTY for this case
+.I sockfd
+is not a file descriptor to which
+.BR sockatmark ()
+can be applied.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR sockatmark ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+glibc 2.2.4.
+POSIX.1-2001.
+.SH NOTES
+If
+.BR sockatmark ()
+returns 1, then the out-of-band data can be read using the
+.B MSG_OOB
+flag of
+.BR recv (2).
+.P
+Out-of-band data is supported only on some stream socket protocols.
+.P
+.BR sockatmark ()
+can safely be called from a handler for the
+.B SIGURG
+signal.
+.P
+.BR sockatmark ()
+is implemented using the
+.B SIOCATMARK
+.BR ioctl (2)
+operation.
+.SH BUGS
+Prior to glibc 2.4,
+.BR sockatmark ()
+did not work.
+.SH EXAMPLES
+The following code can be used after receipt of a
+.B SIGURG
+signal to read (and discard) all data up to the mark,
+and then read the byte of data at the mark:
+.P
+.EX
+    char buf[BUF_LEN];
+    char oobdata;
+    int atmark, s;
+\&
+    for (;;) {
+        atmark = sockatmark(sockfd);
+        if (atmark == \-1) {
+            perror("sockatmark");
+            break;
+        }
+\&
+        if (atmark)
+            break;
+\&
+        s = read(sockfd, buf, BUF_LEN);
+        if (s == \-1)
+            perror("read");
+        if (s <= 0)
+            break;
+    }
+\&
+    if (atmark == 1) {
+        if (recv(sockfd, &oobdata, 1, MSG_OOB) == \-1) {
+            perror("recv");
+            ...
+        }
+    }
+.EE
+.SH SEE ALSO
+.BR fcntl (2),
+.BR recv (2),
+.BR send (2),
+.BR tcp (7)

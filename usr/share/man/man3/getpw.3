@@ -1,0 +1,125 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 19:23:25 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Mon May 27 21:37:47 1996 by Martin Schulze (joey@linux.de)
+.\"
+.TH getpw 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+getpw \- reconstruct password line entry
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#define _GNU_SOURCE" "             /* See feature_test_macros(7) */"
+.B #include <sys/types.h>
+.B #include <pwd.h>
+.P
+.BI "[[deprecated]] int getpw(uid_t " uid ", char *" buf );
+.fi
+.SH DESCRIPTION
+The
+.BR getpw ()
+function reconstructs the password line entry for
+the given user ID \fIuid\fP in the buffer \fIbuf\fP.
+The returned buffer contains a line of format
+.P
+.in +4n
+.EX
+.B name:passwd:uid:gid:gecos:dir:shell
+.EE
+.in
+.P
+The \fIpasswd\fP structure is defined in \fI<pwd.h>\fP as follows:
+.P
+.in +4n
+.EX
+struct passwd {
+    char   *pw_name;       /* username */
+    char   *pw_passwd;     /* user password */
+    uid_t   pw_uid;        /* user ID */
+    gid_t   pw_gid;        /* group ID */
+    char   *pw_gecos;      /* user information */
+    char   *pw_dir;        /* home directory */
+    char   *pw_shell;      /* shell program */
+};
+.EE
+.in
+.P
+For more information about the fields of this structure, see
+.BR passwd (5).
+.SH RETURN VALUE
+The
+.BR getpw ()
+function returns 0 on success; on error, it returns \-1, and
+.I errno
+is set to indicate the error.
+.P
+If
+.I uid
+is not found in the password database,
+.BR getpw ()
+returns \-1, sets
+.I errno
+to 0, and leaves
+.I buf
+unchanged.
+.SH ERRORS
+.TP
+.BR 0 " or " ENOENT
+No user corresponding to
+.IR uid .
+.TP
+.B EINVAL
+.I buf
+is NULL.
+.TP
+.B ENOMEM
+Insufficient memory to allocate
+.I passwd
+structure.
+.SH FILES
+.TP
+.I /etc/passwd
+password database file
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR getpw ()
+T}	Thread safety	MT-Safe locale
+.TE
+.SH STANDARDS
+None.
+.SH HISTORY
+SVr2.
+.SH BUGS
+The
+.BR getpw ()
+function is dangerous as it may overflow the provided buffer
+.IR buf .
+It is obsoleted by
+.BR getpwuid (3).
+.SH SEE ALSO
+.BR endpwent (3),
+.BR fgetpwent (3),
+.BR getpwent (3),
+.BR getpwnam (3),
+.BR getpwuid (3),
+.BR putpwent (3),
+.BR setpwent (3),
+.BR passwd (5)

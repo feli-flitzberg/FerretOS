@@ -1,0 +1,62 @@
+.\" Copyright (c) 2022 by Thomas Voss <mail@thomasvoss.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\"
+.TH EXIT_SUCCESS 3const 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+EXIT_SUCCESS, EXIT_FAILURE \- termination status constants
+.SH LIBRARY
+Standard C library
+.RI ( libc )
+.SH SYNOPSIS
+.nf
+.B #include <stdlib.h>
+.P
+.BR "#define EXIT_SUCCESS  "  0
+.BR "#define EXIT_FAILURE  "  "/* nonzero */"
+.fi
+.SH DESCRIPTION
+.B EXIT_SUCCESS
+and
+.B EXIT_FAILURE
+represent a successful and unsuccessful exit status respectively,
+and can be used as arguments to the
+.BR exit (3)
+function.
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+C89, POSIX.1-2001.
+.SH EXAMPLES
+.\" SRC BEGIN (EXIT_SUCCESS.c)
+.EX
+#include <stdio.h>
+#include <stdlib.h>
+\&
+int
+main(int argc, char *argv[])
+{
+    FILE *fp;
+\&
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <file>\[rs]n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+\&
+    fp = fopen(argv[1], "r");
+    if (fp == NULL) {
+        perror(argv[1]);
+        exit(EXIT_FAILURE);
+    }
+\&
+    /* Other code omitted */
+\&
+    fclose(fp);
+    exit(EXIT_SUCCESS);
+}
+.EE
+.\" SRC END
+.SH SEE ALSO
+.BR exit (3),
+.BR sysexits.h (3head)

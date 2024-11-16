@@ -1,0 +1,69 @@
+'\" t
+.\" Copyright (c) Bruno Haible <haible@clisp.cons.org>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" References consulted:
+.\"   GNU glibc-2 source code and manual
+.\"   Dinkumware C library reference http://www.dinkumware.com/
+.\"   OpenGroup's Single UNIX specification http://www.UNIX-systems.org/online.html
+.\"   ISO/IEC 9899:1999
+.\"
+.TH wcspbrk 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+wcspbrk \- search a wide-character string for any of a set of wide characters
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <wchar.h>
+.P
+.BI "wchar_t *wcspbrk(const wchar_t *" wcs ", const wchar_t *" accept );
+.fi
+.SH DESCRIPTION
+The
+.BR wcspbrk ()
+function is the wide-character equivalent
+of the
+.BR strpbrk (3)
+function.
+It searches for the first occurrence in the wide-character
+string pointed to by
+.I wcs
+of any of the
+characters in the wide-character
+string pointed to by
+.IR accept .
+.SH RETURN VALUE
+The
+.BR wcspbrk ()
+function returns a pointer to the first occurrence in
+.I wcs
+of any of the characters listed in
+.IR accept .
+If
+.I wcs
+contains none of these characters, NULL is returned.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR wcspbrk ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, C99.
+.SH SEE ALSO
+.BR strpbrk (3),
+.BR wcschr (3),
+.BR wcscspn (3)

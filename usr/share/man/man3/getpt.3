@@ -1,0 +1,74 @@
+'\" t
+.\" This man page was written by Jeremy Phelps <jphelps@notreached.net>.
+.\"
+.\" %%%LICENSE_START(FREELY_REDISTRIBUTABLE)
+.\" Redistribute and modify at will.
+.\" %%%LICENSE_END
+.\"
+.TH getpt 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+getpt \- open a new pseudoterminal master
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#define _GNU_SOURCE" "             /* See feature_test_macros(7) */"
+.B #include <stdlib.h>
+.P
+.B "int getpt(void);"
+.fi
+.SH DESCRIPTION
+.BR getpt ()
+opens a new pseudoterminal device and returns a file descriptor
+that refers to that device.
+It is equivalent to opening the pseudoterminal multiplexor device
+.P
+.in +4n
+.EX
+open("/dev/ptmx", O_RDWR);
+.EE
+.in
+.P
+on Linux systems, though the pseudoterminal multiplexor device is located
+elsewhere on some systems that use the GNU C library.
+.SH RETURN VALUE
+.BR getpt ()
+returns an open file descriptor upon successful completion.
+Otherwise, it
+returns \-1 and sets
+.I errno
+to indicate the error.
+.SH ERRORS
+.BR getpt ()
+can fail with various errors described in
+.BR open (2).
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR getpt ()
+T}	Thread safety	MT-Safe
+.TE
+.SH VERSIONS
+Use
+.BR posix_openpt (3)
+instead.
+.SH STANDARDS
+GNU.
+.SH HISTORY
+glibc 2.1.
+.SH SEE ALSO
+.BR grantpt (3),
+.BR posix_openpt (3),
+.BR ptsname (3),
+.BR unlockpt (3),
+.BR ptmx (4),
+.BR pty (7)

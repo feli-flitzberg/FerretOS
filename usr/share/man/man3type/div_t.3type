@@ -1,0 +1,59 @@
+.\" Copyright (c) 2020-2022 by Alejandro Colomar <alx@kernel.org>
+.\" and Copyright (c) 2020 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\"
+.TH div_t 3type 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+div_t, ldiv_t, lldiv_t, imaxdiv_t \-
+quotient and remainder of an integer division
+.SH LIBRARY
+Standard C library
+.RI ( libc )
+.SH SYNOPSIS
+.EX
+.B #include <stdlib.h>
+.P
+.B typedef struct {
+.BR "    int quot;" " /* Quotient */"
+.BR "    int rem;" "  /* Remainder */"
+.B } div_t;
+.P
+.B typedef struct {
+.BR "    long quot;" " /* Quotient */"
+.BR "    long rem;" "  /* Remainder */"
+.B } ldiv_t;
+.P
+.B typedef struct {
+.BR "    long long quot;" " /* Quotient */"
+.BR "    long long rem;" "  /* Remainder */"
+.B } lldiv_t;
+.P
+.B #include <inttypes.h>
+.P
+.B typedef struct {
+.BR "    intmax_t quot;" " /* Quotient */"
+.BR "    intmax_t rem;" "  /* Remainder */"
+.B } imaxdiv_t;
+.EE
+.SH DESCRIPTION
+.RI [[ l ] l ] div_t
+is the type of the value returned by the
+.RB [[ l ] l ]\c
+.BR div (3)
+function.
+.P
+.I imaxdiv_t
+is the type of the value returned by the
+.BR imaxdiv (3)
+function.
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+C99, POSIX.1-2001.
+.SH SEE ALSO
+.BR div (3),
+.BR imaxdiv (3),
+.BR ldiv (3),
+.BR lldiv (3)

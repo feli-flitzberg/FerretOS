@@ -1,0 +1,37 @@
+.\" Copyright (c) 2020-2022 by Alejandro Colomar <alx@kernel.org>
+.\" and Copyright (c) 2020 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\"
+.TH clock_t 3type 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+clock_t \- system time
+.SH LIBRARY
+Standard C library
+.RI ( libc )
+.SH SYNOPSIS
+.nf
+.B #include <time.h>
+.P
+.BR typedef " /* ... */ " clock_t;
+.fi
+.SH DESCRIPTION
+Used for system time in clock ticks or
+.B CLOCKS_PER_SEC
+(defined in
+.IR <time.h> ).
+According to POSIX,
+it is an integer type or a real-floating type.
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+C89, POSIX.1-2001.
+.SH NOTES
+The following headers also provide this type:
+.I <sys/types.h>
+and
+.IR <sys/times.h> .
+.SH SEE ALSO
+.BR times (2),
+.BR clock (3)

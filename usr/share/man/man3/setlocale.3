@@ -1,0 +1,248 @@
+'\" t
+.\" Copyright (c) 1993 by Thomas Koenig (ig25@rz.uni-karlsruhe.de)
+.\" and Copyright 1999 by Bruno Haible (haible@clisp.cons.org)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" Modified Sat Jul 24 18:20:12 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Tue Jul 15 16:49:10 1997 by Andries Brouwer (aeb@cwi.nl)
+.\" Modified Sun Jul  4 14:52:16 1999 by Bruno Haible (haible@clisp.cons.org)
+.\" Modified Tue Aug 24 17:11:01 1999 by Andries Brouwer (aeb@cwi.nl)
+.\" Modified Tue Feb  6 03:31:55 2001 by Andries Brouwer (aeb@cwi.nl)
+.\"
+.TH setlocale 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+setlocale \- set the current locale
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <locale.h>
+.P
+.BI "char *setlocale(int " category ", const char *" locale );
+.fi
+.SH DESCRIPTION
+The
+.BR setlocale ()
+function is used to set or query the program's current locale.
+.P
+If
+.I locale
+is not NULL,
+the program's current locale is modified according to the arguments.
+The argument
+.I category
+determines which parts of the program's current locale should be modified.
+.TS
+lB lB
+lB lx.
+Category	Governs
+LC_ALL	All of the locale
+LC_ADDRESS	T{
+Formatting of addresses and
+geography-related items (*)
+T}
+LC_COLLATE	String collation
+LC_CTYPE	Character classification
+LC_IDENTIFICATION	T{
+Metadata describing the locale (*)
+T}
+LC_MEASUREMENT	T{
+Settings related to measurements
+(metric versus US customary) (*)
+T}
+LC_MESSAGES	T{
+Localizable natural-language messages
+T}
+LC_MONETARY	T{
+Formatting of monetary values
+T}
+LC_NAME	T{
+Formatting of salutations for persons (*)
+T}
+LC_NUMERIC	T{
+Formatting of nonmonetary numeric values
+T}
+LC_PAPER	T{
+Settings related to the standard paper size (*)
+T}
+LC_TELEPHONE	T{
+Formats to be used with telephone services (*)
+T}
+LC_TIME	T{
+Formatting of date and time values
+T}
+.TE
+.P
+The categories marked with an asterisk in the above table
+are GNU extensions.
+For further information on these locale categories, see
+.BR locale (7).
+.P
+The argument
+.I locale
+is a pointer to a character string containing the
+required setting of
+.IR category .
+Such a string is either a well-known constant like "C" or "da_DK"
+(see below), or an opaque string that was returned by another call of
+.BR setlocale ().
+.P
+If
+.I locale
+is an empty string,
+.BR \[dq]\[dq] ,
+each part of the locale that should be modified is set according to the
+environment variables.
+The details are implementation-dependent.
+For glibc, first (regardless of
+.IR category ),
+the environment variable
+.B LC_ALL
+is inspected,
+next the environment variable with the same name as the category
+(see the table above),
+and finally the environment variable
+.BR LANG .
+The first existing environment variable is used.
+If its value is not a valid locale specification, the locale
+is unchanged, and
+.BR setlocale ()
+returns NULL.
+.P
+The locale
+.B \[dq]C\[dq]
+or
+.B \[dq]POSIX\[dq]
+is a portable locale;
+it exists on all conforming systems.
+.P
+A locale name is typically of the form
+.IR language "[_" territory "][." codeset "][@" modifier "],"
+where
+.I language
+is an ISO\~639 language code,
+.I territory
+is an ISO\~3166 country code, and
+.I codeset
+is a character set or encoding identifier like
+.B "ISO\-8859\-1"
+or
+.BR "UTF\-8" .
+For a list of all supported locales, try "locale \-a" (see
+.BR locale (1)).
+.P
+If
+.I locale
+is NULL, the current locale is only queried, not modified.
+.P
+On startup of the main program, the portable
+.B \[dq]C\[dq]
+locale is selected as default.
+A program may be made portable to all locales by calling:
+.P
+.in +4n
+.EX
+setlocale(LC_ALL, "");
+.EE
+.in
+.P
+after program initialization, and then:
+.IP \[bu] 3
+using the values returned from a
+.BR localeconv (3)
+call for locale-dependent information;
+.IP \[bu]
+using the multibyte and wide character functions for text processing if
+.BR "MB_CUR_MAX > 1" ;
+.IP \[bu]
+using
+.BR strcoll (3)
+and
+.BR strxfrm (3)
+to compare strings; and
+.IP \[bu]
+using
+.BR wcscoll (3)
+and
+.BR wcsxfrm (3)
+to compare wide-character strings.
+.SH RETURN VALUE
+A successful call to
+.BR setlocale ()
+returns an opaque string that corresponds to the locale set.
+This string may be allocated in static storage.
+The string returned is such that a subsequent call with that string
+and its associated category will restore that part of the process's
+locale.
+The return value is NULL if the request cannot be honored.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR setlocale ()
+T}	Thread safety	MT-Unsafe const:locale env
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SS Categories
+.TP
+.B LC_ALL
+.TQ
+.B LC_COLLATE
+.TQ
+.B LC_CTYPE
+.TQ
+.B LC_MONETARY
+.TQ
+.B LC_NUMERIC
+.TQ
+.B LC_TIME
+C11, POSIX.1-2008.
+.TP
+.B LC_MESSAGES
+POSIX.1-2008.
+.TP
+Others:
+GNU.
+.SH HISTORY
+POSIX.1-2001, C89.
+.SS Categories
+.TP
+.B LC_ALL
+.TQ
+.B LC_COLLATE
+.TQ
+.B LC_CTYPE
+.TQ
+.B LC_MONETARY
+.TQ
+.B LC_NUMERIC
+.TQ
+.B LC_TIME
+C89, POSIX.1-2001.
+.TP
+.B LC_MESSAGES
+POSIX.1-2001.
+.TP
+Others:
+GNU.
+.SH SEE ALSO
+.BR locale (1),
+.BR localedef (1),
+.BR isalpha (3),
+.BR localeconv (3),
+.BR nl_langinfo (3),
+.BR rpmatch (3),
+.BR strcoll (3),
+.BR strftime (3),
+.BR charsets (7),
+.BR locale (7)

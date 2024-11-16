@@ -1,0 +1,66 @@
+.\" Copyright (c) 1995 Martin Schulze <joey@infodrom.north.de>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" 1995-10-18  Martin Schulze  <joey@infodrom.north.de>
+.\"	* first released
+.\" 2002-09-22  Seth W. Klein  <sk@sethwklein.net>
+.\"     * protocol numbers are now assigned by the IANA
+.\"
+.TH protocols 5 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+protocols \- protocols definition file
+.SH DESCRIPTION
+This file is a plain ASCII file, describing the various DARPA internet
+protocols that are available from the TCP/IP subsystem.
+It should be
+consulted instead of using the numbers in the ARPA include files, or,
+even worse, just guessing them.
+These numbers will occur in the
+protocol field of any IP header.
+.P
+Keep this file untouched since changes would result in incorrect IP
+packages.
+Protocol numbers and names are specified by the IANA
+(Internet Assigned Numbers Authority).
+.\" .. by the DDN Network Information Center.
+.P
+Each line is of the following format:
+.P
+.RS
+.I protocol number aliases .\|.\|.
+.RE
+.P
+where the fields are delimited by spaces or tabs.
+Empty lines are ignored.
+If a line contains a hash mark (#), the hash mark and the part
+of the line following it are ignored.
+.P
+The field descriptions are:
+.TP
+.I protocol
+the native name for the protocol.
+For example
+.IR ip ,
+.IR tcp ,
+or
+.IR udp .
+.TP
+.I number
+the official number for this protocol as it will appear within the IP
+header.
+.TP
+.I aliases
+optional aliases for the protocol.
+.P
+This file might be distributed over a network using a network-wide
+naming service like Yellow Pages/NIS or BIND/Hesiod.
+.SH FILES
+.TP
+.I /etc/protocols
+The protocols definition file.
+.SH SEE ALSO
+.BR getprotoent (3)
+.P
+.UR http://www.iana.org\:/assignments\:/protocol\-numbers
+.UE

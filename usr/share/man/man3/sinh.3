@@ -1,0 +1,129 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\" and Copyright 2008, Linux Foundation, written by Michael Kerrisk
+.\"     <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified 1993-07-24 by Rik Faith (faith@cs.unc.edu)
+.\" Modified 1996-06-08 by aeb
+.\" Modified 2002-07-27 by Walter Harms
+.\" 	(walter.harms@informatik.uni-oldenburg.de)
+.\"
+.TH sinh 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+sinh, sinhf, sinhl \- hyperbolic sine function
+.SH LIBRARY
+Math library
+.RI ( libm ", " \-lm )
+.SH SYNOPSIS
+.nf
+.B #include <math.h>
+.P
+.BI "double sinh(double " x );
+.BI "float sinhf(float " x );
+.BI "long double sinhl(long double " x );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR sinhf (),
+.BR sinhl ():
+.nf
+    _ISOC99_SOURCE || _POSIX_C_SOURCE >= 200112L
+        || /* Since glibc 2.19: */ _DEFAULT_SOURCE
+        || /* glibc <= 2.19: */ _BSD_SOURCE || _SVID_SOURCE
+.fi
+.SH DESCRIPTION
+These functions return the hyperbolic sine of
+.IR x ,
+which
+is defined mathematically as:
+.P
+.nf
+    sinh(x) = (exp(x) \- exp(\-x)) / 2
+.fi
+.SH RETURN VALUE
+On success, these functions return the hyperbolic sine of
+.IR x .
+.P
+If
+.I x
+is a NaN, a NaN is returned.
+.P
+If
+.I x
+is +0 (\-0), +0 (\-0) is returned.
+.P
+If
+.I x
+is positive infinity (negative infinity),
+positive infinity (negative infinity) is returned.
+.P
+If the result overflows,
+a range error occurs,
+and the functions return
+.BR HUGE_VAL ,
+.BR HUGE_VALF ,
+or
+.BR HUGE_VALL ,
+respectively, with the same sign as
+.IR x .
+.\"
+.\" POSIX.1-2001 documents an optional range error (underflow)
+.\" for subnormal x;
+.\" glibc 2.8 does not do this.
+.SH ERRORS
+See
+.BR math_error (7)
+for information on how to determine whether an error has occurred
+when calling these functions.
+.P
+The following errors can occur:
+.TP
+Range error: result overflow
+.I errno
+is set to
+.BR ERANGE .
+An overflow floating-point exception
+.RB ( FE_OVERFLOW )
+is raised.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR sinh (),
+.BR sinhf (),
+.BR sinhl ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+C99, POSIX.1-2001.
+.P
+The variant returning
+.I double
+also conforms to
+SVr4, 4.3BSD, C89.
+.SH SEE ALSO
+.BR acosh (3),
+.BR asinh (3),
+.BR atanh (3),
+.BR cosh (3),
+.BR csinh (3),
+.BR tanh (3)

@@ -1,0 +1,33 @@
+.\" Copyright (C) 2006 Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH mq_getsetattr 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+mq_getsetattr \- get/set message queue attributes
+.SH SYNOPSIS
+.nf
+.BR "#include <mqueue.h>" "           /* Definition of " "struct mq_attr" " */"
+.BR "#include <sys/syscall.h>" "      /* Definition of " SYS_* " constants */"
+.B #include <unistd.h>
+.P
+.BI "int syscall(SYS_mq_getsetattr, mqd_t " mqdes ,
+.BI "            const struct mq_attr *" newattr ", struct mq_attr *" oldattr );
+.fi
+.SH DESCRIPTION
+Do not use this system call.
+.P
+This is the low-level system call used to implement
+.BR mq_getattr (3)
+and
+.BR mq_setattr (3).
+For an explanation of how this system call operates,
+see the description of
+.BR mq_setattr (3).
+.SH STANDARDS
+None.
+.SH NOTES
+Never call it unless you are writing a C library!
+.SH SEE ALSO
+.BR mq_getattr (3),
+.BR mq_overview (7)

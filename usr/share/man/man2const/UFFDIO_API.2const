@@ -1,0 +1,297 @@
+.\" Copyright 2016, IBM Corporation.
+.\" Written by Mike Rapoport <rppt@linux.vnet.ibm.com>
+.\" Copyright 2016, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH UFFDIO_API 2const 2024-06-17 "Linux man-pages 6.9.1"
+.SH NAME
+UFFDIO_API
+\-
+enable operation of the userfaultfd and perform API handshake
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/userfaultfd.h>" "  /* Definition of " UFFD* " constants */"
+.B #include <sys/ioctl.h>
+.P
+.BI "int ioctl(int " fd ", UFFDIO_API, struct uffdio_api *" argp );
+.P
+.B #include <linux/userfaultfd.h>
+.P
+.fi
+.EX
+.B struct uffdio_api {
+.BR "    __u64 api;" "       /* Requested API version (input) */"
+.BR "    __u64 features;" "  /* Requested features (input/output) */"
+.BR "    __u64 ioctls;" "    /* Available ioctl() operations (output) */"
+.B };
+.EE
+.SH DESCRIPTION
+Enable operation of the userfaultfd and perform API handshake.
+.P
+The
+.I api
+field denotes the API version requested by the application.
+The kernel verifies that it can support the requested API version,
+and sets the
+.I features
+and
+.I ioctls
+fields to bit masks representing all the available features and the generic
+.BR ioctl (2)
+operations available.
+.P
+Since Linux 4.11,
+applications should use the
+.I features
+field to perform a two-step handshake.
+First,
+.B UFFDIO_API
+is called with the
+.I features
+field set to zero.
+The kernel responds by setting all supported feature bits.
+.P
+Applications which do not require any specific features
+can begin using the userfaultfd immediately.
+Applications which do need specific features
+should call
+.B UFFDIO_API
+again with a subset of the reported feature bits set
+to enable those features.
+.P
+Before Linux 4.11, the
+.I features
+field must be initialized to zero before the call to
+.BR UFFDIO_API ,
+and zero (i.e., no feature bits) is placed in the
+.I features
+field by the kernel upon return from
+.BR ioctl (2).
+.P
+If the application sets unsupported feature bits,
+the kernel will zero out the returned
+.I uffdio_api
+structure and return
+.BR EINVAL .
+.P
+The following feature bits may be set:
+.TP
+.BR UFFD_FEATURE_EVENT_FORK " (since Linux 4.11)"
+When this feature is enabled,
+the userfaultfd objects associated with a parent process are duplicated
+into the child process during
+.BR fork (2)
+and a
+.B UFFD_EVENT_FORK
+event is delivered to the userfaultfd monitor
+.TP
+.BR UFFD_FEATURE_EVENT_REMAP " (since Linux 4.11)"
+If this feature is enabled,
+when the faulting process invokes
+.BR mremap (2),
+the userfaultfd monitor will receive an event of type
+.BR UFFD_EVENT_REMAP .
+.TP
+.BR UFFD_FEATURE_EVENT_REMOVE " (since Linux 4.11)"
+If this feature is enabled,
+when the faulting process calls
+.BR madvise (2)
+with the
+.B MADV_DONTNEED
+or
+.B MADV_REMOVE
+advice value to free a virtual memory area
+the userfaultfd monitor will receive an event of type
+.BR UFFD_EVENT_REMOVE .
+.TP
+.BR UFFD_FEATURE_EVENT_UNMAP " (since Linux 4.11)"
+If this feature is enabled,
+when the faulting process unmaps virtual memory either explicitly with
+.BR munmap (2),
+or implicitly during either
+.BR mmap (2)
+or
+.BR mremap (2),
+the userfaultfd monitor will receive an event of type
+.BR UFFD_EVENT_UNMAP .
+.TP
+.BR UFFD_FEATURE_MISSING_HUGETLBFS " (since Linux 4.11)"
+If this feature bit is set,
+the kernel supports registering userfaultfd ranges on hugetlbfs
+virtual memory areas
+.TP
+.BR UFFD_FEATURE_MISSING_SHMEM " (since Linux 4.11)"
+If this feature bit is set,
+the kernel supports registering userfaultfd ranges on shared memory areas.
+This includes all kernel shared memory APIs:
+System V shared memory,
+.BR tmpfs (5),
+shared mappings of
+.IR /dev/zero ,
+.BR mmap (2)
+with the
+.B MAP_SHARED
+flag set,
+.BR memfd_create (2),
+and so on.
+.TP
+.BR UFFD_FEATURE_SIGBUS " (since Linux 4.14)"
+.\" commit 2d6d6f5a09a96cc1fec7ed992b825e05f64cb50e
+If this feature bit is set, no page-fault events
+.RB ( UFFD_EVENT_PAGEFAULT )
+will be delivered.
+Instead, a
+.B SIGBUS
+signal will be sent to the faulting process.
+Applications using this
+feature will not require the use of a userfaultfd monitor for processing
+memory accesses to the regions registered with userfaultfd.
+.TP
+.BR UFFD_FEATURE_THREAD_ID " (since Linux 4.14)"
+If this feature bit is set,
+.I uffd_msg.pagefault.feat.ptid
+will be set to the faulted thread ID for each page-fault message.
+.TP
+.BR UFFD_FEATURE_PAGEFAULT_FLAG_WP " (since Linux 5.10)"
+If this feature bit is set,
+userfaultfd supports write-protect faults
+for anonymous memory.
+(Note that shmem / hugetlbfs support
+is indicated by a separate feature.)
+.TP
+.BR UFFD_FEATURE_MINOR_HUGETLBFS " (since Linux 5.13)"
+If this feature bit is set,
+the kernel supports registering userfaultfd ranges
+in minor mode on hugetlbfs-backed memory areas.
+.TP
+.BR UFFD_FEATURE_MINOR_SHMEM " (since Linux 5.14)"
+If this feature bit is set,
+the kernel supports registering userfaultfd ranges
+in minor mode on shmem-backed memory areas.
+.TP
+.BR UFFD_FEATURE_EXACT_ADDRESS " (since Linux 5.18)"
+If this feature bit is set,
+.I uffd_msg.pagefault.address
+will be set to the exact page-fault address that was reported by the hardware,
+and will not mask the offset within the page.
+Note that old Linux versions might indicate the exact address as well,
+even though the feature bit is not set.
+.TP
+.BR UFFD_FEATURE_WP_HUGETLBFS_SHMEM " (since Linux 5.19)"
+If this feature bit is set,
+userfaultfd supports write-protect faults
+for hugetlbfs and shmem / tmpfs memory.
+.TP
+.BR UFFD_FEATURE_WP_UNPOPULATED " (since Linux 6.4)"
+If this feature bit is set,
+the kernel will handle anonymous memory the same way as file memory,
+by allowing the user to write-protect unpopulated page table entries.
+.TP
+.BR UFFD_FEATURE_POISON " (since Linux 6.6)"
+If this feature bit is set,
+the kernel supports resolving faults with the
+.B UFFDIO_POISON
+ioctl.
+.TP
+.BR UFFD_FEATURE_WP_ASYNC " (since Linux 6.7)"
+If this feature bit is set,
+the write protection faults would be asynchronously resolved
+by the kernel.
+.P
+The returned
+.I argp->ioctls
+field can contain the following bits:
+.\" FIXME This user-space API seems not fully polished.  Why are there
+.\" not constants defined for each of the bit-mask values listed below?
+.TP
+.B 1 << _UFFDIO_API
+The
+.B UFFDIO_API
+operation is supported.
+.TP
+.B 1 << _UFFDIO_REGISTER
+The
+.B UFFDIO_REGISTER
+operation is supported.
+.TP
+.B 1 << _UFFDIO_UNREGISTER
+The
+.B UFFDIO_UNREGISTER
+operation is supported.
+.SH RETURN VALUE
+On success,
+0 is returned.
+.P
+On error, \-1 is returned and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EFAULT
+.I argp
+refers to an address that is outside the calling process's
+accessible address space.
+.TP
+.B EINVAL
+The API version requested in the
+.I api
+field is not supported by this kernel, or the
+.I features
+field passed to the kernel includes feature bits that are not supported
+by the current kernel version.
+.TP
+.B EINVAL
+A previous
+.B UFFDIO_API
+call already enabled one or more features for this userfaultfd.
+Calling
+.B UFFDIO_API
+twice,
+the first time with no features set,
+is explicitly allowed
+as per the two-step feature detection handshake.
+.TP
+.B EPERM
+The
+.B UFFD_FEATURE_EVENT_FORK
+feature was enabled,
+but the calling process doesn't have the
+.B CAP_SYS_PTRACE
+capability.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 4.3.
+.SH CAVEATS
+If an error occurs,
+the kernel may zero the provided
+.I uffdio_api
+structure.
+The caller should treat its contents as unspecified,
+and reinitialize it before re-attempting another
+.B UFFDIO_API
+call.
+.SH BUGS
+In order to detect available userfault features and
+enable some subset of those features
+the userfaultfd file descriptor must be closed after the first
+.B UFFDIO_API
+operation that queries features availability and reopened before
+the second
+.B UFFDIO_API
+operation that actually enables the desired features.
+.SH EXAMPLES
+See
+.BR userfaultfd (2).
+.SH SEE ALSO
+.BR ioctl (2),
+.BR ioctl_userfaultfd (2),
+.BR mmap (2),
+.BR userfaultfd (2)
+.P
+.I linux.git/\:Documentation/\:admin\-guide/\:mm/\:userfaultfd.rst

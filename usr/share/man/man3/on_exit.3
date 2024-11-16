@@ -1,0 +1,105 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified 1993-04-02, David Metcalfe
+.\" Modified 1993-07-25, Rik Faith (faith@cs.unc.edu)
+.TH on_exit 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+on_exit \- register a function to be called at normal process termination
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdlib.h>
+.P
+.BI "int on_exit(void (*" function ")(int, void *), void *" arg );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR on_exit ():
+.nf
+    Since glibc 2.19:
+        _DEFAULT_SOURCE
+    glibc 2.19 and earlier:
+        _BSD_SOURCE || _SVID_SOURCE
+.fi
+.SH DESCRIPTION
+The
+.BR on_exit ()
+function registers the given
+.I function
+to be
+called at normal process termination, whether via
+.BR exit (3)
+or via return from the program's
+.IR main ().
+The
+.I function
+is passed the status argument given to the last call to
+.BR exit (3)
+and the
+.I arg
+argument from
+.BR on_exit ().
+.P
+The same function may be registered multiple times:
+it is called once for each registration.
+.P
+When a child process is created via
+.BR fork (2),
+it inherits copies of its parent's registrations.
+Upon a successful call to one of the
+.BR exec (3)
+functions, all registrations are removed.
+.SH RETURN VALUE
+The
+.BR on_exit ()
+function returns the value 0 if successful; otherwise
+it returns a nonzero value.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR on_exit ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+None.
+.SH HISTORY
+SunOS 4, glibc.
+Removed in Solaris (SunOS 5).
+Use the standard
+.BR atexit (3)
+instead.
+.SH CAVEATS
+By the time
+.I function
+is executed, stack
+.RI ( auto )
+variables may already have gone out of scope.
+Therefore,
+.I arg
+should not be a pointer to a stack variable;
+it may however be a pointer to a heap variable or a global variable.
+.SH SEE ALSO
+.BR _exit (2),
+.BR atexit (3),
+.BR exit (3)

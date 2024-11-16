@@ -1,0 +1,75 @@
+.\" Copyright 2008, 2012, 2013, 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_GET_SECCOMP 2 2024-06-02 "Linux man-pages 6.9.1"
+.SH NAME
+PR_GET_SECCOMP
+\-
+get the secure computing mode
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.B int prctl(PR_GET_SECCOMP);
+.fi
+.SH DESCRIPTION
+Return the secure computing mode of the calling thread.
+.P
+If the caller is not in secure computing mode, this operation returns 0;
+if the caller is in strict secure computing mode, then the
+.BR prctl ()
+call will cause a
+.B SIGKILL
+signal to be sent to the process.
+If the caller is in filter mode, and this system call is allowed by the
+seccomp filters, it returns 2; otherwise, the process is killed with a
+.B SIGKILL
+signal.
+.P
+This operation is available only
+if the kernel is configured with
+.B CONFIG_SECCOMP
+enabled.
+.SH RETURN VALUE
+On success,
+this call
+returns the nonnegative value described above.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error;
+or the process is killed.
+.SH ERRORS
+.TP
+.B EINVAL
+The kernel was not configured with
+.BR CONFIG_SECCOMP .
+.TP
+.B SIGKILL
+The caller is in strict secure computing mode.
+.TP
+.B SIGKILL
+The caller is in filter mode,
+and this system call is not allowed by the seccomp filters.
+.SH FILES
+.TP
+.IR /proc/ pid /status
+Since Linux 3.8, the
+.I Seccomp
+field of this file
+provides a method of obtaining the same information,
+without the risk that the process is killed; see
+.BR proc_pid_status (5).
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 2.6.23.
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_SET_SECCOMP (2const),
+.BR seccomp (2)

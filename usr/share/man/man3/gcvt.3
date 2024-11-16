@@ -1,0 +1,82 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 19:32:25 1993 by Rik Faith (faith@cs.unc.edu)
+.TH gcvt 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+gcvt \- convert a floating-point number to a string
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdlib.h>
+.P
+.BI "char *gcvt(double " number ", int " ndigit ", char *" buf );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR gcvt ():
+.nf
+    Since glibc 2.17
+        (_XOPEN_SOURCE >= 500 && ! (_POSIX_C_SOURCE >= 200809L))
+            || /* glibc >= 2.20 */ _DEFAULT_SOURCE
+            || /* glibc <= 2.19 */ _SVID_SOURCE
+    glibc 2.12 to glibc 2.16:
+        (_XOPEN_SOURCE >= 500 && ! (_POSIX_C_SOURCE >= 200112L))
+            || _SVID_SOURCE
+    Before glibc 2.12:
+        _SVID_SOURCE || _XOPEN_SOURCE >= 500
+.\"        || _XOPEN_SOURCE && _XOPEN_SOURCE_EXTENDED
+.fi
+.SH DESCRIPTION
+The
+.BR gcvt ()
+function converts \fInumber\fP to a minimal length null-terminated
+ASCII string and stores the result in \fIbuf\fP.
+It produces \fIndigit\fP significant digits in either
+.BR printf (3)
+F format or E format.
+.SH RETURN VALUE
+The
+.BR gcvt ()
+function returns
+\fIbuf\fP.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR gcvt ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+None.
+.SH HISTORY
+Marked as LEGACY in POSIX.1-2001.
+POSIX.1-2008 removed it,
+recommending the use of
+.BR sprintf (3)
+instead (though
+.BR snprintf (3)
+may be preferable).
+.SH SEE ALSO
+.BR ecvt (3),
+.BR fcvt (3),
+.BR sprintf (3)

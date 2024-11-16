@@ -1,0 +1,155 @@
+'\" t
+.\" Copyright (C) 2002 Andries Brouwer (aeb@cwi.nl)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" Inspired by a page written by Walter Harms.
+.\"
+.TH getfsent 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+getfsent, getfsspec, getfsfile, setfsent, endfsent \- handle fstab entries
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <fstab.h>
+.P
+.B "int setfsent(void);"
+.B "struct fstab *getfsent(void);"
+.B "void endfsent(void);"
+.P
+.BI "struct fstab *getfsfile(const char *" mount_point );
+.BI "struct fstab *getfsspec(const char *" special_file );
+.fi
+.SH DESCRIPTION
+These functions read from the file
+.IR /etc/fstab .
+The
+.I struct fstab
+is defined by:
+.P
+.in +4n
+.EX
+struct fstab {
+    char       *fs_spec;       /* block device name */
+    char       *fs_file;       /* mount point */
+    char       *fs_vfstype;    /* filesystem type */
+    char       *fs_mntops;     /* mount options */
+    const char *fs_type;       /* rw/rq/ro/sw/xx option */
+    int         fs_freq;       /* dump frequency, in days */
+    int         fs_passno;     /* pass number on parallel dump */
+};
+.EE
+.in
+.P
+Here the field
+.I fs_type
+contains (on a *BSD system)
+one of the five strings "rw", "rq", "ro", "sw", "xx"
+(read-write, read-write with quota, read-only, swap, ignore).
+.P
+The function
+.BR setfsent ()
+opens the file when required and positions it at the first line.
+.P
+The function
+.BR getfsent ()
+parses the next line from the file.
+(After opening it when required.)
+.P
+The function
+.BR endfsent ()
+closes the file when required.
+.P
+The function
+.BR getfsspec ()
+searches the file from the start and returns the first entry found
+for which the
+.I fs_spec
+field matches the
+.I special_file
+argument.
+.P
+The function
+.BR getfsfile ()
+searches the file from the start and returns the first entry found
+for which the
+.I fs_file
+field matches the
+.I mount_point
+argument.
+.SH RETURN VALUE
+Upon success, the functions
+.BR getfsent (),
+.BR getfsfile (),
+and
+.BR getfsspec ()
+return a pointer to a
+.IR "struct fstab" ,
+while
+.BR setfsent ()
+returns 1.
+Upon failure or end-of-file, these functions return NULL and 0, respectively.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lb lb lbx
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR endfsent (),
+.BR setfsent ()
+T}	Thread safety	T{
+.na
+.nh
+MT-Unsafe race:fsent
+T}
+T{
+.na
+.nh
+.BR getfsent (),
+.BR getfsspec (),
+.BR getfsfile ()
+T}	Thread safety	T{
+.na
+.nh
+MT-Unsafe race:fsent locale
+T}
+.TE
+.SH VERSIONS
+Several operating systems have these functions, for example,
+*BSD, SunOS, Digital UNIX, AIX (which also has a
+.BR getfstype ()).
+HP-UX has functions of the same names,
+that however use a
+.I struct checklist
+instead of a
+.IR "struct fstab" ,
+and calls these functions obsolete, superseded by
+.BR getmntent (3).
+.SH STANDARDS
+None.
+.SH HISTORY
+The
+.BR getfsent ()
+function appeared in 4.0BSD; the other four functions appeared in 4.3BSD.
+.SH NOTES
+These functions are not thread-safe.
+.P
+Since Linux allows mounting a block special device in several places,
+and since several devices can have the same mount point, where the
+last device with a given mount point is the interesting one,
+while
+.BR getfsfile ()
+and
+.BR getfsspec ()
+only return the first occurrence, these two functions are not suitable
+for use under Linux.
+.SH SEE ALSO
+.BR getmntent (3),
+.BR fstab (5)

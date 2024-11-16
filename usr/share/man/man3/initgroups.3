@@ -1,0 +1,98 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified 1993-07-24 by Rik Faith <faith@cs.unc.edu>
+.\" Modified 2004-10-10 by aeb
+.\"
+.TH initgroups 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+initgroups \- initialize the supplementary group access list
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <sys/types.h>
+.B #include <grp.h>
+.P
+.BI "int initgroups(const char *" user ", gid_t " group );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR initgroups ():
+.nf
+    Since glibc 2.19:
+        _DEFAULT_SOURCE
+    glibc 2.19 and earlier:
+        _BSD_SOURCE
+.fi
+.SH DESCRIPTION
+The
+.BR initgroups ()
+function initializes the group access list by
+reading the group database
+.I /etc/group
+and using all groups of
+which
+.I user
+is a member.
+The additional group
+.I group
+is
+also added to the list.
+.P
+The
+.I user
+argument must be non-NULL.
+.SH RETURN VALUE
+The
+.BR initgroups ()
+function returns 0 on success.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B ENOMEM
+Insufficient memory to allocate group information structure.
+.TP
+.B EPERM
+The calling process has insufficient privilege.
+See the underlying system call
+.BR setgroups (2).
+.SH FILES
+.TP
+.I /etc/group
+group database file
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR initgroups ()
+T}	Thread safety	MT-Safe locale
+.TE
+.SH STANDARDS
+None.
+.SH HISTORY
+SVr4, 4.3BSD.
+.SH SEE ALSO
+.BR getgroups (2),
+.BR setgroups (2),
+.BR credentials (7)

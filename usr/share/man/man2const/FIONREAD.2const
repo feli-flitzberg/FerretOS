@@ -1,0 +1,77 @@
+.\" Copyright 2002, Walter Harms <walter.harms@informatik.uni-oldenburg.de>
+.\" Copyright 2002, Andries Brouwer <aeb@cwi.nl>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-1.0-or-later
+.\"
+.TH FIONREAD 2const 2024-06-13 "Linux man-pages 6.9.1"
+.SH NAME
+FIONREAD,
+TIOCINQ,
+TIOCOUTQ,
+TCFLSH,
+TIOCSERGETLSR
+\-
+buffer count and flushing
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <asm/termbits.h>" "  /* Definition of constants */"
+.B #include <sys/ioctl.h>
+.P
+.BI "int ioctl(int " fd ", FIONREAD, int *" argp );
+.BI "int ioctl(int " fd ", TIOCINQ, int *" argp );
+.BI "int ioctl(int " fd ", TIOCOUTQ, int *" argp );
+.BI "int ioctl(int " fd ", TCFLSH, int " arg );
+.BI "int ioctl(int " fd ", FIONREAD, int *" argp );
+.fi
+.SH DESCRIPTION
+.TP
+.B FIONREAD
+Get the number of bytes in the input buffer.
+.TP
+.B TIOCINQ
+Same as
+.BR FIONREAD .
+.TP
+.B TIOCOUTQ
+Get the number of bytes in the output buffer.
+.TP
+.B TCFLSH
+Equivalent to
+.IR "tcflush(fd, arg)" .
+.IP
+See
+.BR tcflush (3)
+for the argument values
+.BR TCIFLUSH ,
+.BR TCOFLUSH ,
+.BR TCIOFLUSH .
+.TP
+.B TIOCSERGETLSR
+Get line status register.
+Status register has
+.B TIOCSER_TEMT
+bit set when
+output buffer is empty and also hardware transmitter is physically empty.
+.IP
+Does not have to be supported by all serial tty drivers.
+.IP
+.BR tcdrain (3)
+does not wait and returns immediately when
+.B TIOCSER_TEMT
+bit is set.
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error,
+\-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH SEE ALSO
+.BR ioctl (2),
+.BR ioctl_tty (2),
+.BR tcflush (3),
+.BR termios (3)

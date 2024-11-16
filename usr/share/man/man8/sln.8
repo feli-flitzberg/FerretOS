@@ -1,0 +1,44 @@
+.\" Copyright (c) 2013 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH sln 8 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+sln \- create symbolic links
+.SH SYNOPSIS
+.nf
+.BI sln " source dest"
+.BI sln " filelist"
+.fi
+.SH DESCRIPTION
+The
+.B sln
+program creates symbolic links.
+Unlike the
+.BR ln (1)
+program, it is statically linked.
+This means that if for some reason the dynamic linker is not working,
+.B sln
+can be used to make symbolic links to dynamic libraries.
+.P
+The command line has two forms.
+In the first form, it creates
+.I dest
+as a new symbolic link to
+.IR source .
+.P
+In the second form,
+.I filelist
+is a list of space-separated pathname pairs,
+and the effect is as if
+.B sln
+was executed once for each line of the file,
+with the two pathnames as the arguments.
+.P
+The
+.B sln
+program supports no command-line options.
+.SH SEE ALSO
+.BR ln (1),
+.BR ld.so (8),
+.BR ldconfig (8)

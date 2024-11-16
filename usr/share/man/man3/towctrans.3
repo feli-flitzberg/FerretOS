@@ -1,0 +1,82 @@
+'\" t
+.\" Copyright (c) Bruno Haible <haible@clisp.cons.org>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" References consulted:
+.\"   GNU glibc-2 source code and manual
+.\"   Dinkumware C library reference http://www.dinkumware.com/
+.\"   OpenGroup's Single UNIX specification http://www.UNIX-systems.org/online.html
+.\"   ISO/IEC 9899:1999
+.\"
+.TH towctrans 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+towctrans \- wide-character transliteration
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <wctype.h>
+.P
+.BI "wint_t towctrans(wint_t " wc ", wctrans_t " desc );
+.fi
+.SH DESCRIPTION
+If
+.I wc
+is a wide character, then the
+.BR towctrans ()
+function
+translates it according to the transliteration descriptor
+.IR desc .
+If
+.I wc
+is
+.BR WEOF ,
+.B WEOF
+is returned.
+.P
+.I desc
+must be a transliteration descriptor returned by
+the
+.BR wctrans (3)
+function.
+.SH RETURN VALUE
+The
+.BR towctrans ()
+function returns the translated wide character,
+or
+.B WEOF
+if
+.I wc
+is
+.BR WEOF .
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR towctrans ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, C99.
+.SH NOTES
+The behavior of
+.BR towctrans ()
+depends on the
+.B LC_CTYPE
+category of the
+current locale.
+.SH SEE ALSO
+.BR towlower (3),
+.BR towupper (3),
+.BR wctrans (3)

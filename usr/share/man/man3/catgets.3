@@ -1,0 +1,88 @@
+'\" t
+.\" Copyright 1993 Mitchum DSouza <m.dsouza@mrc-applied-psychology.cambridge.ac.uk>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" Updated, aeb, 980809
+.TH catgets 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+catgets \- get message from a message catalog
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <nl_types.h>
+.P
+.BI "char *catgets(nl_catd " catalog ", int " set_number \
+", int " message_number ,
+.BI "              const char *" message );
+.fi
+.SH DESCRIPTION
+.BR catgets ()
+reads the message
+.IR message_number ,
+in set
+.IR set_number ,
+from the message catalog identified by
+.IR catalog ,
+where
+.I catalog
+is a catalog descriptor returned from an earlier call to
+.BR catopen (3).
+The fourth argument,
+.IR message ,
+points to a default message string which will be returned by
+.BR catgets ()
+if the identified message catalog is not currently available.
+The
+message-text is contained in an internal buffer area and should be copied by
+the application if it is to be saved or modified.
+The return string is
+always terminated with a null byte (\[aq]\[rs]0\[aq]).
+.SH RETURN VALUE
+On success,
+.BR catgets ()
+returns a pointer to an internal buffer area
+containing the null-terminated message string.
+On failure,
+.BR catgets ()
+returns the value
+.IR message .
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR catgets ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001.
+.P
+The
+.BR catgets ()
+function is available only in libc.so.4.4.4c and above.
+.P
+The Jan 1987 X/Open Portability Guide specifies a more subtle
+error return:
+.I message
+is returned if the message catalog specified by
+.I catalog
+is not available, while an empty string is returned
+when the message catalog is available but does not contain
+the specified message.
+These two possible error returns seem to be discarded in SUSv2
+in favor of always returning
+.IR message .
+.SH SEE ALSO
+.BR catopen (3),
+.BR setlocale (3)

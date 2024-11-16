@@ -1,0 +1,56 @@
+.\" Copyright (c) 2020-2022 by Alejandro Colomar <alx@kernel.org>
+.\" and Copyright (c) 2020 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\"
+.TH lconv 3type 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+lconv \- numeric formatting information
+.SH LIBRARY
+Standard C library
+.RI ( libc )
+.SH SYNOPSIS
+.EX
+.B #include <locale.h>
+.P
+.BR "struct lconv {" "                /* Values in the \[dq]C\[dq] locale: */"
+.BR "    char *decimal_point;" "      /* \[dq].\[dq] */"
+.BR "    char *thousands_sep;" "      /* \[dq]\[dq] */"
+.BR "    char *grouping;" "           /* \[dq]\[dq] */"
+.BR "    char *mon_decimal_point;" "  /* \[dq]\[dq] */"
+.BR "    char *mon_thousands_sep;" "  /* \[dq]\[dq] */"
+.BR "    char *mon_grouping;" "       /* \[dq]\[dq] */"
+.BR "    char *positive_sign;" "      /* \[dq]\[dq] */"
+.BR "    char *negative_sign;" "      /* \[dq]\[dq] */"
+.BR "    char *currency_symbol;" "    /* \[dq]\[dq] */"
+.BR "    char  frac_digits;" "        /* CHAR_MAX */"
+.BR "    char  p_cs_precedes;" "      /* CHAR_MAX */"
+.BR "    char  n_cs_precedes;" "      /* CHAR_MAX */"
+.BR "    char  p_sep_by_space;" "     /* CHAR_MAX */"
+.BR "    char  n_sep_by_space;" "     /* CHAR_MAX */"
+.BR "    char  p_sign_posn;" "        /* CHAR_MAX */"
+.BR "    char  n_sign_posn;" "        /* CHAR_MAX */"
+.BR "    char *int_curr_symbol;" "    /* \[dq]\[dq] */"
+.BR "    char  int_frac_digits;" "    /* CHAR_MAX */"
+.BR "    char  int_p_cs_precedes;" "  /* CHAR_MAX */"
+.BR "    char  int_n_cs_precedes;" "  /* CHAR_MAX */"
+.BR "    char  int_p_sep_by_space;" " /* CHAR_MAX */"
+.BR "    char  int_n_sep_by_space;" " /* CHAR_MAX */"
+.BR "    char  int_p_sign_posn;" "    /* CHAR_MAX */"
+.BR "    char  int_n_sign_posn;" "    /* CHAR_MAX */"
+.B };
+.EE
+.SH DESCRIPTION
+Contains members related to the formatting of numeric values.
+In the "C" locale, its members have the values
+shown in the comments above.
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001.
+.SH SEE ALSO
+.BR setlocale (3),
+.BR localeconv (3),
+.BR charsets (7),
+.BR locale (7)

@@ -1,0 +1,113 @@
+.\" Copyright (c) 2022 by Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\"
+.TH tm 3type 2024-06-12 "Linux man-pages 6.9.1"
+.SH NAME
+tm \- broken-down time
+.SH LIBRARY
+Standard C library
+.RI ( libc )
+.SH SYNOPSIS
+.EX
+.B #include <time.h>
+.P
+.B struct tm {
+.BR "    int         tm_sec;" "    /* Seconds          [" 0 ", " 60 "] */"
+.BR "    int         tm_min;" "    /* Minutes          [" 0 ", " 59 "] */"
+.BR "    int         tm_hour;" "   /* Hour             [" 0 ", " 23 "] */"
+.BR "    int         tm_mday;" "   /* Day of the month [" 1 ", " 31 "] */"
+.BR "    int         tm_mon;" \
+"    /* Month            [" 0 ", " 11 "]  (January = " 0 ") */"
+.BR "    int         tm_year;" "   /* Year minus " 1900 " */"
+.BR "    int         tm_wday;" \
+"   /* Day of the week  [" 0 ", " 6 "]   (Sunday = " 0 ") */"
+.BR "    int         tm_yday;" \
+"   /* Day of the year  [" 0 ", " 365 "] (Jan/01 = " 0 ") */"
+.BR "    int         tm_isdst;" "  /* Daylight savings flag */"
+.P
+.BR "    long        tm_gmtoff;" " /* Seconds East of UTC */"
+.BR "    const char *tm_zone;" "   /* Timezone abbreviation */"
+.B };
+.EE
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.IR tm_gmtoff ,
+.IR tm_zone :
+.nf
+.\" Guarded with __USE_MISC:
+    Since glibc 2.20:
+        _DEFAULT_SOURCE
+    glibc 2.20 and earlier:
+        _BSD_SOURCE
+.fi
+.SH DESCRIPTION
+Describes time, broken down into distinct components.
+.P
+.I tm_isdst
+describes whether daylight saving time is in effect at the time described.
+The value is positive if daylight saving time is in effect,
+zero if it is not,
+and negative if the information is not available.
+.P
+.I tm_gmtoff
+is the difference, in seconds,
+of the timezone represented by this broken-down time and UTC
+(this is the additive inverse of
+.BR timezone (3)).
+.P
+.I tm_zone
+is the equivalent of
+.BR tzname (3)
+for the timezone represented by this broken-down time.
+.SH VERSIONS
+In C90,
+.I tm_sec
+could represent values in the range
+.RB [ 0 ", " 61 ],
+which could represent a double leap second.
+UTC doesn't permit double leap seconds,
+so it was limited to
+.B 60
+in C99.
+.P
+.BR timezone (3),
+as a variable, is an XSI extension: some systems provide the V7-compatible
+.\" FreeBSD
+.BR timezone (3)
+function.
+The
+.I tm_gmtoff
+field provides an alternative (with the opposite sign) for those systems.
+.P
+.I tm_zone
+points to static storage and may be overridden on subsequent calls to
+.BR localtime (3)
+and similar functions (however, this never happens under glibc).
+.SH STANDARDS
+C23, POSIX.1-2024.
+.SH HISTORY
+C89, POSIX.1-1988.
+.P
+.I tm_gmtoff
+and
+.I tm_zone
+originate from 4.3BSD-Tahoe (where
+.I tm_zone
+is a
+.IR "char *" ),
+and were first standardized in POSIX.1-2024.
+.SH NOTES
+.I tm_sec
+can represent a leap second with the value
+.BR 60 .
+.SH SEE ALSO
+.BR ctime (3),
+.BR strftime (3),
+.BR strptime (3),
+.BR time (7)

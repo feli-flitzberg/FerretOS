@@ -1,0 +1,92 @@
+.\" Copyright (C) 1995 Andries Brouwer (aeb@cwi.nl)
+.\" Written 10 June 1995 by Andries Brouwer <aeb@cwi.nl>
+.\" and Copyright (C) 2007, 2015, 2020, Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" Modified Thu Oct 31 15:16:23 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\"
+.TH _llseek 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+_llseek \- reposition read/write file offset
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <sys/syscall.h>" "      /* Definition of " SYS_* " constants */"
+.B #include <unistd.h>
+.P
+.BI "int syscall(SYS__llseek, unsigned int " fd ", unsigned long " offset_high ,
+.BI "            unsigned long " offset_low ", loff_t *" result ,
+.BI "            unsigned int " whence );
+.fi
+.P
+.IR Note :
+glibc provides no wrapper for
+.BR _llseek (),
+necessitating the use of
+.BR syscall (2).
+.SH DESCRIPTION
+Note: for information about the
+.BR llseek (3)
+library function, see
+.BR lseek64 (3).
+.P
+The
+.BR _llseek ()
+system call repositions the offset of the open file description associated
+with the file descriptor
+.I fd
+to the value
+.IP
+(offset_high << 32) | offset_low
+.P
+This new offset is a byte offset
+relative to the beginning of the file, the current file offset,
+or the end of the file, depending on whether
+.I whence
+is
+.BR SEEK_SET ,
+.BR SEEK_CUR ,
+or
+.BR SEEK_END ,
+respectively.
+.P
+The new file offset is returned in the argument
+.IR result .
+The  type
+.I loff_t
+is a 64-bit signed type.
+.P
+This system call exists on various 32-bit platforms to support
+seeking to large file offsets.
+.SH RETURN VALUE
+Upon successful completion,
+.BR _llseek ()
+returns 0.
+Otherwise, a value of \-1 is returned and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EBADF
+.I fd
+is not an open file descriptor.
+.TP
+.B EFAULT
+Problem with copying results to user space.
+.TP
+.B EINVAL
+.I whence
+is invalid.
+.SH VERSIONS
+You probably want to use the
+.BR lseek (2)
+wrapper function instead.
+.SH STANDARDS
+Linux.
+.SH SEE ALSO
+.BR lseek (2),
+.BR open (2),
+.BR lseek64 (3)

@@ -1,0 +1,79 @@
+'\" t
+.\" Copyright 2002 Walter Harms (walter.harms@informatik.uni-oldenburg.de)
+.\" and Copyright 2008, Linux Foundation, written by Michael Kerrisk
+.\"     <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: GPL-1.0-or-later
+.\"
+.\" Based on glibc infopages, copyright Free Software Foundation
+.\"
+.TH signbit 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+signbit \- test sign of a real floating-point number
+.SH LIBRARY
+Math library
+.RI ( libm ", " \-lm )
+.SH SYNOPSIS
+.nf
+.B "#include <math.h>"
+.P
+.BI  "int signbit(" x ");"
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR signbit ():
+.nf
+    _ISOC99_SOURCE || _POSIX_C_SOURCE >= 200112L
+.fi
+.SH DESCRIPTION
+.BR signbit ()
+is a generic macro which can work on all real floating-point types.
+It returns a nonzero value if the value of
+.I x
+has its sign bit set.
+.P
+This is not the same as
+.IR "x < 0.0" ,
+because IEEE 754 floating point allows zero to be signed.
+The comparison
+.I \-0.0\~<\~0.0
+is false, but
+.I signbit(\-0.0)
+will return a nonzero value.
+.P
+NaNs and infinities have a sign bit.
+.SH RETURN VALUE
+The
+.BR signbit ()
+macro returns nonzero if the sign of
+.I x
+is negative; otherwise it returns zero.
+.SH ERRORS
+No errors occur.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR signbit ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, C99.
+.P
+This function is defined in IEC 559 (and the appendix with
+recommended functions in IEEE 754/IEEE 854).
+.SH SEE ALSO
+.BR copysign (3)

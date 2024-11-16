@@ -1,0 +1,56 @@
+'\" t
+.\" Copyright 2004 Andries Brouwer (aeb@cwi.nl)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH pow10 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+pow10, pow10f, pow10l \- base-10 power functions
+.SH LIBRARY
+Math library
+.RI ( libm ", " \-lm )
+.SH SYNOPSIS
+.nf
+.BR "#define _GNU_SOURCE" "         /* See feature_test_macros(7) */"
+.B #include <math.h>
+.P
+.BI "double pow10(double " x );
+.BI "float pow10f(float " x );
+.BI "long double pow10l(long double " x );
+.fi
+.SH DESCRIPTION
+These functions return the value of 10 raised to the power
+.IR x .
+.P
+.BR "Note well" :
+These functions perform exactly the same task as the functions described in
+.BR exp10 (3),
+with the difference that the latter functions are now standardized
+in TS\ 18661-4:2015.
+Those latter functions should be used in preference
+to the functions described in this page.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR pow10 (),
+.BR pow10f (),
+.BR pow10l ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+GNU.
+.SH VERSIONS
+glibc 2.1.
+Removed in glibc 2.27.
+.\" glibc commit 5a80d39d0d2587e9bd8e72f19e92eeb2a66fbe9e
+.SH SEE ALSO
+.BR exp10 (3),
+.BR pow (3)

@@ -1,0 +1,72 @@
+.\" Written Sat Mar  8 10:35:08 MEZ 1997 by
+.\" J. "MUFTI" Scheurich (mufti@csv.ica.uni-stuttgart.de)
+.\"
+.\" SPDX-License-Identifier: GPL-1.0-or-later
+.\"
+.TH __setfpucw 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+__setfpucw \- set FPU control word on i386 architecture (obsolete)
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <i386/fpu_control.h>
+.P
+.BI "[[deprecated]] void __setfpucw(unsigned short " control_word );
+.fi
+.SH DESCRIPTION
+.BR __setfpucw ()
+transfers
+.I control_word
+to the registers of the FPU (floating-point unit) on the i386 architecture.
+This was used to control floating-point precision,
+rounding and floating-point exceptions.
+.SH STANDARDS
+GNU.
+.SH HISTORY
+Removed in glibc 2.1.
+.SH NOTES
+There are new functions from C99, with prototypes in
+.IR <fenv.h> ,
+to control FPU rounding modes, like
+.BR fegetround (3),
+.BR fesetround (3),
+and the floating-point environment, like
+.BR fegetenv (3),
+.BR feholdexcept (3),
+.BR fesetenv (3),
+.BR feupdateenv (3),
+and FPU exception handling, like
+.BR feclearexcept (3),
+.BR fegetexceptflag (3),
+.BR feraiseexcept (3),
+.BR fesetexceptflag (3),
+and
+.BR fetestexcept (3).
+.P
+If direct access to the FPU control word is still needed, the
+.B _FPU_GETCW
+and
+.B _FPU_SETCW
+macros from
+.I <fpu_control.h>
+can be used.
+.SH EXAMPLES
+.B __setfpucw(0x1372)
+.P
+Set FPU control word on the i386 architecture to
+.RS
+.PD 0
+.IP \[bu] 3
+extended precision
+.IP \[bu]
+rounding to nearest
+.IP \[bu]
+exceptions on overflow, zero divide and NaN
+.PD
+.RE
+.SH SEE ALSO
+.BR feclearexcept (3)
+.P
+.I <fpu_control.h>

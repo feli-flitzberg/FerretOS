@@ -1,0 +1,131 @@
+.\" Copyright 2020, Dave Martin <Dave.Martin@arm.com>
+.\" Copyright 2020, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_SET_TAGGED_ADDR_CTRL 2const 2024-06-01 "Linux man-pages 6.9.1"
+.SH NAME
+PR_SET_TAGGED_ADDR_CTRL
+\-
+control support for passing tagged user-space addresses to the kernel
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.BI "int prctl(PR_SET_TAGGED_ADDR_CTRL, long " mode ", 0L, 0L, 0L);"
+.fi
+.SH DESCRIPTION
+Controls support for passing tagged user-space addresses to the kernel
+(i.e., addresses where bits 56\[em]63 are not all zero).
+.P
+The level of support is selected by
+.IR support ,
+which can be one of the following:
+.TP
+.B 0L
+Addresses that are passed
+for the purpose of being dereferenced by the kernel
+must be untagged.
+.TP
+.B PR_TAGGED_ADDR_ENABLE
+Addresses that are passed
+for the purpose of being dereferenced by the kernel
+may be tagged, with the exceptions summarized below.
+.P
+On success, the mode specified in
+.I mode
+is set for the calling thread.
+.P
+If
+.I prctl(PR_SET_TAGGED_ADDR_CTRL, 0L, 0L, 0L, 0L)
+fails with
+.BR EINVAL ,
+then all addresses passed to the kernel must be untagged.
+.P
+Irrespective of which mode is set,
+addresses passed to certain interfaces
+must always be untagged:
+.IP \[bu] 3
+.BR brk (2),
+.BR mmap (2),
+.BR shmat (2),
+.BR shmdt (2),
+and the
+.I new_address
+argument of
+.BR mremap (2).
+.IP
+(Prior to Linux 5.6 these accepted tagged addresses,
+but the behaviour may not be what you expect.
+Don't rely on it.)
+.IP \[bu]
+\[oq]polymorphic\[cq] interfaces
+that accept pointers to arbitrary types cast to a
+.I void *
+or other generic type, specifically
+.BR prctl (),
+.BR ioctl (2),
+and in general
+.BR setsockopt (2)
+(only certain specific
+.BR setsockopt (2)
+options allow tagged addresses).
+.P
+This list of exclusions may shrink
+when moving from one kernel version to a later kernel version.
+While the kernel may make some guarantees
+for backwards compatibility reasons,
+for the purposes of new software
+the effect of passing tagged addresses to these interfaces
+is unspecified.
+.P
+The mode set by this call is inherited across
+.BR fork (2)
+and
+.BR clone (2).
+The mode is reset by
+.BR execve (2)
+to 0
+(i.e., tagged addresses not permitted in the user/kernel ABI).
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+.I mode
+is invalid or unsupported.
+.TP
+.B EINVAL
+This feature is disabled via
+.IR /proc/\:sys/\:abi/\:tagged_addr_disabled .
+.SH FILES
+.TP
+.I /proc/\:sys/\:abi/\:tagged_addr_disabled
+.SH STANDARDS
+Linux.
+arm64 only.
+.SH HISTORY
+.\" commit 63f0c60379650d82250f22e4cf4137ef3dc4f43d
+Linux 5.4 (arm64).
+.SH CAVEATS
+This call is primarily intended for use by the run-time environment.
+A successful
+.B PR_SET_TAGGED_ADDR_CTRL
+call elsewhere may crash the calling process.
+The conditions for using it safely are complex and system-dependent.
+Don't use it unless you know what you are doing.
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_SET_TAGGED_ADDR_CTRL (2const)
+.P
+For more information, see the kernel source file
+.IR Documentation/arm64/tagged\-address\-abi.rst .

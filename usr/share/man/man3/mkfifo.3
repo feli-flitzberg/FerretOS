@@ -1,0 +1,201 @@
+'\" t
+.\" This manpage is Copyright (C) 1995 James R. Van Zandt <jrv@vanzandt.mv.com>
+.\" and Copyright (C) 2006, 2014 Michael Kerrisk
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" changed section from 2 to 3, aeb, 950919
+.\"
+.TH mkfifo 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+mkfifo, mkfifoat \- make a FIFO special file (a named pipe)
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <sys/types.h>
+.B #include <sys/stat.h>
+.P
+.BI "int mkfifo(const char *" pathname ", mode_t " mode );
+.P
+.BR "#include <fcntl.h>           " "/* Definition of AT_* constants */"
+.B #include <sys/stat.h>
+.P
+.BI "int mkfifoat(int " dirfd ", const char *" pathname ", mode_t " mode );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR mkfifoat ():
+.nf
+    Since glibc 2.10:
+        _POSIX_C_SOURCE >= 200809L
+    Before glibc 2.10:
+        _ATFILE_SOURCE
+.fi
+.SH DESCRIPTION
+.BR mkfifo ()
+makes a FIFO special file with name \fIpathname\fP.
+\fImode\fP specifies the FIFO's permissions.
+It is modified by the
+process's \fBumask\fP in the usual way: the permissions of the created
+file are \fB(\fP\fImode\fP\fB & \[ti]umask)\fP.
+.P
+A FIFO special file is similar to a pipe, except that it is created
+in a different way.
+Instead of being an anonymous communications
+channel, a FIFO special file is entered into the filesystem by
+calling
+.BR mkfifo ().
+.P
+Once you have created a FIFO special file in this way, any process can
+open it for reading or writing, in the same way as an ordinary file.
+However, it has to be open at both ends simultaneously before you can
+proceed to do any input or output operations on it.
+Opening a FIFO for reading normally blocks until some
+other process opens the same FIFO for writing, and vice versa.
+See
+.BR fifo (7)
+for nonblocking handling of FIFO special files.
+.SS mkfifoat()
+The
+.BR mkfifoat ()
+function operates in exactly the same way as
+.BR mkfifo (),
+except for the differences described here.
+.P
+If the pathname given in
+.I pathname
+is relative, then it is interpreted relative to the directory
+referred to by the file descriptor
+.I dirfd
+(rather than relative to the current working directory of
+the calling process, as is done by
+.BR mkfifo ()
+for a relative pathname).
+.P
+If
+.I pathname
+is relative and
+.I dirfd
+is the special value
+.BR AT_FDCWD ,
+then
+.I pathname
+is interpreted relative to the current working
+directory of the calling process (like
+.BR mkfifo ()).
+.P
+If
+.I pathname
+is absolute, then
+.I dirfd
+is ignored.
+.P
+See
+.BR openat (2)
+for an explanation of the need for
+.BR mkfifoat ().
+.SH RETURN VALUE
+On success
+.BR mkfifo ()
+and
+.BR mkfifoat ()
+return 0.
+On error, \-1 is returned and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EACCES
+One of the directories in \fIpathname\fP did not allow search
+(execute) permission.
+.TP
+.B EBADF
+.RB ( mkfifoat ())
+.I pathname
+is relative but
+.I dirfd
+is neither
+.B AT_FDCWD
+nor a valid file descriptor.
+.TP
+.B EDQUOT
+The user's quota of disk blocks or inodes on the filesystem has been
+exhausted.
+.TP
+.B EEXIST
+\fIpathname\fP already exists.
+This includes the case where
+.I pathname
+is a symbolic link, dangling or not.
+.TP
+.B ENAMETOOLONG
+Either the total length of \fIpathname\fP is greater than
+\fBPATH_MAX\fP, or an individual filename component has a length
+greater than \fBNAME_MAX\fP.
+In the GNU system, there is no imposed
+limit on overall filename length, but some filesystems may place
+limits on the length of a component.
+.TP
+.B ENOENT
+A directory component in \fIpathname\fP does not exist or is a
+dangling symbolic link.
+.TP
+.B ENOSPC
+The directory or filesystem has no room for the new file.
+.TP
+.B ENOTDIR
+A component used as a directory in \fIpathname\fP is not, in fact, a
+directory.
+.TP
+.B ENOTDIR
+.RB ( mkfifoat ())
+.I pathname
+is a relative pathname and
+.I dirfd
+is a file descriptor referring to a file other than a directory.
+.TP
+.B EROFS
+\fIpathname\fP refers to a read-only filesystem.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR mkfifo (),
+.BR mkfifoat ()
+T}	Thread safety	MT-Safe
+.TE
+.SH VERSIONS
+It is implemented using
+.BR mknodat (2).
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+.TP
+.BR mkfifo ()
+POSIX.1-2001.
+.TP
+.BR mkfifoat ()
+glibc 2.4.
+POSIX.1-2008.
+.SH SEE ALSO
+.BR mkfifo (1),
+.BR close (2),
+.BR open (2),
+.BR read (2),
+.BR stat (2),
+.BR umask (2),
+.BR write (2),
+.BR fifo (7)

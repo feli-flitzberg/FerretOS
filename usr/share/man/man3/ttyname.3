@@ -1,0 +1,111 @@
+'\" t
+.\" Copyright (c) 1995 Jim Van Zandt <jrv@vanzandt.mv.com>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" Modified 2001-12-13, Martin Schulze <joey@infodrom.org>
+.\" Added ttyname_r, aeb, 2002-07-20
+.\"
+.TH ttyname 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+ttyname, ttyname_r \- return name of a terminal
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <unistd.h>
+.P
+.BI "char *ttyname(int " fd );
+.BI "int ttyname_r(int " fd ", char " buf [. buflen "], size_t " buflen );
+.fi
+.SH DESCRIPTION
+The function
+.BR ttyname ()
+returns a pointer to the null-terminated pathname of the terminal device
+that is open on the file descriptor \fIfd\fP, or NULL on error
+(for example, if \fIfd\fP is not connected to a terminal).
+The return value may point to static data, possibly overwritten by the
+next call.
+The function
+.BR ttyname_r ()
+stores this pathname in the buffer
+.I buf
+of length
+.IR buflen .
+.SH RETURN VALUE
+The function
+.BR ttyname ()
+returns a pointer to a pathname on success.
+On error, NULL is returned, and
+.I errno
+is set to indicate the error.
+The function
+.BR ttyname_r ()
+returns 0 on success, and an error number upon error.
+.SH ERRORS
+.TP
+.B EBADF
+Bad file descriptor.
+.TP
+.\" glibc commit 15e9a4f378c8607c2ae1aa465436af4321db0e23
+.B ENODEV
+.I fd
+refers to a slave pseudoterminal device
+but the corresponding pathname could not be found (see NOTES).
+.TP
+.B ENOTTY
+.I fd
+does not refer to a terminal device.
+.TP
+.B ERANGE
+.RB ( ttyname_r ())
+.I buflen
+was too small to allow storing the pathname.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR ttyname ()
+T}	Thread safety	MT-Unsafe race:ttyname
+T{
+.na
+.nh
+.BR ttyname_r ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, 4.2BSD.
+.SH NOTES
+A process that keeps a file descriptor that refers to a
+.BR pts (4)
+device open when switching to another mount namespace that uses a different
+.I /dev/ptmx
+instance may still accidentally find that a device path of the same name
+for that file descriptor exists.
+However, this device path refers to a different device and thus
+can't be used to access the device that the file descriptor refers to.
+Calling
+.BR ttyname ()
+or
+.BR ttyname_r ()
+on the file descriptor in the new mount namespace will cause these
+functions to return NULL and set
+.I errno
+to
+.BR ENODEV .
+.SH SEE ALSO
+.BR tty (1),
+.BR fstat (2),
+.BR ctermid (3),
+.BR isatty (3),
+.BR pts (4)

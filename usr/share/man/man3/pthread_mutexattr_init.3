@@ -1,0 +1,53 @@
+.\" Copyright (c) 2017, Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH pthread_mutexattr_init 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+pthread_mutexattr_init, pthread_mutexattr_destroy \- initialize and
+destroy a mutex attributes object
+.SH LIBRARY
+POSIX threads library
+.RI ( libpthread ", " \-lpthread )
+.SH SYNOPSIS
+.nf
+.B #include <pthread.h>
+.P
+.BI "int pthread_mutexattr_init(pthread_mutexattr_t *" attr ");"
+.BI "int pthread_mutexattr_destroy(pthread_mutexattr_t *" attr ");"
+.fi
+.SH DESCRIPTION
+The
+.BR pthread_mutexattr_init ()
+function initializes the mutex attributes object pointed to by
+.I attr
+with default values for all attributes defined by the implementation.
+.P
+The results of initializing an already initialized mutex attributes
+object are undefined.
+.P
+The
+.BR pthread_mutexattr_destroy ()
+function destroys a mutex attribute object (making it uninitialized).
+Once a mutex attributes object has been destroyed, it can be reinitialized with
+.BR pthread_mutexattr_init ().
+.P
+The results of destroying an uninitialized mutex attributes
+object are undefined.
+.SH RETURN VALUE
+On success, these functions return 0.
+On error, they return a positive error number.
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001.
+.SH NOTES
+Subsequent changes to a mutex attributes object do not affect mutex that
+have already been initialized using that object.
+.SH SEE ALSO
+.ad l
+.nh
+.BR pthread_mutex_init (3),
+.BR pthread_mutexattr_getpshared (3),
+.BR pthread_mutexattr_getrobust (3),
+.BR pthreads (7)

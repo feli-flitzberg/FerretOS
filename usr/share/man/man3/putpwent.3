@@ -1,0 +1,96 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 18:43:46 1993 by Rik Faith (faith@cs.unc.edu)
+.TH putpwent 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+putpwent \- write a password file entry
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdio.h>
+.B #include <sys/types.h>
+.B #include <pwd.h>
+.P
+.BI "int putpwent(const struct passwd *restrict " p \
+", FILE *restrict " stream );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR putpwent ():
+.nf
+    Since glibc 2.19:
+        _DEFAULT_SOURCE
+    glibc 2.19 and earlier:
+        _SVID_SOURCE
+.fi
+.SH DESCRIPTION
+The
+.BR putpwent ()
+function writes a password entry from the
+structure \fIp\fP in the file associated with \fIstream\fP.
+.P
+The \fIpasswd\fP structure is defined in \fI<pwd.h>\fP as follows:
+.P
+.in +4n
+.EX
+struct passwd {
+    char    *pw_name;        /* username */
+    char    *pw_passwd;      /* user password */
+    uid_t    pw_uid;         /* user ID */
+    gid_t    pw_gid;         /* group ID */
+    char    *pw_gecos;       /* real name */
+    char    *pw_dir;         /* home directory */
+    char    *pw_shell;       /* shell program */
+};
+.EE
+.in
+.SH RETURN VALUE
+The
+.BR putpwent ()
+function returns 0 on success.
+On failure, it returns \-1, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+Invalid (NULL) argument given.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR putpwent ()
+T}	Thread safety	MT-Safe locale
+.TE
+.SH STANDARDS
+None.
+.SH HISTORY
+SVr4.
+.SH SEE ALSO
+.BR endpwent (3),
+.BR fgetpwent (3),
+.BR getpw (3),
+.BR getpwent (3),
+.BR getpwnam (3),
+.BR getpwuid (3),
+.BR setpwent (3)

@@ -1,0 +1,48 @@
+.\" Copyright, Xavier Leroy <Xavier.Leroy@inria.fr>
+.\" Copyright 2023, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH pthread_condattr_init 3 2024-05-02 "Linux man-pages 6.9.1"
+.
+.
+.SH NAME
+pthread_condattr_init,
+pthread_condattr_destroy
+\-
+condition creation attributes
+.
+.
+.SH SYNOPSIS
+.B #include <pthread.h>
+.P
+.BI "int pthread_condattr_init(pthread_condattr_t *" attr ");"
+.BI "int pthread_condattr_destroy(pthread_condattr_t *" attr ");"
+.
+.
+.SH DESCRIPTION
+Condition attributes can be specified at condition creation time,
+by passing a condition attribute object
+as second argument to \fBpthread_cond_init\fP(3).
+Passing \fBNULL\fP is equivalent to
+passing a condition attribute object
+with all attributes set to their default values.
+.P
+The LinuxThreads implementation supports no attributes for conditions.
+The functions on condition attributes are
+included only for compliance with the POSIX standard.
+.P
+\fBpthread_condattr_init\fP
+initializes the condition attribute object \fIattr\fP
+and fills it with default values for the attributes.
+\fBpthread_condattr_destroy\fP destroys a condition attribute object,
+which must not be reused until it is reinitialized.
+Both functions do nothing in the LinuxThreads implementation.
+.
+.
+.SH "RETURN VALUE"
+\fBpthread_condattr_init\fP and \fBpthread_condattr_destroy\fP always return 0.
+.
+.
+.SH "SEE ALSO"
+\fBpthread_cond_init\fP(3).

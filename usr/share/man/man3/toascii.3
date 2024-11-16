@@ -1,0 +1,68 @@
+'\" t
+.\" Copyright (c) 1995 by Jim Van Zandt <jrv@vanzandt.mv.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" Added BUGS section, aeb, 950919
+.\"
+.TH toascii 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+toascii \- convert character to ASCII
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <ctype.h>
+.P
+.BI "[[deprecated]] int toascii(int " c );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR toascii ():
+.nf
+    _XOPEN_SOURCE
+        || /* glibc >= 2.19: */ _DEFAULT_SOURCE
+        || /* glibc <= 2.19: */ _SVID_SOURCE || _BSD_SOURCE
+.fi
+.SH DESCRIPTION
+.BR toascii ()
+converts
+.I c
+to a 7-bit
+.I "unsigned char"
+value that fits into the ASCII character set, by clearing the
+high-order bits.
+.SH RETURN VALUE
+The value returned is that of the converted character.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR toascii ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+SVr4, BSD, POSIX.1-2001.
+Obsolete in POSIX.1-2008,
+noting that it cannot be used portably in a localized application.
+.SH BUGS
+Many people will be unhappy if you use this function.
+This function will convert accented letters into random characters.
+.SH SEE ALSO
+.BR isascii (3),
+.BR tolower (3),
+.BR toupper (3)

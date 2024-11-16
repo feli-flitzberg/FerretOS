@@ -1,0 +1,62 @@
+.\" Copyright 2012, Cyrill Gorcunov <gorcunov@openvz.org>
+.\" Copyright 2012, 2013, 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_SET_MM_START_BRK 2const 2024-06-01 "Linux man-pages 6.9.1"
+.SH NAME
+PR_SET_MM_START_BRK
+\-
+modify kernel memory map descriptor fields
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.BI "int prctl(PR_SET_MM, PR_SET_MM_START_BRK, unsigned long " addr ", 0L, 0L);"
+.fi
+.SH DESCRIPTION
+Set the address above which the program heap can be expanded with
+.BR brk (2)
+call.
+.P
+The address must be greater than the ending address of
+the current program data segment.
+In addition,
+the combined size of the resulting heap and the data segment
+can't exceed the
+.B RLIMIT_DATA
+resource limit (see
+.BR setrlimit (2)).
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+.I addr
+is greater than
+.B TASK_SIZE
+(the limit on the size of the user address space for this architecture).
+.TP
+.B EINVAL
+.I addr
+is less than or equal to the end of the data segment
+or specifies a value that would cause the
+.B RLIMIT_DATA
+resource limit to be exceeded.
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 3.3.
+.\" commit 028ee4be34a09a6d48bdf30ab991ae933a7bc036
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_SET_MM (2const)

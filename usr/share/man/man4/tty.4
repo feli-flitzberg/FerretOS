@@ -1,0 +1,67 @@
+.\" Copyright (c) 1993 Michael Haardt (michael@moria.de),
+.\"     Fri Apr  2 11:32:09 MET DST 1993
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" Modified 1993-07-24 by Rik Faith (faith@cs.unc.edu)
+.\" Modified 2003-04-07 by Michael Kerrisk
+.\"
+.TH tty 4 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+tty \- controlling terminal
+.SH DESCRIPTION
+The file
+.I /dev/tty
+is a character file with major number 5 and
+minor number 0, usually with mode 0666 and ownership root:tty.
+It is a synonym for the controlling terminal of a process, if any.
+.P
+In addition to the
+.BR ioctl (2)
+requests supported by the device that
+.B tty
+refers to, the
+.BR ioctl (2)
+request
+.B TIOCNOTTY
+is supported.
+.SS TIOCNOTTY
+Detach the calling process from its controlling terminal.
+.P
+If the process is the session leader,
+then
+.B SIGHUP
+and
+.B SIGCONT
+signals are sent to the foreground process group
+and all processes in the current session lose their controlling tty.
+.P
+This
+.BR ioctl (2)
+call works only on file descriptors connected
+to
+.IR /dev/tty .
+It is used by daemon processes when they are invoked
+by a user at a terminal.
+The process attempts to open
+.IR /dev/tty .
+If the open succeeds, it
+detaches itself from the terminal by using
+.BR TIOCNOTTY ,
+while if the
+open fails, it is obviously not attached to a terminal and does not need
+to detach itself.
+.SH FILES
+.I /dev/tty
+.SH SEE ALSO
+.BR chown (1),
+.BR mknod (1),
+.BR ioctl (2),
+.BR ioctl_console (2),
+.BR ioctl_tty (2),
+.BR termios (3),
+.BR ttyS (4),
+.BR vcs (4),
+.BR pty (7),
+.BR agetty (8),
+.BR mingetty (8)

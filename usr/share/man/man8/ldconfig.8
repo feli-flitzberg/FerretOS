@@ -1,0 +1,204 @@
+.\" Copyright 1999 SuSE GmbH Nuernberg, Germany
+.\" Author: Thorsten Kukuk <kukuk@suse.de>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" Modified, 6 May 2002, Michael Kerrisk, <mtk.manpages@gmail.com>
+.\"   Change listed order of /usr/lib and /lib
+.TH ldconfig 8 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+ldconfig \- configure dynamic linker run-time bindings
+.SH SYNOPSIS
+.SY /sbin/ldconfig
+.\" TODO?: -c, --format, -i, --ignore-aux-cache, --print-cache,
+.\" --verbose, -V, --version, -?, --help, --usage
+.RB [ \-nNvVX ]
+.RB [ \-C\~\c
+.IR cache ]
+.RB [ \-f\~\c
+.IR conf ]
+.RB [ \-r\~\c
+.IR root ]
+.IR directory \~.\|.\|.
+.YS
+.SY /sbin/ldconfig
+.B \-l
+.RB [ \-v ]
+.IR library \~.\|.\|.
+.YS
+.SY /sbin/ldconfig
+.B \-p
+.YS
+.SH DESCRIPTION
+.B \%ldconfig
+creates the necessary links and cache to the most recent shared
+libraries found in the directories specified on the command line,
+in the file
+.IR /etc/ld.so.conf ,
+and in the trusted directories,
+.I /lib
+and
+.IR /usr/lib .
+On some 64-bit architectures such as x86-64,
+.I /lib
+and
+.I /usr/lib
+are the trusted directories for 32-bit libraries,
+while
+.I /lib64
+and
+.I /usr/lib64
+are used for 64-bit libraries.
+.P
+The cache is used by the run-time linker,
+.I ld.so
+or
+.IR ld\-linux.so .
+.B \%ldconfig
+checks the header and filenames of the libraries it encounters when
+determining which versions should have their links updated.
+.\" Support for libc4 and libc5 dropped in
+.\" 8ee878592c4a642937152c8308b8faef86bcfc40 (2022-07-14) as "obsolete
+.\" for over twenty years".
+.B \%ldconfig
+should normally be run by the superuser as it may require write
+permission on some root owned directories and files.
+.P
+.B \%ldconfig
+will look only at files that are named
+.I lib*.so*
+(for regular shared objects) or
+.I ld\-*.so*
+(for the dynamic loader itself).
+Other files will be ignored.
+Also,
+.B \%ldconfig
+expects a certain pattern to how the symbolic links are set up,
+like this example,
+where the middle file
+.RB ( libfoo.so.1
+here) is the SONAME for the library:
+.P
+.in +4n
+.EX
+libfoo.so \-> libfoo.so.1 \-> libfoo.so.1.12
+.EE
+.in
+.P
+Failure to follow this pattern may result in compatibility issues
+after an upgrade.
+.SH OPTIONS
+.TP
+.BI \-\-format= fmt
+.TQ
+.BI \-c\~ fmt
+(Since glibc 2.2)
+.\" commit 45eca4d141c047950db48c69c8941163d0a61fcd
+Use cache format
+.IR fmt ,
+which is one of
+.BR old ,
+.BR new ,
+or
+.BR \%compat .
+Since glibc 2.32,
+the default is
+.BR new .
+.\" commit cad64f778aced84efdaa04ae64f8737b86f063ab
+Before that,
+it was
+.BR \%compat .
+.TP
+.BI \-C\~ cache
+Use
+.I cache
+instead of
+.IR /etc/ld.so.cache .
+.TP
+.BI \-f\~ conf
+Use
+.I conf
+instead of
+.IR /etc/ld.so.conf .
+.TP
+.B \-\-ignore\-aux\-cache
+.TQ
+.B \-i
+(Since glibc 2.7)
+.\" commit 27d9ffda17df4d2388687afd12897774fde39bcc
+Ignore auxiliary cache file.
+.TP
+.B \-l
+(Since glibc 2.2)
+Interpret each operand as a library name and configure its links.
+Intended for use only by experts.
+.TP
+.B \-n
+Process only the directories specified on the command line;
+don't process the trusted directories,
+nor those specified in
+.IR /etc/ld.so.conf .
+Implies
+.BR \-N .
+.TP
+.B \-N
+Don't rebuild the cache.
+Unless
+.B \-X
+is also specified,
+links are still updated.
+.TP
+.B \-\-print\-cache
+.TQ
+.B \-p
+Print the lists of directories and candidate libraries stored in
+the current cache.
+.TP
+.BI \-r\~ root
+Change to and use
+.I root
+as the root directory.
+.TP
+.B \-\-verbose
+.TQ
+.B \-v
+Verbose mode.
+Print current version number,
+the name of each directory as it is scanned,
+and any links that are created.
+Overrides quiet mode.
+.TP
+.B \-\-version
+.TQ
+.B \-V
+Print program version.
+.TP
+.B \-X
+Don't update links.
+Unless
+.B \-N
+is also specified,
+the cache is still rebuilt.
+.SH FILES
+.\" FIXME Since glibc-2.3.4, "include" directives are supported in ld.so.conf
+.\"
+.\" FIXME Since glibc-2.4, "hwcap" directives are supported in ld.so.conf
+.PD 0
+.TP
+.I /lib/ld.so
+is the run-time linker/loader.
+.TP
+.I /etc/ld.so.conf
+contains a list of directories,
+one per line,
+in which to search for libraries.
+.TP
+.I /etc/ld.so.cache
+contains an ordered list of libraries found in the directories
+specified in
+.IR /etc/ld.so.conf ,
+as well as those found in the trusted directories.
+.PD
+.SH SEE ALSO
+.BR ldd (1),
+.BR ld.so (8)

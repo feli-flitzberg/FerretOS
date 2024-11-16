@@ -1,0 +1,55 @@
+.\" Copyright (c) 2022 by Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\"
+.TH epoll_event 3type 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+epoll_event, epoll_data, epoll_data_t
+\- epoll event
+.SH LIBRARY
+Standard C library
+.RI ( libc )
+.SH SYNOPSIS
+.EX
+.B #include <sys/epoll.h>
+.P
+.B struct epoll_event {
+.BR "    uint32_t      events;" "  /* Epoll events */"
+.BR "    epoll_data_t  data;" "    /* User data variable */"
+.B };
+.P
+.B union epoll_data {
+.B "    void     *ptr;"
+.B "    int       fd;"
+.B "    uint32_t  u32;"
+.B "    uint64_t  u64;"
+.B };
+.P
+.B "typedef union epoll_data  epoll_data_t;"
+.EE
+.SH DESCRIPTION
+The
+.I epoll_event
+structure specifies data that the kernel should save and
+return when the corresponding file descriptor becomes ready.
+.SH VERSIONS
+.SS C library/kernel differences
+The Linux kernel headers also provide this type,
+with a slightly different definition:
+.P
+.in +4n
+.EX
+#include <linux/eventpoll.h>
+\&
+struct epoll_event {
+    __poll_t  events;
+    __u64     data;
+};
+.EE
+.in
+.SH STANDARDS
+Linux.
+.SH SEE ALSO
+.BR epoll_wait (2),
+.BR epoll_ctl (2)

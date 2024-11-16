@@ -1,0 +1,60 @@
+.\" Copyright 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_CAP_AMBIENT_RAISE 2const 2024-06-01 "Linux man-pages 6.9.1"
+.SH NAME
+PR_CAP_AMBIENT_RAISE
+\-
+add to the ambient capability set of the calling thread
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.BI "int prctl(PR_CAP_AMBIENT, PR_CAP_AMBIENT_RAISE, long " cap ", 0L, 0L);"
+.fi
+.SH DESCRIPTION
+The capability specified in
+.I cap
+is added to the ambient capability set.
+The specified capability must already be present in
+both the permitted and the inheritable sets of the process.
+This operation is not permitted if the
+.B SECBIT_NO_CAP_AMBIENT_RAISE
+securebit is set.
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+.I cap
+does not specify a valid capability.
+.TP
+.B EPERM
+either the capability specified in
+.I cap
+is not present in the process's permitted and inheritable capability sets,
+or the
+.B PR_CAP_AMBIENT_LOWER
+securebit has been set.
+.SH VERSIONS
+See
+.BR PR_CAP_AMBIENT (2const).
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 4.3.
+.\" commit 58319057b7847667f0c9585b9de0e8932b0fdb08
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_CAP_AMBIENT (2const),
+.BR libcap (3)

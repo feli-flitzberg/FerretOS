@@ -1,0 +1,115 @@
+'\" t
+.\" Copyright (c) 2008 Linux Foundation, written by Michael Kerrisk
+.\"     <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH pthread_attr_setstackaddr 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+pthread_attr_setstackaddr, pthread_attr_getstackaddr \-
+set/get stack address attribute in thread attributes object
+.SH LIBRARY
+POSIX threads library
+.RI ( libpthread ", " \-lpthread )
+.SH SYNOPSIS
+.nf
+.B #include <pthread.h>
+.P
+.B [[deprecated]]
+.BI "int pthread_attr_setstackaddr(pthread_attr_t *" attr \
+", void *" stackaddr );
+.B [[deprecated]]
+.BI "int pthread_attr_getstackaddr(const pthread_attr_t *restrict " attr ,
+.BI "                              void **restrict " stackaddr );
+.fi
+.SH DESCRIPTION
+These functions are obsolete:
+.B do not use them.
+Use
+.BR pthread_attr_setstack (3)
+and
+.BR pthread_attr_getstack (3)
+instead.
+.P
+The
+.BR pthread_attr_setstackaddr ()
+function sets the stack address attribute of the
+thread attributes object referred to by
+.I attr
+to the value specified in
+.IR stackaddr .
+This attribute specifies the location of the stack that should
+be used by a thread that is created using the thread attributes object
+.IR attr .
+.P
+.I stackaddr
+should point to a buffer of at least
+.B PTHREAD_STACK_MIN
+bytes that was allocated by the caller.
+The pages of the allocated buffer should be both readable and writable.
+.P
+The
+.BR pthread_attr_getstackaddr ()
+function returns the stack address attribute of the
+thread attributes object referred to by
+.I attr
+in the buffer pointed to by
+.IR stackaddr .
+.SH RETURN VALUE
+On success, these functions return 0;
+on error, they return a nonzero error number.
+.SH ERRORS
+No errors are defined
+(but applications should nevertheless
+handle a possible error return).
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR pthread_attr_setstackaddr (),
+.BR pthread_attr_getstackaddr ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+None.
+.SH HISTORY
+glibc 2.1.
+Marked obsolete in POSIX.1-2001.
+Removed in POSIX.1-2008.
+.SH NOTES
+.I Do not use these functions!
+They cannot be portably used, since they provide no way of specifying
+the direction of growth or the range of the stack.
+For example, on architectures with a stack that grows downward,
+.I stackaddr
+specifies the next address past the
+.I highest
+address of the allocated stack area.
+However, on architectures with a stack that grows upward,
+.I stackaddr
+specifies the
+.I lowest
+address in the allocated stack area.
+By contrast, the
+.I stackaddr
+used by
+.BR pthread_attr_setstack (3)
+and
+.BR pthread_attr_getstack (3),
+is always a pointer to the lowest address in the allocated stack area
+(and the
+.I stacksize
+argument specifies the range of the stack).
+.SH SEE ALSO
+.BR pthread_attr_init (3),
+.BR pthread_attr_setstack (3),
+.BR pthread_attr_setstacksize (3),
+.BR pthread_create (3),
+.BR pthreads (7)

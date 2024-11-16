@@ -1,0 +1,184 @@
+'\" t
+.\" Copyright 2003 Walter Harms (walter.harms@informatik.uni-oldenburg.de)
+.\"
+.\" SPDX-License-Identifier: GPL-1.0-or-later
+.\"
+.\" Polished a bit, added a little, aeb
+.\"
+.TH setaliasent 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+setaliasent, endaliasent, getaliasent, getaliasent_r,
+getaliasbyname, getaliasbyname_r \- read an alias entry
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <aliases.h>
+.P
+.B "void setaliasent(void);"
+.B "void endaliasent(void);"
+.P
+.B "struct aliasent *getaliasent(void);"
+.BI "int getaliasent_r(struct aliasent *restrict " result ,
+.BI "                     char " buffer "[restrict ." buflen "], \
+size_t " buflen ,
+.BI "                     struct aliasent **restrict " res );
+.P
+.BI "struct aliasent *getaliasbyname(const char *" name );
+.BI "int getaliasbyname_r(const char *restrict " name ,
+.BI "                     struct aliasent *restrict " result ,
+.BI "                     char " buffer "[restrict ." buflen "], \
+size_t " buflen ,
+.BI "                     struct aliasent **restrict " res );
+.fi
+.SH DESCRIPTION
+One of the databases available with the Name Service Switch (NSS)
+is the aliases database, that contains mail aliases.
+(To find out which databases are supported, try
+.IR "getent \-\-help" .)
+Six functions are provided to access the aliases database.
+.P
+The
+.BR getaliasent ()
+function returns a pointer to a structure containing
+the group information from the aliases database.
+The first time it is called it returns the first entry;
+thereafter, it returns successive entries.
+.P
+The
+.BR setaliasent ()
+function rewinds the file pointer to the beginning of the
+aliases database.
+.P
+The
+.BR endaliasent ()
+function closes the aliases database.
+.P
+.BR getaliasent_r ()
+is the reentrant version of the previous function.
+The requested structure
+is stored via the first argument but the programmer needs to fill the other
+arguments also.
+Not providing enough space causes the function to fail.
+.P
+The function
+.BR getaliasbyname ()
+takes the name argument and searches the aliases database.
+The entry is returned as a pointer to a
+.IR "struct aliasent" .
+.P
+.BR getaliasbyname_r ()
+is the reentrant version of the previous function.
+The requested structure
+is stored via the second argument but the programmer needs to fill the other
+arguments also.
+Not providing enough space causes the function to fail.
+.P
+The
+.I "struct aliasent"
+is defined in
+.IR <aliases.h> :
+.P
+.in +4n
+.EX
+struct aliasent {
+    char    *alias_name;             /* alias name */
+    size_t   alias_members_len;
+    char   **alias_members;          /* alias name list */
+    int      alias_local;
+};
+.EE
+.in
+.SH RETURN VALUE
+The functions
+.BR getaliasent_r ()
+and
+.BR getaliasbyname_r ()
+return a nonzero value on error.
+.SH FILES
+The default alias database is the file
+.IR /etc/aliases .
+This can be changed in the
+.I /etc/nsswitch.conf
+file.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR setaliasent (),
+.BR endaliasent (),
+.BR getaliasent_r (),
+.BR getaliasbyname_r ()
+T}	Thread safety	MT-Safe locale
+T{
+.na
+.nh
+.BR getaliasent (),
+.BR getaliasbyname ()
+T}	Thread safety	MT-Unsafe
+.TE
+.SH STANDARDS
+GNU.
+.SH HISTORY
+The NeXT system has similar routines:
+.P
+.in +4n
+.EX
+#include <aliasdb.h>
+\&
+void alias_setent(void);
+void alias_endent(void);
+alias_ent *alias_getent(void);
+alias_ent *alias_getbyname(char *name);
+.EE
+.in
+.SH EXAMPLES
+The following example compiles with
+.IR "gcc example.c \-o example" .
+It will dump all names in the alias database.
+.P
+.\" SRC BEGIN (setaliasent.c)
+.EX
+#include <aliases.h>
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+\&
+int
+main(void)
+{
+    struct aliasent *al;
+\&
+    setaliasent();
+    for (;;) {
+        al = getaliasent();
+        if (al == NULL)
+            break;
+        printf("Name: %s\[rs]n", al\->alias_name);
+    }
+    if (errno) {
+        perror("reading alias");
+        exit(EXIT_FAILURE);
+    }
+    endaliasent();
+    exit(EXIT_SUCCESS);
+}
+.EE
+.\" SRC END
+.SH SEE ALSO
+.BR getgrent (3),
+.BR getpwent (3),
+.BR getspent (3),
+.BR aliases (5)
+.\"
+.\" /etc/sendmail/aliases
+.\" Yellow Pages
+.\" newaliases, postalias

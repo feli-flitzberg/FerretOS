@@ -1,0 +1,24 @@
+.\" Copyright (c) 1993 Michael Haardt (michael@moria.de),
+.\"     Fri Apr  2 11:32:09 MET DST 1993
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" Modified Sun Jul 25 11:06:22 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Mon Oct 21 17:47:19 EDT 1996 by Eric S. Raymond <esr@thyrsus.com>
+.TH issue 5 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+issue \- prelogin message and identification file
+.SH DESCRIPTION
+.I /etc/issue
+is a text file which contains a message or
+system identification to be printed before the login prompt.
+It may contain various \fB@\fP\fIchar\fP and \fB\[rs]\fP\fIchar\fP
+sequences, if supported by the
+.BR getty -type
+program employed on the system.
+.SH FILES
+.I /etc/issue
+.SH SEE ALSO
+.BR motd (5),
+.BR agetty (8),
+.BR mingetty (8)

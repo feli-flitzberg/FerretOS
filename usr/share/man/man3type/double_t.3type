@@ -1,0 +1,56 @@
+'\" t
+.\" Copyright (c) 2020-2022 by Alejandro Colomar <alx@kernel.org>
+.\" and Copyright (c) 2020 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\"
+.TH double_t 3type 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+float_t, double_t \- most efficient floating types
+.SH LIBRARY
+Math library
+.RI ( libm )
+.SH SYNOPSIS
+.nf
+.B #include <math.h>
+.P
+.BR typedef " /* ... */ " float_t;
+.BR typedef " /* ... */ " double_t;
+.fi
+.SH DESCRIPTION
+The implementation's most efficient floating types at least as wide as
+.I float
+and
+.I double
+respectively.
+Their type depends on the value of the macro
+.B FLT_EVAL_METHOD
+(defined in
+.IR <float.h> ):
+.P
+.TS
+lB rI rI.
+FLT_EVAL_METHOD	float_t	double_t
+.T&
+n rI rI.
+_
+0	float	double
+1	double	double
+2	long double	long double
+.TE
+.P
+For other values of
+.BR FLT_EVAL_METHOD ,
+the types of
+.I float_t
+and
+.I double_t
+are implementation-defined.
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+C99, POSIX.1-2001.
+.SH SEE ALSO
+.BR float.h (0p),
+.BR math.h (0p)

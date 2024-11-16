@@ -1,0 +1,85 @@
+.\" Copyright (c) 1983, 1991 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" SPDX-License-Identifier: BSD-4-Clause-UC
+.\"
+.\"     @(#)getsockname.2	6.4 (Berkeley) 3/10/91
+.\"
+.\" Modified Sat Jul 24 16:30:29 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Tue Oct 22 00:22:35 EDT 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified Sun Mar 28 21:26:46 1999 by Andries Brouwer <aeb@cwi.nl>
+.\"
+.TH getsockname 2 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+getsockname \- get socket name
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <sys/socket.h>
+.P
+.BI "int getsockname(int " sockfd ", struct sockaddr *restrict " addr ,
+.BI "                socklen_t *restrict " addrlen );
+.fi
+.SH DESCRIPTION
+.BR getsockname ()
+returns the current address to which the socket
+.I sockfd
+is bound, in the buffer pointed to by
+.IR addr .
+The
+.I addrlen
+argument should be initialized to indicate
+the amount of space (in bytes) pointed to by
+.IR addr .
+On return it contains the actual size of the socket address.
+.P
+The returned address is truncated if the buffer provided is too small;
+in this case,
+.I addrlen
+will return a value greater than was supplied to the call.
+.SH RETURN VALUE
+On success, zero is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EBADF
+The argument
+.I sockfd
+is not a valid file descriptor.
+.TP
+.B EFAULT
+The
+.I addr
+argument points to memory not in a valid part of the
+process address space.
+.TP
+.B EINVAL
+.I addrlen
+is invalid (e.g., is negative).
+.TP
+.B ENOBUFS
+Insufficient resources were available in the system
+to perform the operation.
+.TP
+.B ENOTSOCK
+The file descriptor
+.I sockfd
+does not refer to a socket.
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, SVr4, 4.4BSD
+(first appeared in 4.2BSD).
+.\" SVr4 documents additional ENOMEM
+.\" and ENOSR error codes.
+.SH SEE ALSO
+.BR bind (2),
+.BR socket (2),
+.BR getifaddrs (3),
+.BR ip (7),
+.BR socket (7),
+.BR unix (7)

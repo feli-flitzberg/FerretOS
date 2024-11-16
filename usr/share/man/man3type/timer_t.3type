@@ -1,0 +1,34 @@
+.\" Copyright (c) 2020-2022 by Alejandro Colomar <alx@kernel.org>
+.\" and Copyright (c) 2020 by Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\"
+.TH timer_t 3type 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+timer_t \- timer ID
+.SH LIBRARY
+Standard C library
+.RI ( libc )
+.SH SYNOPSIS
+.nf
+.B #include <sys/types.h>
+.P
+.BR typedef " /* ... */  " timer_t;
+.fi
+.SH DESCRIPTION
+Used for timer ID returned by
+.BR timer_create (2).
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001.
+.SH NOTES
+The following header also provides
+.IR timer_t :
+.IR <time.h> .
+.SH SEE ALSO
+.BR timer_create (2),
+.BR timer_delete (2),
+.BR timer_getoverrun (2),
+.BR timer_settime (2)

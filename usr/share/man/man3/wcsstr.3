@@ -1,0 +1,75 @@
+'\" t
+.\" Copyright (c) Bruno Haible <haible@clisp.cons.org>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" References consulted:
+.\"   GNU glibc-2 source code and manual
+.\"   Dinkumware C library reference http://www.dinkumware.com/
+.\"   OpenGroup's Single UNIX specification http://www.UNIX-systems.org/online.html
+.\"   ISO/IEC 9899:1999
+.\"
+.TH wcsstr 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+wcsstr \- locate a substring in a wide-character string
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <wchar.h>
+.P
+.BI "wchar_t *wcsstr(const wchar_t *" haystack ", const wchar_t *" needle );
+.fi
+.SH DESCRIPTION
+The
+.BR wcsstr ()
+function is the wide-character equivalent of the
+.BR strstr (3)
+function.
+It searches for the first occurrence of the wide-character string
+.I needle
+(without its terminating null wide character (L\[aq]\[rs]0\[aq]))
+as a substring in the wide-character string
+.IR haystack .
+.SH RETURN VALUE
+The
+.BR wcsstr ()
+function returns a pointer to the first occurrence of
+.I needle
+in
+.IR haystack .
+It returns NULL if
+.I needle
+does not occur
+as a substring in
+.IR haystack .
+.P
+Note the special case:
+If
+.I needle
+is the empty wide-character string,
+the return value is always
+.I haystack
+itself.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR wcsstr ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+C11, POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001, C99.
+.SH SEE ALSO
+.BR strstr (3),
+.BR wcschr (3)

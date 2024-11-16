@@ -1,0 +1,265 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 21:46:57 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified 961109, 031115, aeb
+.\"
+.TH getmntent 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+getmntent, setmntent, addmntent, endmntent, hasmntopt,
+getmntent_r \- get filesystem descriptor file entry
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdio.h>
+.B #include <mntent.h>
+.P
+.BI "FILE *setmntent(const char *" filename ", const char *" type );
+.P
+.BI "struct mntent *getmntent(FILE *" stream );
+.P
+.BI "int addmntent(FILE *restrict " stream ,
+.BI "              const struct mntent *restrict " mnt );
+.P
+.BI "int endmntent(FILE *" streamp );
+.P
+.BI "char *hasmntopt(const struct mntent *" mnt ", const char *" opt );
+.P
+/* GNU extension */
+.B #include <mntent.h>
+.P
+.BI "struct mntent *getmntent_r(FILE *restrict " streamp ,
+.BI "              struct mntent *restrict " mntbuf ,
+.BI "              char " buf "[restrict ." buflen "], int " buflen );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR getmntent_r ():
+.nf
+    Since glibc 2.19:
+        _DEFAULT_SOURCE
+    glibc 2.19 and earlier:
+        _BSD_SOURCE || _SVID_SOURCE
+.fi
+.SH DESCRIPTION
+These routines are used to access the filesystem description file
+.I /etc/fstab
+and the mounted filesystem description file
+.IR /etc/mtab .
+.P
+The
+.BR setmntent ()
+function opens the filesystem description file
+.I filename
+and returns a file pointer which can be used by
+.BR getmntent ().
+The argument
+.I type
+is the type of access
+required and can take the same values as the
+.I mode
+argument of
+.BR fopen (3).
+The returned stream should be closed using
+.BR endmntent ()
+rather than
+.BR fclose (3).
+.P
+The
+.BR getmntent ()
+function reads the next line of the filesystem
+description file from
+.I stream
+and returns a pointer to a structure
+containing the broken out fields from a line in the file.
+The pointer
+points to a static area of memory which is overwritten by subsequent
+calls to
+.BR getmntent ().
+.P
+The
+.BR addmntent ()
+function adds the
+.I mntent
+structure
+.I mnt
+to
+the end of the open
+.IR stream .
+.P
+The
+.BR endmntent ()
+function closes the
+.I stream
+associated with the filesystem description file.
+.P
+The
+.BR hasmntopt ()
+function scans the
+.I mnt_opts
+field (see below)
+of the
+.I mntent
+structure
+.I mnt
+for a substring that matches
+.IR opt .
+See
+.I <mntent.h>
+and
+.BR mount (8)
+for valid mount options.
+.P
+The reentrant
+.BR getmntent_r ()
+function is similar to
+.BR getmntent (),
+but stores the
+.I mntent
+structure
+in the provided
+.IR *mntbuf ,
+and stores the strings pointed to by the entries in that structure
+in the provided array
+.I buf
+of size
+.IR buflen .
+.P
+The
+.I mntent
+structure is defined in
+.I <mntent.h>
+as follows:
+.P
+.in +4n
+.EX
+struct mntent {
+    char *mnt_fsname;   /* name of mounted filesystem */
+    char *mnt_dir;      /* filesystem path prefix */
+    char *mnt_type;     /* mount type (see mntent.h) */
+    char *mnt_opts;     /* mount options (see mntent.h) */
+    int   mnt_freq;     /* dump frequency in days */
+    int   mnt_passno;   /* pass number on parallel fsck */
+};
+.EE
+.in
+.P
+Since fields in the mtab and fstab files are separated by whitespace,
+octal escapes are used to represent the characters space (\[rs]040),
+tab (\[rs]011), newline (\[rs]012), and backslash (\[rs]\[rs]) in those files
+when they occur in one of the four strings in a
+.I mntent
+structure.
+The routines
+.BR addmntent ()
+and
+.BR getmntent ()
+will convert
+from string representation to escaped representation and back.
+When converting from escaped representation, the sequence \[rs]134 is
+also converted to a backslash.
+.SH RETURN VALUE
+The
+.BR getmntent ()
+and
+.BR getmntent_r ()
+functions return
+a pointer to the
+.I mntent
+structure or NULL on failure.
+.P
+The
+.BR addmntent ()
+function returns 0 on success and 1 on failure.
+.P
+The
+.BR endmntent ()
+function always returns 1.
+.P
+The
+.BR hasmntopt ()
+function returns the address of the substring if
+a match is found and NULL otherwise.
+.SH FILES
+.TP
+.I /etc/fstab
+filesystem description file
+.TP
+.I /etc/mtab
+mounted filesystem description file
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lb lb lbx
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR setmntent (),
+.BR endmntent (),
+.BR hasmntopt ()
+T}	Thread safety	MT-Safe
+T{
+.na
+.nh
+.BR getmntent ()
+T}	Thread safety	T{
+.na
+.nh
+MT-Unsafe race:mntentbuf locale
+T}
+T{
+.na
+.nh
+.BR addmntent ()
+T}	Thread safety	T{
+.na
+.nh
+MT-Safe race:stream locale
+T}
+T{
+.na
+.nh
+.BR getmntent_r ()
+T}	Thread safety	MT-Safe locale
+.TE
+.SH STANDARDS
+None.
+.SH HISTORY
+The nonreentrant functions are from SunOS 4.1.3.
+A routine
+.BR getmntent_r ()
+was introduced in HP-UX 10, but it returns an
+.IR int .
+The prototype shown above is glibc-only.
+.P
+System V also has a
+.BR getmntent ()
+function but the calling sequence
+differs, and the returned structure is different.
+Under System V
+.I /etc/mnttab
+is used.
+4.4BSD and Digital UNIX have a routine
+.BR \%getmntinfo (),
+a wrapper around the system call
+.BR getfsstat ().
+.SH SEE ALSO
+.BR fopen (3),
+.BR fstab (5),
+.BR mount (8)

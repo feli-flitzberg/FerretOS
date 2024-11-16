@@ -1,0 +1,157 @@
+'\" t
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\"
+.\" Modified 1993-03-29, David Metcalfe
+.\" Modified 1993-07-24, Rik Faith (faith@cs.unc.edu)
+.\" 2006-01-15, mtk, Added example program.
+.\" Modified 2012-03-08, Mark R. Bannister <cambridge@users.sourceforge.net>
+.\"                  and Ben Bacarisse <software@bsb.me.uk>
+.\"     Document qsort_r()
+.\"
+.TH qsort 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+qsort, qsort_r \- sort an array
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <stdlib.h>
+.P
+.BI "void qsort(void " base [. size " * ." nmemb "], size_t " nmemb ", \
+size_t " size ,
+.BI "           int (*" compar ")(const void [." size "], \
+const void [." size ]));
+.BI "void qsort_r(void " base [. size " * ." nmemb "], size_t " nmemb ", \
+size_t " size ,
+.BI "           int (*" compar ")(const void [." size "], \
+const void [." size "], void *),"
+.BI "           void *" arg ");"
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR qsort_r ():
+.nf
+    _GNU_SOURCE
+.fi
+.SH DESCRIPTION
+The
+.BR qsort ()
+function sorts an array with \fInmemb\fP elements of
+size \fIsize\fP.
+The \fIbase\fP argument points to the start of the
+array.
+.P
+The contents of the array are sorted in ascending order according to a
+comparison function pointed to by \fIcompar\fP, which is called with two
+arguments that point to the objects being compared.
+.P
+The comparison function must return an integer less than, equal to, or
+greater than zero if the first argument is considered to be respectively
+less than, equal to, or greater than the second.
+If two members compare as equal,
+their order in the sorted array is undefined.
+.P
+The
+.BR qsort_r ()
+function is identical to
+.BR qsort ()
+except that the comparison function
+.I compar
+takes a third argument.
+A pointer is passed to the comparison function via
+.IR arg .
+In this way, the comparison function does not need to use global variables to
+pass through arbitrary arguments, and is therefore reentrant and safe to
+use in threads.
+.SH RETURN VALUE
+The
+.BR qsort ()
+and
+.BR qsort_r ()
+functions return no value.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR qsort (),
+.BR qsort_r ()
+T}	Thread safety	MT-Safe
+.TE
+.SH STANDARDS
+.TP
+.BR qsort ()
+C11, POSIX.1-2008.
+.SH HISTORY
+.TP
+.BR qsort ()
+POSIX.1-2001, C89, SVr4, 4.3BSD.
+.TP
+.BR qsort_r ()
+glibc 2.8.
+.SH NOTES
+To compare C strings, the comparison function can call
+.BR strcmp (3),
+as shown in the example below.
+.SH EXAMPLES
+For one example of use, see the example under
+.BR bsearch (3).
+.P
+Another example is the following program,
+which sorts the strings given in its command-line arguments:
+.P
+.\" SRC BEGIN (qsort.c)
+.EX
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+\&
+static int
+cmpstringp(const void *p1, const void *p2)
+{
+    /* The actual arguments to this function are "pointers to
+       pointers to char", but strcmp(3) arguments are "pointers
+       to char", hence the following cast plus dereference. */
+\&
+    return strcmp(*(const char **) p1, *(const char **) p2);
+}
+\&
+int
+main(int argc, char *argv[])
+{
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <string>...\[rs]n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+\&
+    qsort(&argv[1], argc \- 1, sizeof(char *), cmpstringp);
+\&
+    for (size_t j = 1; j < argc; j++)
+        puts(argv[j]);
+    exit(EXIT_SUCCESS);
+}
+.EE
+.\" SRC END
+.SH SEE ALSO
+.BR sort (1),
+.BR alphasort (3),
+.BR strcmp (3),
+.BR versionsort (3)

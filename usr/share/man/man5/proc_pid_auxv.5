@@ -1,0 +1,27 @@
+.\" Copyright (C) 1994, 1995, Daniel Quinlan <quinlan@yggdrasil.com>
+.\" Copyright (C) 2002-2008, 2017, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright (C) 2023, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-3.0-or-later
+.\"
+.TH proc_pid_auxv 5 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+/proc/pid/auxv \- exec(3) information
+.SH DESCRIPTION
+.TP
+.IR /proc/ pid /auxv " (since Linux 2.6.0)"
+.\" Precisely: Linux 2.6.0-test7
+This contains the contents of the ELF interpreter information passed
+to the process at exec time.
+The format is one \fIunsigned long\fP ID
+plus one \fIunsigned long\fP value for each entry.
+The last entry contains two zeros.
+See also
+.BR getauxval (3).
+.IP
+Permission to access this file is governed by a ptrace access mode
+.B PTRACE_MODE_READ_FSCREDS
+check; see
+.BR ptrace (2).
+.SH SEE ALSO
+.BR proc (5)

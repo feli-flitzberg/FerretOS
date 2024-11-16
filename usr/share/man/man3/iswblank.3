@@ -1,0 +1,89 @@
+'\" t
+.\" Copyright (c) Bruno Haible <haible@clisp.cons.org>
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" References consulted:
+.\"   GNU glibc-2 source code and manual
+.\"   Dinkumware C library reference http://www.dinkumware.com/
+.\"   OpenGroup's Single UNIX specification http://www.UNIX-systems.org/online.html
+.\"   ISO/IEC 9899:1999
+.\"
+.TH iswblank 3 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+iswblank \- test for whitespace wide character
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.B #include <wctype.h>
+.P
+.BI "int iswblank(wint_t " wc );
+.fi
+.P
+.RS -4
+Feature Test Macro Requirements for glibc (see
+.BR feature_test_macros (7)):
+.RE
+.P
+.BR iswblank ():
+.nf
+    _ISOC99_SOURCE || _POSIX_C_SOURCE >= 200112L
+.fi
+.SH DESCRIPTION
+The
+.BR iswblank ()
+function is the wide-character equivalent of the
+.BR isblank (3)
+function.
+It tests whether \fIwc\fP is a wide character
+belonging to the wide-character class "blank".
+.P
+The wide-character class "blank" is a subclass of the wide-character class
+"space".
+.P
+Being a subclass of the wide-character class "space",
+the wide-character class "blank" is disjoint from the
+wide-character class "graph" and therefore also disjoint
+from its subclasses "alnum", "alpha", "upper", "lower", "digit",
+"xdigit", "punct".
+.P
+The wide-character class "blank" always contains
+at least the space character
+and the control character \[aq]\[rs]t\[aq].
+.SH RETURN VALUE
+The
+.BR iswblank ()
+function returns nonzero
+if \fIwc\fP is a wide character
+belonging to the wide-character class "blank".
+Otherwise, it returns zero.
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR iswblank ()
+T}	Thread safety	MT-Safe locale
+.TE
+.SH STANDARDS
+POSIX.1-2008.
+.SH HISTORY
+POSIX.1-2001.
+.SH NOTES
+The behavior of
+.BR iswblank ()
+depends on the
+.B LC_CTYPE
+category of the
+current locale.
+.SH SEE ALSO
+.BR isblank (3),
+.BR iswctype (3)

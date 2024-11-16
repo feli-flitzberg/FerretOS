@@ -1,0 +1,90 @@
+'\" t
+.\" Copyright (c) 2007 Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH sysv_signal 3 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+sysv_signal \- signal handling with System V semantics
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#define _GNU_SOURCE" "         /* See feature_test_macros(7) */"
+.B #include <signal.h>
+.P
+.B typedef void (*sighandler_t)(int);
+.P
+.BI "sighandler_t sysv_signal(int " signum ", sighandler_t " handler );
+.fi
+.SH DESCRIPTION
+The
+.BR sysv_signal ()
+function takes the same arguments, and performs the same task, as
+.BR signal (2).
+.P
+However
+.BR sysv_signal ()
+provides the System V unreliable signal semantics, that is:
+a) the disposition of the signal is reset to the default
+when the handler is invoked;
+b) delivery of further instances of the signal is not blocked while
+the signal handler is executing; and
+c) if the handler interrupts (certain) blocking system calls,
+then the system call is not automatically restarted.
+.SH RETURN VALUE
+The
+.BR sysv_signal ()
+function returns the previous value of the signal handler, or
+.B SIG_ERR
+on error.
+.SH ERRORS
+As for
+.BR signal (2).
+.SH ATTRIBUTES
+For an explanation of the terms used in this section, see
+.BR attributes (7).
+.TS
+allbox;
+lbx lb lb
+l l l.
+Interface	Attribute	Value
+T{
+.na
+.nh
+.BR sysv_signal ()
+T}	Thread safety	MT-Safe
+.TE
+.SH VERSIONS
+Use of
+.BR sysv_signal ()
+should be avoided; use
+.BR sigaction (2)
+instead.
+.P
+On older Linux systems,
+.BR sysv_signal ()
+and
+.BR signal (2)
+were equivalent.
+But on newer systems,
+.BR signal (2)
+provides reliable signal semantics; see
+.BR signal (2)
+for details.
+.P
+The use of
+.I sighandler_t
+is a GNU extension;
+this type is defined only if
+the
+.B _GNU_SOURCE
+feature test macro is defined.
+.SH STANDARDS
+None.
+.SH SEE ALSO
+.BR sigaction (2),
+.BR signal (2),
+.BR bsd_signal (3),
+.BR signal (7)

@@ -1,0 +1,105 @@
+.\" Copyright (C) 2014 Michael Kerrisk <mtk.manpages@gmail.com>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH pldd 1 2024-06-15 "Linux man-pages 6.9.1"
+.SH NAME
+pldd \- display dynamic shared objects linked into a process
+.SH SYNOPSIS
+.nf
+.BI "pldd " "pid"
+.BI pldd " option"
+.fi
+.SH DESCRIPTION
+The
+.B pldd
+command displays a list of the dynamic shared objects (DSOs) that are
+linked into the process with the specified process ID (PID).
+The list includes the libraries that have been dynamically loaded using
+.BR dlopen (3).
+.SH OPTIONS
+.TP
+.B \-\-help
+.TQ
+.B \-?
+Display a help message and exit.
+.TP
+.B \-\-usage
+Display a short usage message and exit.
+.TP
+.B \-\-version
+.TQ
+.B \-V
+Display program version information and exit.
+.SH EXIT STATUS
+On success,
+.B pldd
+exits with the status 0.
+If the specified process does not exist,
+the user does not have permission to access
+its dynamic shared object list,
+or no command-line arguments are supplied,
+.B pldd
+exists with a status of 1.
+If given an invalid option, it exits with the status 64.
+.SH VERSIONS
+Some other systems
+.\" There are man pages on Solaris and HP-UX.
+have a similar command.
+.SH STANDARDS
+None.
+.SH HISTORY
+glibc 2.15.
+.SH NOTES
+The command
+.P
+.in +4n
+.EX
+lsof \-p PID
+.EE
+.in
+.P
+also shows output that includes the dynamic shared objects
+that are linked into a process.
+.P
+The
+.BR gdb (1)
+.I "info shared"
+command also shows the shared libraries being used by a process,
+so that one can obtain similar output to
+.B pldd
+using a command such as the following
+(to monitor the process with the specified
+.IR pid ):
+.P
+.in +4n
+.EX
+$ \fBgdb \-ex "set confirm off" \-ex "set height 0" \-ex "info shared" \[rs]\fP
+        \fB\-ex "quit" \-p $pid | grep \[aq]\[ha]0x.*0x\[aq]\fP
+.EE
+.in
+.SH BUGS
+From glibc 2.19 to glibc 2.29,
+.B pldd
+was broken: it just hung when executed.
+.\" glibc commit 1a4c27355e146b6d8cc6487b998462c7fdd1048f
+This problem was fixed in glibc 2.30, and the fix has been backported
+to earlier glibc versions in some distributions.
+.SH EXAMPLES
+.EX
+$ \fBecho $$\fP               # Display PID of shell
+1143
+$ \fBpldd $$\fP               # Display DSOs linked into the shell
+1143:   /usr/bin/bash
+linux\-vdso.so.1
+/lib64/libtinfo.so.5
+/lib64/libdl.so.2
+/lib64/libc.so.6
+/lib64/ld\-linux\-x86\-64.so.2
+/lib64/libnss_files.so.2
+.EE
+.SH SEE ALSO
+.BR ldd (1),
+.BR lsof (1),
+.BR dlopen (3),
+.BR ld.so (8)

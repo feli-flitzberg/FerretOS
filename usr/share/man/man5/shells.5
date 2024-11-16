@@ -1,0 +1,40 @@
+.\" Copyright (c) 1993 Michael Haardt (michael@moria.de),
+.\"     Thu May 20 20:45:48 MET DST 1993
+.\"
+.\" SPDX-License-Identifier: GPL-2.0-or-later
+.\"
+.\" Modified Sat Jul 24 17:11:07 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Sun Nov 21 10:49:38 1993 by Michael Haardt
+.\" Modified Sun Feb 26 15:09:15 1995 by Rik Faith (faith@cs.unc.edu)
+.TH shells 5 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+shells \- pathnames of valid login shells
+.SH DESCRIPTION
+.I /etc/shells
+is a text file which contains the full pathnames of valid login shells.
+This file is consulted by
+.BR chsh (1)
+and available to be queried by other programs.
+.P
+Be aware that there are programs which consult this file to
+find out if a user is a normal user;
+for example,
+FTP daemons traditionally
+disallow access to users with shells not included in this file.
+.SH FILES
+.I /etc/shells
+.SH EXAMPLES
+.I /etc/shells
+may contain the following paths:
+.P
+.in +4n
+.EX
+.I /bin/sh
+.I /bin/bash
+.I /bin/csh
+.EE
+.in
+.SH SEE ALSO
+.BR chsh (1),
+.BR getusershell (3),
+.BR pam_shells (8)

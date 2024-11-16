@@ -1,0 +1,60 @@
+.\" Copyright 2008, Serge Hallyn <serge@hallyn.com>
+.\" Copyright 2008, 2012, 2013, 2015, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright 2024, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH PR_CAPBSET_DROP 2const 2024-06-02 "Linux man-pages 6.9.1"
+.SH NAME
+PR_CAPBSET_DROP
+\-
+drop a capability from the calling thread's capability bounding set
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <linux/prctl.h>" "  /* Definition of " PR_* " constants */"
+.B #include <sys/prctl.h>
+.P
+.BI "int prctl(PR_CAPBSET_DROP, long " cap );
+.fi
+.SH DESCRIPTION
+Drop the capability specified by
+.I cap
+from the calling thread's capability bounding set.
+Any children of the calling thread will inherit the newly
+reduced bounding set.
+.SH RETURN VALUE
+On success,
+0 is returned.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.TP
+.B EINVAL
+File capabilities are not enabled in the kernel.
+.TP
+.B EINVAL
+.I cap
+does not specify a valid capability.
+.TP
+.B EPERM
+The caller does not have the
+.B CAP_SETPCAP
+capability.
+.SH VERSIONS
+A higher-level interface layered on top of this operation is provided in the
+.BR libcap (3)
+library in the form of
+.BR cap_drop_bound (3).
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 2.6.25.
+.SH SEE ALSO
+.BR prctl (2),
+.BR PR_CAPBSET_READ (2const)
+.BR libcap (3),
+.BR cap_drop_bound (3)

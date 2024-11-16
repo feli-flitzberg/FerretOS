@@ -1,0 +1,522 @@
+.\" Copyright (C) 2014 Michael Kerrisk <mtk.manpages@gmail.com>
+.\" and Copyright (C) 2014 Peter Zijlstra <peterz@infradead.org>
+.\"
+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+.\"
+.TH sched_setattr 2 2024-06-13 "Linux man-pages 6.9.1"
+.SH NAME
+sched_setattr, sched_getattr \-
+set and get scheduling policy and attributes
+.SH LIBRARY
+Standard C library
+.RI ( libc ", " \-lc )
+.SH SYNOPSIS
+.nf
+.BR "#include <sched.h>" "            /* Definition of " SCHED_* " constants */"
+.BR "#include <sys/syscall.h>" "      /* Definition of " SYS_* " constants */"
+.B #include <unistd.h>
+.P
+.BI "int syscall(SYS_sched_setattr, pid_t " pid ", struct sched_attr *" attr ,
+.BI "            unsigned int " flags );
+.BI "int syscall(SYS_sched_getattr, pid_t " pid ", struct sched_attr *" attr ,
+.BI "            unsigned int " size ", unsigned int " flags );
+.fi
+.\" FIXME . Add feature test macro requirements
+.P
+.IR Note :
+glibc provides no wrappers for these system calls,
+necessitating the use of
+.BR syscall (2).
+.SH DESCRIPTION
+.SS sched_setattr()
+The
+.BR sched_setattr ()
+system call sets the scheduling policy and
+associated attributes for the thread whose ID is specified in
+.IR pid .
+If
+.I pid
+equals zero,
+the scheduling policy and attributes of the calling thread will be set.
+.P
+Currently, Linux supports the following "normal"
+(i.e., non-real-time) scheduling policies as values that may be specified in
+.IR policy :
+.TP 14
+.B SCHED_OTHER
+the standard round-robin time-sharing policy;
+.\" In the 2.6 kernel sources, SCHED_OTHER is actually called
+.\" SCHED_NORMAL.
+.TP
+.B SCHED_BATCH
+for "batch" style execution of processes; and
+.TP
+.B SCHED_IDLE
+for running
+.I very
+low priority background jobs.
+.P
+Various "real-time" policies are also supported,
+for special time-critical applications that need precise control over
+the way in which runnable threads are selected for execution.
+For the rules governing when a process may use these policies, see
+.BR sched (7).
+The real-time policies that may be specified in
+.I policy
+are:
+.TP 14
+.B SCHED_FIFO
+a first-in, first-out policy; and
+.TP
+.B SCHED_RR
+a round-robin policy.
+.P
+Linux also provides the following policy:
+.TP 14
+.B SCHED_DEADLINE
+a deadline scheduling policy; see
+.BR sched (7)
+for details.
+.P
+The
+.I attr
+argument is a pointer to a structure that defines
+the new scheduling policy and attributes for the specified thread.
+This structure has the following form:
+.P
+.in +4n
+.EX
+struct sched_attr {
+    u32 size;              /* Size of this structure */
+    u32 sched_policy;      /* Policy (SCHED_*) */
+    u64 sched_flags;       /* Flags */
+    s32 sched_nice;        /* Nice value (SCHED_OTHER,
+                              SCHED_BATCH) */
+    u32 sched_priority;    /* Static priority (SCHED_FIFO,
+                              SCHED_RR) */
+    /* For SCHED_DEADLINE */
+    u64 sched_runtime;
+    u64 sched_deadline;
+    u64 sched_period;
+\&
+    /* Utilization hints */
+    u32 sched_util_min;
+    u32 sched_util_max;
+};
+.EE
+.in
+.P
+The fields of the
+.I sched_attr
+structure are as follows:
+.TP
+.B size
+This field should be set to the size of the structure in bytes, as in
+.IR "sizeof(struct sched_attr)" .
+If the provided structure is smaller than the kernel structure,
+any additional fields are assumed to be '0'.
+If the provided structure is larger than the kernel structure,
+the kernel verifies that all additional fields are 0;
+if they are not,
+.BR sched_setattr ()
+fails with the error
+.B E2BIG
+and updates
+.I size
+to contain the size of the kernel structure.
+.IP
+The above behavior when the size of the user-space
+.I sched_attr
+structure does not match the size of the kernel structure
+allows for future extensibility of the interface.
+Malformed applications that pass oversize structures
+won't break in the future if the size of the kernel
+.I sched_attr
+structure is increased.
+In the future,
+it could also allow applications that know about a larger user-space
+.I sched_attr
+structure to determine whether they are running on an older kernel
+that does not support the larger structure.
+.TP
+.I sched_policy
+This field specifies the scheduling policy, as one of the
+.B SCHED_*
+values listed above.
+.TP
+.I sched_flags
+This field contains zero or more of the following flags
+that are ORed together to control scheduling behavior:
+.RS
+.TP
+.B SCHED_FLAG_RESET_ON_FORK
+Children created by
+.BR fork (2)
+do not inherit privileged scheduling policies.
+See
+.BR sched (7)
+for details.
+.TP
+.BR SCHED_FLAG_RECLAIM " (since Linux 4.13)"
+.\" 2d4283e9d583a3ee8cfb1cbb9c1270614df4c29d
+This flag allows a
+.B SCHED_DEADLINE
+thread to reclaim bandwidth unused by other real-time threads.
+.\" Bandwidth reclaim is done via the GRUB algorithm; see
+.\" Documentation/scheduler/sched-deadline.txt
+.TP
+.BR SCHED_FLAG_DL_OVERRUN " (since Linux 4.16)"
+.\" commit 34be39305a77b8b1ec9f279163c7cdb6cc719b91
+This flag allows an application to get informed about run-time overruns in
+.B SCHED_DEADLINE
+threads.
+Such overruns may be caused by (for example) coarse execution time accounting
+or incorrect parameter assignment.
+Notification takes the form of a
+.B SIGXCPU
+signal which is generated on each overrun.
+.IP
+This
+.B SIGXCPU
+signal is
+.I process-directed
+(see
+.BR signal (7))
+rather than thread-directed.
+This is probably a bug.
+On the one hand,
+.BR sched_setattr ()
+is being used to set a per-thread attribute.
+On the other hand, if the process-directed signal is delivered to
+a thread inside the process other than the one that had a run-time overrun,
+the application has no way of knowing which thread overran.
+.TP
+.B SCHED_FLAG_UTIL_CLAMP_MIN
+.TQ
+.BR SCHED_FLAG_UTIL_CLAMP_MAX " (both since Linux 5.3)"
+These flags indicate that the
+.I
+sched_util_min
+or
+.I
+sched_util_max
+fields, respectively, are present,
+representing the expected minimum and maximum utilization of the thread.
+.IP
+The utilization attributes provide the scheduler with boundaries
+within which it should schedule the thread,
+potentially informing its decisions
+regarding task placement and frequency selection.
+.RE
+.TP
+.I sched_nice
+This field specifies the nice value to be set when specifying
+.I sched_policy
+as
+.B SCHED_OTHER
+or
+.BR SCHED_BATCH .
+The nice value is a number in the range \-20 (high priority)
+to +19 (low priority); see
+.BR sched (7).
+.TP
+.I sched_priority
+This field specifies the static priority to be set when specifying
+.I sched_policy
+as
+.B SCHED_FIFO
+or
+.BR SCHED_RR .
+The allowed range of priorities for these policies can be determined using
+.BR sched_get_priority_min (2)
+and
+.BR sched_get_priority_max (2).
+For other policies, this field must be specified as 0.
+.TP
+.I sched_runtime
+This field specifies the "Runtime" parameter for deadline scheduling.
+The value is expressed in nanoseconds.
+This field, and the next two fields,
+are used only for
+.B SCHED_DEADLINE
+scheduling; for further details, see
+.BR sched (7).
+.TP
+.I sched_deadline
+This field specifies the "Deadline" parameter for deadline scheduling.
+The value is expressed in nanoseconds.
+.TP
+.I sched_period
+This field specifies the "Period" parameter for deadline scheduling.
+The value is expressed in nanoseconds.
+.TP
+.I sched_util_min
+.TQ
+.IR sched_util_max " (both since Linux 5.3)"
+These fields specify the expected minimum and maximum utilization, respectively.
+They are ignored unless their corresponding
+.B SCHED_FLAG_UTIL_CLAMP_MIN
+or
+.B SCHED_FLAG_UTIL_CLAMP_MAX
+is set in
+.IR sched_flags .
+.IP
+Utilization is a value in the range [0, 1024], representing the percentage of
+CPU time used by a task when running at the maximum frequency
+on the highest capacity CPU of the system.
+This is a fixed point representation, where 1024 corresponds to 100%,
+and 0 corresponds to 0%.
+For example,
+a 20% utilization task is
+a task running for 2ms every 10ms at maximum frequency and is represented by a
+utilization value of
+.IR 0.2\~*\~1024\~=\~205 .
+.IP
+A task with a minimum utilization value larger than 0 is more likely
+scheduled on a CPU with a capacity big enough to fit the specified value.
+A task with a maximum utilization value smaller than 1024 is more likely
+scheduled on a CPU with no more capacity than the specified value.
+.IP
+A task utilization boundary can be reset by setting its field to
+.B UINT32_MAX
+(since Linux 5.11).
+.P
+The
+.I flags
+argument is provided to allow for future extensions to the interface;
+in the current implementation it must be specified as 0.
+.\"
+.\"
+.SS sched_getattr()
+The
+.BR sched_getattr ()
+system call fetches the scheduling policy and the
+associated attributes for the thread whose ID is specified in
+.IR pid .
+If
+.I pid
+equals zero,
+the scheduling policy and attributes of the calling thread
+will be retrieved.
+.P
+The
+.I size
+argument should be set to the size of the
+.I sched_attr
+structure as known to user space.
+The value must be at least as large as the size of the initially published
+.I sched_attr
+structure, or the call fails with the error
+.BR EINVAL .
+.P
+The retrieved scheduling attributes are placed in the fields of the
+.I sched_attr
+structure pointed to by
+.IR attr .
+The kernel sets
+.I attr.size
+to the size of its
+.I sched_attr
+structure.
+.P
+If the caller-provided
+.I attr
+buffer is larger than the kernel's
+.I sched_attr
+structure,
+the additional bytes in the user-space structure are not touched.
+If the caller-provided structure is smaller than the kernel
+.I sched_attr
+structure, the kernel will silently not return any values which would be stored
+outside the provided space.
+As with
+.BR sched_setattr (),
+these semantics allow for future extensibility of the interface.
+.P
+The
+.I flags
+argument is provided to allow for future extensions to the interface;
+in the current implementation it must be specified as 0.
+.SH RETURN VALUE
+On success,
+.BR sched_setattr ()
+and
+.BR sched_getattr ()
+return 0.
+On error, \-1 is returned, and
+.I errno
+is set to indicate the error.
+.SH ERRORS
+.BR sched_getattr ()
+and
+.BR sched_setattr ()
+can both fail for the following reasons:
+.TP
+.B EINVAL
+.I attr
+is NULL; or
+.I pid
+is negative; or
+.I flags
+is not zero.
+.TP
+.B ESRCH
+The thread whose ID is
+.I pid
+could not be found.
+.P
+In addition,
+.BR sched_getattr ()
+can fail for the following reasons:
+.TP
+.B E2BIG
+The buffer specified by
+.I size
+and
+.I attr
+is too small.
+.TP
+.B EINVAL
+.I size
+is invalid; that is, it is smaller than the initial version of the
+.I sched_attr
+structure (48 bytes) or larger than the system page size.
+.P
+In addition,
+.BR sched_setattr ()
+can fail for the following reasons:
+.TP
+.B E2BIG
+The buffer specified by
+.I size
+and
+.I attr
+is larger than the kernel structure,
+and one or more of the excess bytes is nonzero.
+.TP
+.B EBUSY
+.B SCHED_DEADLINE
+admission control failure, see
+.BR sched (7).
+.TP
+.B EINVAL
+.I attr.sched_policy
+is not one of the recognized policies.
+.TP
+.B EINVAL
+.I attr.sched_flags
+contains a flag other than
+.BR SCHED_FLAG_RESET_ON_FORK .
+.TP
+.B EINVAL
+.I attr.sched_priority
+is invalid.
+.TP
+.B EINVAL
+.I attr.sched_policy
+is
+.BR SCHED_DEADLINE ,
+and the deadline scheduling parameters in
+.I attr
+are invalid.
+.TP
+.B EINVAL
+.I attr.sched_flags
+contains
+.B SCHED_FLAG_UTIL_CLAMP_MIN
+or
+.BR SCHED_FLAG_UTIL_CLAMP_MAX ,
+and
+.I attr.sched_util_min
+or
+.I attr.sched_util_max
+are out of bounds.
+.TP
+.B EOPNOTSUPP
+.B SCHED_FLAG_UTIL_CLAMP
+was provided, but the kernel was not built with
+.B CONFIG_UCLAMP_TASK
+support.
+.TP
+.B EPERM
+The caller does not have appropriate privileges.
+.TP
+.B EPERM
+The CPU affinity mask of the thread specified by
+.I pid
+does not include all CPUs in the system
+(see
+.BR sched_setaffinity (2)).
+.SH STANDARDS
+Linux.
+.SH HISTORY
+Linux 3.14.
+.\" FIXME . Add glibc version
+.SH NOTES
+glibc does not provide wrappers for these system calls; call them using
+.BR syscall (2).
+.P
+.BR sched_setattr ()
+provides a superset of the functionality of
+.BR sched_setscheduler (2),
+.BR sched_setparam (2),
+.BR nice (2),
+and (other than the ability to set the priority of all processes
+belonging to a specified user or all processes in a specified group)
+.BR setpriority (2).
+Analogously,
+.BR sched_getattr ()
+provides a superset of the functionality of
+.BR sched_getscheduler (2),
+.BR sched_getparam (2),
+and (partially)
+.BR getpriority (2).
+.SH BUGS
+In Linux versions up to
+.\" FIXME . patch sent to Peter Zijlstra
+3.15,
+.BR sched_setattr ()
+failed with the error
+.B EFAULT
+instead of
+.B E2BIG
+for the case described in ERRORS.
+.P
+Up to Linux 5.3,
+.BR sched_getattr ()
+failed with the error
+.B EFBIG
+if the in-kernel
+.I sched_attr
+structure was larger than the
+.I size
+passed by user space.
+.\" In Linux versions up to up 3.15,
+.\" FIXME . patch from Peter Zijlstra pending
+.\" .BR sched_setattr ()
+.\" allowed a negative
+.\" .I attr.sched_policy
+.\" value.
+.SH SEE ALSO
+.ad l
+.nh
+.BR chrt (1),
+.BR nice (2),
+.BR sched_get_priority_max (2),
+.BR sched_get_priority_min (2),
+.BR sched_getaffinity (2),
+.BR sched_getparam (2),
+.BR sched_getscheduler (2),
+.BR sched_rr_get_interval (2),
+.BR sched_setaffinity (2),
+.BR sched_setparam (2),
+.BR sched_setscheduler (2),
+.BR sched_yield (2),
+.BR setpriority (2),
+.BR pthread_getschedparam (3),
+.BR pthread_setschedparam (3),
+.BR pthread_setschedprio (3),
+.BR capabilities (7),
+.BR cpuset (7),
+.BR sched (7)
+.ad

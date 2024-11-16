@@ -1,0 +1,27 @@
+.\" Copyright (C) 1994, 1995, Daniel Quinlan <quinlan@yggdrasil.com>
+.\" Copyright (C) 2002-2008, 2017, Michael Kerrisk <mtk.manpages@gmail.com>
+.\" Copyright (C) 2023, Alejandro Colomar <alx@kernel.org>
+.\"
+.\" SPDX-License-Identifier: GPL-3.0-or-later
+.\"
+.TH proc_loadavg 5 2024-05-02 "Linux man-pages 6.9.1"
+.SH NAME
+/proc/loadavg \- load average
+.SH DESCRIPTION
+.TP
+.I /proc/loadavg
+The first three fields in this file are load average figures
+giving the number of jobs in the run queue (state R)
+or waiting for disk I/O (state D) averaged over 1, 5, and 15 minutes.
+They are the same as the load average numbers given by
+.BR uptime (1)
+and other programs.
+The fourth field consists of two numbers separated by a slash (/).
+The first of these is the number of currently runnable kernel
+scheduling entities (processes, threads).
+The value after the slash is the number of kernel scheduling entities
+that currently exist on the system.
+The fifth field is the PID of the process that was most
+recently created on the system.
+.SH SEE ALSO
+.BR proc (5)
