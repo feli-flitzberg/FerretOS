@@ -7,5 +7,5 @@ Name: libmagic
 Description: Magic number recognition library
 Version: 5.45
 Libs: -L${libdir} -lmagic
-Libs.private: 
+Libs.private: -lzstd -llzma -lbz2 -lz 
 Cflags: -I${includedir}

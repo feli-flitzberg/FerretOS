@@ -1,0 +1,303 @@
+#
+# Copyright (C) 2020 Free Software Foundation, Inc.
+#
+# This program is free software; you can redistribute it and/or modify
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# DejaGnu is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with DejaGnu; if not, write to the Free Software Foundation,
+# Inc., 51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA.
+
+# load_base_board_description "gdbserver-support"
+
+set qemu ""
+set spec ""
+
+# No multilib flags needed by default.
+process_multilib_options ""
+
+set_board_info compiler [find_gcc]
+
+# When testing GCC in tree, the libgloss linker scripts files aren't
+# usually in a known location, so we have to find them in the sysroot.
+# FIXME: this may change in the near future, but for now it works.
+set compiler	"[find_gcc]"
+set ret [local_exec "$compiler --print-sysroot" "" "" $timeout]
+if { [lindex $ret 0] == 0 } {
+    set sysroot "[lindex $ret 1]"
+    # Strip the CR or LF off the end of the line as returned by GCC
+    regsub -all "\[\n\r\]+" $sysroot "" sysroot
+}
+# set library path environment variable for qemu
+set env(QEMU_LD_PREFIX) $sysroot
+
+# Define ld_library_path variable to workaround asan and go testsuites
+# referring to it
+set ld_library_path ""
+
+# In the beginning, only linker scripts were used to produce a fully
+# linked executable. Then a better solution of having GCC spec file
+# "patches" worked much better. None of the ARM/AARCH64 target
+# use linker scripts, some targets support both, some just the
+# linker script.
+set ldscripts [ glob -nocomplain $sysroot/usr/lib/*.ld ]
+if { [string length $ldscripts] == 0 } {
+    warning "No linker scripts found."
+}
+set specfiles [ glob -nocomplain $sysroot/usr/lib/*.specs ]
+if { [string length $specfiles] == 0 } {
+    warning "No spec files found."
+} else {
+    # FIXME: For now, both ldscripts and specfiles are ignored, and a
+    # single value is used tor testing.
+    foreach spec $specfiles {
+	verbose "Found spec file $spec"
+    }
+}
+
+# The basic set of flags needed to build "hello world" for this
+# board. This board uses libgloss and newlib.
+case "$target_triplet" in {
+    { "armeb-*-eabi*" } {
+	set qemu "qemu-armeb"
+	set spec  "elf-rdimon.specs"
+    }
+    { "arm-pi3-*" } {
+	set qemu "qemu-arm"
+	set spec="-static"
+	set target_list pi
+    }
+    { "arm*-*-eabi*" } {
+	set qemu "qemu-arm"
+	set spec="-static"
+	set spec  "elf-rdimon.specs"
+    }
+    { "aarch64be-*-elf" } {
+	set qemu "qemu-aarch64_be"
+	set spec  "rdimon.specs"
+    }
+    { "aarch64*-gnu*" } {
+	set qemu "qemu-aarch64"
+	set spec  "-static"
+    }
+    { "aarch64*-*elf*" } {
+	# There's multiple spec files, but rdimon is the
+	# one usually used for testing.
+	set qemu "qemu-aarch64"
+	set spec "rdimon.specs"
+    }
+    # FIXME: These following qemu variants are just what QEMU
+    # supports, the pattern to match for the target needs to be
+    # researched.
+    { "cris*" } {
+	set qemu "qemu-cris"
+    }
+    { "microblaze-*" } {
+	set qemu "qemu-microblaze"
+	set spec "elf-gloss-linux.specs"
+    }
+    { "microblazeel-*" } {
+	set qemu "qemu-microblazeel"
+	set spec "elf-gloss-linux.specs"
+    }
+    { "mips" } {
+	set qemu "qemu-mips"
+    }
+    { "mips64-*" } {
+	set qemu "qemu-mips64"
+    }
+    { "mips64el-*" } {
+	set qemu "qemu-mips64el"
+    }
+    { "mipsel-*" } {
+	set qemu "qemu-mipsel"
+    }
+    { "mipsn32-*" } {
+	set qemu "qemu-mipsn32"
+    }
+    { "mipsn32el-*" } {
+	set qemu "qemu-mipsn32el"
+    }
+    { "ppc-*" } {
+	set qemu "qemu-ppc"
+    }
+    { "ppc64-*" } {
+	set qemu "qemu-ppc64"
+    }
+    { "ppc64abi32-*" } {
+	set qemu "qemu-ppc64abi32"
+    }
+    { "ppc64le-*" } {
+	set qemu "qemu-ppc64le"
+    }
+    { "riscv32-elf" } {
+	set qemu "qemu-riscv32"
+    }
+    { "riscv64-elf" } {
+	set qemu "qemu-riscv64"
+	set spec "nano.spec"
+    }
+    { "sh4-*" } {
+	set qemu "qemu-sh4"
+    }
+    { "sh4eb-*" } {
+	set qemu "qemu-sh4eb"
+    }
+    { "sparc=*" } {
+	set qemu "qemu-sparc"
+    }
+    { "sparc32plus-*" } {
+	set qemu "qemu-sparc32plus"
+    }
+    { "sparc64-*" } {
+	set qemu "qemu-sparc64"
+    }
+    default {
+	puts "No target hardware for $target_triplet"
+    }
+}
+
+# 2345 is the default port used for the remote debugging protocol
+set port "2345"
+# QEMU uses the standard renmote debugging protocol as used by gdbserver.
+set_board_info gdb_protocol "remote"
+# localhost is the default host used for the remote debugging protocol
+set_board_info sockethost "localhost"
+set_board_info gdb,socketport $port
+set_board_info target_sim_options "-g $port"
+set_board_info gdb_server_prog $qemu
+set_board_info specfile $spec
+set_board_info needs_status_wrapper 1
+#set_board_info protocol standard
+push_config target qemu
+
+# Path to the gdbserver executable, if required.
+set_board_info gdb_server_prog "/usr/bin/gdbserver"
+
+# This gdbserver can only run a process once per session.
+set_board_info gdb,do_reload_on_run 1
+set_board_info exit_is_reliable 1
+
+# Set this if the board does not support passing arguments to the
+# inferior process.
+set_board_info noargs 0
+
+set_board_info cflags  "[libgloss_include_flags]"
+set_board_info ldflags "[libgloss_link_flags] [newlib_link_flags] -specs=$spec -static"
+
+
+set_board_info rsh_prog /usr/bin/ssh
+set_board_info rcp_prog /usr/bin/scp
+
+proc qemu_load { dest prog args } {
+    global qemu
+    global timeout
+    set ret [local_exec "$qemu $prog" "" "" $timeout]
+
+    if { [array size ret] == 0 } {
+	return "pass"
+    } else {
+	return "fail"
+    }
+}
+
+#
+# Start QEMU with the executable
+#
+proc qemu_download { dest prog args } {
+    global qemu
+    global timeout
+    # qemu is already running with our executable.
+}
+
+#
+# Load executable into GDB
+#
+proc gdb_load { args } {
+    global gdb_prompt
+    global verbose
+    global GDB
+    global user_spawn_id
+    global spawn_id
+    global qemu
+
+    if { $args != "" } {
+	if [gdb_file_cmd $args] then { return -1 }
+    }
+
+    if { $args == "{}"} {
+	puts "No executable passed to GDB!"
+
+	# Only the remote protocol is used with the QEMU's gdbserver support
+	send_gdb "target extended-remote :2345\n"
+	gdb_expect 2400 {
+	    -re ".*$gdb_prompt $" {
+		if $verbose>1 then {
+		    send_user "Connected to QEMU target\n"
+		}
+	    }
+	    -re "Remote debugging using .*$gdb_prompt $" {
+		verbose "Set target to remote for QEMU"
+	    }
+	    timeout {
+		if $verbose>1 then {
+		    perror "Timed out trying to connect to QEMU target."
+		}
+	    }
+	}
+#	send_gdb "continue\n"
+    }
+
+    send_gdb "load\n"
+    gdb_expect 2400 {
+	-re ".*$gdb_prompt $" {
+	    if $verbose>1 then {
+		send_user "Loaded $args into GDB\n"
+	    }
+	    close $spawn_id
+	    return 0
+	}
+	-re "$gdb_prompt $"     {
+	    if $verbose>1 then {
+		perror "GDB couldn't load."
+	    }
+	}
+	timeout {
+	    if $verbose>1 then {
+		perror "Timed out trying to load $args."
+	    }
+	}
+    }
+
+    close $spawn_id
+    return -1
+}
+
+proc runto_main { } {
+    global verbose
+    global gdb_prompt
+
+    send_gdb "continue\n"
+    gdb_expect 2400 {
+	-re ".*$gdb_prompt $" {
+	    if $verbose>1 then {
+		send_user "Continuing QEMU target\n"
+	    }
+	}
+	timeout {
+	    if $verbose>1 then {
+		perror "Timed out trying to connect to QEMU target."
+	    }
+	}
+    }
+
+    return ""
+    # return [runto main no-message]
+}

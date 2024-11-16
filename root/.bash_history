@@ -156,3 +156,149 @@ mv -v extr libidn2-2.3.7.tar.gz
 mv -v libidn2-2.3.7.tar.gz extra
 ls
 exit
+cd sources
+ls
+tar -vxf zlib-1.3.1.tar.gz 
+cd zlib-1.3.1
+./configure --prefix=/usr && make && make install && rm -fv /usr/lib/libz.a
+cd ..
+rm -rfv zlib-1.3.1
+mv -v zlib-1.3.1.tar.gz base
+ls
+ls base
+ls
+tar -vxf bzip2-1.0.8.tar.gz 
+cd bzip2-1.0.8
+patch -Np1 -i ../bzip2-1.0.8-install_docs-1.patch 
+sed -i 's@\(ln -s -f \)$(PREFIX)/bin/@\1@' Makefile
+make -f Makefile-libbz2_so 
+make clean
+make
+make PREFIX=/usr install
+cp -av libbz2.so.* /usr/lib
+ln -sv libbz2.so.1.0.8 /usr/lib/libbz2.so
+cp -v bzip2-shared /usr/bin/bzip2
+for i in /usr/bin/{bzcat,bunzip2}; do ln -sfv bzip2 $i; done
+rm -fv /usr/lib/libbz2.a
+cd ..
+rm -rfv bzip2-1.0.8
+mv -v bzip2-1.0.8* base
+ls
+tar -vxf xz-5.6.2.tar.xz 
+cd xz-5.6.2
+./configure --prefix=/usr --disable-static --docdir=/usr/share/doc/xz-5.6.2 && make && make install
+cd ..
+rm -rfv xz-5.6.2
+mv -v xz-5.6.2.tar.xz base
+ls
+ls base
+tar -vxf lz4-1.10.0.tar.gz 
+cd lz4-1.10.0
+make BUILD_STATIC=no PREFIX=/usr && make BUILD_STATIC=no PREFIX=/usr install
+cd ..
+rm -rfv lz4-1.10.0
+mv -v lz4-1.10.0.tar.gz base
+ls
+tar -vxf zstd-1.5.6.tar.gz 
+cd zstd-1.5.6
+make prefix=/usr && make prefix=/usr install && rm -v /usr/lib/libzstd.a
+cd ..
+rm -rfv zstd-1.5.6
+mv -v zstd-1.5.6.tar.gz base
+tar -vxf file-5.45.tar.gz 
+cd file-5.45
+./configure --prefix=/usr && make && make install
+cd ..
+rm -rfv file-5.45
+mv -v file-5.45.tar.gz base
+ls
+tar -vxf readline-8.2.13.tar.gz 
+cd readline-8.2.13
+sed -i '/MV.*old/d' Makefile.in
+sed -i '/{OLDSUFF}/c:' support/shlib-install
+sed -i '/{OLDSTUFF}/c:' support/shlib-install
+sed -i 's/-Wl,-rpath,[^ ]*//' support/shobj-conf
+./configure --prefix=/usr --disable-static --with-curses --docdir=/usr/share/doc/readline-8.2.13 && make SHLIB_LIBS="-lncursesw" && make SHLIB_LIBS="-lncursesw" install
+cd ..
+rm -rfv readline-8.2.13
+mv -v readline-8.2.13.tar.gz base
+ls
+tar -vxf m4-1.4.19.tar.xz 
+cd m4-1.4.19
+./configure --prefix=/usr && make && make install
+cd ..
+rm -rfv m4-1.4.19
+mv -v m4-1.4.19.tar.xz base
+ls
+tar -vxf bc-6.7.6.tar.xz 
+cd bc-6.7.6
+CC=gcc ./configure --prefix=/usr -G -O3 -r && make && make install
+cd ..
+rm -rfv bc-6.7.6
+mv -v bc-6.7.6.tar.xz base
+ls
+tar -vxf flex-2.6.4.tar.gz 
+cd flex-2.6.4
+./configure --prefix=/usr --docdir=/usr/share/doc/flex-2.6.4 --disable-static && make && make install && ln -sv flex /usr/bin/lex && ln -sv flex.1 /usr/share/man/man1/lex.1
+cd ..
+rm -rfv flex-2.6.4
+mv -v flex-2.6.4.tar.gz base
+ls
+tar -vxf tcl8.6.14-src.tar.gz 
+cd tcl8.6.14
+SRCDIR=$(pwd)
+cd unix
+./configure --prefix=/usr                       --mandir=/usr/share/man             --disable-rpath
+make
+sed -e "s|$SRCDIR/unix|/usr/lib|"     -e "s|$SRCDIR|/usr/include|"      -i tclConfig.sh
+sed -e "s|$SRCDIR/unix/pkgs/tdbc1.1.7|/usr/lib/tdbc1.1.7|"     -e "s|$SRCDIR/pkgs/tdbc1.1.7/generic|/usr/include|"        -e "s|$SRCDIR/pkgs/tdbc1.1.7/library|/usr/lib/tcl8.6|"     -e "s|$SRCDIR/pkgs/tdbc1.1.7|/usr/include|"                -i pkgs/tdbc1.1.7/tdbcConfig.sh
+sed -e "s|$SRCDIR/unix/pkgs/itcl4.2.4|/usr/lib/itcl4.2.4|"     -e "s|$SRCDIR/pkgs/itcl4.2.4/generic|/usr/include|"        -e "s|$SRCDIR/pkgs/itcl4.2.4|/usr/include|"                -i pkgs/itcl4.2.4/itclConfig.sh
+unset SRCDIR
+make install
+chmod -v u+w /usr/lib/libtcl8.6.so 
+make install-private-headers
+ln -sfv tclsh8.6 /usr/bin/tclsh
+mv /usr/share/man/man3/{Thread,Tcl_Thread}.3
+cd ../..
+rm -rfv tcl8.6.14
+mv -v tcl8.6.14-* base
+ls
+tar -vxf expect5.45.4.tar.gz 
+cd expect5.45.4
+python3 -c 'from pty import spawn; spawn(["echo", "ok"])'
+patch -Np1 -i ../expect-5.45.4-gcc14-1.patch 
+./configure --prefix=/usr --with-tcl=/usr/lib --enable-shared --disable-rpath --mandir=/usr/share/man --with-tclinclude=/usr/include && make && make install && ln -sfv expect5.45.4/libexpect5.45.4.so /usr/lib
+cd ..
+rm -rfv expect5.45.4
+mv -v expect* base
+tar -vxf dejagnu-1.6.3.tar.gz 
+cd dejagnu-1.6.3
+mkdir build
+cd build
+../configure --prefix=/usr && make install
+cd ../..
+rm -rfv dejagnu-1.6.3
+mv -v dejagnu-1.6.3.tar.gz base
+ls
+tar -vxf pkgconf-2.3.0.tar.xz 
+cd pkgconf-2.3.0
+./configure --prefix=/usr --disable-static --docdir=/usr/share/doc/pkgconf-2.3.0 && make && make install
+ln -sv pkgconf /usr/bin/pkg-config
+ln -sv pkgconf.1 /usr/share/man/man1/pkg-config.1
+cd ..
+rm -rfv pkgconf-2.3.0
+mv -v pkgconf-2.3.0.tar.xz base
+ls
+tar -vxf binutils-2.43.1.tar.xz 
+cd binutils-2.43.1
+mkdir build
+cd build
+../configure --prefix=/usr --sysconfdir=/etc --enable-gold --enable-ld=default --enable-plugins --enable-shared --disable-werror --enable-64-bit-bfd --with-system-zlib --enable-default-hash-style=gnu && make tooldir=/usr && make -k check
+grep '^FAIL:' $(find -name '*.log')
+make tooldir=/usr install
+rm -fv /usr/lib/lib{bfd,ctf,ctf-nobfd,gprofng,opcodes,sframe}.a
+cd ../..
+rm -rfv binutils-2.43.1
+mv -v binutils-2.43.1.tar.xz base
+ls
+exit

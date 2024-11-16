@@ -1,0 +1,496 @@
+#!/bin/sh
+#
+# Copyright (C) 2018, 2021 Free Software Foundation, Inc.
+#
+# This file is part of DejaGnu.
+#
+# DejaGnu is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# DejaGnu is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with DejaGnu; if not, write to the Free Software Foundation,
+# Inc., 51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA.
+
+# Portions from runtest Copyright (C) 1992-2016 Free Software Foundation, Inc.
+
+# This script was written by Jacob Bachmeyer.  Portions of this script are
+# adapted from the existing runtest script originally written by Rob Savoye.
+
+# This script finds an implementation for the command given, finds the
+# proper interpreter, and then dispatches the command.  This script can
+# either be run with a command name as the first (few) argument(s), via a
+# link from the command name, or some combination of those.
+
+# shellcheck disable=SC2003
+# The shellcheck tool complains about use of expr and recommends using
+# newer shell features instead.  Solaris 10 /bin/sh does not support the
+# newer features, so we must use expr in this script.
+
+# shellcheck disable=SC2006
+# The shellcheck tool complains about the old style backtick command
+# substitution.  Solaris 10 /bin/sh does not support the new style $()
+# command substitution and the usage of command substitution in this script
+# is simple enough to work.  Most notably, nesting backtick command
+# substitution is tricky, but we do not do that.
+
+# shellcheck disable=SC2209
+# The shellcheck tool complains about assigning certain constant strings to
+# variables.  In this script, the intended meaning is obvious in context.
+
+# ##help
+# #Usage: dejagnu COMMAND [ --help | OPTIONS... ]
+# #Usage: dejagnu --help
+# #Usage: dejagnu --version
+# #	--help			Print help text
+# #	--version		Print DejaGnu version
+# ##end
+
+# list of extensions supported for commands in priority order
+Variants='gawk awk tcl exp bash sh'
+readonly Variants
+
+## Recognize options
+
+# For testing and development
+override_ext=
+if test x"$1" = x--DGTimpl ; then
+    override_ext=$2
+    shift 2
+fi
+
+want_help=false
+want_version=false
+verbose=0
+for a in "$@"; do
+    case $a in
+	--help)				want_help=true			;;
+	-v|--v|-verbose|--verbose)	verbose=`expr $verbose + 1`	;;
+	-V|--V|-version|--version)	want_version=true		;;
+    esac
+done
+
+if expr "$verbose" \> 0 > /dev/null ; then
+    echo Verbose level is "$verbose"
+fi
+
+## Get the file name of this script and deduce @bindir@.
+
+bindir=`echo "$0" | sed -e 's@/[^/]*$@@'`
+if expr "$verbose" \> 0 > /dev/null ; then
+    echo Running launcher from "$bindir"
+fi
+
+## Find the commands.
+
+# If running from source tree, they are in ./commands/ relative to this script.
+# If installed, they are in @datadir@/dejagnu/commands/ on the system.
+
+# This makes the same assumption as in runtest that one of these holds:
+#
+#   @datadir@ == @bindir@/../share
+#   @datadir@ == @bindir@/../../share
+#   @datadir@ == /usr/share
+#   @datadir@ == /usr/local/share
+
+if test -n "$DEJAGNULIBS" ; then
+    commdir="${DEJAGNULIBS}/commands"
+    datadir="${DEJAGNULIBS}"
+elif test -d "${bindir}/commands" && test -f "${bindir}/runtest.exp" ; then
+    if expr "$verbose" \> 1 > /dev/null ; then
+	echo Running from source directory
+    fi
+    commdir="${bindir}/commands"
+    datadir="${bindir}"
+else
+    commdir=
+    bindir1up_check=`echo "$bindir" | sed -e 's@/[^/]*$@/share/dejagnu@'`
+    bindir2up_check=`echo "$bindir" | sed -e 's@/[^/]*/[^/]*$@/share/dejagnu@'`
+    for i in \
+	"${bindir1up_check}" "${bindir2up_check}" \
+	/usr/share/dejagnu /usr/local/share/dejagnu
+    do
+	if expr "$verbose" \> 1 > /dev/null ; then
+	    echo Probing directory "$i"/commands
+	fi
+	if test -d "$i"/commands ; then
+	    commdir="$i"/commands
+	    datadir="$i"
+	    break
+	fi
+    done
+fi
+
+if test -z "${commdir}" ; then
+    echo ERROR: could not find command directory.
+    exit 2
+fi
+
+if expr "$verbose" \> 0 > /dev/null ; then
+    echo Looking for commands in "$commdir"
+fi
+
+## Get the name of the requested command.
+
+# Are we just looking for version information?
+if $want_version ; then
+    frame_version=`grep '^set frame_version' "${datadir}/runtest.exp" \
+	| sed 's/^[^0-9]*//'`
+    echo 'dejagnu auxiliary launcher (DejaGnu)' "$frame_version"
+    exit 0
+fi
+
+# Remove any leading autoconf platform prefix and the "dejagnu" prefix.
+# command=`basename "$0" | sed -e 's/^.*-\?dejagnu-\?//'`
+
+# The above simple solution is not portable, so we use Awk and two steps:
+command=`echo "$0" | awk 'BEGIN { FS = "/" } { print $NF }'`
+# First, we use a simple Awk program to perform the role of basename.
+command=`echo "$command" | awk 'BEGIN { OFS = FS = "-" }
+	   { for (i = 1; i <= NF; i++) if ($i ~ /dejagnu/) break;
+	     i++; for (out = ""; i <= NF; i++) out = out OFS $i;
+	     print substr(out,2) }'`
+# Second, we split on "-" and search for a field matching /dejagnu/ to
+# identify the other prefixes, then skip that field and the second loop
+# collects any following fields.  The spurious leading "-" is then removed
+# using substr() and the result is returned to the shell.
+
+# This roundabout approach maintains compatibility with Solaris 10, where
+# awk allows only limited manipulation of the record structure.
+
+while expr $# \> 0 > /dev/null
+do
+    if test -z "${command}" ; then
+	case $1 in -*) break;; esac
+	command="$1"
+	shift
+    fi
+    if expr "$verbose" \> 2 > /dev/null ; then
+	echo Looking for "${commdir}/${command}.*"
+    fi
+    for ext in ${Variants}
+    do
+	if test -f "${commdir}/${command}.$ext" ; then
+	    break 2
+	fi
+    done
+    case $1 in -*) break;; esac
+    if test -n "$1" ; then
+	command="${command}-$1"
+	shift
+    else
+	break
+    fi
+done
+
+commext=
+for ext in ${Variants}
+do
+    if test -f "${commdir}/${command}.$ext" ; then
+	commext="$commext $ext"
+    fi
+done
+
+if test -z "$commext" && test -n "$command" ; then
+    echo ERROR: could not resolve command "$command"
+    exit 2
+fi
+
+if expr "$verbose" \> 0 > /dev/null ; then
+    if test -n "$command"; then
+	if expr "$verbose" \> 1 > /dev/null ; then
+	    echo Found subcommand "$command" with variants: "$commext"
+	else
+	    echo Found subcommand "$command"
+	fi
+    else
+	echo Running nothing.
+    fi
+fi
+
+## Find interpreters.
+
+# Awk and GNU awk
+if test -n "$AWK" ; then
+    awkbin="$AWK"
+elif test -x "${bindir}/awk" ; then
+    awkbin="${bindir}/awk"
+else
+    # find what might be a usable awk
+    # on Solaris 10, POSIX awk is in /usr/xpg4/bin
+    for awktest in mawk /usr/xpg4/bin/awk nawk awk ; do
+	if command -v "$awktest" > /dev/null 2>&1 ; then
+	    awkbin=$awktest
+	    break;
+	fi
+    done
+fi
+if test -n "$GAWK" ; then
+    gawkbin="$GAWK"
+elif test -x "${bindir}/gawk" ; then
+    gawkbin="${bindir}/gawk"
+else
+    gawkbin=gawk
+fi
+# The non-POSIX awk in /usr/bin on Solaris 10 fails this test
+if echo | "$awkbin" '1 && 1 {exit 0}' > /dev/null 2>&1 ; then
+    have_awk=true
+else
+    have_awk=false
+fi
+if command -v "$gawkbin" > /dev/null 2>&1 ; then
+    have_gawk=true
+else
+    have_gawk=false
+fi
+# substitute GNU awk for awk if needed
+if $have_gawk ; then
+    if $have_awk ; then : ; else
+	have_awk=$have_gawk
+	awkbin=$gawkbin
+    fi
+fi
+# is "awk" actually GNU Awk?
+if $have_awk ; then
+    case `"$awkbin" --version </dev/null 2>&1 | sed 1q` in
+	*'GNU Awk'*)	have_gawk_as_awk=true	;;
+	*)		have_gawk_as_awk=false	;;
+    esac
+fi
+if expr "$verbose" \> 2 > /dev/null ; then
+    if $have_awk ; then
+	echo Awk interpreter is "$awkbin"
+    else
+	echo Awk interpreter was not found
+    fi
+    if $have_gawk ; then
+	echo GNU Awk interpreter is "$gawkbin"
+    else
+	echo GNU Awk interpreter was not found
+    fi
+fi
+# export chosen Awk and GNU Awk
+if $have_awk ; then
+    AWK=$awkbin
+    export AWK
+fi
+if $have_gawk ; then
+    GAWK=$gawkbin
+    export GAWK
+fi
+
+
+# Bash
+if test -n "$BASH" ; then
+    bashbin="$BASH"
+elif test -x "${bindir}/bash" ; then
+    bashbin="${bindir}/bash"
+elif test -x /bin/bash ; then
+    bashbin=/bin/bash
+else
+    bashbin=bash
+fi
+if command -v "$bashbin" > /dev/null 2>&1 ; then
+    have_bash=true
+else
+    have_bash=false
+fi
+if expr "$verbose" \> 2 > /dev/null ; then
+    if $have_bash ; then
+	echo Bash interpreter is "$bashbin"
+    else
+	echo Bash interpreter was not found
+    fi
+fi
+
+# Bourne shell
+#  This script is running, therefore we have a Bourne shell.
+have_sh=true
+
+# Expect
+#  DejaGnu configure bails out if Expect is not available, but this script
+#  can be run from the source directory without first running configure.
+if test -n "$EXPECT" ; then
+    expectbin="$EXPECT"
+elif test -x "${bindir}/expect" ; then
+    expectbin="${bindir}/expect"
+else
+    expectbin=expect
+fi
+if command -v "$expectbin" > /dev/null 2>&1 ; then
+    have_expect=true
+else
+    have_expect=false
+fi
+if expr "$verbose" \> 2 > /dev/null ; then
+    if $have_expect ; then
+	echo Expect interpreter is "$expectbin"
+    else
+	echo Expect interpreter was not found
+    fi
+fi
+
+# Tcl
+if test -n "$TCLSH" ; then
+    tclbin="$TCLSH"
+elif test -x "${bindir}/tclsh" ; then
+    tclbin="${bindir}/tclsh"
+else
+    tclbin=tclsh
+fi
+# substitute expect if needed
+if command -v "$tclbin" > /dev/null 2>&1 ; then :
+elif command -v "$expectbin" > /dev/null 2>&1 ; then tclbin="$expectbin"
+fi
+if command -v "$tclbin" > /dev/null 2>&1 ; then
+    have_tcl=true
+else
+    have_tcl=false
+fi
+if expr "$verbose" \> 2 > /dev/null ; then
+    if $have_tcl ; then
+	echo Tcl interpreter is "$tclbin"
+    else
+	echo Tcl interpreter was not found
+    fi
+fi
+
+## Select a variant.
+
+if test -n "$override_ext" ; then
+    selected_ext="$override_ext"
+else
+    selected_ext=
+    for v in $commext
+    do
+	case $v in
+	    awk)
+		if $have_awk ; then
+		    selected_ext=awk
+		    break
+		fi
+		;;
+	    bash)
+		if $have_bash ; then
+		    selected_ext=bash
+		    break
+		fi
+		;;
+	    exp)
+		if $have_expect ; then
+		    selected_ext=exp
+		    break
+		fi
+		;;
+	    gawk)
+		if $have_gawk ; then
+		    selected_ext=gawk
+		    break
+		fi
+		;;
+	    tcl)
+		if $have_tcl ; then
+		    selected_ext=tcl
+		    break
+		fi
+		;;
+	    sh)
+		selected_ext=sh
+		break
+		;;
+	    *)
+		echo ERROR: '(select-variant)' unrecognized variant "$v"
+		;;
+	esac
+    done
+    if test -z "$selected_ext" && test -n "$command" ; then
+	echo ERROR: no variant of "$command" was selected
+	exit 2
+    fi
+fi
+
+if test -n "$command" && expr "$verbose" \> 0 > /dev/null ; then
+    if test -n "$override_ext" ; then
+	echo Selected variant "$selected_ext" by override
+    else
+	echo Selected variant "$selected_ext"
+    fi
+fi
+
+## Dispatch to the selected command.
+
+# Are we just looking for a usage message?
+if $want_help ; then
+    if $have_awk; then : ; else
+	echo ERROR: extracting help message requires POSIX Awk
+	exit 2
+    fi
+    if test -z "$command" ; then
+	# want help on the launcher itself
+	help_file=$0
+    else
+	help_file="${commdir}/${command}.${selected_ext}"
+    fi
+    if test ! -r "$help_file" ; then
+	echo ERROR: file "'$help_file'" is not readable
+	exit 2
+    fi
+    if "$AWK" '/#help$/ { pfxlen = length($0) - 4 }
+	    pfxlen && substr($0, pfxlen) == "#end" { exit 1 }
+	   ' "$help_file" ; then
+	echo ERROR: file "'$help_file'" does not contain a help message
+	exit 2
+    fi
+    exec "$AWK" '/#help$/ { pfxlen = length($0) - 4 }
+	      pfxlen && substr($0, pfxlen) == "#end" { exit 0 }
+	      pfxlen { print substr($0, pfxlen) }' "$help_file"
+fi
+
+if test -z "$command" ; then
+    if test -n "$override_ext" ; then
+	case $selected_ext in
+	    awk)    if $have_awk;	then exit 0; else exit 1; fi ;;
+	    bash)   if $have_bash;	then exit 0; else exit 1; fi ;;
+	    exp)    if $have_expect;	then exit 0; else exit 1; fi ;;
+	    gawk)   if $have_gawk;	then exit 0; else exit 1; fi ;;
+	    tcl)    if $have_tcl;	then exit 0; else exit 1; fi ;;
+	    sh)	    if $have_sh;	then exit 0; else exit 1; fi ;;
+	    *)	    exit 2 ;;
+	esac
+    else
+	echo ERROR: no command given
+	exit 2
+    fi
+fi
+
+case $selected_ext in
+    awk)
+	if $have_gawk_as_awk ; then
+	    exec "$awkbin" --posix -f "${commdir}/${command}.awk" -- ${1+"$@"}
+	else
+	    exec "$awkbin" -f "${commdir}/${command}.awk" -- ${1+"$@"}
+	fi
+	;;
+    bash)   exec "$bashbin" -- "${commdir}/${command}.bash" ${1+"$@"} ;;
+    exp)    exec "$expectbin" -- "${commdir}/${command}.exp" ${1+"$@"} ;;
+    gawk)   exec "$gawkbin" -f "${commdir}/${command}.gawk" -- ${1+"$@"} ;;
+    tcl)    exec "$tclbin" "${commdir}/${command}.tcl" ${1+"$@"} ;;
+    sh)     exec /bin/sh "${commdir}/${command}.sh" ${1+"$@"} ;;
+    echo)
+	echo command: "${command}"
+	echo args: ${1+"$@"}
+	exit 0
+	;;
+    *)
+	echo ERROR: '(run-variant)' unrecognized variant "$selected_ext"
+	exit 2
+	;;
+esac
+
+#EOF
