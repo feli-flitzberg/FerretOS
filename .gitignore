@@ -6,3 +6,5 @@ sys/*
 !sys/gitkeep
 run/*
 !run/gitkeep
+tmp/*
+!tmp/gitkeep
