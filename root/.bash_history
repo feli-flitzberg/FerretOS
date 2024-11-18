@@ -414,3 +414,41 @@ mv -v /usr/lib/*gdb.py /usr/share/gdb/auto-load/usr/lib
 cd ../..
 rm -rfv gcc-14.2.0
 exit
+cd sources
+tar -vxf ncurses-6.5.tar.gz 
+cd ncurses-6.5
+./configure --prefix=/usr --mandir=/usr/share/man --with-shared --without-debug --without-normal --with-cxx-shared --enable-pc-files --with-pkg-config-libdir=/usr/lib/pkgconfig && make && make DESTDIR=$PWD/dest install
+install -vm755 dest/usr/lib/libncursesw.so.6.5 /usr/lib
+rm -v dest/usr/lib/libncursesw.so.6.5 
+sed -e 's/^#if.*XOPEN.*$/#if 1/' -i dest/usr/include/curses.h 
+cp -av dest/* /
+for lib in ncurses form panel menu ; do ln -sfv lib${lib}w.so /usr/lib/lib${lib}.so; ln -sfv ${lib}w.pc /usr/lib/pkgconfig/${lib}.pc; done
+ln -sfv libncursesw.so /usr/lib/libcurses.so
+cd ..
+rm -rfv ncurses-6.5
+mv -v ncurses-6.5.tar.gz base
+tar -vxf sed-4.9.tar.xz 
+cd sed-4.9
+./configure --prefix=/usr && make && make install
+cd ..
+rm -rfv sed-4.9
+mv -v sed-4.9.tar.xz base/
+ls
+ls --color
+ls --help
+ls --color=auto
+tar -vxf psmisc-23.7.tar.xz 
+cd psmisc-23.7
+./configure --prefix=/usr && make && make install
+cd ..
+rm -rfv psmisc-23.7
+mv -v psmisc-23.7.tar.xz base
+ls
+tar -vxf gettext-0.22.5.tar.xz 
+cd gettext-0.22.5
+./configure --prefix=/usr --disable-static --docdir=/usr/share/doc/gettext-0.22.5 && make && make install && chmod -v 0755 /usr/lib/preloadable_libintl.so
+cd ..
+rm -rfv gettext-0.22.5
+mv -vf gettext-0.22.5.tar.xz base
+ls
+exit

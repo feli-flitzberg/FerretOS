@@ -1,0 +1,185 @@
+.\"
+.\" Copyright 1993-2005 Werner Almesberger
+.\"           2005-2023 Craig Small
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\"*******************************************************************
+.\"
+.\" This file was generated with po4a. Translate the source file.
+.\"
+.\"*******************************************************************
+.TH FUSER 1 2022\-11\-02 psmisc "사용자 명령"
+.SH 이름
+fuser \- 파일 또는 소켓을 사용하는 프로세스를 식별합니다
+.SH 개요
+.ad l
+\fBfuser\fP [\fB\-fuv\fP] [\fB\-a\fP|\fB\-s\fP] [\fB\-4\fP|\fB\-6\fP] [\fB\-c\fP|\fB\-m\fP|\fB\-n\fP
+\fI<영역>\fP] [\fB\ \-k\fP [\fB\-i\fP] [\fB\-M\fP] [\fB\-w\fP] [\fB\-\fP\fI<시그널>\fP] ]
+\fI<이름>	\fP ...
+.br
+\fBfuser \-l\fP
+.br
+\fBfuser \-V\fP
+.ad b
+.SH 설명
+\fBfuser\fP 는 지정 파일 또는 파일 시스템을 사용하는 프로세스의 PID를 나타냅니다.  기본 표시 모드에서, 각 파일 이름 다음에는
+접근 형식을 나타내는 문자가 따라옵니다:
+.PP
+.RS
+.PD 0
+.TP 
+\fBc\fP
+현재 디렉터리입니다.
+.TP 
+\fBe\fP
+실행하고 있는 실행 파일입니다.
+.TP 
+\fBf\fP
+파일을 엽니다.  \fBf\fP 는 기본 표시 모드에서 생략합니다.
+.TP 
+\fBF\fP
+기록 목적으로 파일을 엽니다.  \fBF\fP 는 기본 표시 모드에서 생략합니다.
+.TP 
+\fBr\fP
+루트 디렉터리입니다.
+.TP 
+\fBm\fP
+메모리에 매핑한 파일 또는 공유 라이브러리입니다.
+.TP 
+\&\fB.\fP
+입력 자리이며, 기본 표시 모드에서 생략합니다.
+.PD
+.RE
+.LP
+\fBfuser\fP 는 지정 파일에 접근한 사용자가 없거나 치명적인 오류가 있을 경우에 0이 아닌 코드 값을 반환합니다.  적어도 하나
+이상의 접근 사용자 또는 프로세스를 찾으면, \fBfuser\fP에서 0값을 반환합니다.
+.PP
+TCP와 UDP 소켓으로 프로세스를 찾아보려면, 해당 이름 영역을 \fB\-n\fP 옵션으로 선택해야합니다. \fBfuser\fP는 기본적으로
+IPv6와 IPv4 소켓을 둘 다 찾아봅니다.  기본 동작을 바꾸려면 \fB\-4\fP와 \fB\-6\fP 옵션을 사용하십시오.  소켓은 로컬 또는
+원격 포트, 원격 주소로 지정할 수 있습니다.  모든 필드는 옵션이지만, 빠진 입력란 앞에는 반드시 쉼표를 넣어야 합니다:
+.PP
+[\fI<로컬_포트>\fP][,[\fI<원격_호스트>\fP][,[\fI<원격_포트>\fP]]]
+.PP
+기호 문자 또는 숫자 값을 IP 주소와 포트 번호로 사용할 수 있습니다.
+.PP
+\fBfuser\fP 는 PID만을 표준 출력으로 내보내며 나머지는 표준 오류로 내보냅니다.
+.SH 옵션
+.TP 
+\fB\-a\fP, \fB\-\-all\fP
+명령행에 지정한 모든 파일을 나타냅니다.  기본적으로 최소한 하나 이상의 프로세스로 접근한 파일만 나타납니다.
+.TP 
+\fB\-c\fP
+\fB\-m\fP 옵션과 동일하며, POSIX 호환 목적으로 사용합니다.
+.TP 
+\fB\-f\fP
+조용히 무시하며, POSIX 호환 목적으로 사용합니다.
+.TP 
+\fB\-k\fP, \fB\-\-kill\fP
+파일에 접근하는 프로세스를 강제로 끕니다.  \fB\-\fP\fI<시그널>\/\fP로 바꾸지 않으면 SIGKILL 시그널을 보냅니다.
+\fBfuser\fP 프로세스 자체는 강제로 끝내지 않습니다만, 다른 \fBfuser\fP 프로세스는 강제로 끝낼 수 있습니다.  \fBfuser\fP를
+실행하는 프로세스의 해당 사용자 ID는 강제로 끝내기 전에 실제 사용자 ID로 설정합니다.
+.TP 
+\fB\-i\fP, \fB\-\-interactive\fP
+프로세스를 강제로 끝내기 전에 사용자에게 확인합니다.  이 옵션은 \fB\-k\fP 옵션이 없을 떄도 조용히 무시합니다.
+.TP 
+\fB\-I\fP, \fB\-\-inode\fP
+이름 영역에 대해 \fB<파일>\fP을 지정한 파일의 아이노드와 모두 비교하며, 네트워크 파일 시스템의 파일 이름에 대해서는
+수행하지 않습니다.
+.TP 
+\fB\-l\fP, \fB\-\-list\-signals\fP
+알려진 모든 시그널 이름을 나타냅니다.
+.TP 
+\fB\-m\fP\fI <이름>\fP, \fB\-\-mount \fP\fI<이름>\fP
+\fI<이름>\fP 에는 마운트한 파일 시스템이나 마운트한 블록 장치에 있는 파일을 지정합니다.  해당 파일 시스템의 파일에
+접근하는 모든 프로세스를 나타냅니다.  디렉터리를 지정했다면, 자동으로 \fI<이름>\fP/ 으로 바꾸어 해당 디렉터리에
+마운트한 파일 시스템을 활용합니다.
+.TP 
+\fB\-M\fP, \fB\-\-ismountpoint\fP
+\fI<이름>\fP으로 마운트 지점을 지정했을 때만 요청을 수행합니다.  \fI<이름>\fP이 파일 시스템에 없을때
+머신에서 사용자 여러분의 강제 퇴출을 막는 귀중한 안전장치입니다.
+.TP 
+\fB\-w\fP
+기록 접근을 하고 있는 프로세스만 강제로 끝냅니다.  \fB\-k\fP 옵션이 없을 때도 이 옵션은 조용히 무시합니다.
+.TP 
+\fB\-n\fP\fI <이름영역>\fP, \fB\-\-namespace \fP\fI<이름영역>\fP
+다른 이름 영역을 선택합니다.  \fBfile\fP(파일 이름, 기본), \fBudp\fP(로컬 UDP 포트), \fBtcp\fP(로컬 TCP 포트)
+이름 영역을 지원합니다.  포트의 경우 포트 번호 또는 심볼 이름 둘 다 지원합니다.  햇갈리지만 않는다면
+\fI<이름>\fP\fB/\fP\fI<영역>\fP (예: \fI80\fP\fB/\fP\fItcp\fP) 표기 방식을 활용할 수 있습니다.
+.TP 
+\fB\-s\fP, \fB\-\-silent\fP
+동작 내용 출력을 하지 않습니다.  이 모드에서 \fB\-u\fP, \fB\-v\fP 옵션은 무시합니다.  \fB\-a\fP 옵션은 \fB\-s\fP 옵션과 함께
+사용하면 안됩니다.
+.TP 
+\fB\-\fP\fI<시그널>\fP
+프로세스를 강제로 끝낼 때 SIGKILL 대신 내보낼 지정 시그널을 사용합니다.  시그널은 이름(예: \fB\-HUP\fP) 또는 번호(예:
+\fB\-1\fP)로 지정할 수 있습니다.  이 옵션은 \fB\-k\fP 옵션을 사용하지 않으면 조용히 무시합니다.
+.TP 
+\fB\-u\fP, \fB\-\-user\fP
+각 PID에 프로세스 소유자 사용자 이름을 붙입니다.
+.TP 
+\fB\-v\fP, \fB\-\-verbose\fP
+장황한 출력 모드.  프로세스를 \fBps\fP 방식으로 나타냅니다.  PID, 사용자, 명령을 \fBps\fP와 비슷하게 나타냅니다.  접근에서는
+프로세스의 파일 접근 방식을 나타냅니다.  일부 파일이 마운트 지점, knfs 익스포팅, 스왑 파일로 접근했을 경우에도 장황한 출력
+모드로 나타냅니다.  이 경우 \fBkernel\fP이 PID 대신 나타납니다.
+.TP 
+\fB\-V\fP, \fB\-\-version\fP
+버전 정보를 나타냅니다.
+.TP 
+\fB\-4\fP, \fB\-\-ipv4\fP
+IPv4 소켓만 검색합니다.  이 옵션은 \fB\-6\fP 옵션과 사용하면 안되며, tcp 및 udp 이름 영역에만 해당합니다.
+.TP 
+\fB\-6\fP, \fB\-\-ipv6\fP
+IPv6 소켓만 검색합니다.  이 옵션은 \fB\-4\fP 옵션과 사용하면 안되며, tcp 및 udp 이름 영역에만 해당합니다.
+.SH 파일
+.TP 
+/proc
+proc 파일 시스템의 위치입니다
+.SH 예제
+.TP 
+\fBfuser \-km /home\fP
+어떤 힉으로든 /home 파일 시스템에 접근하고 있는 모든 프로세스를 강제로 끝냅니다.
+.TP 
+\fBif fuser \-s /dev/ttyS1; then :; else \fP\fI<명령>\fP\fB; fi\fP
+/dev/ttyS1을 활용하는 프로세스가 없다면 \f\fI명령\fP\fP을 실행합니다.
+.TP 
+\fBfuser telnet/tcp\fP
+(로컬) 텔넷 포트의 모든 프로세스를 나타냅니다.
+.SH 제약사항
+동일한 파일 또는 파일 시스템에 동일한 방식으로 여러번 접근하는 프로세스는 한번만 나타냅니다.
+.PP
+동일한 개체를 명령행에 여러번 지정하면, 일부 항목은 무시합니다.
+.PP
+\fBfuser\fP는 권한 없이 실행할 경우 일부 정보를 가져오지 못할 수 있습니다.  이 결과로, 다른 사용자가 소유한 프로세스에서 연
+파일은 목록에 나타나지 않으며, 매핑한 실행 파일로 분류한 요소만 나타납니다.
+.PP
+\fBfuser\fP는 권한이 없는 파일 서술자 테이블의 프로세스 정보를 나타낼 수는 없습니다.  대부분의 경우 이런 문제는 \fBfuser\fP를
+일반 사용자로 실행할 때 TCP 또는 UDP 소켓을 찾아볼 때 나타납니다.  이 경우 \fBfuser\fP에서는 접근 권한이 없다고
+알려줍니다.
+.PP
+\fBfuser\fP SUID 루트를 설치하면 일부 정보를 조회하는 관련 문제를 막아주긴 하지만, 보안 및 사생활 문제로 적절하지 못합니다.
+.PP
+\fBudp\fP 와 \fBtcp\fP 이름 영역, 유닉스 도메인 소켓은 1.3.78 버전 이전 커널에서는 검색할 수 없습니다.
+.PP
+커널 접근은 \fB\-v\fP 옵션으로만 나타납니다.
+.PP
+\fB\-k\fP 옵션만 프로세스를 처리할 수 있습니다.  사용자가 커널이라면, \fBfuser\fP 에서 지침을 나타내긴 하지만 그 이상의 동작은
+취하지 않습니다.
+.PP
+\fBfuser\fP는 다른 마운트 이름 영역에서 프로세스가 마운팅한 블록 장치는 보여주지 않습니다.  fuser가 아닌 프로세스 이름 영역의
+프로세스 파일 서술자 테이블에 장치 ID가 나타나서 결과적으로 일치하지 않기 때문입니다.
+.SH 버그
+.PP
+\fBfuser \-m /dev/sgX\fP 명령 (또는 \fB\-k\fP 플래그로 강제로 끝냄) 은 해당 장치를 설정하지 않아도 모든 프로세스를
+보여줍니다.  이런 동작을 취하는 다른 장치가 있을 수도 있습니다.
+.PP
+\fB\-m\fP 마운트 옵션은 동일한 장치에서 지정한 파일과 일치하는 어떤 파일이든 찾겠지만, 마운트 지점을 지정하기만 할 경우 \fB\-M\fP
+옵션을 활용하십시오.
+.PP
+\fBfuser\fP는 \fBstat\fP(2)  과 \fI/proc/<PID>/maps\fP의 장치 ID가 달라 \fBbtrfs\fP(5)
+파일 시스템에서의 경우 프로세스 공유 라이브러리 같은 매핑 파일을 찾아내지 못합니다.
+.SH "추가 참조"
+\fBkill\fP(1), \fBkillall\fP(1), \fBstat\fP(2), \fBbtrfs\fP(5), \fBlsof\fP(8),
+\fBmount_namespaces\fP(7), \fBpkill\fP(1), \fBps\fP(1), \fBkill\fP(2).

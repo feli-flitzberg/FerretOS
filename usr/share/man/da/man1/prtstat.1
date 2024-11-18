@@ -1,0 +1,36 @@
+.\"
+.\" Copyright 2009-2020 Craig Small
+.\"
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\"*******************************************************************
+.\"
+.\" This file was generated with po4a. Translate the source file.
+.\"
+.\"*******************************************************************
+.TH PRTSTAT 1 09\-09\-2020 psmisc Brugerkommandoer
+.SH NAVN
+prtstat \- vis statistikken for en proces
+.SH SYNOPSIS
+.ad l
+\fBprtstat\fP [\fB\-r\fP|\fB\-\-raw\fP] \fIpid\fP
+.br
+\fBprtstat\fP \fB\-V\fP|\fB\-\-version\fP
+.ad b
+.SH BESKRIVELSE
+\fBprtstat\fP viser statistikken for den specificerede proces. Denne
+information kommer fra filen \fB/proc/\fP\fIpid\fP\fB/stat\fP.
+.SH TILVALG
+.TP 
+\fB\-r\fP,\fB\ \-\-raw\fP
+Vis informationen i formatet raw (rå).
+.TP 
+\fB\-V\fP,\fB\ \-\-version\fP
+Vis versionsinformationen for \fBprtstat\fP.
+.SH FILER
+.TP 
+\fB/proc/\fP\fIPID\fP\fB/stat\fP
+kilden for informationen brugt af \fBprtstat\fP.

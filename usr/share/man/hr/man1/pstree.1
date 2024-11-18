@@ -1,0 +1,138 @@
+.\"
+.\" Copyright 1993-2002 Werner Almesberger
+.\"           2002-2021 Craig Small
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\"*******************************************************************
+.\"
+.\" This file was generated with po4a. Translate the source file.
+.\"
+.\"*******************************************************************
+.TH PSTREE 1 2021\-06\-21 psmisc "Naredbe korisnika"
+.SH IME
+pstree \- prikaže stablo procesa
+.SH UPORABA
+.ad l
+\fBpstree\fP [\fB\-a\fP,\fB\ \-\-arguments\fP] [\fB\-c\fP,\fB\ \-\-compact\-not\fP] [\fB\-C\fP,\fB\ \-\-color\ \fP\fIattr\fP] [\fB\-g\fP,\fB\ \-\-show\-pgids\fP] [\fB\-h\fP,\fB\ \-\-highlight\-all\fP,\fB\ \-H\fP\fI\ pid\fP,\fB\ \-\-highlight\-pid\ \fP\fIpid\fP] [\fB\-l\fP,\fB\ \-\-long\fP] [\fB\-n\fP,\fB\ \-\-numeric\-sort\fP] [\fB\-N\fP,\fB\ \-\-ns\-sort\ \fP\fIns\fP] [\fB\-p\fP,\fB\ \-\-show\-pids\fP]
+[\fB\-s\fP,\fB\ \-\-show\-parents\fP] [\fB\-S\fP,\fB\ \-\-ns\-changes\fP] [\fB\-t\fP,\fB\ \-\-thread\-names\fP] [\fB\-T\fP,\fB\ \-\-hide\-threads\fP] [\fB\-u\fP,\fB\ \-\-uid\-changes\fP]
+[\fB\-Z\fP,\fB\ \-\-security\-context\fP] [\fB\-A\fP,\fB\ \-\-ascii\fP,\fB\ \-G\fP,\fB\ \-\-vt100\fP,\fB\ \-U\fP,\fB\ \-\-unicode\fP] [\fIpid\fP,\fB\ \fP\fIuser\fP]
+.br
+\fBpstree\fP \fB\-V\fP,\fB\ \-\-version\fP
+.ad b
+.SH OPIS
+\fBpstree\fP prikaže pokrenute procese kao stablo. Stablo je ukorijenjeno na
+\fIpid\fP ili \fBinit\fP ako je \fIpid\fP izostavljen. Ako je navedeno korisničko
+ime, prikaže sva stabla procesa ukorijenjena u procesima u vlasništvu tog
+korisnika.
+.PP
+\fBpstree\fP vizualno spaja identične grane stavljajući ih u uglate zagrade i
+dodajući im prefiks s brojem ponavljanja, na pr.
+.nf
+.sp
+    init\-+\-getty
+         |\-getty
+         |\-getty
+         `\-getty
+.sp
+.fi
+postaje
+.nf
+.sp
+    init\-\-\-4*[getty]
+.sp
+.fi
+.PP
+.PP
+Dretve potomka procesa nalaze se ispod roditeljskog procesa i prikazuju se s
+imenom procesa u vitičastim zagradama, na pr.
+.nf
+.sp
+    icecast2\-\-\-13*[{icecast2}]
+.sp
+.fi
+.PP
+Ako je \fBpstree\fP pozvan kao \fBpstree.x11\fP, tada će na kraju retka zatražiti
+od korisnika da pritisne Enter i neće se vratiti dok se to ne napravi. Ovo
+je korisno kada se \fBpstree\fP izvšava u xterminalu.
+.PP
+Određeni parametri kernela ili montiranja, poput opcije \fIhidepid\fP za
+procfs, sakrit će informacije za neke procese. U tim će situacijama
+\fBpstree\fP pokušati izgraditi stablo bez ovih informacija, pokazujući imena
+procesa kao upitnike.
+
+.SH OPCIJE
+.IP \fB\-a\fP
+Pokaže argumente naredbenog retka. Ako se naredbeni redak procesa isprazni,
+taj je proces prikazan u zagradama. \fB\-a\fP implicitno onemogućuje sažimanje
+za procese, ali ne i dretvi.
+.IP \fB\-A\fP
+Koristi ASCII znakove za crtanje stabla.
+.IP \fB\-c\fP
+Onemogući sažimanje identičnih podstabala. Zadano, podstabla se sažimaju kad
+god je to moguće.
+.IP \fB\-C\fP
+Oboji ime postupka prema zadanom atributu. Trenutno \fBpstree\fP prihvaća samo
+\fBage\fP koji oboji ovisno o dobi procesa. Procesi noviji od 60 sekundi su
+zeleni, noviji od jednog sata su žuti, a preostali su crveni.
+.IP \fB\-g\fP
+Prikaže PGID\-ove. ID\-ovi grupa procesa pokazani su u decimalnim brojevima u
+zagradama nakon imena svakog procesa. Ako su pokazani i PID\-ovi i PGID\-ovi,
+onda se prvo pokazuju PID\-ovi.
+.IP \fB\-G\fP
+Koristi znakove za crtanje po VT100.
+.IP \fB\-h\fP
+Istakne trenutni proces i njegove pretke. Ovo nije dopušteno ako terminal ne
+podržava isticanje ili ako se u podstablu ne pokazuje niti trenutni postupak
+niti bilo koji od njegovih predaka.
+.IP \fB\-H\fP
+Poput \fB\-h\fP, ali umjesto toga istakne navedeni postupak. Za razliku od
+\fB\-h\fP, \fBpstree\fP ne uspijeva kada se koristi \fB\-H\fP ako nije isticanje
+dostupno.
+.IP \fB\-l\fP
+Prikaže duge redove. Zadano, redci su skraćeni ili na varijablu okoline
+COLUMNS ili na širinu zaslona. Ako niti jedna od ovih metoda ne radi,
+koristi se zadano, 132 stupca.
+.IP \fB\-n\fP
+Razvrsta procese s istim roditeljem po PID\-u umjesto po imenu. (Numeričko
+sortiranje.)
+.IP \fB\-N\fP
+Prikaže pojedinačna stabla za svaki imenski prostor specificiranog
+tipa. Dostupn su ove vrste: \fIipc\fP, \fImnt\fP, \fInet\fP, \fIpid\fP, \fItime\fP,
+\fIuser\fP, \fIuts\fP. Obični korisnici nemaju pristup informacijama o procesima
+drugih korisnika, pa će izlaz biti ograničen.
+.IP \fB\-p\fP
+Pokaže PID\-ove. PID\-ovi su prikazani kao decimalni brojevi u zagradama nakon
+imena svakog procesa. \fB\-p\fP implicitno onemogućuje sažimanje.
+.IP \fB\-s\fP
+Prikaže roditeljske procese navedenog procesa.
+.IP \fB\-S\fP
+Prikaže prijelaze imenskih prostora. Poput \fB\-N\fP, ali izlaz je ograničen kad
+se to izvršava obični korisnik.
+.IP \fB\-t\fP
+Ako su dostupna, pokaže puna imena dretvi.
+.IP \fB\-T\fP
+Sakrije dretve i pokaže samo procese.
+.IP \fB\-u\fP
+Prikaže UID prijelaze. Kad god se UID procesa razlikuje od UID\-a njegovog
+roditelja, novi se UID prikaže u zagradama nakon imena procesa.
+.IP \fB\-U\fP
+Koristi UTF\-8 (Unicode) znakove za linije za crtanje. Pod Linuxom 1.1\-54 i
+novijim, UTF\-8 način rada se unosi na konzolu s \fBecho \-e '\033%8'\fP, a
+napušta se s \fBecho \-e '\033%@'\fP.
+.IP \fB\-V\fP
+Pokaže informacije o inačici.
+.IP \fB\-Z\fP
+Pokaže trenutne sigurnosne atribute procesa. Za SELinux sustave to će biti
+sigurnosni kontekst.
+.SH FILES
+.TP 
+/proc
+lokacija proc datotečnog sustava
+.SH BUGS
+Neki skupovi znakova mogu biti nekompatibilni s VT100 znakovima.
+.SH "POGLEDAJTE TAKOĐER"
+\fBps\fP(1), \fBtop\fP(1), \fBproc\fP(5).
+.\"{{{}}}

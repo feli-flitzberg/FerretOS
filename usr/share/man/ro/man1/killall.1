@@ -1,0 +1,130 @@
+.\"
+.\" Copyright 1993-2002 Werner Almesberger
+.\"           2002-2023 Craig Small
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\"*******************************************************************
+.\"
+.\" This file was generated with po4a. Translate the source file.
+.\"
+.\"*******************************************************************
+.TH KILLALL 1 17.06.2023 psmisc "Comenzi pentru utilizator"
+.SH NUME
+killall \- omoară procesele după nume
+.SH REZUMAT
+.ad l
+\fBkillall\fP [\fB\-Z\fP,\fB\ \-\-context\fP \fImodel\fP] [\fB\-e\fP,\fB\ \-\-exact\fP] [\fB\-g\fP,\fB\ \-\-process\-group\fP] [\fB\-i\fP,\fB\ \-\-interactive\fP] [\fB\-n\fP,\fB\ \-\-ns\fP \fIPID\fP]
+[\fB\-o\fP,\fB\ \-\-older\-than\fP \fIDATĂ\-ORĂ\fP] [\fB\-q\fP,\fB\ \-\-quiet\fP] [\fB\-r\fP,\fB\ \-\-regexp\fP] [\fB\-s\fP,\fB\ \-\-signal\fP \fISEMNAL\fP,\ \fB\-\fP\fISEMNAL\fP] [\fB\-u\fP,\fB\ \-\-user\fP \fIutilizator\fP] [\fB\-v\fP,\fB\ \-\-verbose\fP] [\fB\-w\fP,\fB\ \-\-wait\fP] [\fB\-y\fP,\fB\ \-\-younger\-than\fP \fIDATĂ\-ORĂ\fP] [\fB\-I\fP,\fB\ \-\-ignore\-case\fP] [\fB\-V\fP,\fB\ \-\-version\fP] [\fB\-\-\fP] \fInume\fP ...
+.br
+\fBkillall\fP \fB\-l\fP, \fB\-\-list\fP
+.br
+\fBkillall\fP \fB\-V\fP,\fB\ \-\-version\fP
+.ad b
+.SH DESCRIERE
+\fBkillall\fP trimite un semnal tuturor proceselor care rulează oricare dintre
+comenzile specificate. Dacă nu este specificat niciun nume de semnal, este
+trimis semnalul SIGTERM.
+.PP
+Semnalele pot fi specificate fie prin nume (de exemplu, \fB\-HUP\fP sau
+\fB\-SIGHUP\fP), fie prin număr (de exemplu, \fB\-1\fP), fie prin opțiunea \fB\-s\fP.
+.PP
+Dacă numele comenzii nu este o expresie regulată (opțiunea \fB\-r\fP) și conține
+o bară oblică (\fB/\fP), procesele care execută acel fișier anume vor fi
+selectate pentru omorâre, independent de numele lor.
+.PP
+\fBkillall\fP returnează un cod de returnare zero dacă cel puțin un proces a
+fost omorât pentru fiecare comandă listată sau nicio comandă nu a fost
+listată și cel puțin un proces se potrivește cu criteriile de căutare \fB\-u\fP
+și \fB\-Z\fP. \fBkillall\fP returnează un cod de returnare diferit de zero în caz
+contrar.
+.PP
+Un proces \fBkillall\fP nu se omoară niciodată pe el însuși (dar poate omorî
+alte procese \fBkillall\fP).
+.SH OPȚIUNI
+.IP "\fB\-e\fP, \fB\-\-exact\fP"
+Necesită o potrivire exactă pentru nume foarte lungi. Dacă un nume de
+comandă are mai mult de 15 caractere, este posibil ca numele complet să nu
+fie disponibil (adică se află în fișierul de interschimb „swap”). În acest
+caz, \fBkillall\fP va omorî tot ceea ce se potrivește cu primele 15
+caractere. Cu \fB\-e\fP, astfel de intrări sunt sărite. \fBkillall\fP afișează un
+mesaj pentru fiecare intrare omisă dacă opțiunea \fB\-v\fP este specificată pe
+lângă opțiunea \fB\-e\fP.
+.IP "\fB\-I\fP, \fB\-\-ignore\-case\fP"
+Face ca operația de căutare a numelui procesului să nu țină seama de
+majuscule și minuscule.
+.IP "\fB\-g\fP, \fB\-\-process\-group\fP"
+Omoară grupul de procese din care face parte procesul. Semnalul de omorâre
+este trimis o singură dată pe grup, chiar dacă au fost găsite mai multe
+procese care aparțin aceluiași grup de procese.
+.IP "\fB\-i\fP, \fB\-\-interactive\fP"
+Solicită interactiv confirmarea înainte de a omorî.
+.IP "\fB\-l\fP, \fB\-\-list\fP"
+Listează toate numele semnalelor cunoscute.
+.IP "\fB\-n\fP, \fB\-\-ns\fP"
+Compară spațiul de nume PID cu PID\-ul dat. Valoarea implicită este să se
+potrivească cu toate spațiile de nume.
+.IP "\fB\-o\fP, \fB\-\-older\-than\fP"
+Caută numai procesele care sunt mai vechi (începute înainte) de timpul
+specificat. Timpul este specificat ca un număr zecimal urmat de o
+unitate. Unitățile sunt s,m,h,d,w,M,y pentru secunde, minute, ore, zile,
+săptămâni, luni și, respectiv, ani.
+.IP "\fB\-q\fP, \fB\-\-quiet\fP"
+Nu se plânge dacă niciun proces nu a fost omorât.
+.IP "\fB\-r\fP, \fB\-\-regexp\fP"
+Interpretează modelul de nume de proces ca o expresie regulată extinsă
+POSIX, conform \fBregex\fP(3).
+.IP "\fB\-s\fP, \fB\-\-signal\fP, \fB\-\fP\fISEMNAL\fP"
+Trimite acest semnal în loc de SIGTERM.
+.IP "\fB\-u\fP, \fB\-\-user\fP"
+Omoară numai procesele deținute de utilizatorul specificat. Numele
+comenzilor sunt opționale.
+.IP "\fB\-v\fP, \fB\-\-verbose\fP"
+Raportează dacă semnalul a fost trimis cu succes.
+.IP "\fB\-V\fP, \fB\-\-version\fP"
+Afișează informațiile despre versiune.
+.IP "\fB\-w\fP, \fB\-\-wait\fP"
+Așteaptă ca toate procesele omorâte să moară. \fBkillall\fP verifică o dată pe
+secundă dacă există încă vreunul dintre procesele omorâte și returnează
+controlul numai atunci când nu mai sunt procese în listă. Rețineți că
+\fBkillall\fP poate aștepta pentru totdeauna dacă semnalul a fost ignorat, nu a
+avut niciun efect sau dacă procesul intră în starea „zombie”.
+.IP "\fB\-y\fP, \fB\-\-younger\-than\fP"
+Caută numai procesele care sunt mai noi (începute după) de timpul
+specificat. Timpul este specificat ca un număr zecimal urmat de o
+unitate. Unitățile sunt s,m,h,d,w,M,y pentru secunde, minute, ore, zile,
+săptămâni, luni și, respectiv, an.
+.IP "\fB\-Z\fP, \fB\-\-context\fP"
+Specifică contextul de securitate: omoară numai procesele care au un context
+de securitate care se potrivește cu modelul de expresie regulată extins
+dat. Trebuie să precedă alte argumente din linia de comandă. Numele
+comenzilor sunt opționale.
+.SH FIȘIERE
+.TP 
+/proc
+locația sistemului de fișiere proc
+.SH "ERORI CUNOSCUTE"
+Omorârea prin fișier funcționează numai pentru executabilele care sunt
+menținute deschise în timpul execuției, adică executabilele impure nu pot fi
+omorâte în acest fel.
+.PP
+Aveți grijă asupra faptului că tastarea \fBkillall\fP \fInume\fP poate să nu aibă
+efectul dorit asupra sistemelor non\-Linux, mai ales când este făcută de un
+utilizator privilegiat.
+.PP
+\fBkillall \-w\fP nu detectează dacă un proces dispare și este înlocuit cu un
+nou proces cu același PID între două scanări.
+.PP
+Dacă procesele își schimbă numele, este posibil ca \fBkillall\fP să nu le
+recunoască corect.
+.PP
+\fBkillall\fP are o limită de nume care pot fi specificate în linia de
+comandă. Această cifră are dimensiunea unui număr întreg lung fără semn
+înmulțit cu 8. Pentru majoritatea sistemelor pe 32 de biți limita este 32
+și, în mod similar, pentru un sistem pe 64 de biți, limita este de obicei
+64.
+.SH "CONSULTAȚI ȘI"
+\fBkill\fP(1), \fBfuser\fP(1), \fBpgrep\fP(1), \fBpidof\fP(1), \fBpkill\fP(1), \fBps\fP(1),
+\fBkill\fP(2), \fBexpreg\fP(3).

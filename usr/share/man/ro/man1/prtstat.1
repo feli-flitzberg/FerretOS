@@ -1,0 +1,36 @@
+.\"
+.\" Copyright 2009-2020 Craig Small
+.\"
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\"*******************************************************************
+.\"
+.\" This file was generated with po4a. Translate the source file.
+.\"
+.\"*******************************************************************
+.TH PRTSTAT 1 09.09.2020 psmisc "Comenzi pentru utilizator"
+.SH NUME
+prtstat \- afișează statisticile unui proces
+.SH REZUMAT
+.ad l
+\fBprtstat\fP [\fB\-r\fP|\fB\-\-raw\fP] \fIpid\fP
+.br
+\fBprtstat\fP \fB\-V\fP|\fB\-\-version\fP
+.ad b
+.SH DESCRIERE
+\fBprtstat\fP afișează statistici ale procesului specificat. Aceste informații
+provin din fișierul \fB/proc/\fP\fIpid\fP\fB/stat\fP.
+.SH OPȚIUNI
+.TP 
+\fB\-r\fP,\fB\ \-\-raw\fP
+Afișează informațiile în format brut.
+.TP 
+\fB\-V\fP,\fB\ \-\-version\fP
+Afișează informațiile despre versiune pentru \fBprtstat\fP.
+.SH FIȘIERE
+.TP 
+\fB/proc/\fP\fIpid\fP\fB/stat\fP
+sursa informațiilor pe care o folosește \fBprtstat\fP.

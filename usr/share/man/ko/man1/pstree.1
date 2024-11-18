@@ -1,0 +1,119 @@
+.\"
+.\" Copyright 1993-2002 Werner Almesberger
+.\"           2002-2021 Craig Small
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\"*******************************************************************
+.\"
+.\" This file was generated with po4a. Translate the source file.
+.\"
+.\"*******************************************************************
+.TH PSTREE 1 2021\-06\-21 psmisc "사용자 명령"
+.SH 이름
+pstree \- 프로세스 트리를 나타냅니다
+.SH 개요
+.ad l
+\fBpstree\fP [\fB\-a\fP,\fB\ \-\-arguments\fP] [\fB\-c\fP,\fB\ \-\-compact\-not\fP] [\fB\-C\fP,\fB\ \-\-color\ \fP\fIattr\fP] [\fB\-g\fP,\fB\ \-\-show\-pgids\fP] [\fB\-h\fP,\fB\ \-\-highlight\-all\fP,\fB\ \-H\fP\fI\ pid\fP,\fB\ \-\-highlight\-pid\ \fP\fIpid\fP] [\fB\-l\fP,\fB\ \-\-long\fP] [\fB\-n\fP,\fB\ \-\-numeric\-sort\fP] [\fB\-N\fP,\fB\ \-\-ns\-sort\ \fP\fIns\fP] [\fB\-p\fP,\fB\ \-\-show\-pids\fP]
+[\fB\-s\fP,\fB\ \-\-show\-parents\fP] [\fB\-S\fP,\fB\ \-\-ns\-changes\fP] [\fB\-t\fP,\fB\ \-\-thread\-names\fP] [\fB\-T\fP,\fB\ \-\-hide\-threads\fP] [\fB\-u\fP,\fB\ \-\-uid\-changes\fP]
+[\fB\-Z\fP,\fB\ \-\-security\-context\fP] [\fB\-A\fP,\fB\ \-\-ascii\fP,\fB\ \-G\fP,\fB\ \-\-vt100\fP,\fB\ \-U\fP,\fB\ \-\-unicode\fP] [\fIPID\fP,\fB\ \fP\fI<사용자>\fP]
+.br
+\fBpstree\fP \fB\-V\fP,\fB\ \-\-version\fP
+.ad b
+.SH 설명
+\fBpstree\fP 는 실행 프로세스를 트리 형식으로 나타냅니다.  \fIpid\fP 값을 생략하면 \fIpid\fP 또는 \fBinit\fP를 뿌리로
+둡니다.  사용자 이름을 지정하면, 해당 사용자를 루트로 하여 해당 사용가 소유한 프로세스를 나타냅니다.
+.PP
+\fBpstree\fP 는 이상적인 브랜치를 각 괄호 내로 시각적으로 병합하고, 그 앞에 반복 횟수를 붙여 나타냅니다. 예를 들면,
+.nf
+.sp
+    init\-+\-getty
+         |\-getty
+         |\-getty
+         `\-getty
+.sp
+.fi
+를 다음처럼 나타냅니다
+.nf
+.sp
+    init\-\-\-4*[getty]
+.sp
+.fi
+.PP
+.PP
+프로세스의 하위 스레드는 상위 프로세스 아래서 찾을 수 있으며, 중괄호로 감싼 프로세스 이름으로 나타냅니다. 예를 들면,
+.nf
+.sp
+    icecast2\-\-\-13*[{icecast2}]
+.sp
+.fi
+.PP
+\fBpstree\fP를 \fBpstree.x11\fP로 호출하면, 행 마지막에서 사용자에게 리턴 키를 누르도록 요청하며, 키를 누르지 않으면 어떤
+동작도 취하지 않습니다.  \fBpstree\fP를 xterminal에서 실행할 경우 이 옵션이 요긴합니다.
+.PP
+procfs의 \fIhidepid\fP 옵션 같은 커널 또는 마운트 인자 종류는 일부 프로세스의 정보를 숨깁니다. 이 경우 \fBpstree\fP는
+이 정보 없이 트리를 구성하여 해당 프로세스 이름은 물음표로 나타냅니다.
+
+.SH 옵션
+.IP \fB\-a\fP
+명령행 인자를 나타냅니다.  프로세스의 명령행을 스와핑했다면, 해당 프로세스를 괄호로 감싸서 나타냅니다.  \fB\-a\fP 옵션은 암묵적으로
+스레드 뿐만 아니라 프로세스의 간소화를 막아줍니다.
+.IP \fB\-A\fP
+트리를 그려 나타낼 떄 아스키 문자를 사용합니다.
+.IP \fB\-c\fP
+이상적인 하위 트리의 간소화를 진행하지 않습니다.  기본적으로 하위 트리는 가능하면 간소화합니다.
+.IP \fB\-C\fP
+주어진 속성의 프로세스 이름을 색으로 구별합니다. 현재 \fBpstree\fP는 프로세스 실행 경과 시간으로 색상 구별하는 \fBage\fP 속성만
+받아들입니다.  60초 이내로 실행한 프로세스는 녹색으로, 한시간 이내로 실행한 프로세스는 황색으로, 나머지는 적색으로 나타냅니다.
+.IP \fB\-g\fP
+PGID를 나타냅니다.  프로세스 그룹 ID는 각 프로세스 이름 다음에 괄호로 감싼 10진수로 나타냅니다.  PID와 PGID를 둘 다
+나타낸다면 PID가 먼저 나타납니다.
+.IP \fB\-G\fP
+VT100 선 그리기 문자를 사용합니다.
+.IP \fB\-h\fP
+현재 프로세스와 상위 프로세스를 강조합니다.  터미널 강조 기능이 동작하지 않거나 현재 프로세스 또는 상위 프로세스가 나타나지 않으면 이
+옵션은 동작하지 않습니다.
+.IP \fB\-H\fP
+\fB\-h\fP 옵션과 유사하지만, 대신 지정 프로세스를 강조합니다.  \fB\-h\fP 옵션과는 달리, \fBpstree\fP 명령은 강조 기능이
+동작하지 않을 때 \fB\-H\fP 옵션을 사용하면 동작에 실패합니다.
+.IP \fB\-l\fP
+길게 행을 표시합니다.  기본적으로 COLUMNS 환경 변수 또는 화면 표시 폭에 따라 행을 자릅니다.  두가지 어떤 방식으로든 동작하지
+않는다면 132 컬럼을 기본값으로 활용합니다.
+.IP \fB\-n\fP
+이름 대신 PID로 동일한 상위 프로세스를 정렬합니다.  (숫자 크기순 정렬.)
+.IP \fB\-N\fP
+지정 형식의 각 이름 영역에 대한 각 트리를 나타냅니다.  가용 형식으로 \fIipc\fP, \fImnt\fP, \fInet\fP, \fIpid\fP,
+\fItime\fP, \fIuser\fP, \fIuts\fP가 있습니다.  일반 사용자는 다른 사용자의 프로세스 정보를 볼 수 없기 때문에, 출력 내용을
+제한합니다.
+.IP \fB\-p\fP
+여러 PID를 나타냅니다.  PID는 각 프로세스 이름 다음에 괄호로 둘러싸인 10진 숫자로 나타냅니다.  \fB\-p\fP 옵션으로는
+암묵적으로 간소화 동작을 막아줍니다.
+.IP \fB\-s\fP
+지정 프로세스의 상위 프로세스를 나타냅니다.
+.IP \fB\-S\fP
+이름영역 변환을 나타냅니다.  \fB\-N\fP 옵션과 유사하게, 일반 사용자로 실행하는 경우 출력 내용을 제한합니다.
+.IP \fB\-t\fP
+스레드가 있다면 전체 이름을 나타냅니다.
+.IP \fB\-T\fP
+스레드는 숨기고 프로세스만 나타냅니다.
+.IP \fB\-u\fP
+UID 변환을 나타냅니다.  상위 프로세스의 UID와 프로세스 UID가 달라지는 언제든지, 새 UID를 해당 프로세스 이름 다음에 괄호로
+감싸서 나타냅니다.
+.IP \fB\-U\fP
+UTF\-8 (유니코드) 선 그리기 문자를 사용합니다.  리눅스 1.1\-54 이상의 버전에서는 콘솔에서 \fBecho \-e '\033%8'\fP
+명령으로 UTF\-8 모드에 진입하고 \fBecho \-e '\033%@'\fP 명령으로 빠져나옵니다.
+.IP \fB\-V\fP
+버전 정보를 나타냅니다.
+.IP \fB\-Z\fP
+프로세스의 현재 보안 속성을 나타냅니다. SELinux 시스템에서 이 정보는 보안 컨텍스트가 되겠습니다.
+.SH 파일
+.TP 
+/proc
+proc 파일 시스템의 위치입니다
+.SH 버그
+일부 문자 집합은 VT100 문자를 제대로 표시하지 못할 수도 있습니다.
+.SH "추가 참조"
+\fBps\fP(1), \fBtop\fP(1), \fBproc\fP(5).
+.\"{{{}}}

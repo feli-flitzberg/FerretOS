@@ -1,0 +1,219 @@
+.\"
+.\" Copyright 1993-2005 Werner Almesberger
+.\"           2005-2023 Craig Small
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\"*******************************************************************
+.\"
+.\" This file was generated with po4a. Translate the source file.
+.\"
+.\"*******************************************************************
+.TH FUSER 1 2022\-11\-02 psmisc "Naredbe korisnika"
+.SH IME
+fuser \- procese identificira preko datoteka i utičnica
+.SH UPORABA
+.ad l
+\fBfuser\fP [\fB\-fuv\fP] [\fB\-a\fP|\fB\-s\fP] [\fB\-4\fP|\fB\-6\fP] [\fB\-c\fP|\fB\-m\fP|\fB\-n\fP \fIspace\fP]
+[\fB\ \-k\fP [\fB\-i\fP] [\fB\-M\fP] [\fB\-w\fP] [\fB\-\fP\fISIGNAL\fP] ] \fIname\fP ...
+.br
+\fBfuser \-l\fP
+.br
+\fBfuser \-V\fP
+.ad b
+.SH OPIS
+\fBfuser\fP pokaže PID\-ove procesa koji koriste navedene datoteke ili datotečne
+sustave. U zadanom načinu prikaza, iza svakog imena datoteke slijedi slovo
+koje označava vrstu pristupa:
+.PP
+.RS
+.PD 0
+.TP 
+\fBc\fP
+tekući direktorij.
+.TP 
+\fBe\fP
+pokrenuti izvršni program.
+.TP 
+\fBf\fP
+otvorena datoteka. \fBf\fP je izostavljen u zadanom načinu prikaza.
+.TP 
+\fBF\fP
+datoteka otvorena za pisanje. \fBf\fP je izostavljen u zadanom načinu prikaza.
+.TP 
+\fBr\fP
+korijenski (root) direktorij.
+.TP 
+\fBm\fP
+pridružena mmap datoteka ili zajednička knjižnica.
+.TP 
+\&\fB.\fP
+Rezervirano mjesto (izostavljeno u zadanom načinu prikaza).
+.PD
+.RE
+.LP
+\fBfuser\fP vrati kôd različit od nule ako ne može pristupiti nijednoj od
+navedenih datoteka ili u slučaju fatalne pogreške. Ako je ostvaren barem
+jedan pristup, \fBfuser\fP vrati nulu.
+.PP
+Da se pronađu procesi koji koriste TCP i UDP utičnice, odgovarajući imenski
+prostor mora biti odabran opcijom \fB\-n\fP. Zadano, \fBfuser\fP pregleda IPv6 i
+IPv4 utičnice. Zadano ponašanje možete promijeniti s opcijama \fB\-4\fP i
+\fB\-6\fP. Utičnic(a/e) može/mogu biti specificiran(a/e) s lokalnim i udaljenim
+portom ili udaljenom adresom. Sva polja nisu obavezna ali zarezi ispred
+polja kojih nema su obvezni:
+.PP
+[\fIlcl_port\fP][,[\fIrmt_host\fP][,[\fIrmt_port\fP]]]
+.PP
+Za IP adrese i brojeve porta mogu se koristiti simboličke ili numeričke
+vrijednosti.
+.PP
+\fBfuser\fP ispiše samo PID\-ove na stdout, a sve ostalo ide na stderr.
+.SH OPCIJE
+.TP 
+\fB\-a\fP, \fB\-\-all\fP
+Prikaže sve datoteke navedene na naredbenom retku. Zadano, pokazane su samo
+one datoteke kojima je pristupio barem jedan proces.
+.TP 
+\fB\-c\fP
+Isto kao opcija \fB\-m\fP (zbog kompatibilnosti s POSIX\-om).
+.TP 
+\fB\-f\fP
+Zanemareno (zbog kompatibilnosti s POSIX\-om).
+.TP 
+\fB\-k\fP, \fB\-\-kill\fP
+Ubije procese koji pristupaju datoteci. Ako se ne promijeni s
+\fB\-\fP\fISIGNAL\/\fP, pošalje se SIGKILL. \fBfuser\fP proces se nikada ne ubije, ali
+može ubiti druge \fBfuser\fP procese. Efektivni ID korisnika procesa koji
+izvršava \fBfuser\fP postavlja se na realni korisnički ID prije pokušaja
+ubijanja.
+.TP 
+\fB\-i\fP, \fB\-\-interactive\fP
+Pita korisnika da potvrdu prije nego ubije proces. Ova opcija je prešutno
+zanemarena ako opcija \fB\-k\fP nije navedena.
+.TP 
+\fB\-I\fP, \fB\-\-inode\fP
+Za imenski prostor \fBfile\fP radi sve usporedbe bazirane na inodima navedenih
+datoteka a nikada na bazi imena datoteka uključujući i mrežne datotečne
+sustave.
+.TP 
+\fB\-l\fP, \fB\-\-list\-signals\fP
+Ispiše imena svih poznatih signala.
+.TP 
+\fB\-m\fP\fI NAME\fP, \fB\-\-mount \fP\fINAME\fP
+\fINAME\fP specificira datoteku na montiranom datotečnom sustavu ili blok
+uređaj koji je montiran. Izlistani su svi procesi koji pristupaju datotekama
+u tom datotečnom sustavu. Ako je naveden direktorij, automatski se premjesti
+u \fINAME\fP/ i koristi bilo koji datotečni sustav koji se može montirati na
+taj direktorij.
+.TP 
+\fB\-M\fP, \fB\-\-ismountpoint\fP
+Zahtjev će se ispuniti samo ako \fINAME\fP navede točku montiranja. Ovo je
+iznimno važno jer sprečava da ubijete stroj ako kojim slučajem \fINAME\fP nije
+datotečni sustav.
+.TP 
+\fB\-w\fP
+Ubije samo procese koji mogu pisati. Ova se opcija prešutno zanemari ako
+\fB\-k\fP nije naveden.
+.TP 
+\fB\-n\fP\fI NAMESPACE\fP, \fB\-\-namespace \fP\fINAMESPACE\fP
+Odabire drugi imenski prostor. Podržani su imenski prostori \fBfile\fP (zadano,
+imena datoteka), \fBudp\fP (lokalni UDP portovi) i \fBtcp\fP (lokalni TCP
+portovi). Za portove se mogu navesti ili broj porta ili simboličko ime. Ako
+nema višeznačnosti, može se koristiti oznaka prečaca \fIname\fP\fB/\fP\fIspace\fP
+(npr. \fI80\fP\fB/\fP\fItcp\fP).
+.TP 
+\fB\-s\fP, \fB\-\-silent\fP
+Prešutna operacija. \fB\-u\fP and \fB\-v\fP se zanemare u ovom načinu rada. \fB\-a\fP se
+ne smije koristiti istovremeno s \fB\-s\fP.
+.TP 
+\fB\-\fP\fISIGNAL\fP
+Koristite navedeni signal umjesto SIGKILL za ubijanje. Signali se mogu
+navesti imenom (npr. \fB\-HUP\fP) ili brojem (npr. \fB\-1\fP). Ova se opcija
+prešutno zanemari ako se ne koristi s opcijom \fB\-k\fP.
+.TP 
+\fB\-u\fP, \fB\-\-user\fP
+Pripoji ime korisnika od vlasnika procesa svakom PID\-u.
+.TP 
+\fB\-v\fP, \fB\-\-verbose\fP
+Opširni način. Procesi su pokazani u stilu sličnom \fBps\fP. Polja PID, USER i
+COMMAND slična su \fBps\fP. ACCESS prikaže kako proces pristupa
+datoteci. Opširni način također prikaže kada se određenoj datoteci pristupi
+kao točki montiranja, kao knfs izvozu ili kao swap datoteci. U ovom se
+slučaju umjesto PID\-a prikaže \fBkernel\fP.
+.TP 
+\fB\-V\fP, \fB\-\-version\fP
+Pokaže informacije o inačici.
+.TP 
+\fB\-4\fP, \fB\-\-ipv4\fP
+Traži samo IPv4 utičnice. Ova se opcija ne smije koristiti s opcijom \fB\-6\fP i
+ima utjecaj samo na tcp i udp imenske prostore.
+.TP 
+\fB\-6\fP, \fB\-\-ipv6\fP
+Traži samo IPv6 utičnice. Ova se opcija ne smije koristiti s opcijom \fB\-4\fP i
+ima utjecaj samo na tcp i udp imenske prostore.
+.SH FILES
+.TP 
+/proc
+lokacija proc datotečnog sustava
+.SH PRIMJERI
+.TP 
+\fBfuser \-km /home\fP
+ubije sve procese koji na bilo koji način pristupaju k /home datotečnom
+sustavu.
+.TP 
+\fBif fuser \-s /dev/ttyS1; then :; else \fP\fIcommand\fP\fB; fi\fP
+pozove \fIcommand\fP ako nijedan drugi proces ne koristi /dev/ttyS1.
+.TP 
+\fBfuser telnet/tcp\fP
+pokaži sve procese na (lokalnom) TELNET portu.
+.SH OGRANIČENJA
+Procesi koji pristupaju istoj datoteci ili istom datotečnom sustavu na isti
+način nekoliko puta, pokazani su samo jednom.
+.PP
+Ako je isti objekt naveden nekoliko puta na naredbenom retku, onda se neki
+od tih objekata mogu zanemariti.
+.PP
+\fBfuser\fP može prikupiti djelomične informacije ako nije pokrenut s
+privilegijama. Kao posljedica toga, datoteke koje su otvorili procesi koji
+pripadaju drugim korisnicima možda neće biti popisane, a izvršne datoteke
+mogu se klasificirati samo kao mapirane.
+.PP
+\fBfuser\fP ne može izvještavati ni o kakvim procesima za koje nema dozvolu
+pogledati tablicu deskriptora datoteke. Najčešće, ovaj problem se javlja
+kada se traže TCP ili UDP utičnice a \fBfuser\fP se pokrene kao nekorijenski
+korisnik. U tom slučaju \fBfuser\fP neće prijaviti pristup.
+.PP
+Instaliranjem \fBfuser\fP SUID root izbjeći će se problemi povezani s
+djelomičnim informacijama, ali to može biti nepoželjno radi sigurnosti i
+privatnosti.
+.PP
+Imenski prostori \fBudp\fP i \fBtcp\fP i utičnice UNIX domene nije moguće
+pretraživati s jezgrom (kernel) starijom od 1.3.78.
+.PP
+Pristupi jezgri (kernel) pokazani su samo s opcijom \fB\-v\fP.
+.PP
+Opcija \fB\-k\fP radi samo na procesima. Ako je korisnik jezgra, \fBfuser\fP će
+ispisati preporuku i ništa drugo neće poduzeti.
+.PP
+\fBfuser\fP neće blokirati montiranje uređaja procesu u drugom imenskom
+prostoru. To je zato, jer je ID uređaja prikazan datotečnim deskriptorom
+procesa, a ne od ID fuser\-a; ne podudaraju se.
+.SH BUGS
+.PP
+\fBfuser \-m /dev/sgX\fP pokazat će (ili ubiti s \fB\-k\fP) sve procese, čak i ako
+taj uređaj nije konfiguriran. Možda postoje i drugi uređaji za koje to isto
+čini.
+.PP
+Opcija montiranja \fB\-m\fP podudarat će se s bilo kojom datotekom na istom
+uređaju kao i navedena datoteka, upotrijebite i opciju \fB\-M\fP ako mislite
+navesti samo točku montiranja.
+.PP
+\fBfuser\fP will not match mapped files, such as a process' shared libraries if
+they are on a \fBbtrfs\fP(5)  filesystem due to the device IDs being different
+for \fBstat\fP(2)  and \fI/proc/<PID>/maps\fP.
+.SH "POGLEDAJTE TAKOĐER"
+\fBkill\fP(1), \fBkillall\fP(1), \fBstat\fP(2), \fBbtrfs\fP(5), \fBlsof\fP(8),
+\fBmount_namespaces\fP(7), \fBpkill\fP(1), \fBps\fP(1), \fBkill\fP(2).

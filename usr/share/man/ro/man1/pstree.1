@@ -1,0 +1,144 @@
+.\"
+.\" Copyright 1993-2002 Werner Almesberger
+.\"           2002-2021 Craig Small
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\"*******************************************************************
+.\"
+.\" This file was generated with po4a. Translate the source file.
+.\"
+.\"*******************************************************************
+.TH PSTREE 1 21.06.2021 psmisc "Comenzi pentru utilizator"
+.SH NUME
+pstree \- afișează un arbore de procese
+.SH REZUMAT
+.ad l
+\fBpstree\fP [\fB\-a\fP,\fB\ \-\-arguments\fP] [\fB\-c\fP,\fB\ \-\-compact\-not\fP] [\fB\-C\fP,\fB\ \-\-color\ \fP\fIattr\fP] [\fB\-g\fP,\fB\ \-\-show\-pgids\fP] [\fB\-h\fP,\fB\ \-\-highlight\-all\fP,\fB\ \-H\fP\fI\ pid\fP,\fB\ \-\-highlight\-pid\ \fP\fIpid\fP] [\fB\-l\fP,\fB\ \-\-long\fP] [\fB\-n\fP,\fB\ \-\-numeric\-sort\fP] [\fB\-N\fP,\fB\ \-\-ns\-sort\ \fP\fIns\fP] [\fB\-p\fP,\fB\ \-\-show\-pids\fP]
+[\fB\-s\fP,\fB\ \-\-show\-parents\fP] [\fB\-S\fP,\fB\ \-\-ns\-changes\fP] [\fB\-t\fP,\fB\ \-\-thread\-names\fP] [\fB\-T\fP,\fB\ \-\-hide\-threads\fP] [\fB\-u\fP,\fB\ \-\-uid\-changes\fP]
+[\fB\-Z\fP,\fB\ \-\-security\-context\fP] [\fB\-A\fP,\fB\ \-\-ascii\fP,\fB\ \-G\fP,\fB\ \-\-vt100\fP,\fB\ \-U\fP,\fB\ \-\-unicode\fP] [\fIpid\fP,\fB\ \fP\fIutilizator\fP]
+.br
+\fBpstree\fP \fB\-V\fP,\fB\ \-\-version\fP
+.ad b
+.SH DESCRIERE
+\fBpstree\fP arată procesele care rulează sub formă de arbore. Arborele este
+înrădăcinat fie la \fIpid\fP, fie la \fBinit\fP dacă \fIpid\fP este omis. Dacă este
+specificat un nume de utilizator, sunt afișați toți arborii de proces cu
+rădăcină la procesele deținute de acel utilizator.
+.PP
+\fBpstree\fP îmbină vizual ramuri identice punându\-le între paranteze drepte și
+prefixându\-le cu numărul de repetiții, de exemplu:
+.nf
+.sp
+    init\-+\-getty
+         |\-getty
+         |\-getty
+         `\-getty
+.sp
+.fi
+devine
+.nf
+.sp
+    init\-\-\-4*[getty]
+.sp
+.fi
+.PP
+.PP
+Firele secundare ale unui proces sunt găsite sub procesul părinte și sunt
+afișate cu numele procesului în acolade, de exemplu:
+.nf
+.sp
+    icecast2\-\-\-13*[{icecast2}]
+.sp
+.fi
+.PP
+Dacă \fBpstree\fP este apelat ca \fBpstree.x11\fP, atunci acesta va solicita
+utilizatorului să apese «Enter» la sfârșitul liniei și nu returnează
+controlul până când nu se va întâmpla acest lucru. Acest lucru este util
+atunci când \fBpstree\fP este rulat într\-un xterminal.
+.PP
+Anumiți parametri de nucleu sau de montare, cum ar fi opțiunea \fIhidepid\fP
+pentru «procfs», vor ascunde informațiile pentru unele procese. În aceste
+situații, \fBpstree\fP va încerca să construiască arborele fără aceste
+informații, arătând numele proceselor ca semne de întrebare.
+
+.SH OPȚIUNI
+.IP \fB\-a\fP
+Afișează argumentele liniei de comandă. Dacă linia de comandă a unui proces
+este schimbată, acel proces este afișat în paranteze. \fB\-a\fP dezactivează
+implicit compactarea pentru procese, dar nu pentru fire.
+.IP \fB\-A\fP
+Utilizează caractere ASCII pentru a desena arborele.
+.IP \fB\-c\fP
+Dezactivează compactarea subarborilor identici. În mod implicit, subarborii
+sunt compactați ori de câte ori este posibil.
+.IP \fB\-C\fP
+Colorează numele procesului după atributul dat. În prezent, \fBpstree\fP
+acceptă doar valoarea \fBage\fP care colorează după vârsta
+procesului. Procesele mai noi de 60 de secunde sunt verzi, mai noi de o oră
+galbene și cele rămase roșii.
+.IP \fB\-g\fP
+Afișează PGID\-urile. ID\-urile grupurilor de procese sunt afișate ca numere
+zecimale în paranteze după fiecare nume de proces. Dacă sunt afișate atât
+PID\-urile, cât și PGID\-urile, atunci PID\-urile sunt afișate mai întâi.
+.IP \fB\-G\fP
+Utilizează caractere VT100 pentru a desena linii.
+.IP \fB\-h\fP
+Evidențiază procesul actual și „strămoșii” săi. Această opțiune nu face
+nimic dacă terminalul nu acceptă evidențierea sau dacă nici procesul curent,
+nici vreunul dintre „strămoșii” săi nu se află în subarborele care este
+afișat.
+.IP \fB\-H\fP
+Ca \fB\-h\fP, dar evidențiază procesul specificat în schimb. Spre deosebire de
+\fB\-h\fP, \fBpstree\fP eșuează când se folosește \fB\-H\fP dacă evidențierea nu este
+disponibilă.
+.IP \fB\-l\fP
+Afișează linii lungi. În mod implicit, liniile sunt trunchiate fie la
+variabila de mediu COLUMNS, fie la lățimea afișajului. Dacă niciuna dintre
+aceste metode nu funcționează, se folosește valoarea implicită de 132 de
+coloane.
+.IP \fB\-n\fP
+Sortează procesele cu același părinte după PID și nu după nume (sortare
+numerică).
+.IP \fB\-N\fP
+Afișează arbori individuali pentru fiecare spațiu de nume de tipul
+specificat. Tipurile disponibile sunt: \fIipc\fP, \fImnt\fP, \fInet\fP, \fIpid\fP,
+\fItime\fP, \fIuser\fP, \fIuts\fP. Utilizatorii obișnuiți nu au acces la informațiile
+despre procesele altor utilizatori, astfel încât rezultatul va fi limitat.
+.IP \fB\-p\fP
+Afișează PID\-urile. PID\-urile sunt afișate ca numere zecimale între
+paranteze după fiecare nume de proces. \fB\-p\fP dezactivează implicit
+compactarea.
+.IP \fB\-s\fP
+Afișează procesele părinte ale procesului specificat.
+.IP \fB\-S\fP
+Afișează tranzițiile de spații de nume. La fel ca opțiunea \fB\-N\fP, ieșirea
+este limitată atunci când rulează ca utilizator obișnuit.
+.IP \fB\-t\fP
+Afișează numele complete pentru firele de execuție atunci când sunt
+disponibile.
+.IP \fB\-T\fP
+Ascunde firele de execuție și arată numai procesele.
+.IP \fB\-u\fP
+Afișează tranzițiile uid. Ori de câte ori uid\-ul unui proces diferă de
+uid\-ul părintelui său, noul uid este afișat în paranteze după numele
+procesului.
+.IP \fB\-U\fP
+Utilizează caractere UTF\-8 (Unicode) pentru desenul liniilor. Sub Linux
+1.1\-54 și versiuni ulterioare, consola intră în modul UTF\-8 cu \fBecho \-e \&'\033%8'\fP și iese cu \fBecho \-e '\033%@'\fP.
+.IP \fB\-V\fP
+Afișează informațiile despre versiune.
+.IP \fB\-Z\fP
+Afișează atributele de securitate curente ale procesului. Pentru sistemele
+SELinux acesta va fi contextul de securitate.
+.SH FIȘIERE
+.TP 
+/proc
+locația sistemului de fișiere proc
+.SH ERORI
+Unele seturi de caractere pot fi incompatibile cu caracterele VT100.
+.SH "CONSULTAȚI ȘI"
+\fBps\fP(1), \fBtop\fP(1), \fBproc\fP(5).
+.\"{{{}}}

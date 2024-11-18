@@ -1,0 +1,123 @@
+.\"
+.\" Copyright 1993-2002 Werner Almesberger
+.\"           2002-2023 Craig Small
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\"*******************************************************************
+.\"
+.\" This file was generated with po4a. Translate the source file.
+.\"
+.\"*******************************************************************
+.TH KILLALL 1 2023\-06\-17 psmisc Användarkommandon
+.SH NAMN
+killall \- döda processer efter namn
+.SH SYNOPSIS
+.ad l
+\fBkillall\fP [\fB\-Z\fP,\fB\ \-\-context\fP \fImönster\fP] [\fB\-e\fP,\fB\ \-\-exact\fP] [\fB\-g\fP,\fB\ \-\-process\-group\fP] [\fB\-i\fP,\fB\ \-\-interactive\fP] [\fB\-n\fP,\fB\ \-\-ns\fP \fIPID\fP]
+[\fB\-o\fP,\fB\ \-\-older\-than\fP \fITID\fP] [\fB\-q\fP,\fB\ \-\-quiet\fP] [\fB\-r\fP,\fB\ \-\-regexp\fP]
+[\fB\-s\fP,\fB\ \-\-signal\fP \fISIGNAL\fP,\ \fB\-\fP\fISIGNAL\fP] [\fB\-u\fP,\fB\ \-\-user\fP
+\fIanvändare\fP] [\fB\-v\fP,\fB\ \-\-verbose\fP] [\fB\-w\fP,\fB\ \-\-wait\fP] [\fB\-y\fP,\fB\ \-\-younger\-than\fP \fITID\fP] [\fB\-I\fP,\fB\ \-\-ignore\-case\fP] [\fB\-V\fP,\fB\ \-\-version\fP]
+[\fB\-\-\fP] \fInamn\fP ...
+.br
+\fBkillall\fP \fB\-l\fP, \fB\-\-list\fP
+.br
+\fBkillall\fP \fB\-V\fP,\fB\ \-\-version\fP
+.ad b
+.SH BESKRIVNING
+\fBkillall\fP skickar en signal till alla processer som kör någon av de angivna
+kommandona.  Om inget signalnamn anges skickas SIGTERM.
+.PP
+Signals can be specified either by name (e.g.\& \fB\-HUP\fP or \fB\-SIGHUP\fP)  or
+by number (e.g.\& \fB\-1\fP)  or by option \fB\-s\fP.
+.PP
+Om kommandonamnet inte är ett reguljärt uttryck (flagga \fB\-r\fP)  och
+innehåller ett snedstreck (\fB/\fP) kommer processer som kör den filen att bli
+utvalda och dödade, oberoende av deras namn.
+.PP
+\fBkillall\fP returnerar en returkod som är noll om åtminstone en process har
+dödats för varje listat kommando eller om inga kommando listades och
+åtminstone en process matchade sökkriterierna \fB\-u\fP och \fB\-Z\fP.  Annars
+returnerar \fBkillall\fP något annat än noll.
+.PP
+En \fBkillall\fP\-process dödar aldrig sig själv (men kan döda andra
+\fBkillall\fP\-processer).
+.SH FLAGGOR
+.IP "\fB\-e\fP, \fB\-\-exact\fP"
+Kräver en exakt match för väldigt långa namn.  Om ett kommandonamn är längre
+än 15 tecken kan det fullständiga namn vara otillgängligt (det kan t.ex.
+vara utspeglat).  I detta fall kommer \fBkillall\fP att döda allting som
+matchar de första 15 tecknen.  Med \fB\-e\fP kommer sådana poster att hoppas
+över.  \fBkillall\fP skriver ut ett meddelandet för varje överhoppad post om
+\fB\-v\fP anges i kombination med \fB\-e\fP.
+.IP "\fB\-I\fP, \fB\-\-ignore\-case\fP"
+Gör namnmatchningen skiftlägesokänslig.
+.IP "\fB\-g\fP, \fB\-\-process\-group\fP"
+Döda processgruppen som processen tillhör.  Dödssignalen skickas endast en
+gång per grupp även om flera processer hittades som hör till samma
+processgrupp.
+.IP "\fB\-i\fP, \fB\-\-interactive\fP"
+Fråga interaktivt efter bekräftelse innan dödande.
+.IP "\fB\-l\fP, \fB\-\-list\fP"
+Lista alla kända signaler.
+.IP "\fB\-n\fP, \fB\-\-ns\fP"
+Matcha mot PID\-namnrymden för den angivna PID:en. Standard är att matcha mot
+alla namnrymder.
+.IP "\fB\-o\fP, \fB\-\-older\-than\fP"
+Matcha endast processer som är äldre (startade innan) den angivna tiden.
+Tiden anges som ett flyttal följt av en enhet.  Enheterna är s,m,h,d,w,M,y
+för sekunder, minuter, timmar, dagar, veckor, månader respektive år.
+.IP "\fB\-q\fP, \fB\-\-quiet\fP"
+Klaga inte om inga processer dödades.
+.IP "\fB\-r\fP, \fB\-\-regexp\fP"
+Tolka processnamnmönstret som ett POSIX utökat reguljärt uttryck enligt
+\fBregex\fP(3).
+.IP "\fB\-s\fP, \fB\-\-signal\fP, \fB\-\fP\fISIGNAL\fP"
+Skicka denna signal istället för SIGTERM.
+.IP "\fB\-u\fP, \fB\-\-user\fP"
+Döda endast processer som den angivna användaren äger.  Kommandonamnen är
+valfria.
+.IP "\fB\-v\fP, \fB\-\-verbose\fP"
+Rapportera om signalen skickades framgångsrikt.
+.IP "\fB\-V\fP, \fB\-\-version\fP"
+Visa versionsinformation.
+.IP "\fB\-w\fP, \fB\-\-wait\fP"
+Vänta på att alla dödade processer dör.  \fBkillall\fP kontrollerar en gång per
+sekund om någon av de dödade processerna fortfarande existerar och
+returnerar först när ingen finns kvar.  Notera att \fBkillall\fP kan komma att
+vänta för evigt om signalen ignorerats, inte hade någon effekt, eller om
+processen förblir i ett zombietillstånd.
+.IP "\fB\-y\fP, \fB\-\-younger\-than\fP"
+Matcha endast processer som är yngre (startade efter) den angivna tiden.
+Tiden anges som ett flyttal följt av en enhet.  Enheterna är s,m,h,d,w,M,y
+för sekunder, minuter, timmar, dagar, veckor, månader respektive år.
+.IP "\fB\-Z\fP, \fB\-\-context\fP"
+Ange säkerhetskontext: döda endast processer som har en säkerhetskontext som
+matchar det givna utökade reguljära uttrycksmönstret.  Måste föregå andra
+argument på kommandoraden.  Kommandonamnen är valfria.
+.SH FILER
+.TP 
+/proc
+plats för proc\-filsystemet
+.SH "KÄNDA FEL"
+Dödande efter fil fungerar endast för körbara filer som förbli öppna under
+körning, d.v.s. orena körbara filer kan inte dödas på detta sätt.
+.PP
+Varning för att \fBkillall\fP \fInamn\fP kanske inte får den önskade effekten på
+icke\-Linux\-system, speciellt när det körs som en privilegierad användare.
+.PP
+\fBkillall \-w\fP detekterar om en process försvinner och ersätts av en ny
+process med samma PID mellan genomsökningar.
+.PP
+Om processer ändrar sina namn kan \fBkillall\fP kanske komma att misslyckas att
+matcha dem korrekt.
+.PP
+\fBkillall\fP har en begränsning på antalet namn som kan anges på
+kommandoraden.  Denna är storleken på en unsigned long int multiplicerad med
+8.  För de flesta 32\-bitarssystem är begränsningen 32 och på samma sätt för
+ett 64\-bitarssystem är begränsningen vanligtvis 64.
+.SH "SE VIDARE"
+\fBkill\fP(1), \fBfuser\fP(1), \fBpgrep\fP(1), \fBpidof\fP(1), \fBpkill\fP(1), \fBps\fP(1),
+\fBkill\fP(2), \fBregex\fP(3).

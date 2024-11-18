@@ -1,3 +1,11 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:494092cd6f7ad242ac9050bbf1bad8e480969bf24b8827cf4217482bc2533c5d
-size 372
+=head1 NAME
+
+perltodo - Link to the Perl to-do list
+
+=head1 DESCRIPTION
+
+The Perl 5 to-do list is maintained in the git repository, and can
+be viewed at L<https://github.com/Perl/perl5/blob/blead/Porting/todo.pod>.
+
+(The to-do list used to be here in perltodo. That has stopped, as installing a
+snapshot that becomes increasingly out of date isn't that useful to anyone.)

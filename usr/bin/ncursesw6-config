@@ -120,13 +120,13 @@ do
 		lib_check=`echo "x$opt" | sed -e 's/^.-L//'`
 		[ -d "$lib_check" ] || continue
 		case "$lib_check" in
-		/usr/lib|/lib) # skip standard libdir
+		/lib64|/usr/lib64|/usr/local/lib|/lib|/usr/lib) # skip standard libdir
 			if [ "$lib_check" = "$libdir" ]
 			then
 				lib_first=yes
 				IFS_save="$IFS"
 				IFS='|'
-				LIBDIRS="/usr/lib|/lib"
+				LIBDIRS="/lib64|/usr/lib64|/usr/local/lib|/lib|/usr/lib"
 				for lib_check in $LIBDIRS
 				do
 					if [ -d "$lib_check" ]

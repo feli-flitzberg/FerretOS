@@ -1,0 +1,139 @@
+.\"
+.\" Copyright 1993-2002 Werner Almesberger
+.\"           2002-2021 Craig Small
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\"*******************************************************************
+.\"
+.\" This file was generated with po4a. Translate the source file.
+.\"
+.\"*******************************************************************
+.TH PSTREE 1 2021\-06\-21 psmisc Användarkommandon
+.SH NAMN
+pstree \- visa ett träd av processer
+.SH SYNOPSIS
+.ad l
+\fBpstree\fP [\fB\-a\fP,\fB\ \-\-arguments\fP] [\fB\-c\fP,\fB\ \-\-compact\-not\fP] [\fB\-C\fP,\fB\ \-\-color\ \fP\fIattr\fP] [\fB\-g\fP,\fB\ \-\-show\-pgids\fP] [\fB\-h\fP,\fB\ \-\-highlight\-all\fP,\fB\ \-H\fP\fI\ pid\fP,\fB\ \-\-highlight\-pid\ \fP\fIpid\fP] [\fB\-l\fP,\fB\ \-\-long\fP] [\fB\-n\fP,\fB\ \-\-numeric\-sort\fP] [\fB\-N\fP,\fB\ \-\-ns\-sort\ \fP\fIns\fP] [\fB\-p\fP,\fB\ \-\-show\-pids\fP]
+[\fB\-s\fP,\fB\ \-\-show\-parents\fP] [\fB\-S\fP,\fB\ \-\-ns\-changes\fP] [\fB\-t\fP,\fB\ \-\-thread\-names\fP] [\fB\-T\fP,\fB\ \-\-hide\-threads\fP] [\fB\-u\fP,\fB\ \-\-uid\-changes\fP]
+[\fB\-Z\fP,\fB\ \-\-security\-context\fP] [\fB\-A\fP,\fB\ \-\-ascii\fP,\fB\ \-G\fP,\fB\ \-\-vt100\fP,\fB\ \-U\fP,\fB\ \-\-unicode\fP] [\fIpid\fP,\fB\ \fP\fIanvändare\fP]
+.br
+\fBpstree\fP \fB\-V\fP,\fB\ \-\-version\fP
+.ad b
+.SH BESKRIVNING
+\fBpstree\fP visar körande processer som ett träd.  Trädet är rotat antingen
+efter \fIpid\fP eller \fBinit\fP om \fIpid\fP inte anges.  Om ett användarnamn anges
+visas alla processträd rotade i processer som ägs av den användaren.
+.PP
+\fBpstree\fP sammanfogar visuellt identiska grenar genom att placera dem inom
+hakparenteser och genom att lägga till ett förled med antal repetitioner,
+t.ex. kommer
+.nf
+.sp
+    init\-+\-getty
+         |\-getty
+         |\-getty
+         `\-getty
+.sp
+.fi
+att bli
+.nf
+.sp
+    init\-\-\-4*[getty]
+.sp
+.fi
+.PP
+.PP
+Barntrådar för processer hittas under föräldraprocessen och visas med
+processnamnet i klammerparenteser, t.ex.
+.nf
+.sp
+    icecast2\-\-\-13*[{icecast2}]
+.sp
+.fi
+.PP
+Om \fBpstree\fP anropas som \fBpstree.x11\fP kommer det att fråga användaren på
+slutet av raden att trycka på retur och kommer inte att avslutas förrän det
+har hänt.  Detta är användbart när \fBpstree\fP körs i en xterminal.
+.PP
+Vissa kärn\- eller monteringsparametrar så som \fIhidepid\fP\-flaggan för procfs,
+kommer att gömma information för vissa processer. I dessa situationer kommer
+\fBpstree\fP att försöka att bygga trädet utan denna information och visa
+processnamnen som frågetecken.
+
+.SH FLAGGOR
+.IP \fB\-a\fP
+Visa kommandoradsargument.  Om kommandoraden för en process byts ut kommer
+processen att visas i parenteser.  \fB\-a\fP inaktiverar implicit kompaktering
+för processer men inte för trådar.
+.IP \fB\-A\fP
+Använd ASCII\-tecken för att rita trädet.
+.IP \fB\-c\fP
+Inaktivera kompaktering av identiska underträd.  Som standard kompakteras
+underträd närhelst det är möjligt.
+.IP \fB\-C\fP
+Färglägg processnamnen efter angivet attribut. \fBpstree\fP accepterar för
+närvarande endast värdet \fBage\fP vilket färgsätter efter processålder.
+Processer nyare än 60 sekunder är gröna, nyare än en timme, gula och
+resterande röda.
+.IP \fB\-g\fP
+Visa PGID:er.  Process Grupp ID:er visas som decimala tal inom parentes
+efter varje processnamn.  Om både PID:er och PGID:er visas så visas PID:er
+först.
+.IP \fB\-G\fP
+Använd VT100\-linjeritningstecken.
+.IP \fB\-h\fP
+Markera aktuell process och dess förfäder.  Detta gör ingenting om
+terminalen in har stöd för markering eller om varken den aktuella processen
+eller någon av dess förfäder finns i underträdet som visas.
+.IP \fB\-H\fP
+Som \fB\-h\fP, men markera den angivna processen istället.  Till skillnad från
+\fB\-h\fP, kommer \fBpstree\fP att misslyckads om \fB\-H\fP används och markering inte
+är möjligt.
+.IP \fB\-l\fP
+Visa långa rader.  Som standard trunkeras rader efter antingen
+miljövariabeln COLUMNS eller skärmbredden.  Om ingendera av dessa metoder
+fungerar, används som standard 132 kolumner.
+.IP \fB\-n\fP
+Sortera processer med samma förälder efter PID istället för efter namn.
+(Numerisk sortering.)
+.IP \fB\-N\fP
+Visa individuella träd för varje namnrymd för den angivna typen.  De möjliga
+typerna är \fIipc\fP, \fImnt\fP, \fInet\fP, \fIpid\fP, \fItime\fP, \fIuser\fP, \fIuts\fP.
+Vanliga användare har inte tillgång till andra användares
+processinformation, så utskrifterna kommer att vara begränsade.
+.IP \fB\-p\fP
+Visa PID:er.  PID:er visas som decimaltal i parenteser efter varje
+processnamn.  \fB\-p\fP inaktiverar implicit kompaktering.
+.IP \fB\-s\fP
+Visa föräldraprocesser för den angivna processen.
+.IP \fB\-S\fP
+Visa namnrymdsövergångar.  Som för \fB\-N\fP är utskriften begränsad vid körning
+som en vanlig användare.
+.IP \fB\-t\fP
+Visa fullständiga namn för trådar när det finns.
+.IP \fB\-T\fP
+Göm trådar och visa endast processer.
+.IP \fB\-u\fP
+Visa uid\-övergångar.  Närhelst uid:en för en process skiljer sig från uid:en
+för dess förälder visas den nya uid:en i parenteser efter processnamnet.
+.IP \fB\-U\fP
+Använd UTF\-8 (Unicode) linjeritningstecken.  Under Linux 1.1\-54 och senare
+kan UTF\-8\-läge aktiveras på konsolen med \fBecho \-e '\033%8'\fP år inaktiveras
+med \fBecho \-e '\033%@'\fP.
+.IP \fB\-V\fP
+Visa versionsinformation.
+.IP \fB\-Z\fP
+Visa aktuella säkerhetsattribut för processen. För SELInux\-system kommer
+detta att vara säkerhetskontexten.
+.SH FILER
+.TP 
+/proc
+plats för proc\-filsystemet
+.SH FEL
+Vissa teckenuppsättningar kan vara inkompatibla med VT100\-tecken.
+.SH "SE VIDARE"
+\fBps\fP(1), \fBtop\fP(1), \fBproc\fP(5).
+.\"{{{}}}

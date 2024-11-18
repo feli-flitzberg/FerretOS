@@ -1,0 +1,35 @@
+.\"
+.\" Copyright 2009-2020 Craig Small
+.\"
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\"*******************************************************************
+.\"
+.\" This file was generated with po4a. Translate the source file.
+.\"
+.\"*******************************************************************
+.TH PRTSTAT 1 2020\-09\-09 psmisc "사용자 명령"
+.SH 이름
+prtstat \- 프로세스 통계를 나타냅니다
+.SH 개요
+.ad l
+\fBprtstat\fP [\fB\-r\fP|\fB\-\-raw\fP] \fIpid\fP
+.br
+\fBprtstat\fP \fB\-V\fP|\fB\-\-version\fP
+.ad b
+.SH 설명
+\fBprtstat\fP은 지정 프로세스의 통계를 나타냅니다.  이 정보는 \fB/proc/\fP\fIpid\fP\fB/stat\fP 파일에서 가져옵니다.
+.SH 옵션
+.TP 
+\fB\-r\fP,\fB\ \-\-raw\fP
+원시 형식으로 정보를 나타냅니다.
+.TP 
+\fB\-V\fP,\fB\ \-\-version\fP
+\fBprtstat\fP의 버전 정보를 나타냅니다.
+.SH 파일
+.TP 
+\fB/proc/\fP\fIpid\fP\fB/stat\fP
+\fBprtstat\fP이 사용하는 정보의 출처를 지정합니다.

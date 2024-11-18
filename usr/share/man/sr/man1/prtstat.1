@@ -1,0 +1,36 @@
+.\"
+.\" Copyright 2009-2020 Craig Small
+.\"
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\"*******************************************************************
+.\"
+.\" This file was generated with po4a. Translate the source file.
+.\"
+.\"*******************************************************************
+.TH PRTSTAT 1 09.09.2020. psmisc "Корисничке наредбе"
+.SH НАЗИВ
+prtstat – исписује статистику процеса
+.SH УВОД
+.ad l
+\fBprtstat\fP [\fB\-r\fP|\fB\-\-raw\fP] \fIpid\fP
+.br
+\fBprtstat\fP \fB\-V\fP|\fB\-\-version\fP
+.ad b
+.SH ОПИС
+\fBprtstat\fP исписује статистику наведног процеса. Ова информација долази из
+датотеке \fB/proc/\fP\fIpid\fP\fB/stat\fP.
+.SH ОПЦИЈЕ
+.TP 
+\fB\-r\fP,\fB\ \-\-raw\fP
+Исписује информације у сировом формату.
+.TP 
+\fB\-V\fP,\fB\ \-\-version\fP
+Приказује информације о издању за \fBprtstat\fP.
+.SH ДАТОТЕКЕ
+.TP 
+\fB/proc/\fP\fIpid\fP\fB/stat\fP
+извор информација које користи \fBprtstat\fP.

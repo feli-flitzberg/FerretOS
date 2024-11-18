@@ -1,0 +1,221 @@
+.\"
+.\" Copyright 1993-2005 Werner Almesberger
+.\"           2005-2023 Craig Small
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\"*******************************************************************
+.\"
+.\" This file was generated with po4a. Translate the source file.
+.\"
+.\"*******************************************************************
+.TH FUSER 1 2022\-11\-02 psmisc Användarkommandon
+.SH NAMN
+fuser \- identifiera processer som använder filer eller uttag
+.SH SYNOPSIS
+.ad l
+\fBfuser\fP [\fB\-fuv\fP] [\fB\-a\fP|\fB\-s\fP] [\fB\-4\fP|\fB\-6\fP] [\fB\-c\fP|\fB\-m\fP|\fB\-n\fP
+\fIutrymme\fP] [\fB\ \-k\fP [\fB\-i\fP] [\fB\-M\fP] [\fB\-w\fP] [\fB\-\fP\fISIGNAL\fP] ] \fInamn\fP ...
+.br
+\fBfuser \-l\fP
+.br
+\fBfuser \-V\fP
+.ad b
+.SH BESKRIVNING
+\fBfuser\fP visar PID:arna för processor som använder den angivna filerna eller
+filsystemen.  I standardvisningsläge kommer varje filnamn att åtföljas av en
+bokstav som visar typen av åtkomst:
+.PP
+.RS
+.PD 0
+.TP 
+\fBc\fP
+aktuell katalog.
+.TP 
+\fBe\fP
+körbar fil körs.
+.TP 
+\fBf\fP
+fil öppen.  \fBf\fP utelämnas i standardvisningsläge.
+.TP 
+\fBF\fP
+öppen för skrivning.  \fBF\fP utelämnas i standardvisningsläge.
+.TP 
+\fBr\fP
+rotkatalog.
+.TP 
+\fBm\fP
+mmap:pad fil eller delat bibliotek.
+.TP 
+\&\fB.\fP
+Platshållare, utelämnas i standardvisningsläge.
+.PD
+.RE
+.LP
+\fBfuser\fP returnerar en returkod som inte är noll om ingen av de angivna
+filerna används eller vid ett fatalt fel.  Om åtminstone en åtkomst hittats
+kommer \fBfuser\fP att returnera noll.
+.PP
+För att slå upp processer som använder TCP\- och UDP\-uttag måste motsvarande
+namnrymd väljas med flaggan \fB\-n\fP.  Som standard kommer \fBfuser\fP att leta
+bland både IPv6\- och IPv4\-uttag.  För att förändra standardbeteendet, använd
+flaggorna \fB\-4\fP och \fB\-6\fP.  Uttagen kan anges antingen efter lokal eller
+fjärrport och fjärradressen.  Alla fält är valfria, men komman i början av
+fält som saknas måste finnas:
+.PP
+[\fIlkl_port\fP][,[\fIfjr_värd\fP][,[\fIfjr_port\fP]]]
+.PP
+Endera symboliska eller numeriska värden kan användas för IP\-adresser och
+portnummer.
+.PP
+\fBfuser\fP matar endas ut PID:ar till standard ut, allting annat skickas till
+standard fel.
+.SH FLAGGOR
+.TP 
+\fB\-a\fP, \fB\-\-all\fP
+Visa alla filer angivna på kommandoraden.  Som standard visas endast filer
+som används av åtminstone en process.
+.TP 
+\fB\-c\fP
+Samma som flaggan \fB\-m\fP, används för POSIX\-kompatibilitet.
+.TP 
+\fB\-f\fP
+Ignoreras tyst, används för POSIX\-kompatibilitet.
+.TP 
+\fB\-k\fP, \fB\-\-kill\fP
+Döda processer som kommer åt filen.  Om det inte ändrats med
+\fB\-\fP\fISIGNAL\/\fP, så skickas SIGKILL.  En \fBfuser\fP process dödar aldrig sig
+själv, men kan döda andra \fBfuser\fP\-processer.  Det effektiva användar\-ID:t
+för processen som kör \fBfuser\fP sätts till dess riktiga användar\-ID innan
+försök att döda.
+.TP 
+\fB\-i\fP, \fB\-\-interactive\fP
+Fråga användaren om bekräftelse innan en process dödas.  Denna flagga
+ignoreras tyst om \fB\-k\fP saknas.
+.TP 
+\fB\-I\fP, \fB\-\-inode\fP
+För namnrymden \fBfile\fP låt alla jämförelser baseras på inoderna för de
+angivna filerna och aldrig på filnamnen, gäller även för nätverksbaserade
+filsystem.
+.TP 
+\fB\-l\fP, \fB\-\-list\-signals\fP
+Lista alla kända signaler.
+.TP 
+\fB\-m\fP\fI NAMN\fP, \fB\-\-mount \fP\fINAMN\fP
+\fINAMN\fP anger en fil på ett monterat filsystem eller en blockenhet som är
+monterad. Alla processer som använder filer på det filsystemet listas.  Om
+en katalog inte anges, ändras den automatiskt till \fINAMN\fP/ för att använda
+eventuellt filsystem som monterats på den katalogen.
+.TP 
+the shortcut notation
+Begäran kommer att uppfyllas om \fINAMN\fP anger en monteringspunkt.  Detta är
+ett ovärderligt säkerhetsbälte vilket förhindrar sig från att döda maskinen
+om \fINAMN\fP inte råkas vara ett filsystem.
+.TP 
+\fB\-w\fP
+Döda endast processer som har skrivåtkomst.  Denna flagga ignoreras tyst om
+\fB\-k\fP saknas.
+.TP 
+\fB\-n\fP\fI NAMNRYMD\fP, \fB\-\-namespace \fP\fINAMNRYMD\fP
+Välj en annan namnrymd.  Namnrymderna \fBfile\fP (filnamn, standardvärdet),
+\fBudp\fP (lokala UDP\-portar) och \fBtcp\fP (lokala TCP\-portar) stöds.  För portar
+kan antingen portnumret eller det symboliska namnet anges.  Om det inte
+finns tvetydighet kan kortbeteckningen \fInamn\fP\fB/\fP\fIrymd\fP användas
+(t.ex. \fI80\fP\fB/\fP\fItcp\fP).
+.TP 
+\fB\-s\fP, \fB\-\-silent\fP
+Tyst läge.  \fB\-u\fP och \fB\-v\fP ignoreras i detta läge.  \fB\-a\fP kan inte användas
+tillsammans med \fB\-s\fP.
+.TP 
+\fB\-\fP\fISIGNAL\fP
+Använd den angivna signalen istället för SIGKILL då processer dödas.
+Signaler kan ange antingen med namn (t.ex. \fB\-HUP\fP)  eller med nummer
+(t.ex. \fB\-1\fP).  Denna flagga ignoreras tyst om flaggan \fB\-k\fP inte används.
+.TP 
+\fB\-u\fP, \fB\-\-user\fP
+Lägg till användarnamnet för processägaren till varje PID.
+.TP 
+\fB\-v\fP, \fB\-\-verbose\fP
+Utförligt läge.  Processer visas i en \fBps\fP\-liknande stil.  Fälten PID, USER
+och COMMAND liknar de från \fBps\fP.  ACCESS visar hur processen använder
+filen.  Utförligt läge kommer också att visa när en särskild fil används som
+en monteringspunkt, knfs exportering eller speglingsfil.  I detta fall visas
+\fBkernel\fP istället för PID:en.
+.TP 
+\fB\-V\fP, \fB\-\-version\fP
+Visa versionsinformation.
+.TP 
+\fB\-4\fP, \fB\-\-ipv4\fP
+SökSök endast efter IPv4\-uttag. Denna flagga kan inte användas tillsammans
+med flaggan \fB\-6\fP och påverkar bara tcp\- och udp\-namnrymderna.
+.TP 
+\fB\-6\fP, \fB\-\-ipv6\fP
+Sök endast efter IPv6\-uttag. Denna flagga kan inte användas tillsammans med
+flaggan \fB\-4\fP och påverkar bara tcp\- och udp\-namnrymderna.
+.SH FILER
+.TP 
+/proc
+plats för proc\-filsystemet
+.SH EXEMPEL
+.TP 
+\fBfuser \-km /home\fP
+dödar alla processer som använder filsystemet /home på något sätt.
+.TP 
+\fBif fuser \-s /dev/ttyS1; then :; else \fP\fIkommando\fP\fB; fi\fP
+kör \fIkommando\fP om inga andra processer använder /dev/ttyS1.
+.TP 
+\fBfuser telnet/tcp\fP
+visar alla processer på den (lokala) TELNET\-porten.
+.SH BEGRÄNSNINGAR
+Processer som använder samma fil eller filsystem flera gånger på samma sätt
+visas endast en gång.
+.PP
+Om samma objekt anges flera gånger på kommandoraden, kommer vissa av de
+posterna att ignoreras.
+.PP
+\fBfuser\fP kanska bara kan samla ihop partiell information om det körs utan
+privilegier.  Som en konsekvens kanske filer öppnade av processer som
+tillhör andra användare inte komma att listas och körbara filer kanske
+endast  klassificeras som mappade.
+.PP
+\fBfuser\fP kan inte rapportera processor som det inte har tillåtelse att titta
+på fildeskriptortabellen för.  Det mest frekventa tillfället då detta
+problem uppstår är när man letar efter TCP\- eller UDP\-uttag och \fBfuser\fP
+inte körs som root\-användare.  I detta fall kommer \fBfuser\fP inte att
+rapportera någon användning.
+.PP
+Att installera \fBfuser\fP som SUID root kommer att undvika problem associerade
+med ofullständig information, men kan vara oönskat av säkerhets\- och
+sekretesskäl.
+.PP
+\fBudp\fP\- och \fBtcp\fP\-namnrymder och UNIX\-domänuttag kan inte genomsökas med
+kärnor äldre än 1.3.78.
+.PP
+Åtkomst av kärnan visas endast med flaggan \fB\-v\fP.
+.PP
+Flaggan \fB\-k\fP fungerar endast för processer.  Om användaren är kärnan kommer
+\fBfuser\fP att skriva ut en rekommendation, men inte genomföra någon åtgärd
+utöver det.
+.PP
+\fBfuser\fP kommer inte att se blockenheter monterade av processer i en annan
+monteringsnamnrymd. Detta är på grund av att enhets\-ID:t som visas i
+processens fildeskriptortabell kommer från processnamnrymden, inte fusers;
+vilket innebär att de inte matchar.
+.SH FEL
+.PP
+\fBfuser \-m /dev/sgX\fP kommer att visa (eller döda med \fB\-k\fP\-flaggan) alla
+processer även om du inte har den enheten konfigurerad.  Det kan finnas
+ytterligare enheter detta gäller.
+.PP
+Monteringsflaggan \fB\-m\fP kommer att matcha alla filer inom samma enhet som
+den angivna filen, använd även flaggan \fB\-M\fP om det endast menar att ange
+monteringspunkten.
+.PP
+\fBfuser\fP will not match mapped files, such as a process' shared libraries if
+they are on a \fBbtrfs\fP(5)  filesystem due to the device IDs being different
+for \fBstat\fP(2)  and \fI/proc/<PID>/maps\fP.
+.SH "SE VIDARE"
+\fBkill\fP(1), \fBkillall\fP(1), \fBstat\fP(2), \fBbtrfs\fP(5), \fBlsof\fP(8),
+\fBmount_namespaces\fP(7), \fBpkill\fP(1), \fBps\fP(1), \fBkill\fP(2).

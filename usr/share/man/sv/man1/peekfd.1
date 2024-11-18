@@ -1,0 +1,60 @@
+.\"
+.\" Copyright 2007 Trent Waddington <trent.waddington@gmail.com>
+.\"
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\"*******************************************************************
+.\"
+.\" This file was generated with po4a. Translate the source file.
+.\"
+.\"*******************************************************************
+.TH PEEKFD 1 2021\-12\-01 psmisc Användarkommandon
+.SH NAMN
+peekfd \- kika på fildeskriptorer för körande processer
+.SH SYNOPSIS
+\fBpeekfd\fP [\fB\-8\fP,\fB\-\-eight\-bit\-clean\fP] [\fB\-n\fP,\fB\-\-no\-headers\fP]
+[\fB\-c\fP,\fB\-\-follow\fP] [\fB\-d\fP,\fB\-\-duplicates\-removed\fP] [\fB\-V\fP,\fB\-\-version\fP]
+[\fB\-h\fP,\fB\-\-help\fP] \fIpid\fP [\fIfd\fP] [\fIfd\fP] ...
+.SH BESKRIVNING
+\fBpeekfd\fP fäster till en körande process och fångar upp alla läsningar och
+skrivningar till fildeskriptorer.  Du kan ange det önskade
+fildeskriptornumret eller dumpa dem allihop.
+.SH FLAGGOR
+.IP \-8
+Gör ingen efterbehandling av läst eller skriven data.
+.IP \-n
+Visa inte huvuden som indikerar källan för de dumpade byten.
+.IP \-c
+Dumpa också den begärda fildeskriptoraktiviteten i nya barnprocesser som
+skapas.
+.IP \-d
+Ta bort duplicerade läsningar/skrivningar från utskriften.  Om du tittar på
+den med en tty kan du vilja använda detta.
+.IP \-v
+Visa en versionssträng
+.IP \-h
+Visa ett hjälpmeddelande.
+.SH FILER
+\fB/proc/\fP\fI*\fP\fB/fd\fP
+.RS
+Används inte men användbart för användaren att titta på för att få bra
+fildeskriptornummer.
+.SH MILJÖ
+Ingen.
+.SH DIAGNOSTIK
+Följande diagnostik kan matas ut på stderr:
+.TP 
+\fBFel vid koppling till pid \fP\fI<PID>\fP
+Ett okänt fel inträffade vid fästning till en process, du kanske måste vara
+root.
+.SH FEL
+Troligtvis många.  Bli inte förvånad om processen du övervakar dör.
+.SH UPPHOVSMAN
+.MT trent.waddington@gmail.com
+Trent Waddington
+.ME
+.SH "SE VIDARE"
+\fBttysnoop\fP(8)

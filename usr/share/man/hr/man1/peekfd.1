@@ -1,0 +1,60 @@
+.\"
+.\" Copyright 2007 Trent Waddington <trent.waddington@gmail.com>
+.\"
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\"*******************************************************************
+.\"
+.\" This file was generated with po4a. Translate the source file.
+.\"
+.\"*******************************************************************
+.TH PEEKFD 1 2021\-12\-01 psmisc "Naredbe korisnika"
+.SH IME
+peekfd \- luka (gleda) u deskriptore datoteka pokrenutih procesa
+.SH UPORABA
+\fBpeekfd\fP [\fB\-8\fP,\fB\-\-eight\-bit\-clean\fP] [\fB\-n\fP,\fB\-\-no\-headers\fP]
+[\fB\-c\fP,\fB\-\-follow\fP] [\fB\-d\fP,\fB\-\-duplicates\-removed\fP] [\fB\-V\fP,\fB\-\-version\fP]
+[\fB\-h\fP,\fB\-\-help\fP] \fIpid\fP [\fIfd\fP] [\fIfd\fP] ...
+.SH OPIS
+\fBpeekfd\fP se prikvači pokrenutom procesu i presreće svako čitanje i pisanje
+u deskriptore datoteka. Možete specificirati željene brojeve deskriptora
+datoteka ili napraviti "dump" od svih naredbi za čitanje i pisanje.
+.SH OPCIJE
+.IP \-8
+Ne obrađuje podatke o pročitanim ili zapisanim bajtovima nakon primitka.
+.IP \-n
+Ne pokazivati zaglavlja koja označavaju izvor primljenih (dumped) bajtova.
+.IP \-c
+Također spremi (dump) zatražene aktivnosti nad deskriptorima datoteke iz
+svih novih potomaka koji su stvoreni.
+.IP \-d
+Uklanja duplicirane zapise čitanja/pisanja na izlazu. To je korisno ako
+rabite tty s echo.
+.IP \-v
+Prikaže informacije o inačici.
+.IP \-h
+Prikaže tekst s pomoći.
+.SH FILES
+\fB/proc/\fP\fI*\fP\fB/fd\fP
+.RS
+Ne rabi se, ali je korisno da ga korisnik pogleda i dobije dobre brojeve za
+deskriptor datoteke.
+.SH OKOLINA
+Nijedno.
+.SH DIJAGNOSTIKA
+Sljedeće dijagnoze mogu biti ispisane na stderr:
+.TP 
+\fBGreška povezana na pid \fP\fI<PID>\fP
+Dogodila se nepoznata greška pri pokušaju pripajanja na proces. Možda morate
+biti root.
+.SH BUGS
+Vjerojatno puno. Nemojte se iznenaditi ako postupak koji nadgledate umre.
+.SH AUTOR
+.MT trent.waddington@gmail.com
+Trent Waddington
+.ME
+.SH "POGLEDAJTE TAKOĐER"
+\fBttysnoop\fP(8)

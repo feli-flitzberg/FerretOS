@@ -1,0 +1,127 @@
+.\"
+.\" Copyright 1993-2002 Werner Almesberger
+.\"           2002-2023 Craig Small
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\"*******************************************************************
+.\"
+.\" This file was generated with po4a. Translate the source file.
+.\"
+.\"*******************************************************************
+.TH KILLALL 1 2023\-06\-17 psmisc "Naredbe korisnika"
+.SH IME
+killall \- ubije imenovane procese
+.SH UPORABA
+.ad l
+\fBkillall\fP [\fB\-Z\fP,\fB\ \-\-context\fP \fIpattern\fP] [\fB\-e\fP,\fB\ \-\-exact\fP] [\fB\-g\fP,\fB\ \-\-process\-group\fP] [\fB\-i\fP,\fB\ \-\-interactive\fP] [\fB\-n\fP,\fB\ \-\-ns\fP \fIPID\fP]
+[\fB\-o\fP,\fB\ \-\-older\-than\fP \fITIME\fP] [\fB\-q\fP,\fB\ \-\-quiet\fP] [\fB\-r\fP,\fB\ \-\-regexp\fP]
+[\fB\-s\fP,\fB\ \-\-signal\fP \fISIGNAL\fP,\ \fB\-\fP\fISIGNAL\fP] [\fB\-u\fP,\fB\ \-\-user\fP \fIuser\fP]
+[\fB\-v\fP,\fB\ \-\-verbose\fP] [\fB\-w\fP,\fB\ \-\-wait\fP] [\fB\-y\fP,\fB\ \-\-younger\-than\fP
+\fITIME\fP] [\fB\-I\fP,\fB\ \-\-ignore\-case\fP] [\fB\-V\fP,\fB\ \-\-version\fP] [\fB\-\-\fP] \fIname\fP
+\&...
+.br
+\fBkillall\fP \fB\-l\fP, \fB\-\-list\fP
+.br
+\fBkillall\fP \fB\-V\fP,\fB\ \-\-version\fP
+.ad b
+.SH OPIS
+\fBkillall\fP pošalje signal svim procesima koji izvode bilo koju od navedenih
+naredbi. Ako nije navedeno ime signala, šalje se SIGTERM.
+.PP
+Signals can be specified either by name (e.g.\& \fB\-HUP\fP or \fB\-SIGHUP\fP)  or
+by number (e.g.\& \fB\-1\fP)  or by option \fB\-s\fP.
+.PP
+Ako ime naredbe nije regularni izraz (opcija \fB\-r\fP), a sadrži kosu crtu
+(\fB/\fP), procesi koji izvršavaju tu određenu datoteku bit će odabrani za
+ubijanje, neovisno o njihovom imenu.
+.PP
+\fBkillall\fP završi uspješno (završi s kodom nula) ako je za svaku navedenu
+naredbu ubijen barem jedan postupak ili ako nije navedena nijedna naredba i
+ako je barem jedan postupak odgovarao kriterijima pretraživanja \fB\-u\fP i
+\fB\-Z\fP. \fBkillall\fP u suprotnom završi neuspješno (završi s kodom različitim
+od nule).
+.PP
+\fBkillall\fP proces nikada ne ubije samog sebe (ali može ubiti druge
+\fBkillall\fP procese).
+.SH OPCIJE
+.IP "\fB\-e\fP, \fB\-\-exact\fP"
+Zahtijeva se točno podudaranje za vrlo duga imena. Ako je ime naredbe duže
+od 15 znakova, puno ime možda neće biti dostupno (tj. zamijenjeno je). U
+ovom će slučaju \fBkillall\fP ubiti sve što se podudara unutar prvih 15
+znakova. \fB\-e\fP preskače takve unose. \fBkillall\fP ispiše poruku za svaki
+preskočeni unos ako je uz \fB\-e\fP naveden i \fB\-v\fP.
+.IP "\fB\-I\fP, \fB\-\-ignore\-case\fP"
+Zanemari veličinu slova prilikom podudaranja.
+.IP "\fB\-g\fP, \fB\-\-process\-group\fP"
+Ubije procesnu grupu kojoj pripada proces. Signal ubijanja pošalje se samo
+jednom po grupi, čak i ako je pronađeno više procesa koji pripadaju istoj
+grupi procesa.
+.IP "\fB\-i\fP, \fB\-\-interactive\fP"
+Interaktivno pita za potvrdu prije ubijanja.
+.IP "\fB\-l\fP, \fB\-\-list\fP"
+Ispiše imena svih poznatih signala.
+.IP "\fB\-n\fP, \fB\-\-ns\fP"
+Traži procese samo u imenskom prostoru koji se podudara s navedenim
+PID\-om. Zadano, pretražuju se svi imenski prostori.
+.IP "\fB\-o\fP, \fB\-\-older\-than\fP"
+Podudara samo procese koji su stariji (pokrenuti prije) od navedenog
+vremena. Vrijeme se specificira kao decimalni broj s pomičnom točkom, a
+zatim slijedi jedinica za vrijeme. Jedinice su s, m, h, d, w, M, y za
+sekunde, minute, sate, dane, tjedne, mjesece i godine.
+.IP "\fB\-q\fP, \fB\-\-quiet\fP"
+Ne žali se ako nijedan proces nije ubijen.
+.IP "\fB\-r\fP, \fB\-\-regexp\fP"
+Razmatra uzorak imena procesa kao POSIX prošireni regularni izraz, prema
+\fBregex\fP(3).
+.IP "\fB\-s\fP, \fB\-\-signal\fP, \fB\-\fP\fISIGNAL\fP"
+Pošalje taj signal umjesto SIGTERM.
+.IP "\fB\-u\fP, \fB\-\-user\fP"
+Ubije samo procese koje posjeduje navedeni korisnik. Imena naredbi nisu
+obavezna.
+.IP "\fB\-v\fP, \fB\-\-verbose\fP"
+Javi ako je signal uspješno poslan.
+.IP "\fB\-V\fP, \fB\-\-version\fP"
+Pokaže informacije o inačici.
+.IP "\fB\-w\fP, \fB\-\-wait\fP"
+Čeka dok svi ubijeni procesi ne umru. \fBkillall\fP provjerava jedanput svake
+sekunde postoji li još uvijek neki od ubijenih procesa i završi s uspjehom
+samo ako nijedan više nije živ. Imajte na umu da \fBkillall\fP može zauvijek
+čekati ako je signal zanemaren, nije imao učinka ili ako postupak ostane u
+zombi stanju.
+.IP "\fB\-y\fP, \fB\-\-younger\-than\fP"
+Podudara samo procese koji su mlađi (pokrenuti kasnije) od navedenog
+vremena. Vrijeme se specificira kao decimalni broj s pomičnom točkom, a
+zatim slijedi jedinica za vrijeme. Jedinice su s, m, h, d, w, M, y za
+sekunde, minute, sate, dane, tjedne, mjesece i godine.
+.IP "\fB\-Z\fP, \fB\-\-context\fP"
+Navedite sigurnosni kontekst: ubije samo procese čiji se sigurnosni kontekst
+podudara s uzorkom danim proširenim regularnim izrazom. Mora prethoditi
+ostalim argumentima u naredbenom retku. Imena naredbi nisu obavezna.
+.SH FILES
+.TP 
+/proc
+lokacija proc datotečnog sustava
+.SH "POZNATE GREŠKE"
+Ubijanje pomoću datoteke funkcionira samo za izvršne datoteke koje drže
+datoteke otvorene tijekom izvršavanja. Drugim riječima, nečiste izvršne
+datoteke ne mogu se ubiti na ovaj način.
+.PP
+Imajte na umu da naredba \fBkillall\fP \fIname\fP možda neće imati željeni učinak
+na ne\-Linux sustavima, posebno, ako to radi privilegirani korisnik.
+.PP
+\fBkillall \-w\fP ne otkriva nestaje li proces i zamjenjuje ga novi proces s
+istim PID\-om između skaniranja.
+.PP
+Ako procesi promijene svoje ime, \fBkillall\fP ih možda neće moći ispravno
+podudariti.
+.PP
+\fBkillall\fP ima ograničenje na broj imena koja se mogu specificirati u
+naredbenom retku. Taj broj je "unsigned long integer" pomnožen s 8. Za
+većinu 32\-bitnih sustava ograničenje je 32, a za 64\-bitni sustav je obično
+64.
+.SH "POGLEDAJTE TAKOĐER"
+\fBkill\fP(1), \fBfuser\fP(1), \fBpgrep\fP(1), \fBpidof\fP(1), \fBpkill\fP(1), \fBps\fP(1),
+\fBkill\fP(2), \fBregex\fP(3).

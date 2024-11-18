@@ -1,0 +1,62 @@
+.\"
+.\" Copyright 2007 Trent Waddington <trent.waddington@gmail.com>
+.\"
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\"*******************************************************************
+.\"
+.\" This file was generated with po4a. Translate the source file.
+.\"
+.\"*******************************************************************
+.TH PEEKFD 1 01.12.2021 psmisc "Comenzi pentru utilizator"
+.SH NUME
+peekfd \- examinează descriptorii de fișiere ai proceselor care rulează
+.SH REZUMAT
+\fBpeekfd\fP [\fB\-8\fP,\fB\-\-eight\-bit\-clean\fP] [\fB\-n\fP,\fB\-\-no\-headers\fP]
+[\fB\-c\fP,\fB\-\-follow\fP] [\fB\-d\fP,\fB\-\-duplicates\-removed\fP] [\fB\-V\fP,\fB\-\-version\fP]
+[\fB\-h\fP,\fB\-\-help\fP] \fIpid\fP [\fIdescriptor_fișier\fP] [\fIdescriptor_fișier\fP] ...
+.SH DESCRIERE
+\fBpeekfd\fP se atașează la un proces care rulează și interceptează toate
+citirile și scrierile în descriptorii de fișiere. Puteți specifica numerele
+descriptorilor de fișiere pe care îi doriți sau îi puteți imprima pe toți.
+.SH OPȚIUNI
+.IP \-8
+Nu efectuează post\-procesare asupra octeților citiți sau scriși.
+.IP \-n
+Nu afișează anteturi care indică sursa octeților descărcați.
+.IP \-c
+Afișează de asemenea, activitatea descriptorului de fișier solicitat în
+orice proces\-copil nou creat.
+.IP \-d
+Elimină citirile/scrierile duplicate de la ieșire. Dacă vizualizați date
+într\-un terminal cu ieșire repetată, această opțiune este probabil să vă fie
+utilă.
+.IP \-v
+Afișează informațiile despre versiune.
+.IP \-h
+Afișează un mesaj de ajutor.
+.SH FIȘIERE
+\fB/proc/\fP\fI*\fP\fB/fd\fP
+.RS
+Nu este folosit, dar este util pentru utilizator pentru a obține un număr
+bun de descriptoare de fișiere.
+.SH MEDIU
+Nimic.
+.SH DIAGNOSTICE
+Următoarele diagnostice pot fi emise la ieșirea de eroare standard:
+.TP 
+\fBEroare la atașarea la pid \fP\fI<PID>\fP
+A apărut o eroare necunoscută în timpul încercării de atașare la un proces,
+poate că trebuie să fiți root.
+.SH ERORI
+Probabil multe. Nu fiți surprins dacă procesul pe care îl monitorizați
+moare.
+.SH AUTOR
+.MT trent.waddington@gmail.com
+Trent Waddington
+.ME
+.SH "CONSULTAȚI ȘI"
+\fBttysnoop\fP(8)

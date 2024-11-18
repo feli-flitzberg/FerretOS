@@ -1,0 +1,232 @@
+.\"
+.\" Copyright 1993-2005 Werner Almesberger
+.\"           2005-2023 Craig Small
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\"*******************************************************************
+.\"
+.\" This file was generated with po4a. Translate the source file.
+.\"
+.\"*******************************************************************
+.TH FUSER 1 02.11.2022 psmisc "Comenzi pentru utilizator"
+.SH NUME
+fuser \- identifică procesele care utilizează fișiere sau socluri
+.SH REZUMAT
+.ad l
+\fBfuser\fP [\fB\-fuv\fP] [\fB\-a\fP|\fB\-s\fP] [\fB\-4\fP|\fB\-6\fP] [\fB\-c\fP|\fB\-m\fP|\fB\-n\fP
+\fIspațiu_nume\fP] [\fB\ \-k\fP [\fB\-i\fP] [\fB\-M\fP] [\fB\-w\fP] [\fB\-\fP\fISEMNAL\fP] ] \fInume\fP
+\&...
+.br
+\fBfuser \-l\fP
+.br
+\fBfuser \-V\fP
+.ad b
+.SH DESCRIERE
+\fBfuser\fP afișează PID\-urile proceselor care utilizează fișierele sau
+sistemele de fișiere specificate. În modul de afișare implicit, fiecare nume
+de fișier este urmat de o literă care indică tipul de acces:
+.PP
+.RS
+.PD 0
+.TP 
+\fBc\fP
+directorul curent.
+.TP 
+\fBe\fP
+executabil în curs de executare.
+.TP 
+\fBf\fP
+fișier deschis.. \fBf\fP este omis în modul de afișare implicit.
+.TP 
+\fBF\fP
+fișier deschis pentru scriere. \fBF\fP este omis în modul de afișare implicit.
+.TP 
+\fBr\fP
+directorul rădăcină.
+.TP 
+\fBm\fP
+fișier alocat cu «mmap» sau bibliotecă partajată.
+.TP 
+\&\fB.\fP
+Substituent, omis în modul de afișare implicit.
+.PD
+.RE
+.LP
+\fBfuser\fP returnează un cod de returnare diferit de zero dacă niciunul dintre
+fișierele specificate nu este accesat sau în cazul unei erori fatale. Dacă a
+fost găsit cel puțin un fișier accesat, \fBfuser\fP returnează zero.
+.PP
+Pentru a căuta procese folosind socluri TCP și UDP, spațiul de nume
+corespunzător trebuie să fie selectat cu opțiunea \fB\-n\fP. În mod implicit,
+\fBfuser\fP va căuta atât în soclurile IPv6, cât și în soclurile IPv4. Pentru a
+modifica comportamentul implicit, utilizați opțiunile \fB\-4\fP și
+\fB\-6\fP. Soclurile pot fi specificate prin portul local și de la distanță și
+prin adresa de la distanță. Toate câmpurile sunt opționale, dar virgulele
+din fața câmpurilor lipsă trebuie să fie prezente:
+.PP
+[\fIport_local\fP][,[\fIgazdă_rmt\fP][,[\fIport_rmt\fP]]] 	notă: rmt = la
+distanță(remote)
+.PP
+Puteți utiliza fie valori simbolice, fie valori numerice pentru adresele IP
+și numerele de porturi.
+.PP
+\fBfuser\fP afișează doar PID\-urile la ieșirea standard, orice altceva este
+trimis către ieșirea de eroare standard.
+.SH OPȚIUNI
+.TP 
+\fB\-a\fP, \fB\-\-all\fP
+Afișează toate fișierele specificate în linia de comandă. În mod implicit,
+sunt afișate doar fișierele care sunt accesate de cel puțin un proces.
+.TP 
+\fB\-c\fP
+La fel ca și opțiunea \fB\-m\fP, utilizată pentru compatibilitatea cu POSIX.
+.TP 
+\fB\-f\fP
+Ignorată în tăcere, utilizată pentru compatibilitatea cu POSIX.
+.TP 
+\fB\-k\fP, \fB\-\-kill\fP
+Omoară procesele care accesează fișierul. Cu excepția cazului în care este
+schimbat cu opțiunea \fB\-\fP\fISIGNAL\/\fP, semnalul SIGKILL este semnalul trimis
+procesului. Un proces \fBfuser\fP nu se omoară pe el însuși niciodată, dar
+poate omorî alte procese \fBfuser\fP. ID\-ul de utilizator efectiv al procesului
+care execută \fBfuser\fP este reamplasat cu ID\-ul de utilizator real înainte de
+a încerca să ucidă.
+.TP 
+\fB\-i\fP, \fB\-\-interactive\fP
+Cere utilizatorului confirmarea înainte de a omorî un proces. Această
+opțiune este ignorată în tăcere dacă opțiunea \fB\-k\fP nu este deasemeni
+prezentă.
+.TP 
+\fB\-I\fP, \fB\-\-inode\fP
+Pentru spațiul de nume \fBfișier\fP, toate comparațiile trebuie să se bazeze pe
+nodul\-i al fișierelor specificate și niciodată pe numele fișierelor, chiar
+și pe sistemele de fișiere bazate pe rețea.
+.TP 
+\fB\-l\fP, \fB\-\-list\-signals\fP
+Listează toate numele semnalelor cunoscute.
+.TP 
+\fB\-m\fP\fI NUME\fP, \fB\-\-mount \fP\fINUME\fP
+\fINUME\fP specifică un fișier pe un sistem de fișiere montat sau un dispozitiv
+bloc care este montat. Sunt listate toate procesele care accesează fișierele
+din acel sistem de fișiere. Dacă este specificat un director, acesta este
+schimbat automat în \fINUME\fP/ pentru a utiliza orice sistem de fișiere care
+ar putea fi montat pe acel director.
+.TP 
+\fB\-M\fP, \fB\-\-ismountpoint\fP
+Solicitarea va fi îndeplinită numai dacă \fINUME\fP specifică un punct de
+montare. Aceasta este o centură de siguranță neprețuită care vă împiedică să
+ucideți mașina dacă \fINUME\fP se întâmplă să nu fie un sistem de fișiere.
+.TP 
+\fB\-w\fP
+Omoară numai procesele care au acces de scriere. Această opțiune este
+ignorată în tăcere dacă opțiunea \fB\-k\fP nu este deasemeni prezentă.
+.TP 
+\fB\-n\fP\fI SPAȚIU_NUME\fP, \fB\-\-namespace \fP\fI SPAȚIU_NUME\fP
+Selectează un alt spațiu de nume. Sunt acceptate spațiile de nume \fBfișier\fP
+(nume de fișiere, implicit), \fBudp\fP (porturi UDP locale) și \fBtcp\fP (porturi
+TCP locale). Pentru porturi, poate fi specificat fie numărul portului, fie
+numele simbolic. Dacă nu există ambiguitate, poate fi folosită notația
+scurtă \fInume\fP\fB/\fP\fIspațiu\fP (de exemplu, \fI80\fP\fB/\fP\fItcp\fP).
+.TP 
+\fB\-s\fP, \fB\-\-silent\fP
+Funcționare silențioasă. Opțiunile \fB\-u\fP și \fB\-v\fP sunt ignorate în acest
+mod. Opțiunea \fB\-a\fP nu trebuie să fie utilizată cu opțiunea \fB\-s\fP.
+.TP 
+\fB\-\fP\fISEMNAL\fP
+Utilizează semnalul specificat în loc de SIGKILL atunci când omoară
+procesele. Semnalele pot fi specificate fie după nume (de exemplu, \fB\-HUP\fP),
+fie după număr (de exemplu, \fB\-1\fP).  Această opțiune este ignorată în tăcere
+dacă nu este utilizată opțiunea \fB\-k\fP.
+.TP 
+\fB\-u\fP, \fB\-\-user\fP
+Adaugă numele de utilizator al proprietarului procesului la fiecare PID.
+.TP 
+\fB\-v\fP, \fB\-\-verbose\fP
+Modul informație\-detaliată. Procesele sunt afișate într\-un stil asemănător
+comenzii \fBps\fP. Câmpurile PID, UTILIZATOR și COMANDĂ sunt similare cu cele
+ale \fBps\fP. ACCES arată modul în care procesul accesează fișierul. Modul
+informație\-detaliată va afișa, de asemenea, când un anumit fișier este
+accesat ca punct de montare, export knfs sau fișier de spațiu de interschimb
+„swap”. În acest caz, \fBnucleul\fP este afișat în loc de PID.
+.TP 
+\fB\-V\fP, \fB\-\-version\fP
+Afișează informațiile despre versiune.
+.TP 
+\fB\-4\fP, \fB\-\-ipv4\fP
+Caută doar socluri IPv4. Această opțiune nu trebuie utilizată cu opțiunea
+\fB\-6\fP și are efect doar cu spațiile de nume tcp și udp.
+.TP 
+\fB\-6\fP, \fB\-\-ipv6\fP
+Caută doar socluri IPv6. Această opțiune nu trebuie utilizată cu opțiunea
+\fB\-4\fP și are efect doar cu spațiile de nume tcp și udp.
+.SH FIȘIERE
+.TP 
+/proc
+locația sistemului de fișiere proc
+.SH EXEMPLE
+.TP 
+\fBfuser \-km /home\fP
+omoară toate procesele care accesează sistemul de fișiere „/home” în orice
+fel (citire, scriere, creare, .. etc.).
+.TP 
+\fBif fuser \-s /dev/ttyS1; then :; else \fP\fIcomanda\fP\fB; fi\fP
+invocă \fIcomanda\fP dacă niciun alt proces nu utilizează /dev/ttyS1.
+.TP 
+\fBfuser telnet/tcp\fP
+afișează toate procesele de la portul (local) TELNET.
+.SH RESTRICȚII
+Procesele care accesează același fișier sau sistem de fișiere de mai multe
+ori în același mod sunt afișate o singură dată.
+.PP
+Dacă același obiect este specificat de mai multe ori în linia de comandă,
+unele dintre aceste intrări pot fi ignorate.
+.PP
+\fBfuser\fP poate obține doar informații parțiale, cu excepția cazului în care
+rulează cu privilegii. În consecință, fișierele deschise de procese
+aparținând altor utilizatori pot să nu fie listate și executabilele pot să
+fie clasificate doar ca asociate cu fișierul.
+.PP
+\fBfuser\fP nu poate raporta niciun proces pentru care nu are permisiunea de a
+căuta în tabelul descriptor al fișierului. Cel mai frecvent caz în care
+apare această problemă este atunci când se caută socluri TCP sau UDP în timp
+ce \fBfuser\fP rulează ca utilizator non\-root. În acest caz, \fBfuser\fP va
+raporta că nu există acces.
+.PP
+Instalarea lui \fBfuser\fP cu SUID root va evita problemele asociate cu
+informațiile parțiale, dar poate fi nedorită din motive de securitate și
+confidențialitate.
+.PP
+Spațiile de nume \fBudp\fP și \fBtcp\fP și soclurile de domeniu UNIX nu pot fi
+căutate cu nuclee mai vechi de 1.3.78.
+.PP
+Accesările de către nucleu sunt afișate doar cu opțiunea \fB\-v\fP.
+.PP
+Opțiunea \fB\-k\fP funcționează numai asupra proceselor. Dacă utilizatorul este
+nucleul, \fBfuser\fP va afișa un sfat, dar nu va lua nicio măsură în afară de
+aceasta.
+.PP
+\fBfuser\fP nu va vedea dispozitivele bloc montate de procese într\-un spațiu de
+nume de montare diferit. Acest lucru se datorează faptului că ID\-ul
+dispozitivului afișat în tabelul descriptor al fișierului procesului provine
+din spațiul de nume al procesului, nu din cel al «fuser»; adică nu se va
+potrivi.
+.SH ERORI
+.PP
+\fBfuser \-m /dev/sgX\fP va afișa (sau va ucide cu opțiuneal \fB\-k\fP) toate
+procesele, chiar dacă nu aveți acel dispozitiv configurat. Pot exista și
+alte dispozitive pentru care face acest lucru.
+.PP
+Opțiunea de montare \fB\-m\fP se va potrivi cu orice fișier din același
+dispozitiv cu fișierul specificat, utilizați și opțiunea \fB\-M\fP dacă doriți
+să specificați doar punctul de montare.
+.PP
+\fBfuser\fP nu va potrivi fișierele copiate în memorie, cum ar fi bibliotecile
+partajate ale unui proces, dacă acestea se află pe un sistem de fișiere
+\fBbtrfs\fP(5) din cauza faptului că ID\-urile de dispozitiv sunt diferite
+pentru \fBstat\fP(2) și \fI/proc/<PID>/maps\fP.
+.SH "CONSULTAȚI ȘI"
+\fBkill\fP(1), \fBkillall\fP(1), \fBstat\fP(2), \fBbtrfs\fP(5), \fBlsof\fP(8),
+\fBmount_namespaces\fP(7), \fBpkill\fP(1), \fBps\fP(1), \fBkill\fP(2).
