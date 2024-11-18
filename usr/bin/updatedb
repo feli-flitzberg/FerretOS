@@ -106,7 +106,7 @@ case "$dbformat" in
 esac
 
 
-if false
+if true
 then
     sort="/usr/bin/sort -z"
     print_option="-print0"

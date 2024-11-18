@@ -28,23 +28,24 @@ build_time_vars = {'ABIFLAGS': '',
  'CFLAGS': '-fno-strict-overflow -Wsign-compare -DNDEBUG -g -O3 -Wall',
  'CFLAGSFORSHARED': '-fPIC',
  'CFLAGS_ALIASING': '',
- 'CFLAGS_NODIST': '',
  'CODECS_COMMON_HEADERS': './Modules/cjkcodecs/multibytecodec.h '
                           './Modules/cjkcodecs/cjkcodecs.h',
  'COMPILEALL_OPTS': '-j0',
  'CONFIGFILES': 'configure configure.ac acconfig.h pyconfig.h.in '
                 'Makefile.pre.in',
  'CONFIGURE_CFLAGS': '',
- 'CONFIGURE_CFLAGS_NODIST': '-std=c11 -Wextra -Wno-unused-parameter '
+ 'CONFIGURE_CFLAGS_NODIST': '-fno-semantic-interposition -std=c11 -Wextra '
+                            '-Wno-unused-parameter '
                             '-Wno-missing-field-initializers '
                             '-Wstrict-prototypes '
                             '-Werror=implicit-function-declaration '
                             '-fvisibility=hidden',
  'CONFIGURE_CPPFLAGS': '',
  'CONFIGURE_LDFLAGS': '',
- 'CONFIGURE_LDFLAGS_NODIST': '',
+ 'CONFIGURE_LDFLAGS_NODIST': '-fno-semantic-interposition',
  'CONFIGURE_LDFLAGS_NOLTO': '',
- 'CONFIG_ARGS': "'--prefix=/usr' '--enable-shared' '--without-ensurepip'",
+ 'CONFIG_ARGS': "'--prefix=/usr' '--enable-shared' '--with-system-expat' "
+                "'--enable-optimizations'",
  'CONFINCLUDEDIR': '/usr/include',
  'CONFINCLUDEPY': '/usr/include/python3.12',
  'COREPYTHONPATH': '',
@@ -85,7 +86,7 @@ build_time_vars = {'ABIFLAGS': '',
  'DTRACE_OBJS': '',
  'DYNLOADFILE': 'dynload_shlib.o',
  'ENABLE_IPV6': 1,
- 'ENSUREPIP': 'no',
+ 'ENSUREPIP': 'upgrade',
  'EXE': '',
  'EXEMODE': 755,
  'EXENAME': '/usr/bin/python3.12',
@@ -131,7 +132,7 @@ build_time_vars = {'ABIFLAGS': '',
  'HAVE_BROKEN_SEM_GETVALUE': 0,
  'HAVE_BROKEN_UNSETENV': 0,
  'HAVE_BUILTIN_ATOMIC': 1,
- 'HAVE_BZLIB_H': 0,
+ 'HAVE_BZLIB_H': 1,
  'HAVE_CHFLAGS': 0,
  'HAVE_CHMOD': 1,
  'HAVE_CHOWN': 1,
@@ -147,8 +148,8 @@ build_time_vars = {'ABIFLAGS': '',
  'HAVE_CONIO_H': 0,
  'HAVE_CONNECT': 1,
  'HAVE_COPY_FILE_RANGE': 1,
- 'HAVE_CRYPT_H': 0,
- 'HAVE_CRYPT_R': 0,
+ 'HAVE_CRYPT_H': 1,
+ 'HAVE_CRYPT_R': 1,
  'HAVE_CTERMID': 1,
  'HAVE_CTERMID_R': 0,
  'HAVE_CURSES_FILTER': 1,
@@ -210,9 +211,9 @@ build_time_vars = {'ABIFLAGS': '',
  'HAVE_FDOPENDIR': 1,
  'HAVE_FDWALK': 0,
  'HAVE_FEXECVE': 1,
- 'HAVE_FFI_CLOSURE_ALLOC': 0,
- 'HAVE_FFI_PREP_CIF_VAR': 0,
- 'HAVE_FFI_PREP_CLOSURE_LOC': 0,
+ 'HAVE_FFI_CLOSURE_ALLOC': 1,
+ 'HAVE_FFI_PREP_CIF_VAR': 1,
+ 'HAVE_FFI_PREP_CLOSURE_LOC': 1,
  'HAVE_FLOCK': 1,
  'HAVE_FORK': 1,
  'HAVE_FORK1': 0,
@@ -236,7 +237,7 @@ build_time_vars = {'ABIFLAGS': '',
  'HAVE_GCC_ASM_FOR_X87': 1,
  'HAVE_GCC_UINT128_T': 1,
  'HAVE_GDBM_DASH_NDBM_H': 0,
- 'HAVE_GDBM_H': 0,
+ 'HAVE_GDBM_H': 1,
  'HAVE_GDBM_NDBM_H': 0,
  'HAVE_GETADDRINFO': 1,
  'HAVE_GETC_UNLOCKED': 1,
@@ -343,7 +344,7 @@ build_time_vars = {'ABIFLAGS': '',
  'HAVE_LONG_DOUBLE': 1,
  'HAVE_LSTAT': 1,
  'HAVE_LUTIMES': 1,
- 'HAVE_LZMA_H': 1,
+ 'HAVE_LZMA_H': 0,
  'HAVE_MADVISE': 1,
  'HAVE_MAKEDEV': 1,
  'HAVE_MBRTOWC': 1,
@@ -361,7 +362,7 @@ build_time_vars = {'ABIFLAGS': '',
  'HAVE_NANOSLEEP': 1,
  'HAVE_NCURSESW': 1,
  'HAVE_NCURSES_H': 1,
- 'HAVE_NDBM_H': 0,
+ 'HAVE_NDBM_H': 1,
  'HAVE_NDIR_H': 0,
  'HAVE_NETCAN_CAN_H': 0,
  'HAVE_NETDB_H': 1,
@@ -411,15 +412,15 @@ build_time_vars = {'ABIFLAGS': '',
  'HAVE_REALPATH': 1,
  'HAVE_RECVFROM': 1,
  'HAVE_RENAMEAT': 1,
- 'HAVE_RL_APPEND_HISTORY': 0,
- 'HAVE_RL_CATCH_SIGNAL': 0,
- 'HAVE_RL_COMPDISP_FUNC_T': 0,
- 'HAVE_RL_COMPLETION_APPEND_CHARACTER': 0,
- 'HAVE_RL_COMPLETION_DISPLAY_MATCHES_HOOK': 0,
- 'HAVE_RL_COMPLETION_MATCHES': 0,
- 'HAVE_RL_COMPLETION_SUPPRESS_APPEND': 0,
- 'HAVE_RL_PRE_INPUT_HOOK': 0,
- 'HAVE_RL_RESIZE_TERMINAL': 0,
+ 'HAVE_RL_APPEND_HISTORY': 1,
+ 'HAVE_RL_CATCH_SIGNAL': 1,
+ 'HAVE_RL_COMPDISP_FUNC_T': 1,
+ 'HAVE_RL_COMPLETION_APPEND_CHARACTER': 1,
+ 'HAVE_RL_COMPLETION_DISPLAY_MATCHES_HOOK': 1,
+ 'HAVE_RL_COMPLETION_MATCHES': 1,
+ 'HAVE_RL_COMPLETION_SUPPRESS_APPEND': 1,
+ 'HAVE_RL_PRE_INPUT_HOOK': 1,
+ 'HAVE_RL_RESIZE_TERMINAL': 1,
  'HAVE_RPC_RPC_H': 0,
  'HAVE_RTPSPAWN': 0,
  'HAVE_SCHED_GET_PRIORITY_MAX': 1,
@@ -576,8 +577,8 @@ build_time_vars = {'ABIFLAGS': '',
  'HAVE_UTMP_H': 1,
  'HAVE_UUID_CREATE': 0,
  'HAVE_UUID_ENC_BE': 0,
- 'HAVE_UUID_GENERATE_TIME_SAFE': 0,
- 'HAVE_UUID_H': 0,
+ 'HAVE_UUID_GENERATE_TIME_SAFE': 1,
+ 'HAVE_UUID_H': 1,
  'HAVE_UUID_UUID_H': 0,
  'HAVE_VFORK': 1,
  'HAVE_WAIT': 1,
@@ -592,7 +593,7 @@ build_time_vars = {'ABIFLAGS': '',
  'HAVE_WMEMCMP': 1,
  'HAVE_WORKING_TZSET': 1,
  'HAVE_WRITEV': 1,
- 'HAVE_ZLIB_COPY': 0,
+ 'HAVE_ZLIB_COPY': 1,
  'HAVE_ZLIB_H': 0,
  'HAVE__GETPTY': 0,
  'HOSTRUNNER': '',
@@ -611,7 +612,6 @@ build_time_vars = {'ABIFLAGS': '',
  'IO_OBJS': '\\',
  'LDCXXSHARED': 'g++ -shared',
  'LDFLAGS': '',
- 'LDFLAGS_NODIST': '',
  'LDLIBRARY': 'libpython3.12.so',
  'LDLIBRARYDIR': '',
  'LDSHARED': 'gcc -shared',
@@ -620,19 +620,20 @@ build_time_vars = {'ABIFLAGS': '',
  'LIBDEST': '/usr/lib/python3.12',
  'LIBDIR': '/usr/lib',
  'LIBEXPAT_A': 'Modules/expat/libexpat.a',
- 'LIBEXPAT_CFLAGS': '-I./Modules/expat -fno-strict-overflow -Wsign-compare '
-                    '-DNDEBUG -g -O3 -Wall -std=c11 -Wextra '
+ 'LIBEXPAT_CFLAGS': '-fno-strict-overflow -Wsign-compare -DNDEBUG -g -O3 -Wall '
+                    '-fno-semantic-interposition -std=c11 -Wextra '
                     '-Wno-unused-parameter -Wno-missing-field-initializers '
                     '-Wstrict-prototypes -Werror=implicit-function-declaration '
-                    '-fvisibility=hidden  -I./Include/internal -I. -I./Include '
-                    '-fPIC -fPIC',
+                    '-fvisibility=hidden -fprofile-use -fprofile-correction '
+                    '-I./Include/internal -I. -I./Include -fPIC -fPIC',
  'LIBEXPAT_HEADERS': '\\',
  'LIBEXPAT_OBJS': '\\',
  'LIBHACL_CFLAGS': '-I./Modules/_hacl/include -D_BSD_SOURCE -D_DEFAULT_SOURCE '
                    '-fno-strict-overflow -Wsign-compare -DNDEBUG -g -O3 -Wall '
-                   '-std=c11 -Wextra -Wno-unused-parameter '
-                   '-Wno-missing-field-initializers -Wstrict-prototypes '
-                   '-Werror=implicit-function-declaration -fvisibility=hidden  '
+                   '-fno-semantic-interposition -std=c11 -Wextra '
+                   '-Wno-unused-parameter -Wno-missing-field-initializers '
+                   '-Wstrict-prototypes -Werror=implicit-function-declaration '
+                   '-fvisibility=hidden -fprofile-use -fprofile-correction '
                    '-I./Include/internal -I. -I./Include -fPIC -fPIC',
  'LIBHACL_HEADERS': '\\',
  'LIBHACL_SHA2_A': 'Modules/_hacl/libHacl_Hash_SHA2.a',
@@ -642,11 +643,12 @@ build_time_vars = {'ABIFLAGS': '',
  'LIBMPDEC_A': 'Modules/_decimal/libmpdec/libmpdec.a',
  'LIBMPDEC_CFLAGS': '-I./Modules/_decimal/libmpdec -DCONFIG_64=1 -DANSI=1 '
                     '-DHAVE_UINT128_T=1 -fno-strict-overflow -Wsign-compare '
-                    '-DNDEBUG -g -O3 -Wall -std=c11 -Wextra '
-                    '-Wno-unused-parameter -Wno-missing-field-initializers '
-                    '-Wstrict-prototypes -Werror=implicit-function-declaration '
-                    '-fvisibility=hidden  -I./Include/internal -I. -I./Include '
-                    '-fPIC -fPIC',
+                    '-DNDEBUG -g -O3 -Wall -fno-semantic-interposition '
+                    '-std=c11 -Wextra -Wno-unused-parameter '
+                    '-Wno-missing-field-initializers -Wstrict-prototypes '
+                    '-Werror=implicit-function-declaration -fvisibility=hidden '
+                    '-fprofile-use -fprofile-correction -I./Include/internal '
+                    '-I. -I./Include -fPIC -fPIC',
  'LIBMPDEC_HEADERS': '\\',
  'LIBMPDEC_OBJS': '\\',
  'LIBOBJDIR': 'Python/',
@@ -684,19 +686,21 @@ build_time_vars = {'ABIFLAGS': '',
                    '_json  _lsprof  _opcode  _pickle  _queue  _random  '
                    '_struct  _xxsubinterpreters  _xxinterpchannels  _zoneinfo  '
                    'audioop  math  cmath  _statistics  _datetime  _decimal  '
-                   'binascii  _lzma  _md5  _sha1  _sha2  _sha3  _blake2  '
-                   'pyexpat  _elementtree  _codecs_cn  _codecs_hk  '
-                   '_codecs_iso2022  _codecs_jp  _codecs_kr  _codecs_tw  '
-                   '_multibytecodec  unicodedata  fcntl  grp  mmap  '
-                   'ossaudiodev  _posixsubprocess  resource  select  _socket  '
-                   'spwd  syslog  termios  _posixshmem  _multiprocessing  '
-                   '_curses  _curses_panel  xxsubtype  _xxtestfuzz  '
-                   '_testbuffer  _testinternalcapi  _testcapi  _testclinic  '
-                   '_testimportmultiple  _testmultiphase  _testsinglephase  '
-                   'xxlimited  xxlimited_35  atexit  faulthandler  posix  '
-                   '_signal  _tracemalloc  _codecs  _collections  errno  _io  '
-                   'itertools  _sre  _thread  time  _typing  _weakref  _abc  '
-                   '_functools  _locale  _operator  _stat  _symtable  pwd',
+                   'binascii  _bz2  _lzma  zlib  _dbm  _gdbm  readline  _md5  '
+                   '_sha1  _sha2  _sha3  _blake2  pyexpat  _elementtree  '
+                   '_codecs_cn  _codecs_hk  _codecs_iso2022  _codecs_jp  '
+                   '_codecs_kr  _codecs_tw  _multibytecodec  unicodedata  '
+                   '_crypt  fcntl  grp  mmap  ossaudiodev  _posixsubprocess  '
+                   'resource  select  _socket  spwd  syslog  termios  '
+                   '_posixshmem  _multiprocessing  _ctypes  _curses  '
+                   '_curses_panel  _ssl  _hashlib  _uuid  xxsubtype  '
+                   '_xxtestfuzz  _testbuffer  _testinternalcapi  _testcapi  '
+                   '_testclinic  _testimportmultiple  _testmultiphase  '
+                   '_testsinglephase  _ctypes_test  xxlimited  xxlimited_35  '
+                   'atexit  faulthandler  posix  _signal  _tracemalloc  '
+                   '_codecs  _collections  errno  _io  itertools  _sre  '
+                   '_thread  time  _typing  _weakref  _abc  _functools  '
+                   '_locale  _operator  _stat  _symtable  pwd',
  'MODDISABLED_NAMES': '',
  'MODLIBS': '',
  'MODOBJS': 'Modules/atexitmodule.o  Modules/faulthandler.o  '
@@ -715,22 +719,23 @@ build_time_vars = {'ABIFLAGS': '',
  'MODSHARED_NAMES': 'array _asyncio _bisect _contextvars _csv _heapq _json '
                     '_lsprof _opcode _pickle _queue _random _struct '
                     '_xxsubinterpreters _xxinterpchannels _zoneinfo audioop '
-                    'math cmath _statistics _datetime _decimal binascii _lzma '
-                    '_md5 _sha1 _sha2 _sha3 _blake2 pyexpat _elementtree '
-                    '_codecs_cn _codecs_hk _codecs_iso2022 _codecs_jp '
-                    '_codecs_kr _codecs_tw _multibytecodec unicodedata fcntl '
-                    'grp mmap ossaudiodev _posixsubprocess resource select '
-                    '_socket spwd syslog termios _posixshmem _multiprocessing '
-                    '_curses _curses_panel xxsubtype _xxtestfuzz _testbuffer '
-                    '_testinternalcapi _testcapi _testclinic '
-                    '_testimportmultiple _testmultiphase _testsinglephase '
-                    'xxlimited xxlimited_35',
+                    'math cmath _statistics _datetime _decimal binascii _bz2 '
+                    '_lzma zlib _dbm _gdbm readline _md5 _sha1 _sha2 _sha3 '
+                    '_blake2 pyexpat _elementtree _codecs_cn _codecs_hk '
+                    '_codecs_iso2022 _codecs_jp _codecs_kr _codecs_tw '
+                    '_multibytecodec unicodedata _crypt fcntl grp mmap '
+                    'ossaudiodev _posixsubprocess resource select _socket spwd '
+                    'syslog termios _posixshmem _multiprocessing _ctypes '
+                    '_curses _curses_panel _ssl _hashlib _uuid xxsubtype '
+                    '_xxtestfuzz _testbuffer _testinternalcapi _testcapi '
+                    '_testclinic _testimportmultiple _testmultiphase '
+                    '_testsinglephase _ctypes_test xxlimited xxlimited_35',
  'MODULE_ARRAY_STATE': 'yes',
  'MODULE_ATEXIT_LDFLAGS': '',
  'MODULE_AUDIOOP_LDFLAGS': '-lm',
  'MODULE_AUDIOOP_STATE': 'yes',
- 'MODULE_BINASCII_CFLAGS': '',
- 'MODULE_BINASCII_LDFLAGS': '',
+ 'MODULE_BINASCII_CFLAGS': '-DUSE_ZLIB_CRC32',
+ 'MODULE_BINASCII_LDFLAGS': '-lz',
  'MODULE_BINASCII_STATE': 'yes',
  'MODULE_CMATH_DEPS': './Modules/_math.h',
  'MODULE_CMATH_LDFLAGS': '-lm',
@@ -754,11 +759,13 @@ build_time_vars = {'ABIFLAGS': '',
  'MODULE_POSIX_LDFLAGS': '',
  'MODULE_PWD_LDFLAGS': '',
  'MODULE_PWD_STATE': 'yes',
- 'MODULE_PYEXPAT_CFLAGS': '-I./Modules/expat',
- 'MODULE_PYEXPAT_DEPS': '\\ Modules/expat/libexpat.a',
- 'MODULE_PYEXPAT_LDFLAGS': '-lm Modules/expat/libexpat.a',
+ 'MODULE_PYEXPAT_CFLAGS': '',
+ 'MODULE_PYEXPAT_DEPS': '',
+ 'MODULE_PYEXPAT_LDFLAGS': '-lexpat',
  'MODULE_PYEXPAT_STATE': 'yes',
- 'MODULE_READLINE_STATE': 'missing',
+ 'MODULE_READLINE_CFLAGS': '-D_DEFAULT_SOURCE',
+ 'MODULE_READLINE_LDFLAGS': '-lreadline',
+ 'MODULE_READLINE_STATE': 'yes',
  'MODULE_RESOURCE_STATE': 'yes',
  'MODULE_SELECT_STATE': 'yes',
  'MODULE_SPWD_STATE': 'yes',
@@ -772,7 +779,9 @@ build_time_vars = {'ABIFLAGS': '',
  'MODULE_XXLIMITED_35_STATE': 'yes',
  'MODULE_XXLIMITED_STATE': 'yes',
  'MODULE_XXSUBTYPE_STATE': 'yes',
- 'MODULE_ZLIB_STATE': 'missing',
+ 'MODULE_ZLIB_CFLAGS': '',
+ 'MODULE_ZLIB_LDFLAGS': '-lz',
+ 'MODULE_ZLIB_STATE': 'yes',
  'MODULE__ABC_LDFLAGS': '',
  'MODULE__ASYNCIO_STATE': 'yes',
  'MODULE__BISECT_STATE': 'yes',
@@ -794,7 +803,9 @@ build_time_vars = {'ABIFLAGS': '',
                         './Modules/_blake2/blake2module.h ./Modules/hashlib.h',
  'MODULE__BLAKE2_LDFLAGS': '',
  'MODULE__BLAKE2_STATE': 'yes',
- 'MODULE__BZ2_STATE': 'missing',
+ 'MODULE__BZ2_CFLAGS': '',
+ 'MODULE__BZ2_LDFLAGS': '-lbz2',
+ 'MODULE__BZ2_STATE': 'yes',
  'MODULE__CODECS_CN_DEPS': './Modules/cjkcodecs/mappings_cn.h '
                            './Modules/cjkcodecs/multibytecodec.h '
                            './Modules/cjkcodecs/cjkcodecs.h',
@@ -827,34 +838,45 @@ build_time_vars = {'ABIFLAGS': '',
  'MODULE__CODECS_TW_STATE': 'yes',
  'MODULE__COLLECTIONS_LDFLAGS': '',
  'MODULE__CONTEXTVARS_STATE': 'yes',
- 'MODULE__CRYPT_STATE': 'missing',
+ 'MODULE__CRYPT_CFLAGS': '',
+ 'MODULE__CRYPT_LDFLAGS': '-lcrypt',
+ 'MODULE__CRYPT_STATE': 'yes',
  'MODULE__CSV_STATE': 'yes',
+ 'MODULE__CTYPES_CFLAGS': '-fno-strict-overflow',
  'MODULE__CTYPES_DEPS': './Modules/_ctypes/ctypes.h',
+ 'MODULE__CTYPES_LDFLAGS': '-L/usr/lib/../lib -lffi -ldl',
  'MODULE__CTYPES_MALLOC_CLOSURE': '',
- 'MODULE__CTYPES_STATE': 'missing',
- 'MODULE__CTYPES_TEST_STATE': 'missing',
- 'MODULE__CURSES_CFLAGS': '',
+ 'MODULE__CTYPES_STATE': 'yes',
+ 'MODULE__CTYPES_TEST_LDFLAGS': '-lm',
+ 'MODULE__CTYPES_TEST_STATE': 'yes',
+ 'MODULE__CURSES_CFLAGS': '-D_DEFAULT_SOURCE',
  'MODULE__CURSES_LDFLAGS': '-lncursesw',
- 'MODULE__CURSES_PANEL_CFLAGS': '',
+ 'MODULE__CURSES_PANEL_CFLAGS': '-D_DEFAULT_SOURCE  -D_DEFAULT_SOURCE',
  'MODULE__CURSES_PANEL_LDFLAGS': '-lpanelw -lncursesw',
  'MODULE__CURSES_PANEL_STATE': 'yes',
  'MODULE__CURSES_STATE': 'yes',
  'MODULE__DATETIME_LDFLAGS': '-lm',
  'MODULE__DATETIME_STATE': 'yes',
- 'MODULE__DBM_STATE': 'missing',
+ 'MODULE__DBM_CFLAGS': '-DUSE_NDBM',
+ 'MODULE__DBM_LDFLAGS': '-lgdbm_compat',
+ 'MODULE__DBM_STATE': 'yes',
  'MODULE__DECIMAL_CFLAGS': '-I./Modules/_decimal/libmpdec -DCONFIG_64=1 '
                            '-DANSI=1 -DHAVE_UINT128_T=1',
  'MODULE__DECIMAL_DEPS': './Modules/_decimal/docstrings.h \\ '
                          'Modules/_decimal/libmpdec/libmpdec.a',
  'MODULE__DECIMAL_LDFLAGS': '-lm Modules/_decimal/libmpdec/libmpdec.a',
  'MODULE__DECIMAL_STATE': 'yes',
- 'MODULE__ELEMENTTREE_CFLAGS': '-I./Modules/expat',
- 'MODULE__ELEMENTTREE_DEPS': './Modules/pyexpat.c \\ Modules/expat/libexpat.a',
+ 'MODULE__ELEMENTTREE_CFLAGS': '',
+ 'MODULE__ELEMENTTREE_DEPS': './Modules/pyexpat.c',
  'MODULE__ELEMENTTREE_STATE': 'yes',
  'MODULE__FUNCTOOLS_LDFLAGS': '',
- 'MODULE__GDBM_STATE': 'missing',
+ 'MODULE__GDBM_CFLAGS': '',
+ 'MODULE__GDBM_LDFLAGS': '-lgdbm',
+ 'MODULE__GDBM_STATE': 'yes',
+ 'MODULE__HASHLIB_CFLAGS': '',
  'MODULE__HASHLIB_DEPS': './Modules/hashlib.h',
- 'MODULE__HASHLIB_STATE': 'missing',
+ 'MODULE__HASHLIB_LDFLAGS': '-lcrypto',
+ 'MODULE__HASHLIB_STATE': 'yes',
  'MODULE__HEAPQ_STATE': 'yes',
  'MODULE__IO_CFLAGS': '-I./Modules/_io',
  'MODULE__IO_DEPS': './Modules/_io/_iomodule.h',
@@ -910,11 +932,13 @@ build_time_vars = {'ABIFLAGS': '',
                          './Modules/_sqlite/row.h ./Modules/_sqlite/util.h',
  'MODULE__SQLITE3_STATE': 'disabled',
  'MODULE__SRE_LDFLAGS': '',
+ 'MODULE__SSL_CFLAGS': '',
  'MODULE__SSL_DEPS': './Modules/_ssl.h ./Modules/_ssl/cert.c '
                      './Modules/_ssl/debughelpers.c ./Modules/_ssl/misc.c '
                      './Modules/_ssl_data.h ./Modules/_ssl_data_111.h '
                      './Modules/_ssl_data_300.h ./Modules/socketmodule.h',
- 'MODULE__SSL_STATE': 'missing',
+ 'MODULE__SSL_LDFLAGS': '-lssl -lcrypto',
+ 'MODULE__SSL_STATE': 'yes',
  'MODULE__STATISTICS_LDFLAGS': '-lm',
  'MODULE__STATISTICS_STATE': 'yes',
  'MODULE__STAT_LDFLAGS': '',
@@ -934,7 +958,9 @@ build_time_vars = {'ABIFLAGS': '',
  'MODULE__TRACEMALLOC_LDFLAGS': '',
  'MODULE__TYPING_LDFLAGS': '',
  'MODULE__TYPING_STATE': 'yes',
- 'MODULE__UUID_STATE': 'missing',
+ 'MODULE__UUID_CFLAGS': '-I/usr/include/uuid',
+ 'MODULE__UUID_LDFLAGS': '-luuid',
+ 'MODULE__UUID_STATE': 'yes',
  'MODULE__WEAKREF_LDFLAGS': '',
  'MODULE__XXINTERPCHANNELS_STATE': 'yes',
  'MODULE__XXSUBINTERPRETERS_STATE': 'yes',
@@ -981,39 +1007,46 @@ build_time_vars = {'ABIFLAGS': '',
  'PYTHON_OBJS': '\\',
  'PY_BUILTIN_HASHLIB_HASHES': '"md5,sha1,sha2,sha3,blake2"',
  'PY_BUILTIN_MODULE_CFLAGS': '-fno-strict-overflow -Wsign-compare -DNDEBUG -g '
-                             '-O3 -Wall -std=c11 -Wextra -Wno-unused-parameter '
+                             '-O3 -Wall -fno-semantic-interposition -std=c11 '
+                             '-Wextra -Wno-unused-parameter '
                              '-Wno-missing-field-initializers '
                              '-Wstrict-prototypes '
                              '-Werror=implicit-function-declaration '
-                             '-fvisibility=hidden  -I./Include/internal -I. '
+                             '-fvisibility=hidden -fprofile-use '
+                             '-fprofile-correction -I./Include/internal -I. '
                              '-I./Include -fPIC -DPy_BUILD_CORE_BUILTIN',
  'PY_CFLAGS': '-fno-strict-overflow -Wsign-compare -DNDEBUG -g -O3 -Wall',
- 'PY_CFLAGS_NODIST': '-std=c11 -Wextra -Wno-unused-parameter '
-                     '-Wno-missing-field-initializers -Wstrict-prototypes '
+ 'PY_CFLAGS_NODIST': '-fno-semantic-interposition -std=c11 -Wextra '
+                     '-Wno-unused-parameter -Wno-missing-field-initializers '
+                     '-Wstrict-prototypes '
                      '-Werror=implicit-function-declaration '
-                     '-fvisibility=hidden  -I./Include/internal',
+                     '-fvisibility=hidden -fprofile-use -fprofile-correction '
+                     '-I./Include/internal',
  'PY_COERCE_C_LOCALE': 1,
  'PY_CORE_CFLAGS': '-fno-strict-overflow -Wsign-compare -DNDEBUG -g -O3 -Wall '
-                   '-std=c11 -Wextra -Wno-unused-parameter '
-                   '-Wno-missing-field-initializers -Wstrict-prototypes '
-                   '-Werror=implicit-function-declaration -fvisibility=hidden  '
+                   '-fno-semantic-interposition -std=c11 -Wextra '
+                   '-Wno-unused-parameter -Wno-missing-field-initializers '
+                   '-Wstrict-prototypes -Werror=implicit-function-declaration '
+                   '-fvisibility=hidden -fprofile-use -fprofile-correction '
                    '-I./Include/internal -I. -I./Include -fPIC -DPy_BUILD_CORE',
- 'PY_CORE_LDFLAGS': '',
+ 'PY_CORE_LDFLAGS': '-fno-semantic-interposition',
  'PY_CPPFLAGS': '-I. -I./Include',
  'PY_ENABLE_SHARED': 1,
  'PY_HAVE_PERF_TRAMPOLINE': 1,
  'PY_LDFLAGS': '',
- 'PY_LDFLAGS_NODIST': '',
+ 'PY_LDFLAGS_NODIST': '-fno-semantic-interposition',
  'PY_LDFLAGS_NOLTO': '',
  'PY_SQLITE_ENABLE_LOAD_EXTENSION': 0,
  'PY_SQLITE_HAVE_SERIALIZE': 0,
  'PY_SSL_DEFAULT_CIPHERS': 1,
  'PY_SSL_DEFAULT_CIPHER_STRING': 0,
  'PY_STDMODULE_CFLAGS': '-fno-strict-overflow -Wsign-compare -DNDEBUG -g -O3 '
-                        '-Wall -std=c11 -Wextra -Wno-unused-parameter '
-                        '-Wno-missing-field-initializers -Wstrict-prototypes '
+                        '-Wall -fno-semantic-interposition -std=c11 -Wextra '
+                        '-Wno-unused-parameter -Wno-missing-field-initializers '
+                        '-Wstrict-prototypes '
                         '-Werror=implicit-function-declaration '
-                        '-fvisibility=hidden  -I./Include/internal -I. '
+                        '-fvisibility=hidden -fprofile-use '
+                        '-fprofile-correction -I./Include/internal -I. '
                         '-I./Include -fPIC',
  'PY_SUPPORT_TIER': 1,
  'Py_DEBUG': 0,
@@ -1055,7 +1088,12 @@ build_time_vars = {'ABIFLAGS': '',
                'Modules/_datetime.cpython-312-x86_64-linux-gnu.so '
                'Modules/_decimal.cpython-312-x86_64-linux-gnu.so '
                'Modules/binascii.cpython-312-x86_64-linux-gnu.so '
+               'Modules/_bz2.cpython-312-x86_64-linux-gnu.so '
                'Modules/_lzma.cpython-312-x86_64-linux-gnu.so '
+               'Modules/zlib.cpython-312-x86_64-linux-gnu.so '
+               'Modules/_dbm.cpython-312-x86_64-linux-gnu.so '
+               'Modules/_gdbm.cpython-312-x86_64-linux-gnu.so '
+               'Modules/readline.cpython-312-x86_64-linux-gnu.so '
                'Modules/_md5.cpython-312-x86_64-linux-gnu.so '
                'Modules/_sha1.cpython-312-x86_64-linux-gnu.so '
                'Modules/_sha2.cpython-312-x86_64-linux-gnu.so '
@@ -1071,6 +1109,7 @@ build_time_vars = {'ABIFLAGS': '',
                'Modules/_codecs_tw.cpython-312-x86_64-linux-gnu.so '
                'Modules/_multibytecodec.cpython-312-x86_64-linux-gnu.so '
                'Modules/unicodedata.cpython-312-x86_64-linux-gnu.so '
+               'Modules/_crypt.cpython-312-x86_64-linux-gnu.so '
                'Modules/fcntl.cpython-312-x86_64-linux-gnu.so '
                'Modules/grp.cpython-312-x86_64-linux-gnu.so '
                'Modules/mmap.cpython-312-x86_64-linux-gnu.so '
@@ -1084,8 +1123,12 @@ build_time_vars = {'ABIFLAGS': '',
                'Modules/termios.cpython-312-x86_64-linux-gnu.so '
                'Modules/_posixshmem.cpython-312-x86_64-linux-gnu.so '
                'Modules/_multiprocessing.cpython-312-x86_64-linux-gnu.so '
+               'Modules/_ctypes.cpython-312-x86_64-linux-gnu.so '
                'Modules/_curses.cpython-312-x86_64-linux-gnu.so '
                'Modules/_curses_panel.cpython-312-x86_64-linux-gnu.so '
+               'Modules/_ssl.cpython-312-x86_64-linux-gnu.so '
+               'Modules/_hashlib.cpython-312-x86_64-linux-gnu.so '
+               'Modules/_uuid.cpython-312-x86_64-linux-gnu.so '
                'Modules/xxsubtype.cpython-312-x86_64-linux-gnu.so '
                'Modules/_xxtestfuzz.cpython-312-x86_64-linux-gnu.so '
                'Modules/_testbuffer.cpython-312-x86_64-linux-gnu.so '
@@ -1095,6 +1138,7 @@ build_time_vars = {'ABIFLAGS': '',
                'Modules/_testimportmultiple.cpython-312-x86_64-linux-gnu.so '
                'Modules/_testmultiphase.cpython-312-x86_64-linux-gnu.so '
                'Modules/_testsinglephase.cpython-312-x86_64-linux-gnu.so '
+               'Modules/_ctypes_test.cpython-312-x86_64-linux-gnu.so '
                'Modules/xxlimited.cpython-312-x86_64-linux-gnu.so '
                'Modules/xxlimited_35.cpython-312-x86_64-linux-gnu.so',
  'SHELL': '/bin/sh -e',

@@ -26,10 +26,10 @@
 #
 MACHINE="x86_64"
 OS="linux-gnu"
-CC="x86_64-lfs-linux-gnu-gcc"
+CC="gcc"
 CFLAGS="-g -O2 -DNDEBUG"
 VERSION="5.3.0"
-MACHTYPE="x86_64-lfs-linux-gnu"
+MACHTYPE="x86_64-pc-linux-gnu"
 
 PATH=/bin:/usr/bin:/usr/local/bin:$PATH
 export PATH

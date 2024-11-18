@@ -35,11 +35,12 @@ LiveCD variant, provided there are people able to maintain it.
 - Update python to 3.12.7
 - Add (blfs) libidn2 2.3.7
   - Add (blfs) libunistring 1.2 as recommended dependency
-- Build gmp with `--disable-assembly --host=amd64-pc-linux-gnu`
-- Build mpfr with `--enable-decimal-float=generic`
-- Build gcc with `--with-arch=x86-64 --with-tune=generic`
-- Build libffi with `--with-gcc-arch=x86-64`
-- Install all of elfutils, then clean up all installed static libraries
+- Build gmp 6.3.0 with `--disable-assembly --host=amd64-pc-linux-gnu`
+- Build mpfr 4.2.1 with `--enable-decimal-float=generic`
+- Build gcc 14.2.0 with `--with-arch=x86-64 --with-tune=generic`
+- Install all of elfutils 0.191, then clean up all installed static libraries
+  - `rm -fv /usr/lib/lib{elf,dw,asm}.a`
+- Build libffi 3.4.6 with `--with-gcc-arch=x86-64`
 - Install (external) pyelftools to enable systemd-boot during configuration
   - Build instructions:
 ```
@@ -64,6 +65,8 @@ root) until a text editor is available.***
 - Timezone not configured to avoid assumptions
 - Mailboxes disabled for `useradd`
 - Root password set
+- Add `pip` as link to `pip3`
+- Add `python` as link to `python3`
 - `PAGE` is set to `letter`
 - `/etc/os-release` is required before configuring systemd for bootloader
   - `/usr/lib/os-release` points to `/etc/os-release`
