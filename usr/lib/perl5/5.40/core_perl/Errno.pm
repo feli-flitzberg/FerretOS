@@ -10,8 +10,8 @@ use strict;
 
 use Config;
 "$Config{'archname'}-$Config{'osvers'}" eq
-"x86_64\-linux-6\.8\.0\-48\-generic" or
-	die "Errno architecture (x86_64\-linux-6\.8\.0\-48\-generic) does not match executable architecture ($Config{'archname'}-$Config{'osvers'})";
+"x86_64\-linux\-thread\-multi-6\.8\.0\-48\-generic" or
+	die "Errno architecture (x86_64\-linux\-thread\-multi-6\.8\.0\-48\-generic) does not match executable architecture ($Config{'archname'}-$Config{'osvers'})";
 
 our $VERSION = "1.38";
 $VERSION = eval $VERSION;

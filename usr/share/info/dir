@@ -14,6 +14,12 @@ File: dir	Node: Top	This is the top of the INFO tree
 
 * Menu: 
 
+Basics
+* Bash: (bash).                 The GNU Bourne-Again SHell.
+* Common options: (inetutils)Common options.
+                                Common options.
+* Inetutils: (inetutils).       GNU networking utilities.
+
 C++ libraries
 * autosprintf: (autosprintf).   Support for printf format strings in C++.
 
@@ -2336,22 +2342,53 @@ Individual utilities
 * cxxfilt: (binutils)c++filt.                   MS-DOS name for c++filt.
 * dlltool: (binutils)dlltool.                   Create files needed to build 
                                                   and use DLLs.
+* dnsdomainname: (inetutils)dnsdomainname invocation.
+                                                Show DNS domain name.
 * elfedit: (binutils)elfedit.                   Update ELF header and property 
                                                   of ELF files.
+* ftp: (inetutils)ftp invocation.               FTP client.
+* ftpd: (inetutils)ftpd invocation.             FTP Daemon.
+* hostname: (inetutils)hostname invocation.     Show or set system host name.
+* ifconfig: (inetutils)ifconfig invocation.     Configure network interfaces.
+* inetd: (inetutils)inetd invocation.           Internet super-server.
+* libtool-invocation: (libtool)Invoking libtool.
+                                                Running the 'libtool' script.
+* libtoolize: (libtool)Invoking libtoolize.     Adding libtool support.
+* logger: (inetutils)logger invocation.         Send messages to the system 
+                                                  log.
 * nm: (binutils)nm.                             List symbols from object files.
 * objcopy: (binutils)objcopy.                   Copy and translate object 
                                                   files.
 * objdump: (binutils)objdump.                   Display information from 
                                                   object files.
+* ping: (inetutils)ping invocation.             Packets to network hosts.
+* ping6: (inetutils)ping6 invocation.           Packets to IPv6 network hosts.
 * ranlib: (binutils)ranlib.                     Generate index to archive 
                                                   contents.
+* rcp: (inetutils)rcp invocation.               Remote copy
 * readelf: (binutils)readelf.                   Display the contents of ELF 
                                                   format files.
+* rexec: (inetutils)rexec invocation.           Remote execution client.
+* rexecd: (inetutils)rexecd invocation.         Remote execution server.
+* rlogin: (inetutils)rlogin invocation.         Remote login.
+* rlogind: (inetutils)rlogind invocation.       Remote login server.
+* rsh: (inetutils)rsh invocation.               Remote shell.
+* rshd: (inetutils)rshd invocation.             Remote shell server.
 * size: (binutils)size.                         List section sizes and total 
                                                   size.
 * strings: (binutils)strings.                   List printable strings from 
                                                   files.
 * strip: (binutils)strip.                       Discard symbols.
+* syslogd: (inetutils)syslogd invocation.       Syslog server.
+* talk: (inetutils)talk invocation.             Talk client.
+* talkd: (inetutils)talkd invocation.           Talk server.
+* telnet: (inetutils)telnet invocation.         User interface to TELNET.
+* telnetd: (inetutils)telnetd invocation.       Telnet server.
+* tftp: (inetutils)tftp invocation.             TFTP client.
+* tftpd: (inetutils)tftpd invocation.           TFTP server.
+* traceroute: (inetutils)traceroute invocation. Trace the route to a host.
+* uucpd: (inetutils)uucpd invocation.           Unix to Unix Copy.
+* whois: (inetutils)whois invocation.           Whois user interface.
 * windmc: (binutils)windmc.                     Generator for Windows message 
                                                   resources.
 * windres: (binutils)windres.                   Manipulate Windows resources.
@@ -2369,6 +2406,12 @@ Programming
 * flex: (flex).                 Fast lexical analyzer generator (lex 
                                   replacement).
 
+Programming & development tools
+* gdbm_dump: (gdbm) gdbm_dump.  Dump the GDBM database into a flat file.
+* gdbm_load: (gdbm) gdbm_load.  Load the database from a flat file.
+* gdbmtool: (gdbm) gdbmtool.    Examine and modify a GDBM database.
+* GDBM: (gdbm).                 The GNU database manager.
+
 Software development
 * As: (as).                     The GNU assembler.
 * Bfd: (bfd).                   The Binary File Descriptor library.
@@ -2383,7 +2426,9 @@ Software development
 * Gas: (as).                    The GNU assembler.
 * Ld: (ld).                     The GNU linker.
 * Ld-Internals: (ldint).        The GNU linker internals.
+* Libtool: (libtool).           Generic shared library support script.
 * SFrame: (sframe-spec).        The Simple Frame format.
+* bison: (bison).               GNU parser generator (Yacc replacement).
 * g++: (gcc).                   The GNU C++ compiler.
 * gcc: (gcc).                   The GNU Compiler Collection.
 * gccinstall: (gccinstall).     Installing the GNU Compiler Collection.

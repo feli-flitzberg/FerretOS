@@ -9,7 +9,7 @@
 
 /* Package name      : perl5
  * Source directory  : .
- * Configuration time: Fri Nov 15 18:45:29 UTC 2024
+ * Configuration time: Mon Nov 18 22:07:39 UTC 2024
  * Configured by     : root
  * Target system     : linux deltazulu 6.8.0-48-generic #48-ubuntu smp preempt_dynamic fri sep 27 14:04:52 utc 2024 x86_64 gnulinux 
  */
@@ -56,7 +56,7 @@
  *	This symbol, if defined, indicates that the crypt routine is available
  *	to encrypt passwords and the like.
  */
-/*#define HAS_CRYPT		/ **/
+#define HAS_CRYPT		/**/
 
 /* HAS_CTERMID:
  *	This symbol, if defined, indicates that the ctermid routine is
@@ -606,7 +606,7 @@
  *	This symbol, if defined, indicates that <rpcsvc/dbm.h> exists and
  *	should be included.
  */
-/*#define I_DBM	/ **/
+#define I_DBM	/**/
 /*#define I_RPCSVC_DBM	/ **/
 
 /* I_DLFCN:
@@ -624,7 +624,7 @@
  *	This symbol, if defined, indicates that <gdbm.h> exists and should
  *	be included.
  */
-/*#define I_GDBM	/ **/
+#define I_GDBM	/**/
 
 /* I_LOCALE:
  *	This symbol, if defined, indicates to the C program that it should
@@ -2082,10 +2082,10 @@
  *	parameter information. While ANSI C prototypes are supported in C++,
  *	K&R style function declarations will yield errors.
  */
-/*#define I_NDBM	/ **/
+#define I_NDBM	/**/
 /*#define I_GDBMNDBM	/ **/
 /*#define I_GDBM_NDBM	/ **/
-/*#define NDBM_H_USES_PROTOTYPES	/ **/
+#define NDBM_H_USES_PROTOTYPES	/**/
 /*#define GDBMNDBM_H_USES_PROTOTYPES	/ **/
 /*#define GDBM_NDBM_H_USES_PROTOTYPES	/ **/
 
@@ -2401,7 +2401,7 @@
  *	to the program to supply one.  A good guess is
  *		extern int dbminit(char *);
  */
-/*#define HAS_DBMINIT_PROTO	/ **/
+#define HAS_DBMINIT_PROTO	/**/
 
 /* HAS_DIR_DD_FD:
  *	This symbol, if defined, indicates that the DIR* dirstream
@@ -3157,7 +3157,7 @@
 /* HAS_OFF64_T:
  *	This symbol will be defined if the C compiler supports off64_t.
  */
-/*#define HAS_OFF64_T		/ **/
+#define HAS_OFF64_T		/**/
 
 /* HAS_PIPE2:
  *	This symbol, if defined, indicates that the pipe2 routine is
@@ -3367,7 +3367,7 @@
  *	to the program to supply one.  Good guesses are
  *		extern int setresgid(uid_t ruid, uid_t euid, uid_t suid);
  */
-/*#define HAS_SETRESGID_PROTO	/ **/
+#define HAS_SETRESGID_PROTO	/**/
 
 /* HAS_SETRESUID_PROTO:
  *	This symbol, if defined, indicates that the system provides
@@ -3375,7 +3375,7 @@
  *	to the program to supply one.  Good guesses are
  *		extern int setresuid(uid_t ruid, uid_t euid, uid_t suid);
  */
-/*#define HAS_SETRESUID_PROTO	/ **/
+#define HAS_SETRESUID_PROTO	/**/
 
 /* HAS_STRUCT_STATFS_F_FLAGS:
  *	This symbol, if defined, indicates that the struct statfs
@@ -3673,7 +3673,7 @@
  *	This symbol, if defined, indicates that <crypt.h> exists and
  *	should be included.
  */
-/*#define I_CRYPT		/ **/
+#define I_CRYPT		/**/
 
 /* DB_Prefix_t:
  *	This symbol contains the type of the prefix structure element
@@ -3781,7 +3781,7 @@
  *	This symbol, if defined, indicates that <quadmath.h> exists and
  *	should be included.
  */
-/*#define I_QUADMATH		/ **/
+#define I_QUADMATH		/**/
 
 /* I_SHADOW:
  *	This symbol, if defined, indicates that <shadow.h> exists and
@@ -4385,7 +4385,7 @@
  *	be built to use multiplicity.
  */
 #ifndef MULTIPLICITY
-/*#define MULTIPLICITY		/ **/
+#define MULTIPLICITY		/**/
 #endif
 
 /* USE_NSGETEXECUTABLEPATH:
@@ -4509,7 +4509,7 @@
  *	where library files may be held under a private library, for
  *	instance.
  */
-#define ARCHNAME "x86_64-linux"		/**/
+#define ARCHNAME "x86_64-linux-thread-multi"		/**/
 
 /* HAS_ASCTIME_R:
  *	This symbol, if defined, indicates that the asctime_r routine
@@ -4521,8 +4521,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_asctime_r
  *	is defined.
  */
-/*#define HAS_ASCTIME_R	/ **/
-#define ASCTIME_R_PROTO 0	/**/
+#define HAS_ASCTIME_R	/**/
+#define ASCTIME_R_PROTO REENTRANT_PROTO_B_SB	/**/
 
 /* HAS_CRYPT_R:
  *	This symbol, if defined, indicates that the crypt_r routine
@@ -4534,8 +4534,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_crypt_r
  *	is defined.
  */
-/*#define HAS_CRYPT_R	/ **/
-#define CRYPT_R_PROTO 0	/**/
+#define HAS_CRYPT_R	/**/
+#define CRYPT_R_PROTO REENTRANT_PROTO_B_CCS	/**/
 
 /* HAS_CTERMID_R:
  *	This symbol, if defined, indicates that the ctermid_r routine
@@ -4560,8 +4560,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_ctime_r
  *	is defined.
  */
-/*#define HAS_CTIME_R	/ **/
-#define CTIME_R_PROTO 0	/**/
+#define HAS_CTIME_R	/**/
+#define CTIME_R_PROTO REENTRANT_PROTO_B_SB	/**/
 
 /* HAS_DRAND48_R:
  *	This symbol, if defined, indicates that the drand48_r routine
@@ -4573,8 +4573,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_drand48_r
  *	is defined.
  */
-/*#define HAS_DRAND48_R	/ **/
-#define DRAND48_R_PROTO 0	/**/
+#define HAS_DRAND48_R	/**/
+#define DRAND48_R_PROTO REENTRANT_PROTO_I_ST	/**/
 
 /* HAS_ENDGRENT_R:
  *	This symbol, if defined, indicates that the endgrent_r routine
@@ -4677,8 +4677,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_getgrent_r
  *	is defined.
  */
-/*#define HAS_GETGRENT_R	/ **/
-#define GETGRENT_R_PROTO 0	/**/
+#define HAS_GETGRENT_R	/**/
+#define GETGRENT_R_PROTO REENTRANT_PROTO_I_SBWR	/**/
 
 /* HAS_GETGRGID_R:
  *	This symbol, if defined, indicates that the getgrgid_r routine
@@ -4690,8 +4690,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_getgrgid_r
  *	is defined.
  */
-/*#define HAS_GETGRGID_R	/ **/
-#define GETGRGID_R_PROTO 0	/**/
+#define HAS_GETGRGID_R	/**/
+#define GETGRGID_R_PROTO REENTRANT_PROTO_I_TSBWR	/**/
 
 /* HAS_GETGRNAM_R:
  *	This symbol, if defined, indicates that the getgrnam_r routine
@@ -4703,8 +4703,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_getgrnam_r
  *	is defined.
  */
-/*#define HAS_GETGRNAM_R	/ **/
-#define GETGRNAM_R_PROTO 0	/**/
+#define HAS_GETGRNAM_R	/**/
+#define GETGRNAM_R_PROTO REENTRANT_PROTO_I_CSBWR	/**/
 
 /* HAS_GETHOSTBYADDR_R:
  *	This symbol, if defined, indicates that the gethostbyaddr_r routine
@@ -4716,8 +4716,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_gethostbyaddr_r
  *	is defined.
  */
-/*#define HAS_GETHOSTBYADDR_R	/ **/
-#define GETHOSTBYADDR_R_PROTO 0	/**/
+#define HAS_GETHOSTBYADDR_R	/**/
+#define GETHOSTBYADDR_R_PROTO REENTRANT_PROTO_I_TsISBWRE	/**/
 
 /* HAS_GETHOSTBYNAME_R:
  *	This symbol, if defined, indicates that the gethostbyname_r routine
@@ -4729,8 +4729,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_gethostbyname_r
  *	is defined.
  */
-/*#define HAS_GETHOSTBYNAME_R	/ **/
-#define GETHOSTBYNAME_R_PROTO 0	/**/
+#define HAS_GETHOSTBYNAME_R	/**/
+#define GETHOSTBYNAME_R_PROTO REENTRANT_PROTO_I_CSBWRE	/**/
 
 /* HAS_GETHOSTENT_R:
  *	This symbol, if defined, indicates that the gethostent_r routine
@@ -4742,8 +4742,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_gethostent_r
  *	is defined.
  */
-/*#define HAS_GETHOSTENT_R	/ **/
-#define GETHOSTENT_R_PROTO 0	/**/
+#define HAS_GETHOSTENT_R	/**/
+#define GETHOSTENT_R_PROTO REENTRANT_PROTO_I_SBWRE	/**/
 
 /* HAS_GETLOGIN_R:
  *	This symbol, if defined, indicates that the getlogin_r routine
@@ -4755,8 +4755,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_getlogin_r
  *	is defined.
  */
-/*#define HAS_GETLOGIN_R	/ **/
-#define GETLOGIN_R_PROTO 0	/**/
+#define HAS_GETLOGIN_R	/**/
+#define GETLOGIN_R_PROTO REENTRANT_PROTO_I_BW	/**/
 
 /* HAS_GETNETBYADDR_R:
  *	This symbol, if defined, indicates that the getnetbyaddr_r routine
@@ -4768,8 +4768,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_getnetbyaddr_r
  *	is defined.
  */
-/*#define HAS_GETNETBYADDR_R	/ **/
-#define GETNETBYADDR_R_PROTO 0	/**/
+#define HAS_GETNETBYADDR_R	/**/
+#define GETNETBYADDR_R_PROTO REENTRANT_PROTO_I_uISBWRE	/**/
 
 /* HAS_GETNETBYNAME_R:
  *	This symbol, if defined, indicates that the getnetbyname_r routine
@@ -4781,8 +4781,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_getnetbyname_r
  *	is defined.
  */
-/*#define HAS_GETNETBYNAME_R	/ **/
-#define GETNETBYNAME_R_PROTO 0	/**/
+#define HAS_GETNETBYNAME_R	/**/
+#define GETNETBYNAME_R_PROTO REENTRANT_PROTO_I_CSBWRE	/**/
 
 /* HAS_GETNETENT_R:
  *	This symbol, if defined, indicates that the getnetent_r routine
@@ -4794,8 +4794,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_getnetent_r
  *	is defined.
  */
-/*#define HAS_GETNETENT_R	/ **/
-#define GETNETENT_R_PROTO 0	/**/
+#define HAS_GETNETENT_R	/**/
+#define GETNETENT_R_PROTO REENTRANT_PROTO_I_SBWRE	/**/
 
 /* HAS_GETPROTOBYNAME_R:
  *	This symbol, if defined, indicates that the getprotobyname_r routine
@@ -4807,8 +4807,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_getprotobyname_r
  *	is defined.
  */
-/*#define HAS_GETPROTOBYNAME_R	/ **/
-#define GETPROTOBYNAME_R_PROTO 0	/**/
+#define HAS_GETPROTOBYNAME_R	/**/
+#define GETPROTOBYNAME_R_PROTO REENTRANT_PROTO_I_CSBWR	/**/
 
 /* HAS_GETPROTOBYNUMBER_R:
  *	This symbol, if defined, indicates that the getprotobynumber_r routine
@@ -4820,8 +4820,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_getprotobynumber_r
  *	is defined.
  */
-/*#define HAS_GETPROTOBYNUMBER_R	/ **/
-#define GETPROTOBYNUMBER_R_PROTO 0	/**/
+#define HAS_GETPROTOBYNUMBER_R	/**/
+#define GETPROTOBYNUMBER_R_PROTO REENTRANT_PROTO_I_ISBWR	/**/
 
 /* HAS_GETPROTOENT_R:
  *	This symbol, if defined, indicates that the getprotoent_r routine
@@ -4833,8 +4833,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_getprotoent_r
  *	is defined.
  */
-/*#define HAS_GETPROTOENT_R	/ **/
-#define GETPROTOENT_R_PROTO 0	/**/
+#define HAS_GETPROTOENT_R	/**/
+#define GETPROTOENT_R_PROTO REENTRANT_PROTO_I_SBWR	/**/
 
 /* HAS_GETPWENT_R:
  *	This symbol, if defined, indicates that the getpwent_r routine
@@ -4846,8 +4846,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_getpwent_r
  *	is defined.
  */
-/*#define HAS_GETPWENT_R	/ **/
-#define GETPWENT_R_PROTO 0	/**/
+#define HAS_GETPWENT_R	/**/
+#define GETPWENT_R_PROTO REENTRANT_PROTO_I_SBWR	/**/
 
 /* HAS_GETPWNAM_R:
  *	This symbol, if defined, indicates that the getpwnam_r routine
@@ -4859,8 +4859,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_getpwnam_r
  *	is defined.
  */
-/*#define HAS_GETPWNAM_R	/ **/
-#define GETPWNAM_R_PROTO 0	/**/
+#define HAS_GETPWNAM_R	/**/
+#define GETPWNAM_R_PROTO REENTRANT_PROTO_I_CSBWR	/**/
 
 /* HAS_GETPWUID_R:
  *	This symbol, if defined, indicates that the getpwuid_r routine
@@ -4872,8 +4872,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_getpwuid_r
  *	is defined.
  */
-/*#define HAS_GETPWUID_R	/ **/
-#define GETPWUID_R_PROTO 0	/**/
+#define HAS_GETPWUID_R	/**/
+#define GETPWUID_R_PROTO REENTRANT_PROTO_I_TSBWR	/**/
 
 /* HAS_GETSERVBYNAME_R:
  *	This symbol, if defined, indicates that the getservbyname_r routine
@@ -4885,8 +4885,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_getservbyname_r
  *	is defined.
  */
-/*#define HAS_GETSERVBYNAME_R	/ **/
-#define GETSERVBYNAME_R_PROTO 0	/**/
+#define HAS_GETSERVBYNAME_R	/**/
+#define GETSERVBYNAME_R_PROTO REENTRANT_PROTO_I_CCSBWR	/**/
 
 /* HAS_GETSERVBYPORT_R:
  *	This symbol, if defined, indicates that the getservbyport_r routine
@@ -4898,8 +4898,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_getservbyport_r
  *	is defined.
  */
-/*#define HAS_GETSERVBYPORT_R	/ **/
-#define GETSERVBYPORT_R_PROTO 0	/**/
+#define HAS_GETSERVBYPORT_R	/**/
+#define GETSERVBYPORT_R_PROTO REENTRANT_PROTO_I_ICSBWR	/**/
 
 /* HAS_GETSERVENT_R:
  *	This symbol, if defined, indicates that the getservent_r routine
@@ -4911,8 +4911,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_getservent_r
  *	is defined.
  */
-/*#define HAS_GETSERVENT_R	/ **/
-#define GETSERVENT_R_PROTO 0	/**/
+#define HAS_GETSERVENT_R	/**/
+#define GETSERVENT_R_PROTO REENTRANT_PROTO_I_SBWR	/**/
 
 /* HAS_GETSPNAM_R:
  *	This symbol, if defined, indicates that the getspnam_r routine
@@ -4924,8 +4924,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_getspnam_r
  *	is defined.
  */
-/*#define HAS_GETSPNAM_R	/ **/
-#define GETSPNAM_R_PROTO 0	/**/
+#define HAS_GETSPNAM_R	/**/
+#define GETSPNAM_R_PROTO REENTRANT_PROTO_I_CSBWR	/**/
 
 /* HAS_GMTIME_R:
  *	This symbol, if defined, indicates that the gmtime_r routine
@@ -4937,8 +4937,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_gmtime_r
  *	is defined.
  */
-/*#define HAS_GMTIME_R	/ **/
-#define GMTIME_R_PROTO 0	/**/
+#define HAS_GMTIME_R	/**/
+#define GMTIME_R_PROTO REENTRANT_PROTO_S_TS	/**/
 
 /* HAS_LOCALECONV_L:
  *	This symbol, if defined, indicates that the localeconv_l routine is
@@ -4956,7 +4956,7 @@
  *	changes using $ENV{TZ} without explicitly calling tzset
  *	impossible. This symbol makes us call tzset before localtime_r
  */
-/*#define LOCALTIME_R_NEEDS_TZSET / **/
+#define LOCALTIME_R_NEEDS_TZSET /**/
 #ifdef LOCALTIME_R_NEEDS_TZSET
 #define L_R_TZSET tzset(),
 #else
@@ -4972,8 +4972,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_localtime_r
  *	is defined.
  */
-/*#define HAS_LOCALTIME_R	/ **/
-#define LOCALTIME_R_PROTO 0	/**/
+#define HAS_LOCALTIME_R	/**/
+#define LOCALTIME_R_PROTO REENTRANT_PROTO_S_TS	/**/
 
 /* HAS_MBRLEN:
  *	This symbol, if defined, indicates that the mbrlen routine is
@@ -5018,7 +5018,7 @@
  *	routine is available to yield the execution of the current
  *	thread.	 sched_yield is preferable to pthread_yield.
  */
-/*#define HAS_PTHREAD_YIELD	/ **/
+#define HAS_PTHREAD_YIELD	/**/
 #define SCHED_YIELD	sched_yield()	/**/
 #define HAS_SCHED_YIELD	/**/
 
@@ -5032,8 +5032,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_random_r
  *	is defined.
  */
-/*#define HAS_RANDOM_R	/ **/
-#define RANDOM_R_PROTO 0	/**/
+#define HAS_RANDOM_R	/**/
+#define RANDOM_R_PROTO REENTRANT_PROTO_I_St	/**/
 
 /* HAS_READDIR64_R:
  *	This symbol, if defined, indicates that the readdir64_r routine
@@ -5045,8 +5045,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_readdir64_r
  *	is defined.
  */
-/*#define HAS_READDIR64_R	/ **/
-#define READDIR64_R_PROTO 0	/**/
+#define HAS_READDIR64_R	/**/
+#define READDIR64_R_PROTO REENTRANT_PROTO_I_TSR	/**/
 
 /* HAS_READDIR_R:
  *	This symbol, if defined, indicates that the readdir_r routine
@@ -5058,8 +5058,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_readdir_r
  *	is defined.
  */
-/*#define HAS_READDIR_R	/ **/
-#define READDIR_R_PROTO 0	/**/
+#define HAS_READDIR_R	/**/
+#define READDIR_R_PROTO REENTRANT_PROTO_I_TSR	/**/
 
 /* HAS_SETGRENT_R:
  *	This symbol, if defined, indicates that the setgrent_r routine
@@ -5162,8 +5162,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_srand48_r
  *	is defined.
  */
-/*#define HAS_SRAND48_R	/ **/
-#define SRAND48_R_PROTO 0	/**/
+#define HAS_SRAND48_R	/**/
+#define SRAND48_R_PROTO REENTRANT_PROTO_I_LS	/**/
 
 /* HAS_SRANDOM_R:
  *	This symbol, if defined, indicates that the srandom_r routine
@@ -5175,8 +5175,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_srandom_r
  *	is defined.
  */
-/*#define HAS_SRANDOM_R	/ **/
-#define SRANDOM_R_PROTO 0	/**/
+#define HAS_SRANDOM_R	/**/
+#define SRANDOM_R_PROTO REENTRANT_PROTO_I_TS	/**/
 
 /* HAS_STRERROR_R:
  *	This symbol, if defined, indicates that the strerror_r routine
@@ -5188,8 +5188,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_strerror_r
  *	is defined.
  */
-/*#define HAS_STRERROR_R	/ **/
-#define STRERROR_R_PROTO 0	/**/
+#define HAS_STRERROR_R	/**/
+#define STRERROR_R_PROTO REENTRANT_PROTO_B_IBW	/**/
 
 /* HAS_STRTOD_L:
  *	This symbol, if defined, indicates that the strtod_l routine is
@@ -5225,8 +5225,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_tmpnam_r
  *	is defined.
  */
-/*#define HAS_TMPNAM_R	/ **/
-#define TMPNAM_R_PROTO 0	/**/
+#define HAS_TMPNAM_R	/**/
+#define TMPNAM_R_PROTO REENTRANT_PROTO_B_B	/**/
 
 /* HAS_TTYNAME_R:
  *	This symbol, if defined, indicates that the ttyname_r routine
@@ -5238,8 +5238,8 @@
  *	REENTRANT_PROTO_T_ABC macros of reentr.h if d_ttyname_r
  *	is defined.
  */
-/*#define HAS_TTYNAME_R	/ **/
-#define TTYNAME_R_PROTO 0	/**/
+#define HAS_TTYNAME_R	/**/
+#define TTYNAME_R_PROTO REENTRANT_PROTO_I_IBW	/**/
 
 /* HAS_WCRTOMB:
  *	This symbol, if defined, indicates that the wcrtomb routine is
@@ -5278,8 +5278,8 @@
  *	try to use the various _r versions of library functions.
  *	This is extremely experimental.
  */
-/*#define USE_ITHREADS		/ **/
-/*#define 	USE_THREADS		/ **/
+#define USE_ITHREADS		/**/
+#define 	USE_THREADS		/**/
 /*#define OLD_PTHREADS_API		/ **/
 /*#define USE_REENTRANT_API	/ **/
 

@@ -85,7 +85,7 @@ sub AUTOLOAD {
 # tie returns the object, so the value returned to require will be true.
 tie %Config, 'Config', {
     archlibexp => '/usr/lib/perl5/5.40/core_perl',
-    archname => 'x86_64-linux',
+    archname => 'x86_64-linux-thread-multi',
     cc => 'cc',
     d_readlink => 'define',
     d_symlink => 'define',
@@ -105,7 +105,7 @@ tie %Config, 'Config', {
     sitearchexp => '/usr/lib/perl5/5.40/site_perl',
     sitelibexp => '/usr/lib/perl5/5.40/site_perl',
     so => 'so',
-    useithreads => undef,
+    useithreads => 'define',
     usevendorprefix => 'define',
     version => '5.40.0',
 };

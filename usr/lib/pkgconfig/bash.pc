@@ -12,8 +12,8 @@ LOCAL_CFLAGS =
 LOCAL_DEFS = -DSHELL
 CCFLAGS = ${LOCAL_DEFS} ${LOCAL_CFLAGS}
 
-CC = x86_64-lfs-linux-gnu-gcc
-SHOBJ_CC = x86_64-lfs-linux-gnu-gcc
+CC = gcc
+SHOBJ_CC = gcc
 SHOBJ_CFLAGS = -fPIC
 SHOBJ_LD = ${CC}
 SHOBJ_LDFLAGS = -shared -Wl,-soname,$@

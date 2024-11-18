@@ -1,49 +1,3 @@
-mkdir -pv /{boot,home,mnt,opt,srv}
-ls /usr/lib64
-ls /usr/lib
-mkdir -pv /etc/{opt,sysconfig}
-mkdir -pv /lib/firmware
-mkdir -pv /media/{floppy,cdrom}
-mkdir -pv /usr/{,local/}{include,src}
-mkdir -pv /usr/lib/locale
-mkdir -pv /usr/local/{bin,lib,sbin}
-mkdir -pv /usr/{,local/}share/{color,dict,doc,info,locale,man}
-mkdir -pv /usr/{,local/}share/{misc,terminfo,zoneinfo
-mkdir -pv /usr/{,local/}share/man/man{1..8}
-mkdir -pv /var/{cache,local,log,mail,opt,spool}
-mkdir -pv /var/lib/{color,misc,locate}
-ln -sfv /run /var/run
-ln -sfv /run/lock /var/lock
-install -vdm0750 /root
-install-vdm 1777 /tmp /var/tmp
-install -vdm 1777 /tmp /var/tmp
-ln -sv /proc/self/mounts /etc/mtab
-localedef -i C -f UTF-8 C.UTF-8
-echo "tester:x:101:101::/home/tester:/bin/bash" >> /etc/passwd
-echo "tester:x:101:" >> /etc/group
-install -o tester -d /home/tester
-touch /var/log/{btmp,lastlog,faillog,wtmp}
-chgrp -v utmp /var/log/lastlog
-chmod -v 664 /var/log/lastlog
-chmod -v 600 /var/log/btmp
-cd sources
-tar -vxf gettext-0.22.5.tar.xz 
-cd gettext-0.22.5
-./configure --disable-shared && make && cp -v gettext-tools/src/{msgfmt,msgmerge,xgettext} /usr/bin
-cd ..
-rm -rfv gettext-0.22.5
-tar -vxf bison-3.8.2.tar.xz 
-cd bison-3.8.2
-./configure --prefix=/usr --docdir=/usr/share/doc/bison-3.8.2 && make && make install
-echo $MAKEFLAGS
-cd ..
-rm -rfv bison-3.8.2
-tar -vxf perl-5.40.0.tar.xz 
-cd perl-5.40.0
-sh Configure -des -D prefix=/usr -D vendorprefix=/usr -D useshrplib -D privlib=/usr/lib/perl5/5.40/core_perl -D archlib=/usr/lib/perl5/5.40/core_perl -D sitelib=/usr/lib/perl5/5.40/site_perl -D sitearch=/usr/lib/perl5/5.40/site_perl -D vendorlib=/usr/lib/perl5/5.40/vendor_perl -D vendorarch=/usr/lib/perl5/5.40/vendor_perl && make && make install
-cd ..
-rm -rfv perl-5.40.0
-tar -vxf Python-3.12.7.tar.xz 
 cd Python-3.12.7
 ./configure --prefix=/usr --enable-shared --without-ensurepip && make && make install
 cd ..
@@ -450,5 +404,97 @@ cd gettext-0.22.5
 cd ..
 rm -rfv gettext-0.22.5
 mv -vf gettext-0.22.5.tar.xz base
+ls
+exit
+exit
+cd sources/
+ls
+tar -vxf bison-3.8.2.tar.xz 
+cd bison-3.8.2
+./configure --prefix=/usr --docdir=/usr/share/doc/bison-3.8.2 && make && make install
+cd ..
+rm -rfv bison-3.8.2
+mv -v bison-3.8.2.tar.xz base
+ls
+tar -vxf bash-5.2.32.tar.gz 
+cd bas
+cd bash-5.2.32
+./configure --prefix=/usr --without-bash-malloc --with-installed-readline bash_cv_strtold_broken=no --docdir=/usr/share/doc/bash-5.2.32 && make && make install && exec /usr/bin/bash --login
+cd ..
+rm -rfv bash-5.2.32
+mv -v bash-5.2.32.tar.gz base
+ls
+tar -vxf libtool-2.4.7.tar.xz 
+cd libtool-2.4.7
+./configure --prefix=/usr && make && make install && rm -fv /usr/lib/libltdl.a
+cd ..
+rm -rfv libtool-2.4.7
+mv -v libtool-2.4.7.tar.xz base
+l
+ls
+tar -vxf gdbm-1.24.tar.gz 
+cd gdbm-1.24
+./configure --prefix=/usr --disable-static --enable-libgdbm-compat && make && make install
+cd ..
+rm -rfv gdbm-1.24
+mv -v gdbm-1.24.tar.gz base
+ls
+tar -vxf gperf-3.1.tar.gz 
+cd gperf-3.1
+./configure --prefix=/usr --docdir=/usr/share/doc/gperf-3.1 && make && make install
+cd ..
+rm -rfv gperf-3.1
+mv -v gperf-3.1.tar.gz base
+ls
+tar -vxf expat-2.6.4.tar.xz 
+cd expat-2.6.4
+./configure --prefix=/usr --disable-static --docdir=/usr/share/doc/expat-2.6.4 && make && make install
+cd ..
+rm -rfv expat-2.6.4
+mv -v expat-2.6.4.tar.xz base
+ls
+tar -vxf inetutils-2.5.tar.xz 
+cd inetutils-2.5
+sed -i 's/def HAVE_TERMCAP_TGETENT/ 1/' telnet/telnet.c
+./configure --prefix=/usr --bindir=/usr/bin --localstatedir=/var --disable-logger --disable-whois --disable-rcp --disable-rexec --disable-rlogin --disable-rsh --disable-servers && make && make install && mv -v /usr/{,s}bin/ifconfig
+cd ..
+rm -rfv inetutils-2.5
+mv -v inetutils-2.5.tar.xz base
+ls
+tar -vxf less-661.tar.gz 
+cd less-661
+./configure --prefix=/usr --sysconfdir=/etc && make && make install
+cd ..
+rm -rfv less-661
+mv -v less-661.tar.gz base
+ls
+find / -size +100M
+tar -vxf perl-5.40.0.tar.xz 
+cd perl-5.40.0
+export BUILD_ZLIB=False
+export BUILD_BZIP2=0
+sh Configure -des                                                       -D prefix=/usr                                             -D vendorprefix=/usr                                       -D privlib=/usr/lib/perl5/5.40/core_perl                   -D archlib=/usr/lib/perl5/5.40/core_perl                   -D sitelib=/usr/lib/perl5/5.40/site_perl                   -D sitearch=/usr/lib/perl5/5.40/site_perl                  -D vendorlib=/usr/lib/perl5/5.40/vendor_perl               -D vendorarch=/usr/lib/perl5/5.40/vendor_perl              -D man1dir=/usr/share/man/man1                             -D man3dir=/usr/share/man/man3                             -D pager="/usr/bin/less -isR"                              -D useshrplib                                              -D usethreads && make && make install && unset BUILD_ZLIB BUILD_BZIP2
+cd ..
+rm -rfv perl-5.40.0
+ls
+tar -vxf XML-Parser-2.47.tar.gz 
+cd XML-Parser-2.47
+perl Makefile.PL && make && make install
+cd ..
+rm -rfv XML-Parser-2.47
+mv -v perl-5.40.0.tar.xz XML-Parser-2.47.tar.gz base
+ls
+tar -vxf intltool-0.51.0.tar.gz 
+cd intltool-0.51.0
+sed -i 's:\\\${:\\\$\\{:' intltool-update.in
+./configure --prefix=/usr && make && make install && install -vDm644 doc/I18N-HOWTO /usr/share/doc/intltool-0.51.0/
+install -vDm644 doc/I18N-HOWTO /usr/share/doc/intltool-0.51.0
+rm -fv /usr/share/doc/intltool-0.51.0 
+install -vDm644 doc/I18N-HOWTO /usr/share/doc/intltool-0.51.0/I18N-HOWTO
+cd ..
+rm -rfv intltool-0.51.0
+mv -v intltool-0.51.0.tar.gz base
+ls
+mv -v grep-3.11.tar.xz base
 ls
 exit

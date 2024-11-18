@@ -454,7 +454,7 @@
 
 #define HAVE_STRUCT_TIMEZONE 1
 
-#define WEXITSTATUS_OFFSET 0
+#define WEXITSTATUS_OFFSET 8
 
 #define HAVE_STRUCT_TIMESPEC 1
 #define TIME_H_DEFINES_STRUCT_TIMESPEC 1
@@ -511,7 +511,7 @@
 /* Define if the `getpgrp' function takes no argument.  */
 #define GETPGRP_VOID 1
 
-#define NAMED_PIPES_MISSING 1
+/* #undef NAMED_PIPES_MISSING */
 
 /* #undef OPENDIR_NOT_ROBUST */
 
@@ -519,7 +519,7 @@
 
 /* #undef STAT_MACROS_BROKEN */
 
-/* #undef ULIMIT_MAXFDS */
+#define ULIMIT_MAXFDS 1
 
 #define CAN_REDEFINE_GETENV 1
 
@@ -527,7 +527,7 @@
 
 #define HAVE_STD_UNSETENV 1
 
-/* #undef HAVE_PRINTF_A_FORMAT */
+#define HAVE_PRINTF_A_FORMAT 1
 
 /* Define if you have <langinfo.h> and nl_langinfo(CODESET). */
 #define HAVE_LANGINFO_CODESET 1
@@ -559,7 +559,7 @@
 
 /* #undef HAVE_USG_SIGHOLD */
 
-#define UNUSABLE_RT_SIGNALS 1
+/* #undef UNUSABLE_RT_SIGNALS */
 
 /* Presence of system and C library functions. */
 
@@ -612,7 +612,7 @@
 #define HAVE_FNMATCH 1
 
 /* Can fnmatch be used as a fallback to match [=equiv=] with collation weights? */
-#define FNMATCH_EQUIV_FALLBACK 0
+#define FNMATCH_EQUIV_FALLBACK 1
 
 /* Define if you have the fpurge/__fpurge function.  */
 /* #undef HAVE_FPURGE */
@@ -1154,7 +1154,7 @@
 
 /* #undef DUP2_BROKEN */
 
-#define GETCWD_BROKEN 1
+/* #undef GETCWD_BROKEN */
 
 /* #undef DEV_FD_STAT_BROKEN */
 

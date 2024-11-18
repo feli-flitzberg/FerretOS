@@ -2,7 +2,7 @@
     eval 'exec /usr/bin/perl -S $0 ${1+"$@"}'
 	if 0; # ^ Run only under a shell
 
-my $config_tag1 = '5.40.0 - Fri Nov 15 18:45:29 UTC 2024';
+my $config_tag1 = '5.40.0 - Mon Nov 18 22:07:39 UTC 2024';
 
 my $patchlevel_date = 1717941604;
 my @patches = Config::local_patches();

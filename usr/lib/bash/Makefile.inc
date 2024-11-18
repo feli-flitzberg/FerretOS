@@ -38,7 +38,7 @@ loadablesdir = ${libdir}/bash
 headersdir = $(includedir)/$(PACKAGE_NAME)
 
 topdir = ../..
-BUILD_DIR = /opt/lfs/sources/bash-5.2.32
+BUILD_DIR = /sources/bash-5.2.32
 srcdir = .
 
 
@@ -52,14 +52,14 @@ INSTALL_DATA = ${INSTALL} -m 644
 INSTALLMODE= -m 0755
 
 
-CC = x86_64-lfs-linux-gnu-gcc
+CC = gcc
 RM = rm -f
 
 SHELL = /bin/sh
 
 host_os = linux-gnu
 host_cpu = x86_64
-host_vendor = lfs
+host_vendor = pc
 
 CFLAGS = -g -O2
 LOCAL_CFLAGS = 
@@ -87,7 +87,7 @@ CCFLAGS = $(DEFS) $(LOCAL_DEFS) $(LOCAL_CFLAGS) $(CFLAGS)
 # dynamic loading of shared objects, please update the script and send the
 # changes to bash-maintainers@gnu.org.
 #
-SHOBJ_CC = x86_64-lfs-linux-gnu-gcc
+SHOBJ_CC = gcc
 SHOBJ_CFLAGS = -fPIC
 SHOBJ_LD = ${CC}
 SHOBJ_LDFLAGS = -shared -Wl,-soname,$@ 

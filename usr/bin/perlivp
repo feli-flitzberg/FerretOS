@@ -46,7 +46,7 @@ my $error_total = 0;
 my $tests_total = 0;
 
 my $perlpath = '/usr/bin/perl';
-my $useithreads = '';
+my $useithreads = 'define';
 
 print "## Checking Perl binary via variable '\$perlpath' = $perlpath.\n" if $opt{'p'};
 
