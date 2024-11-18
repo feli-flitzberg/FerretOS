@@ -1,6 +1,10 @@
-*.gz filter=lfs diff=lfs merge=lfs -text
-*.xz filter=lfs diff=lfs merge=lfs -text
-*.bz2 filter=lfs diff=lfs merge=lfs -text
+*.tar.gz filter=lfs diff=lfs merge=lfs -text
+*.tar.xz filter=lfs diff=lfs merge=lfs -text
+*.tar.bz2 filter=lfs diff=lfs merge=lfs -text
 *.tgz filter=lfs diff=lfs merge=lfs -text
-*lto* filter=lfs diff=lfs merge=lfs -text
-cc1* filter=lfs diff=lfs merge=lfs -text
+cc1 filter=lfs diff=lfs merge=lfs -text
+lto-dump filter=lfs diff=lfs merge=lfs -text
+cc1plus filter=lfs diff=lfs merge=lfs -text
+lto1 filter=lfs diff=lfs merge=lfs -text
+cc1plus filter=lfs diff=lfs merge=lfs -text
+
