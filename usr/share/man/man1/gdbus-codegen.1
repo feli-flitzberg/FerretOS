@@ -1,0 +1,1000 @@
+'\" t
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GDBUS-CODEGEN" "" "" ""
+.SH NAME
+gdbus-codegen \- D-Bus code and documentation generator
+.\" This has to be duplicated from above to make it machine-readable by `reuse`:
+.\" SPDX-FileCopyrightText: 2011, 2013, 2016 Red Hat, Inc.
+.\" SPDX-FileCopyrightText: 2013, 2022 Emmanuele Bassi
+.\" SPDX-FileCopyrightText: 2017 Patrick Griffis
+.\" SPDX-FileCopyrightText: 2018 Iñigo Martínez
+.\" SPDX-FileCopyrightText: 2018, 2019 Endless Mobile, Inc.
+.\" SPDX-FileCopyrightText: 2020 Endless OS Foundation, LLC
+.\" SPDX-FileCopyrightText: 2020 Chun-wei Fan
+.\" SPDX-License-Identifier: LGPL-2.1-or-later
+.
+.SH SYNOPSIS
+.nf
+\fBgdbus\-codegen\fP
+.in +2
+[\-\-help]
+[\-\-interface\-prefix \fIorg.project.Prefix\fP]
+[\-\-header | \-\-body | \-\-interface\-info\-header | \-\-interface\-info\-body | \-\-generate\-c\-code \fIOUTFILES\fP]
+[\-\-c\-namespace \fIYourProject\fP]
+[\-\-c\-generate\-object\-manager]
+[\-\-c\-generate\-autocleanup none|objects|all]
+[\-\-output\-directory \fIOUTDIR\fP | \-\-output \fIOUTFILE\fP]
+[\-\-generate\-docbook \fIOUTFILES\fP]
+[\-\-generate\-rst \fIOUTFILES\fP]
+[\-\-pragma\-once]
+[\-\-xml\-files \fIFILE\fP]
+[\-\-symbol\-decorator \fIDECORATOR\fP [\-\-symbol\-decorator\-header \fIHEADER\fP] [\-\-symbol\-decorator\-define \fIDEFINE\fP]]
+[\-\-annotate \fIELEMENT\fP \fIKEY\fP \fIVALUE\fP]…
+[\-\-glib\-min\-required \fIVERSION\fP]
+[\-\-glib\-max\-allowed \fIVERSION\fP]
+\fIFILE\fP…
+.in -2
+.fi
+.sp
+.SH DESCRIPTION
+.sp
+\fBgdbus\-codegen\fP is used to generate code and/or documentation for one or more
+D\-Bus interfaces.
+.sp
+\fBgdbus\-codegen\fP reads
+D\-Bus Introspection XML <https://dbus.freedesktop.org/doc/dbus-specification.html#introspection-format>
+
+from files passed as additional arguments on the command line and generates
+output files. It currently supports generating C source code (via \fB\-\-body\fP) or
+header (via \fB\-\-header\fP) and DocBook XML (via \fB\-\-generate\-docbook\fP).
+Alternatively, more restricted C source code and headers can be generated, which
+just contain the interface information (as \fBGDBusInterfaceInfo\fP structures)
+using \fB\-\-interface\-info\-body\fP and \fB\-\-interface\-info\-header\fP\&.
+.SH GENERATING C CODE
+.sp
+When generating C code, a \fBGInterface\fP derived type is generated for each
+D\-Bus interface. Additionally, for every generated type, \fBFooBar\fP, two
+concrete instantiatable types, \fBFooBarProxy\fP and \fBFooBarSkeleton\fP,
+implementing said interface are also generated. The former is derived from
+\fBGDBusProxy\fP and intended for use on the client side while the latter is
+derived from the \fBGDBusInterfaceSkeleton\fP type making it easy to export on a
+\fBGDBusConnection\fP either directly or via a \fBGDBusObjectManagerServer\fP
+instance.
+.sp
+For C code generation either \fB\-\-body\fP that generates source code, \fB\-\-header\fP
+that generates headers, \fB\-\-interface\-info\-body\fP that generates interface
+information source code, or \fB\-\-interface\-info\-header\fP that generates interface
+information headers, can be used. These options must be used along with
+\fB\-\-output\fP, which is used to specify the file to output to.
+.sp
+Both files can be generated at the same time by using \fB\-\-generate\-c\-code\fP, but
+this option is deprecated. In this case \fB\-\-output\fP cannot be used due to the
+generation of multiple files. Instead pass \fB\-\-output\-directory\fP to specify the
+directory to put the output files in. By default the current directory will be
+used.
+.sp
+The name of each generated C type is derived from the D\-Bus interface name
+stripped with the prefix given with \fB\-\-interface\-prefix\fP and with the dots
+removed and initial characters capitalized. For example, for the D\-Bus
+interface \fBcom.acme.Coyote\fP the name used is \fBComAcmeCoyote\fP\&. For the D\-Bus
+interface \fBorg.project.Bar.Frobnicator\fP with \fB\-\-interface\-prefix\fP set to
+\fBorg.project.\fP, the name used is \fBBarFrobnicator\fP\&.
+.sp
+For methods, signals and properties, if not specified, the name defaults to the
+name of the method, signal or property.
+.sp
+Two forms of the name are used — the CamelCase form and the lower\-case form. The
+CamelCase form is used for the \fBGType\fP and struct name, while lower\-case form
+is used in function names. The lower\-case form is calculated by converting from
+CamelCase to lower\-case and inserting underscores at word boundaries (using
+certain heuristics).
+.sp
+If the value given by the \fBorg.gtk.GDBus.C.Name\fP annotation or the
+\fB\-\-c\-namespace\fP option contains an underscore (sometimes called \fIUgly_Case\fP),
+then the camel\-case name is derived by removing all underscores, and the
+lower\-case name is derived by lower\-casing the string. This is useful in some
+situations where abbreviations are used. For example, if the annotation is used
+on the interface \fBnet.MyCorp.MyApp.iSCSITarget\fP with the value
+\fBiSCSI_Target\fP the CamelCase form is \fBiSCSITarget\fP while the lower\-case form
+is \fBiscsi_target\fP\&. If the annotation is used on the method \fBEjectTheiPod\fP
+with the value \fBEject_The_iPod\fP, the lower\-case form is \fBeject_the_ipod\fP\&.
+.SH GENERATING DOCBOOK DOCUMENTATION
+.sp
+Each generated DocBook XML file (see the \fB\-\-generate\-docbook\fP option for
+details) is a \fBRefEntry\fP article describing the D\-Bus interface. (See the
+DocBook documentation <https://tdg.docbook.org/tdg/4.5/refentry.html>
+\&.)
+.SH GENERATING RESTRUCTUREDTEXT DOCUMENTATION
+.sp
+Each generated reStructuredText file (see the \fB\-\-generate\-rst\fP option for
+details) is a plain text
+reStructuredText <https://docutils.sourceforge.io/rst.html>
+ document
+describing the D\-Bus interface.
+.SH OPTIONS
+.sp
+The following options are supported:
+.sp
+\fB\-h\fP, \fB\-\-help\fP
+.INDENT 0.0
+.INDENT 3.5
+Show help and exit.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-xml\-files\fP \fIFILE\fP
+.INDENT 0.0
+.INDENT 3.5
+This option is deprecated; use positional arguments instead.  The D\-Bus
+introspection XML file.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-interface\-prefix\fP \fIorg.project.Prefix.\fP
+.INDENT 0.0
+.INDENT 3.5
+A prefix to strip from all D\-Bus interface names when
+calculating the type name for the C binding and the DocBook \fBsortas\fP
+attribute <https://tdg.docbook.org/tdg/4.5/primary.html>
+\&.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-generate\-docbook\fP \fIOUTFILES\fP
+.INDENT 0.0
+.INDENT 3.5
+Generate DocBook Documentation for each D\-Bus interface and put it in
+\fBOUTFILES\-NAME.xml\fP where \fBNAME\fP is a placeholder for the interface
+name, e.g. \fBnet.Corp.FooBar\fP and so on.
+.sp
+Pass \fB\-\-output\-directory\fP to specify the directory to put the output files
+in. By default the current directory will be used.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-generate\-rst\fP \fIOUTFILES\fP
+.INDENT 0.0
+.INDENT 3.5
+Generate reStructuredText Documentation for each D\-Bus interface and put it in
+\fBOUTFILES\-NAME.rst\fP where \fBNAME\fP is a placeholder for the interface
+name, e.g. \fBnet.Corp.FooBar\fP and so on.
+.sp
+Pass \fB\-\-output\-directory\fP to specify the directory to put the output files
+in. By default the current directory will be used.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-generate\-c\-code\fP \fIOUTFILES\fP
+.INDENT 0.0
+.INDENT 3.5
+Generate C code for all D\-Bus interfaces and put it in \fBOUTFILES.c\fP and
+\fBOUTFILES.h\fP including any sub\-directories. If you want the files to be
+output in a different location use \fB\-\-output\-directory\fP as \fBOUTFILES.h\fP
+including sub\-directories will be referenced from \fBOUTFILES.c\fP\&.
+.sp
+The full paths would then be
+\fB$(OUTDIR)/$(dirname $OUTFILES)/$(basename $OUTFILES).{c,h}\fP\&.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-c\-namespace\fP \fIYourProject\fP
+.INDENT 0.0
+.INDENT 3.5
+The namespace to use for generated C code. This is expected to be in
+CamelCase <https://en.wikipedia.org/wiki/Camel_case>
+ or \fIUgly_Case\fP (see
+above).
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-pragma\-once\fP
+.INDENT 0.0
+.INDENT 3.5
+If this option is passed, the
+#pragma once <https://en.wikipedia.org/wiki/Pragma_once>
+ preprocessor
+directive is used instead of include guards.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-c\-generate\-object\-manager\fP
+.INDENT 0.0
+.INDENT 3.5
+If this option is passed, suitable \fBGDBusObject\fP, \fBGDBusObjectProxy\fP,
+\fBGDBusObjectSkeleton\fP and \fBGDBusObjectManagerClient\fP subclasses are
+generated.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-c\-generate\-autocleanup\fP none|objects|all
+.INDENT 0.0
+.INDENT 3.5
+This option influences what types autocleanup functions are
+generated for. \fBnone\fP means to not generate any autocleanup functions.
+\fBobjects\fP means to generate them for object types, and \fBall\fP means to
+generate them for object types and interfaces. The default is \fBobjects\fP
+due to a corner case in backwards compatibility with a few projects,
+but you should likely switch your project to use \fBall\fP\&.
+This option was added in GLib 2.50.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-output\-directory\fP \fIOUTDIR\fP
+.INDENT 0.0
+.INDENT 3.5
+Directory to output generated source to. Equivalent to changing directory
+before generation.
+.sp
+This option cannot be used with \fB\-\-body\fP, \fB\-\-header\fP,
+\fB\-\-interface\-info\-body\fP or \fB\-\-interface\-info\-header\fP; and \fB\-\-output\fP
+must be used.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-header\fP
+.INDENT 0.0
+.INDENT 3.5
+If this option is passed, it will generate the header code and write it to the
+disk by using the path and file name provided by \fB\-\-output\fP\&.
+.sp
+Using \fB\-\-generate\-c\-code\fP, \fB\-\-generate\-docbook\fP or \fB\-\-output\-directory\fP
+are not allowed to be used along with \fB\-\-header\fP and \fB\-\-body\fP options,
+because these options are used to generate only one file.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-body\fP
+.INDENT 0.0
+.INDENT 3.5
+If this option is passed, it will generate the source code and write it to the
+disk by using the path and file name provided by \fB\-\-output\fP\&.
+.sp
+Using \fB\-\-generate\-c\-code\fP, \fB\-\-generate\-docbook\fP or \fB\-\-output\-directory\fP
+are not allowed to be used along with \fB\-\-header\fP and \fB\-\-body\fP options,
+because these options are used to generate only one file.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-interface\-info\-header\fP
+.INDENT 0.0
+.INDENT 3.5
+If this option is passed, it will generate the header code for the
+\fBGDBusInterfaceInfo\fP structures only and will write it to the disk by using
+the path and file name provided by \fB\-\-output\fP\&.
+.sp
+Using \fB\-\-generate\-c\-code\fP, \fB\-\-generate\-docbook\fP or \fB\-\-output\-directory\fP
+are not allowed to be used along with the \fB\-\-interface\-info\-header\fP and
+\fB\-\-interface\-info\-body\fP options, because these options are used to generate
+only one file.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-interface\-info\-body\fP
+.INDENT 0.0
+.INDENT 3.5
+If this option is passed, it will generate the source code for the
+\fBGDBusInterfaceInfo\fP structures only and will write it to the disk by using
+the path and file name provided by \fB\-\-output\fP\&.
+.sp
+Using \fB\-\-generate\-c\-code\fP, \fB\-\-generate\-docbook\fP or \fB\-\-output\-directory\fP
+are not allowed to be used along with the \fB\-\-interface\-info\-header\fP and
+\fB\-\-interface\-info\-body\fP options, because these options are used to generate
+only one file.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-symbol\-decorator\fP \fIDECORATOR\fP
+.INDENT 0.0
+.INDENT 3.5
+If a \fBDECORATOR\fP is passed in with this option, all the generated function
+prototypes in the generated header will be marked with \fBDECORATOR\fP\&. This can
+be used, for instance, to export symbols from code generated with
+\fBgdbus\-codegen\fP\&.
+.sp
+This option was added in GLib 2.66.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-symbol\-decorator\-header\fP \fIHEADER\fP
+.INDENT 0.0
+.INDENT 3.5
+If a \fBHEADER\fP is passed in with this option, the generated header will put a
+\fB#include HEADER\fP before the rest of the items, except for the inclusion
+guards or \fB#pragma once\fP (if \fB\-\-pragma\-once\fP is used).  This is used if
+using another header file is needed for the decorator passed in via
+\fB\-\-symbol\-decorator\fP to be defined.
+.sp
+This option was added in GLib 2.66.
+.sp
+This option can only be used if \fB\-\-symbol\-decorator\fP is used.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-symbol\-decorator\-define\fP \fIDEFINE\fP
+.INDENT 0.0
+.INDENT 3.5
+If a \fBDEFINE\fP is passed in with this option, the generated source will add a
+\fB#define DEFINE\fP before the rest of the items.  This is used if a particular
+macro is needed to ensure the decorator passed in via \fB\-\-symbol\-decorator\fP
+uses the correct definition when the generated source is being compiled.
+.sp
+This option was added in GLib 2.66.
+.sp
+This option can only be used if \fB\-\-symbol\-decorator\fP is used.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-output\fP \fIOUTFILE\fP
+.INDENT 0.0
+.INDENT 3.5
+The full path where the header (\fB\-\-header\fP, \fB\-\-interface\-info\-header\fP) or
+the source code (\fB\-\-body\fP, \fB\-\-interface\-info\-body\fP) will be written, using
+the path and filename provided by \fB\-\-output\fP\&. The full path could be
+something like \fB$($OUTFILE).{c,h}\fP\&.
+.sp
+Using \fB\-\-generate\-c\-code\fP, \fB\-\-generate\-docbook\fP or \fB\-\-output\-directory\fP
+is not allowed along with \fB\-\-output\fP, because the latter is used to generate
+only one file.
+.sp
+Since GLib 2.80, if \fIOUTFILE\fP is the literal string \fB\-\fP, the header
+or source code will be written to standard output.
+.sp
+For \fB\-\-body\fP and \fB\-\-interface\-info\-body\fP, the generated code will not
+automatically \fB#include\fP a corresponding header file when writing to
+standard output, because there is no obvious name for that header file.
+This might make it necessary to use \fBcc \-include foo.h\fP, or generate a
+filename like \fBfoo\-impl.h\fP and \fB#include\fP it into a wrapper \fB\&.c\fP file.
+.sp
+For \fB\-\-header\fP and \fB\-\-interface\-info\-header\fP, there is no obvious
+name for a traditional multiple\-inclusion guard when writing to standard
+output, so using the \fB\-\-pragma\-once\fP option is recommended.
+.sp
+In the rare situation that the intended output filename starts with \fB\-\fP,
+it should be prefixed with \fB\&./\fP\&.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-annotate\fP \fIELEMENT\fP \fIKEY\fP \fIVALUE\fP
+.INDENT 0.0
+.INDENT 3.5
+Used to inject D\-Bus annotations into the given XML files. It can be used with
+interfaces, methods, signals, properties and arguments in the following way:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.EX
+gdbus\-codegen \-\-c\-namespace MyApp                           \e
+  \-\-generate\-c\-code myapp\-generated                         \e
+  \-\-annotate \(dqorg.project.InterfaceName\(dq                    \e
+    org.gtk.GDBus.C.Name MyFrobnicator                      \e
+  \-\-annotate \(dqorg.project.InterfaceName:Property\(dq           \e
+    bar bat                                                 \e
+  \-\-annotate \(dqorg.project.InterfaceName.Method()\(dq           \e
+    org.freedesktop.DBus.Deprecated true                    \e
+  \-\-annotate \(dqorg.project.InterfaceName.Method()[arg_name]\(dq \e
+    snake hiss                                              \e
+  \-\-annotate \(dqorg.project.InterfaceName::Signal\(dq            \e
+    cat meow                                                \e
+  \-\-annotate \(dqorg.project.InterfaceName::Signal[arg_name]\(dq  \e
+    dog wuff                                                \e
+  myapp\-dbus\-interfaces.xml
+.EE
+.UNINDENT
+.UNINDENT
+.sp
+Any UTF\-8 string can be used for \fIKEY\fP and \fIVALUE\fP\&.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-glib\-min\-required\fP \fIVERSION\fP
+.INDENT 0.0
+.INDENT 3.5
+Specifies the minimum version of GLib which the code generated by
+\fBgdbus\-codegen\fP can depend on. This may be used to make
+backwards\-incompatible changes in the output or behaviour of \fBgdbus\-codegen\fP
+in future, which users may opt in to by increasing the value they pass for
+\fB\-\-glib\-min\-required\fP\&. If this option is not passed, the output from
+\fBgdbus\-codegen\fP is guaranteed to be compatible with all versions of GLib
+from 2.30 upwards, as that is when \fBgdbus\-codegen\fP was first released.
+.sp
+Note that some version parameters introduce incompatible changes: all callers
+of the generated code might need to be updated, and if the generated code is
+part of a library’s API or ABI, then increasing the version parameter can
+result in an API or ABI break.
+.sp
+The version number must be of the form \fBMAJOR.MINOR.MICRO\fP, where all parts
+are integers. \fBMINOR\fP and \fBMICRO\fP are optional. The version number may not
+be smaller than \fB2.30\fP\&.
+.sp
+If the version number is \fB2.64\fP or greater, the generated code will
+have the following features:
+.INDENT 0.0
+.IP 1. 3
+If a method has \fBh\fP (file descriptor) parameter(s), a \fBGUnixFDList\fP
+parameter will exist in the generated code for it (whereas previously the
+annotation \fBorg.gtk.GDBus.C.UnixFD\fP was required), and
+.IP 2. 3
+Method call functions will have two additional arguments to allow the user
+to specify \fBGDBusCallFlags\fP and a timeout value, as is possible when
+using \fBg_dbus_proxy_call()\fP\&.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-glib\-max\-allowed\fP \fIVERSION\fP
+.INDENT 0.0
+.INDENT 3.5
+Specifies the maximum version of GLib which the code generated by
+\fBgdbus\-codegen\fP can depend on. This may be used to ensure that code
+generated by \fBgdbus\-codegen\fP is compilable with specific older versions of
+GLib that your software has to support.
+.sp
+The version number must be of the form \fBMAJOR.MINOR.MICRO\fP, where all parts
+are integers. \fBMINOR\fP and \fBMICRO\fP are optional. The version number must be
+greater than or equal to that passed to \fB\-\-glib\-min\-required\fP\&.
+It defaults to the version of GLib which provides this \fBgdbus\-codegen\fP\&.
+.UNINDENT
+.UNINDENT
+.SH SUPPORTED D-BUS ANNOTATIONS
+.sp
+The following D\-Bus annotations are supported by \fBgdbus\-codegen\fP:
+.sp
+\fBorg.freedesktop.DBus.Deprecated\fP
+.INDENT 0.0
+.INDENT 3.5
+Can be used on any \fB<interface>\fP, \fB<method>\fP, \fB<signal>\fP and
+\fB<property>\fP element to specify that the element is deprecated if its value
+is \fBtrue\fP\&. Note that this annotation is defined in the
+D\-Bus specification <https://dbus.freedesktop.org/doc/dbus-specification.html#introspection-format>
+
+and can only assume the values \fBtrue\fP and \fBfalse\fP\&. In particular, you
+cannot specify the version that the element was deprecated in nor any helpful
+deprecation message. Such information should be added to the element
+documentation instead.
+.sp
+When generating C code, this annotation is used to add \fBG_GNUC_DEPRECATED\fP
+to generated functions for the element.
+.sp
+When generating DocBook XML, a deprecation warning will appear along the
+documentation for the element.
+.UNINDENT
+.UNINDENT
+.sp
+\fBorg.gtk.GDBus.Since\fP
+.INDENT 0.0
+.INDENT 3.5
+Can be used on any \fB<interface>\fP, \fB<method>\fP, \fB<signal>\fP and
+\fB<property>\fP element to specify the version (any free\-form string but
+compared using a version\-aware sort function) the element appeared in.
+.sp
+When generating C code, this field is used to ensure
+function pointer order for preserving ABI/API, see ‘STABILITY GUARANTEES’.
+.sp
+When generating DocBook XML, the value of this tag appears in the
+documentation.
+.UNINDENT
+.UNINDENT
+.sp
+\fBorg.gtk.GDBus.DocString\fP
+.INDENT 0.0
+.INDENT 3.5
+A string with DocBook content for documentation. This annotation can
+be used on \fB<interface>\fP, \fB<method>\fP, \fB<signal>\fP, \fB<property>\fP and
+\fB<arg>\fP elements.
+.UNINDENT
+.UNINDENT
+.sp
+\fBorg.gtk.GDBus.DocString.Short\fP
+.INDENT 0.0
+.INDENT 3.5
+A string with DocBook content for short/brief documentation. This annotation
+can only be used on \fB<interface>\fP elements.
+.UNINDENT
+.UNINDENT
+.sp
+\fBorg.gtk.GDBus.C.Name\fP
+.INDENT 0.0
+.INDENT 3.5
+Can be used on any \fB<interface>\fP, \fB<method>\fP, \fB<signal>\fP and
+\fB<property>\fP element to specify the name to use when generating C code. The
+value is expected to be in
+CamelCase <https://en.wikipedia.org/wiki/Camel_case>
+ or \fIUgly_Case\fP (see
+above).
+.UNINDENT
+.UNINDENT
+.sp
+\fBorg.gtk.GDBus.C.ForceGVariant\fP
+.INDENT 0.0
+.INDENT 3.5
+If set to a non\-empty string, a \fBGVariant\fP instance will be used instead of
+the natural C type. This annotation can be used on any \fB<arg>\fP and
+\fB<property>\fP element.
+.UNINDENT
+.UNINDENT
+.sp
+\fBorg.gtk.GDBus.C.UnixFD\fP
+.INDENT 0.0
+.INDENT 3.5
+If set to a non\-empty string, the generated code will include parameters to
+exchange file descriptors using the \fBGUnixFDList\fP type. This annotation can
+be used on \fB<method>\fP elements.
+.UNINDENT
+.UNINDENT
+.sp
+As an easier alternative to using the \fBorg.gtk.GDBus.DocString\fP annotation,
+note that parser used by \fBgdbus\-codegen\fP parses XML comments in a way similar
+to gtk\-doc <https://developer-old.gnome.org/gtk-doc-manual/stable/>
+:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.EX
+<!\-\-
+  net.Corp.Bar:
+  @short_description: A short description
+
+  A <emphasis>longer</emphasis> description.
+
+  This is a new paragraph.
+\-\->
+<interface name=\(dqnet.corp.Bar\(dq>
+  <!\-\-
+    FooMethod:
+    @greeting: The docs for greeting parameter.
+    @response: The docs for response parameter.
+
+    The docs for the actual method.
+  \-\->
+  <method name=\(dqFooMethod\(dq>
+    <arg name=\(dqgreeting\(dq direction=\(dqin\(dq type=\(dqs\(dq/>
+    <arg name=\(dqresponse\(dq direction=\(dqout\(dq type=\(dqs\(dq/>
+  </method>
+
+  <!\-\-
+    BarSignal:
+    @blah: The docs for blah parameter.
+    @boo: The docs for boo parameter.
+    @since: 2.30
+
+    The docs for the actual signal.
+  \-\->
+  <signal name=\(dqBarSignal\(dq>
+    <arg name=\(dqblah\(dq type=\(dqs\(dq/>
+    <arg name=\(dqboo\(dq type=\(dqs\(dq/>
+  </signal>
+
+  <!\-\- BazProperty: The docs for the property. \-\->
+  <property name=\(dqBazProperty\(dq type=\(dqs\(dq access=\(dqread\(dq/>
+</interface>
+.EE
+.UNINDENT
+.UNINDENT
+.sp
+Note that \fB@since\fP can be used in any inline documentation bit (e.g. for
+interfaces, methods, signals and properties) to set the \fBorg.gtk.GDBus.Since\fP
+annotation. For the \fBorg.gtk.GDBus.DocString\fP annotation (and inline
+comments), note that substrings of the form \fB#net.Corp.Bar\fP,
+\fBnet.Corp.Bar.FooMethod()\fP, \fB#net.Corp.Bar::BarSignal\fP and
+\fB#net.Corp.InlineDocs:BazProperty\fP are all expanded to links to the respective
+interface, method, signal and property. Additionally, substrings starting with
+\fB@\fP and \fB%\fP characters are rendered as
+parameter <https://tdg.docbook.org/tdg/4.5/parameter.html>
+ and
+constant <https://tdg.docbook.org/tdg/4.5/constant.html>
+ respectively.
+.sp
+If both XML comments and \fBorg.gtk.GDBus.DocString\fP or
+\fBorg.gtk.GDBus.DocString.Short\fP annotations are present, the latter wins.
+.SH EXAMPLE
+.sp
+Consider the following D\-Bus Introspection XML:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.EX
+<node>
+  <interface name=\(dqnet.Corp.MyApp.Frobber\(dq>
+    <method name=\(dqHelloWorld\(dq>
+      <arg name=\(dqgreeting\(dq direction=\(dqin\(dq type=\(dqs\(dq/>
+      <arg name=\(dqresponse\(dq direction=\(dqout\(dq type=\(dqs\(dq/>
+    </method>
+
+    <signal name=\(dqNotification\(dq>
+      <arg name=\(dqicon_blob\(dq type=\(dqay\(dq/>
+      <arg name=\(dqheight\(dq type=\(dqi\(dq/>
+      <arg name=\(dqmessages\(dq type=\(dqas\(dq/>
+    </signal>
+
+    <property name=\(dqVerbose\(dq type=\(dqb\(dq access=\(dqreadwrite\(dq/>
+  </interface>
+</node>
+.EE
+.UNINDENT
+.UNINDENT
+.sp
+If \fBgdbus\-codegen\fP is used on this file like this:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.EX
+gdbus\-codegen \-\-generate\-c\-code myapp\-generated       \e
+              \-\-c\-namespace MyApp                     \e
+              \-\-interface\-prefix net.corp.MyApp.      \e
+              net.Corp.MyApp.Frobber.xml
+.EE
+.UNINDENT
+.UNINDENT
+.sp
+two files called \fBmyapp\-generated.[ch]\fP are generated. The files provide an
+abstract \fBGTypeInterface\fP derived type called \fBMyAppFrobber\fP as well as two
+instantiatable types with the same name but suffixed with \fBProxy\fP and
+\fBSkeleton\fP\&. The generated file, roughly, contains the following facilities:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.EX
+/* GType macros for the three generated types */
+#define MY_APP_TYPE_FROBBER (my_app_frobber_get_type ())
+#define MY_APP_TYPE_FROBBER_SKELETON (my_app_frobber_skeleton_get_type ())
+#define MY_APP_TYPE_FROBBER_PROXY (my_app_frobber_proxy_get_type ())
+
+typedef struct _MyAppFrobber MyAppFrobber; /* Dummy typedef */
+
+typedef struct
+{
+  GTypeInterface parent_iface;
+
+  /* Signal handler for the ::notification signal */
+  void (*notification) (MyAppFrobber *proxy,
+                        GVariant *icon_blob,
+                        gint height,
+                        const gchar* const *messages);
+
+  /* Signal handler for the ::handle\-hello\-world signal */
+  gboolean (*handle_hello_world) (MyAppFrobber *proxy,
+                                  GDBusMethodInvocation *invocation,
+                                  const gchar *greeting);
+} MyAppFrobberIface;
+
+/* Asynchronously calls HelloWorld() */
+void
+my_app_frobber_call_hello_world (MyAppFrobber *proxy,
+                                 const gchar *greeting,
+                                 GCancellable *cancellable,
+                                 GAsyncReadyCallback callback,
+                                 gp ointer user_data);
+gboolean
+my_app_frobber_call_hello_world_finish (MyAppFrobber *proxy,
+                                        gchar **out_response,
+                                        GAsyncResult *res,
+                                        GError **error);
+
+/* Synchronously calls HelloWorld(). Blocks calling thread. */
+gboolean
+my_app_frobber_call_hello_world_sync (MyAppFrobber *proxy,
+                                      const gchar *greeting,
+                                      gchar **out_response,
+                                      GCancellable *cancellable,
+                                      GError **error);
+
+/* Completes handling the HelloWorld() method call */
+void
+my_app_frobber_complete_hello_world (MyAppFrobber *object,
+                                     GDBusMethodInvocation *invocation,
+                                     const gchar *response);
+
+/* Emits the ::notification signal / Notification() D\-Bus signal */
+void
+my_app_frobber_emit_notification (MyAppFrobber *object,
+                                  GVariant *icon_blob,
+                                  gint height,
+                                  const gchar* const *messages);
+
+/* Gets the :verbose GObject property / Verbose D\-Bus property.
+ * Does no blocking I/O.
+ */
+gboolean my_app_frobber_get_verbose (MyAppFrobber *object);
+
+/* Sets the :verbose GObject property / Verbose D\-Bus property.
+ * Does no blocking I/O.
+ */
+void my_app_frobber_set_verbose (MyAppFrobber *object,
+                                 gboolean      value);
+
+/* Gets the interface info */
+GDBusInterfaceInfo *my_app_frobber_interface_info (void);
+
+/* Creates a new skeleton object, ready to be exported */
+MyAppFrobber *my_app_frobber_skeleton_new (void);
+
+/* Client\-side proxy constructors.
+ *
+ * Additionally, _new_for_bus(), _new_for_bus_finish() and
+ * _new_for_bus_sync() proxy constructors are also generated.
+ */
+void
+my_app_frobber_proxy_new        (GDBusConnection     *connection,
+                                 GDBusProxyFlags      flags,
+                                 const gchar         *name,
+                                 const gchar         *object_path,
+                                 GCancellable        *cancellable,
+                                 GAsyncReadyCallback  callback,
+                                 gpointer             user_data);
+MyAppFrobber *
+my_app_frobber_proxy_new_finish (GAsyncResult        *res,
+                                 GError             **error);
+MyAppFrobber *
+my_app_frobber_proxy_new_sync   (GDBusConnection     *connection,
+                                 GDBusProxyFlags      flags,
+                                 const gchar         *name,
+                                 const gchar         *object_path,
+                                 GCancellable        *cancellable,
+                                 GError             **error);
+.EE
+.UNINDENT
+.UNINDENT
+.sp
+Thus, for every D\-Bus method, there will be three C functions for calling the
+method, one \fBGObject\fP signal for handling an incoming call and one C function
+for completing an incoming call. For every D\-Bus signal, there’s one \fBGObject\fP
+signal and one C function for emitting it. For every D\-Bus property, two C
+functions are generated (one setter, one getter) and one \fBGObject\fP property.
+The following table summarizes the generated facilities and where they are
+applicable:
+.TS
+box center;
+l|l|l.
+T{
+Symbol type
+T}	T{
+Client
+T}	T{
+Server
+T}
+_
+T{
+Types
+T}	T{
+Use \fBMyAppFrobberProxy\fP\&.
+T}	T{
+Any type implementing the \fBMyAppFrobber\fP interface.
+T}
+_
+T{
+Methods
+T}	T{
+Use \fBm_a_f_hello_world()\fP to call.
+T}	T{
+Receive via the \fBhandle_hello_world()\fP signal handler. Complete the call with \fBm_a_f_complete_hello_world()\fP\&.
+T}
+_
+T{
+Signals
+T}	T{
+Connect to the \fB::notification\fP signal.
+T}	T{
+Use \fBm_a_f_emit_notification()\fP to emit signal.
+T}
+_
+T{
+Properties (Reading)
+T}	T{
+Use \fBm_a_f_get_verbose()\fP or the \fB:verbose\fP property.
+T}	T{
+Implement the \fBget_property()\fP vfunc of \fBGObject\fP\&.
+T}
+_
+T{
+Properties (writing)
+T}	T{
+Use \fBm_a_f_set_verbose()\fP or the \fB:verbose\fP property.
+T}	T{
+Implement the \fBset_property()\fP vfunc of \fBGObject\fP\&.
+T}
+.TE
+.SS Client\-side usage
+.sp
+You can use the generated proxy type with the generated constructors:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.EX
+MyAppFrobber *proxy;
+GError *error;
+
+error = NULL;
+proxy = my_app_frobber_proxy_new_for_bus_sync (
+            G_BUS_TYPE_SESSION,
+            G_DBUS_PROXY_FLAGS_NONE,
+            \(dqnet.Corp.MyApp\(dq,              /* bus name */
+            \(dq/net/Corp/MyApp/SomeFrobber\(dq, /* object */
+            NULL,                          /* GCancellable* */
+            &error);
+/* do stuff with proxy */
+g_object_unref (proxy);
+.EE
+.UNINDENT
+.UNINDENT
+.sp
+Instead of using the generic \fBGDBusProxy\fP facilities, one can use the
+generated methods such as \fBmy_app_frobber_call_hello_world()\fP to invoke
+the \fBnet.Corp.MyApp.Frobber.HelloWorld()\fP D\-Bus method, connect to the
+\fB::notification\fP \fBGObject\fP signal to receive the
+\fBnet.Corp.MyApp.Frobber::Notification\fP D\-Bus signal and get/set the
+\fBnet.Corp.MyApp.Frobber:Verbose\fP D\-Bus Property using either the \fBGObject\fP
+property \fB:verbose\fP or the \fBmy_app_get_verbose()\fP and
+\fBmy_app_set_verbose()\fP methods. Use the standard \fBGObject::notify\fP signal to
+listen to property changes.
+.sp
+Note that all property access is via the \fBGDBusProxy\fP property cache so no I/O
+is ever done when reading properties. Also note that setting a property will
+cause the \fBorg.freedesktop.DBus.Properties.Set\fP method
+(documentation <https://dbus.freedesktop.org/doc/dbus-specification.html#standard-interfaces-properties>
+)
+to be called on the remote object. This call, however, is asynchronous so
+setting a property won’t block. Further, the change is delayed and no error
+checking is possible.
+.SS Server\-side usage
+.sp
+The generated \fBMyAppFrobber\fP interface is designed so it is easy to implement
+it in a \fBGObject\fP subclass. For example, to handle \fBHelloWorld()\fP method
+invocations, set the vfunc for \fBhandle_hello_hello_world()\fP in the
+\fBMyAppFrobberIface\fP structure. Similarly, to handle the
+\fBnet.Corp.MyApp.Frobber:Verbose\fP property override the \fB:verbose\fP
+\fBGObject\fP property from the subclass. To emit a signal, use e.g.
+\fBmy_app_emit_signal()\fP or \fBg_signal_emit_by_name()\fP\&.
+.sp
+Instead of subclassing, it is often easier to use the generated
+\fBMyAppFrobberSkeleton\fP subclass. To handle incoming method calls, use
+\fBg_signal_connect()\fP with the \fB::handle\-*\fP signals and instead of
+overriding the \fBget_property()\fP and \fBset_property()\fP vfuncs from
+\fBGObject\fP, use \fBg_object_get()\fP and \fBg_object_set()\fP or the generated
+property getters and setters (the generated class has an internal property bag
+implementation).
+.sp
+For example:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.EX
+static gboolean
+on_handle_hello_world (MyAppFrobber           *interface,
+                       GDBusMethodInvocation  *invocation,
+                       const gchar            *greeting,
+                       gpointer                user_data)
+{
+  if (g_strcmp0 (greeting, \(dqBoo\(dq) != 0)
+    {
+      gchar *response;
+      response = g_strdup_printf (\(dqWord! You said ‘%s’.\(dq, greeting);
+      my_app_complete_hello_world (interface, invocation, response);
+      g_free (response);
+    }
+  else
+    {
+      g_dbus_method_invocation_return_error (invocation,
+                 MY_APP_ERROR,
+                 MY_APP_ERROR_NO_WHINING,
+                 \(dqHey, %s, there will be no whining!\(dq,
+                 g_dbus_method_invocation_get_sender (invocation));
+    }
+  return TRUE;
+}
+
+  […]
+
+  interface = my_app_frobber_skeleton_new ();
+  my_app_frobber_set_verbose (interface, TRUE);
+
+  g_signal_connect (interface,
+                    \(dqhandle\-hello\-world\(dq,
+                    G_CALLBACK (on_handle_hello_world),
+                    some_user_data);
+
+  […]
+
+  error = NULL;
+  if (!g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (interface),
+                                         connection,
+                                         \(dq/path/of/dbus_object\(dq,
+                                         &error))
+    {
+      /* handle error */
+    }
+.EE
+.UNINDENT
+.UNINDENT
+.sp
+To facilitate atomic changesets (multiple properties changing at the same time),
+\fBGObject::notify\fP signals are queued up when received. The queue is drained in
+an idle handler (which is called from the thread\-default main loop of the thread
+where the skeleton object was constructed) and will cause emissions of the
+\fBorg.freedesktop.DBus.Properties::PropertiesChanged\fP
+(documentation <https://dbus.freedesktop.org/doc/dbus-specification.html#standard-interfaces-properties>
+)
+signal with all the properties that have changed. Use
+\fBg_dbus_interface_skeleton_flush()\fP or \fBg_dbus_object_skeleton_flush()\fP to
+empty the queue immediately. Use \fBg_object_freeze_notify()\fP and
+\fBg_object_thaw_notify()\fP for atomic changesets if on a different thread.
+.SH C TYPE MAPPING
+.sp
+Scalar types (type strings \fBb\fP, \fBy\fP, \fBn\fP, \fBq\fP, \fBi\fP, \fBu\fP, \fBx\fP,
+\fBt\fP and \fBd\fP), strings (type strings \fBs\fP, \fBay\fP, \fBo\fP and \fBg\fP) and
+arrays of strings (type strings \fBas\fP, \fBao\fP and \fBaay\fP) are mapped to the
+natural types, e.g. \fBgboolean\fP, \fBgdouble\fP, \fBgint\fP, \fBgchar*\fP, \fBgchar**\fP
+and so on. Everything else is mapped to the \fBGVariant\fP type.
+.sp
+This automatic mapping can be turned off by using the annotation
+\fBorg.gtk.GDBus.C.ForceGVariant\fP — if used then a \fBGVariant\fP is always
+exchanged instead of the corresponding native C type. This annotation may be
+convenient to use when using bytestrings (type string \fBay\fP) for data that
+could have embedded nul bytes.
+.SH STABILITY GUARANTEES
+.sp
+The generated C functions are guaranteed to not change their ABI. That is, if a
+method, signal or property does not change its signature in the introspection
+XML, the generated C functions will not change their C ABI either. The ABI of
+the generated instance and class structures will be preserved as well.
+.sp
+The ABI of the generated \fBGType\fP instances will be preserved only if the
+\fBorg.gtk.GDBus.Since\fP annotation is used judiciously — this is because the
+VTable for the \fBGInterface\fP relies on function pointers for signal handlers.
+Specifically, if a D\-Bus method, property or signal or is added to a D\-Bus
+interface, then ABI of the generated \fBGInterface\fP type is preserved if, and
+only if, each added method, property signal is annotated with the
+\fBorg.gtk.GDBus.Since\fP annotation using a greater version number than previous
+versions.
+.sp
+The generated C code currently happens to be annotated with
+gtk\-doc <https://developer-old.gnome.org/gtk-doc-manual/stable/>
+ and
+GObject Introspection <https://gi.readthedocs.io/en/latest/>
+ comments and
+annotations. The layout and contents might change in the future so no guarantees
+about e.g. \fBSECTION\fP usage etc. are given.
+.sp
+While the generated DocBook for D\-Bus interfaces isn’t expected to change, no
+guarantees are given at this point.
+.sp
+It is important to note that the generated code should not be checked into
+version control systems, nor it should be included in distributed source
+archives.
+.SH BUGS
+.sp
+Please send bug reports to either the distribution bug tracker or the
+upstream bug tracker <https://gitlab.gnome.org/GNOME/glib/issues/new>
+\&.
+.SH SEE ALSO
+.sp
+ <gdbus(1)> 
+.\" Generated by docutils manpage writer.
+.

@@ -1,0 +1,34 @@
+name: Release
+
+on:
+  schedule:
+    ## Schedule the job to run on Apr-1, Aug-1, Dec-1
+    - cron: '0 0 1 APR,AUG,DEC *'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "release version number (3 digits)"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Build
+        run: bash ${GITHUB_WORKSPACE}/tools/release.sh ${{ inputs.tag }}
+
+      - name: Release
+        if: ${{ env.new_version }}
+        uses: softprops/action-gh-release@v0.1.15
+        with:
+          tag_name: ${{ env.new_version }}
+          name: dracut-${{ env.new_version }}
+          body_path: ${{ github.workspace }}/release.md

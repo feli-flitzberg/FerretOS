@@ -52,6 +52,39 @@ installation
 pip3 wheel -w dist --no-cache-dir --no-build-isolation --no-deps $PWD
 pip3 install --no-index --no-user --find-links dist pyelftools
 ```
+- Add (blfs) BLFS systemd units (2024-08-01)
+- Add (blfs) wget 1.25.0
+  - Add (blfs) libpsl 0.21.5 as recommended dependency
+  - Add (blfs) make-ca 1.14 as recommended dependency
+    - Add (blfs) p11-kit 0.25.5 as dependency
+      - Add (blfs) libtasn1 4.19.0 as recommended dependency
+- Add (blfs) openssh 9.8p1
+- Add (blfs) sudo 1.9.15p5
+  - To enable insults: `--with-insults`
+  - To enable all insults: `--with insults --with-all-insults`
+- Add (external) dracut (last commit 2024-03-21)
+  - Requires asciidoc for documentation, use `--disable-documentation` to avoid
+- Add (blfs) btrfs-progs 6.10.1
+  - Add (blfs) lzo 2.10 as dependency
+- Add (blfs) dosfstools 4.2
+- Add (blfs) jfsutils 1.1.15
+- Add (blfs) gptfdisk 1.0.10
+  - Add (blfs) popt 1.19 as dependency
+- Add (blfs) parted 3.6
+- Add (blfs) sshfs 3.7.3
+  - Add (blfs) fuse 3.16.2 as dependency
+  - Add (blfs) glib 2.80.4 as dependency
+    - Add (blfs) packaging 24.1 as dependency
+    - Add (blfs) docutils 0.21.2 as recommended dependency
+    - Add (blfs) libxslt 1.1.42 as recommended dependency
+      - Add (blfs) libxml2 2.13.3 as dependency
+        - Add (blfs) icu 75.1 as recommended dependency
+      - Add (blfs) docbook-xml 4.5 as recommended dependency
+        - Add (blfs) unzip 6.0 as unpack requirement
+      - Add (blfs) docbook-xsl-nons 1.79.2 as recommended dependency
+    - Add (blfs) pcre2 10.44 as recommended dependency
+    - Add (blfs) shared-mime-info 2.4 as dependency
+    - Add (blfs) desktop-file-utils 0.27 as dependency
 - Add (external) [linux-firmware](https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/)
   - Add (external) rdfind as dependency requirement
 
@@ -72,6 +105,25 @@ root until a text editor is available).***
 - Make single systemd network file to match any found network devices
   - Not sure it will enable more than one device, but it will at least enable the first
 - Add `noclear.conf` from 9.10 Systemd Usage & Configuration
+- Add (blfs) `/usr/sbin/strip-all.sh`
+- Add (blfs) `/usr/sbin/remove-la-files.sh`
+- Add `/etc/profile.d` and various shell scripts
+  - Add `bash_completion.sh`
+  - Add `dircolors.sh`
+  - Add `extrapaths.sh`
+  - Add `readline.sh`
+  - Add `umask.sh`
+  - Add `i18n.sh`
+  - Add `pythoncerts.sh`
+- Add `/etc/skel` with configuration files and FerretOS needs
+  - Files copied to `/root` when finishing image
+  - Add `.bash_profile`
+  - Add `.bashrc`
+  - Add `.bash_logout`
+- Add `/etc/profile` from BLFS
+- Add `/etc/bashrc` from BLFS
+- Add `/etc/dircolors`
+- Add `/etc/issue`
 
 #### Build/Configure process
 
@@ -101,6 +153,7 @@ manually pruned
 - Timezone is not set to accomodate systemd-firstboot
 - `/etc/adjtime` is not used to accomodate multiple hardware setups
 - System locale is not set to accomodate systemd-firstboot
+- Additional packages are added before building the kernel and finalizing the image
 - `/etc/fstab` is not created
   - As part of the [Bootloader Specification](https://uapi-group.org/specifications/specs/boot_loader_specification/)
 this file isn't needed by a spec-compliant bootloader to find the root

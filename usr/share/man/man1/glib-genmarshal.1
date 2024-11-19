@@ -1,0 +1,592 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GLIB-GENMARSHAL" "" "" ""
+.SH NAME
+glib-genmarshal \- C code marshaller generation utility for GLib closures
+.\" This has to be duplicated from above to make it machine-readable by `reuse`:
+.\" SPDX-FileCopyrightText: 2003 Matthias Clasen
+.\" SPDX-FileCopyrightText: 2005, 2012, 2013, 2016 Red Hat, Inc.
+.\" SPDX-FileCopyrightText: 2010 Christian Persch
+.\" SPDX-FileCopyrightText: 2017, 2019, 2020 Emmanuele Bassi
+.\" SPDX-FileCopyrightText: 2020 Centricular
+.\" SPDX-License-Identifier: LGPL-2.1-or-later
+.
+.SH SYNOPSIS
+.nf
+\fBglib\-genmarshal\fP [OPTION…] [FILE…]
+.fi
+.sp
+.SH DESCRIPTION
+.sp
+\fBglib\-genmarshal\fP is a small utility that generates C code marshallers for
+callback functions of the GClosure mechanism in the GObject sublibrary of GLib.
+The marshaller functions have a standard signature, they get passed in the
+invoking closure, an array of value structures holding the callback function
+parameters and a value structure for the return value of the callback. The
+marshaller is then responsible to call the respective C code function of the
+closure with all the parameters on the stack and to collect its return value.
+.sp
+\fBglib\-genmarshal\fP takes a list of marshallers to generate as input. The
+marshaller list is either read from files passed as additional arguments
+on the command line; or from standard input, by using \fB\-\fP as the input file.
+.SS MARSHALLER LIST FORMAT
+.sp
+The marshaller lists are processed line by line, a line can contain a comment in
+the form of:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.EX
+# this is a comment
+.EE
+.UNINDENT
+.UNINDENT
+.sp
+or a marshaller specification of the form:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.EX
+RTYPE:PTYPE
+RTYPE:PTYPE,PTYPE
+RTYPE:PTYPE,PTYPE,PTYPE
+…
+.EE
+.UNINDENT
+.UNINDENT
+.sp
+The \fBRTYPE\fP part specifies the callback’s return type and the \fBPTYPE\fP
+instances right of the colon specify the callback’s parameter list, except for
+the first and the last arguments which are always pointers.
+.SS PARAMETER TYPES
+.sp
+Currently, the following types are supported:
+.sp
+\fBVOID\fP
+.INDENT 0.0
+.INDENT 3.5
+Indicates no return type, or no extra parameters. If \fBVOID\fP is used as the
+parameter list, no additional parameters may be present.
+.UNINDENT
+.UNINDENT
+.sp
+\fBBOOLEAN\fP
+.INDENT 0.0
+.INDENT 3.5
+For boolean types (\fBgboolean\fP).
+.UNINDENT
+.UNINDENT
+.sp
+\fBCHAR\fP
+.INDENT 0.0
+.INDENT 3.5
+For signed char types (\fBgchar\fP).
+.UNINDENT
+.UNINDENT
+.sp
+\fBUCHAR\fP
+.INDENT 0.0
+.INDENT 3.5
+For unsigned char types (\fBguchar\fP).
+.UNINDENT
+.UNINDENT
+.sp
+\fBINT\fP
+.INDENT 0.0
+.INDENT 3.5
+For signed integer types (\fBgint\fP).
+.UNINDENT
+.UNINDENT
+.sp
+\fBUINT\fP
+.INDENT 0.0
+.INDENT 3.5
+For unsigned integer types (\fBguint\fP).
+.UNINDENT
+.UNINDENT
+.sp
+\fBLONG\fP
+.INDENT 0.0
+.INDENT 3.5
+For signed long integer types (\fBglong\fP).
+.UNINDENT
+.UNINDENT
+.sp
+\fBULONG\fP
+.INDENT 0.0
+.INDENT 3.5
+For unsigned long integer types (\fBgulong\fP).
+.UNINDENT
+.UNINDENT
+.sp
+\fBINT64\fP
+.INDENT 0.0
+.INDENT 3.5
+For signed 64\-bit integer types (\fBgint64\fP).
+.UNINDENT
+.UNINDENT
+.sp
+\fBUINT64\fP
+.INDENT 0.0
+.INDENT 3.5
+For unsigned 64\-bit integer types (\fBguint64\fP).
+.UNINDENT
+.UNINDENT
+.sp
+\fBENUM\fP
+.INDENT 0.0
+.INDENT 3.5
+For enumeration types (\fBgint\fP).
+.UNINDENT
+.UNINDENT
+.sp
+\fBFLAGS\fP
+.INDENT 0.0
+.INDENT 3.5
+For flag enumeration types (\fBguint\fP).
+.UNINDENT
+.UNINDENT
+.sp
+\fBFLOAT\fP
+.INDENT 0.0
+.INDENT 3.5
+For single\-precision float types (\fBgfloat\fP).
+.UNINDENT
+.UNINDENT
+.sp
+\fBDOUBLE\fP
+.INDENT 0.0
+.INDENT 3.5
+For double\-precision float types (\fBgdouble\fP).
+.UNINDENT
+.UNINDENT
+.sp
+\fBSTRING\fP
+.INDENT 0.0
+.INDENT 3.5
+For string types (\fBgchar*\fP).
+.UNINDENT
+.UNINDENT
+.sp
+\fBBOXED\fP
+.INDENT 0.0
+.INDENT 3.5
+For boxed (anonymous but reference counted) types (\fBGBoxed*\fP).
+.UNINDENT
+.UNINDENT
+.sp
+\fBPARAM\fP
+.INDENT 0.0
+.INDENT 3.5
+For \fBGParamSpec\fP or derived types (\fBGParamSpec*\fP).
+.UNINDENT
+.UNINDENT
+.sp
+\fBPOINTER\fP
+.INDENT 0.0
+.INDENT 3.5
+For anonymous pointer types (\fBgpointer\fP).
+.UNINDENT
+.UNINDENT
+.sp
+\fBOBJECT\fP
+.INDENT 0.0
+.INDENT 3.5
+For \fBGObject\fP or derived types (\fBGObject*\fP).
+.UNINDENT
+.UNINDENT
+.sp
+\fBVARIANT\fP
+.INDENT 0.0
+.INDENT 3.5
+For \fBGVariant\fP types (\fBGVariant*\fP).
+.UNINDENT
+.UNINDENT
+.sp
+\fBNONE\fP
+.INDENT 0.0
+.INDENT 3.5
+Deprecated alias for \fBVOID\fP\&.
+.UNINDENT
+.UNINDENT
+.sp
+\fBBOOL\fP
+.INDENT 0.0
+.INDENT 3.5
+Deprecated alias for \fBBOOLEAN\fP\&.
+.UNINDENT
+.UNINDENT
+.SH OPTIONS
+.sp
+\fB\-\-header\fP
+.INDENT 0.0
+.INDENT 3.5
+Generate header file contents of the marshallers. This option is mutually
+exclusive with the \fB\-\-body\fP option.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-body\fP
+.INDENT 0.0
+.INDENT 3.5
+Generate C code file contents of the marshallers. This option is mutually
+exclusive with the \fB\-\-header\fP option.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-prefix <PREFIX>\fP
+.INDENT 0.0
+.INDENT 3.5
+Specify marshaller prefix. The default prefix is \fBg_cclosure_user_marshal\fP\&.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-skip\-source\fP
+.INDENT 0.0
+.INDENT 3.5
+Skip source location remarks in generated comments.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-stdinc\fP
+.INDENT 0.0
+.INDENT 3.5
+Use the standard marshallers of the GObject library, and include
+\fBglib\-object.h\fP in generated header files. This option is mutually exclusive
+with the \fB\-\-nostdinc\fP option.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-nostdinc\fP
+.INDENT 0.0
+.INDENT 3.5
+Do not use the standard marshallers of the GObject library, and skip the
+\fBglib\-object.h\fP include directive in generated header files.
+This option is mutually exclusive with the \fB\-\-stdinc\fP option.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-internal\fP
+.INDENT 0.0
+.INDENT 3.5
+Mark generated functions as internal, using \fBG_GNUC_INTERNAL\fP\&.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-valist\-marshallers\fP
+.INDENT 0.0
+.INDENT 3.5
+Generate \fBvalist\fP marshallers, for use with
+\fBg_signal_set_va_marshaller()\fP\&.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-v\fP, \fB\-\-version\fP
+.INDENT 0.0
+.INDENT 3.5
+Print version information and exit.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-g\-fatal\-warnings\fP
+.INDENT 0.0
+.INDENT 3.5
+Make warnings fatal. That is, exit immediately once a warning occurs.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-h\fP, \fB\-\-help\fP
+.INDENT 0.0
+.INDENT 3.5
+Print brief help and exit.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-output <FILE>\fP
+.INDENT 0.0
+.INDENT 3.5
+Write output to \fBFILE\fP instead of the standard output.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-prototypes\fP
+.INDENT 0.0
+.INDENT 3.5
+Generate function prototypes before the function definition in the C source
+file, in order to avoid a \fBmissing\-prototypes\fP compiler warning. This option
+is only useful when using the \fB\-\-body\fP option.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-pragma\-once\fP
+.INDENT 0.0
+.INDENT 3.5
+Use the \fBonce\fP pragma instead of an old style header guard
+when generating the C header file. This option is only useful when using the
+\fB\-\-header\fP option.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-include\-header <HEADER>\fP
+.INDENT 0.0
+.INDENT 3.5
+Adds a \fB#include\fP directive for the given file in the C source file. This
+option is only useful when using the \fB\-\-body\fP option.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-D <SYMBOL>[=<VALUE>]\fP
+.INDENT 0.0
+.INDENT 3.5
+Adds a \fB#define\fP C pre\-processor directive for \fBSYMBOL\fP and its given
+\fBVALUE\fP, or \fB\(dq1\(dq\fP if the value is unset. You can use this option multiple
+times; if you do, all the symbols will be defined in the same order given on
+the command line, before the symbols undefined using the \fB\-U\fP option. This
+option is only useful when using the \fB\-\-body\fP option.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-U <SYMBOL>\fP
+.INDENT 0.0
+.INDENT 3.5
+Adds a \fB#undef\fP C pre\-processor directive to undefine the given \fBSYMBOL\fP\&.
+You can use this option multiple times; if you do, all the symbols will be
+undefined in the same order given on the command line, after the symbols
+defined using the \fB\-D\fP option. This option is only useful when using the
+\fB\-\-body\fP option.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-quiet\fP
+.INDENT 0.0
+.INDENT 3.5
+Minimizes the output of \fBglib\-genmarshal\fP, by printing only warnings and
+errors. This option is mutually exclusive with the \fB\-\-verbose\fP option.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-verbose\fP
+.INDENT 0.0
+.INDENT 3.5
+Increases the verbosity of \fBglib\-genmarshal\fP, by printing debugging
+information. This option is mutually exclusive with the \fB\-\-quiet\fP option.
+.UNINDENT
+.UNINDENT
+.SH USING GLIB-GENMARSHAL WITH MESON
+.sp
+Meson supports generating closure marshallers using \fBglib\-genmarshal\fP out of
+the box in its \fBgnome\fP module.
+.sp
+In your \fBmeson.build\fP file you will typically call the \fBgnome.genmarshal()\fP
+method with the source list of marshallers to generate:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.EX
+gnome = import(\(aqgnome\(aq)
+marshal_files = gnome.genmarshal(\(aqmarshal\(aq,
+  sources: \(aqmarshal.list\(aq,
+  internal: true,
+)
+.EE
+.UNINDENT
+.UNINDENT
+.sp
+The \fBmarshal_files\fP variable will contain an array of two elements in the
+following order:
+.INDENT 0.0
+.IP \(bu 2
+a build target for the source file
+.IP \(bu 2
+a build target for the header file
+.UNINDENT
+.sp
+You should use the returned objects to provide a dependency on every other
+build target that references the source or header file; for instance, if you
+are using the source to build a library:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.EX
+mainlib = library(\(aqproject\(aq,
+  sources: project_sources + marshal_files,
+  …
+)
+.EE
+.UNINDENT
+.UNINDENT
+.sp
+Additionally, if you are including the generated header file inside a build
+target that depends on the library you just built, you must ensure that the
+internal dependency includes the generated header as a required source file:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.EX
+mainlib_dep = declare_dependency(sources: marshal_files[1], link_with: mainlib)
+.EE
+.UNINDENT
+.UNINDENT
+.sp
+You should not include the generated source file as well, otherwise it will
+be built separately for every target that depends on it, causing build
+failures. To know more about why all this is required, please refer to the
+corresponding Meson FAQ entry <https://mesonbuild.com/FAQ.html#how-do-i-tell-meson-that-my-sources-use-generated-headers>
+\&.
+.sp
+For more information on how to use the method, see the
+Meson documentation <https://mesonbuild.com/Gnome-module.html#gnomegenmarshal>
+
+for \fBgnome.genmarshal()\fP\&.
+.SH USING GLIB-GENMARSHAL WITH AUTOTOOLS
+.sp
+In order to use \fBglib\-genmarshal\fP in your project when using Autotools as the
+build system, you will first need to modify your \fBconfigure.ac\fP file to ensure
+you find the appropriate command using \fBpkg\-config\fP, similarly as to how you
+discover the compiler and linker flags for GLib:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.EX
+PKG_PROG_PKG_CONFIG([0.28])
+
+PKG_CHECK_VAR([GLIB_GENMARSHAL], [glib\-2.0], [glib_genmarshal])
+.EE
+.UNINDENT
+.UNINDENT
+.sp
+In your \fBMakefile.am\fP file you will typically need very simple rules to
+generate the C files needed for the build:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.EX
+marshal.h: marshal.list
+        $(AM_V_GEN)$(GLIB_GENMARSHAL) \e
+                \-\-header \e
+                \-\-output=$@ \e
+                $<
+
+marshal.c: marshal.list marshal.h
+        $(AM_V_GEN)$(GLIB_GENMARSHAL) \e
+                \-\-include\-header=marshal.h \e
+                \-\-body \e
+                \-\-output=$@ \e
+                $<
+
+BUILT_SOURCES += marshal.h marshal.c
+CLEANFILES += marshal.h marshal.c
+EXTRA_DIST += marshal.list
+.EE
+.UNINDENT
+.UNINDENT
+.sp
+In the example above, the first rule generates the header file and depends on
+a \fBmarshal.list\fP file in order to regenerate the result in case the
+marshallers list is updated. The second rule generates the source file for the
+same \fBmarshal.list\fP, and includes the file generated by the header rule.
+.SH EXAMPLE
+.sp
+To generate marshallers for the following callback functions:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.EX
+void   foo (gpointer data1,
+            gpointer data2);
+void   bar (gpointer data1,
+            gint     param1,
+            gpointer data2);
+gfloat baz (gpointer data1,
+            gboolean param1,
+            guchar   param2,
+            gpointer data2);
+.EE
+.UNINDENT
+.UNINDENT
+.sp
+The \fBmarshaller.list\fP file has to look like this:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.EX
+VOID:VOID
+VOID:INT
+FLOAT:BOOLEAN,UCHAR
+.EE
+.UNINDENT
+.UNINDENT
+.sp
+and you call \fBglib\-genmarshal\fP like this:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.EX
+glib\-genmarshal \-\-header marshaller.list > marshaller.h
+glib\-genmarshal \-\-body marshaller.list > marshaller.c
+.EE
+.UNINDENT
+.UNINDENT
+.sp
+The generated marshallers have the arguments encoded in their function name.
+For this particular list, they are:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.EX
+g_cclosure_user_marshal_VOID__VOID(...),
+g_cclosure_user_marshal_VOID__INT(...),
+g_cclosure_user_marshal_FLOAT__BOOLEAN_UCHAR(...).
+.EE
+.UNINDENT
+.UNINDENT
+.sp
+They can be used directly for GClosures or be passed in as the
+\fBGSignalCMarshaller c_marshaller\fP argument upon creation of signals:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.EX
+GClosure *cc_foo, *cc_bar, *cc_baz;
+
+cc_foo = g_cclosure_new (NULL, foo, NULL);
+g_closure_set_marshal (cc_foo, g_cclosure_user_marshal_VOID__VOID);
+cc_bar = g_cclosure_new (NULL, bar, NULL);
+g_closure_set_marshal (cc_bar, g_cclosure_user_marshal_VOID__INT);
+cc_baz = g_cclosure_new (NULL, baz, NULL);
+g_closure_set_marshal (cc_baz, g_cclosure_user_marshal_FLOAT__BOOLEAN_UCHAR);
+.EE
+.UNINDENT
+.UNINDENT
+.SH SEE ALSO
+.sp
+ <glib\-mkenums(1)> 
+.\" Generated by docutils manpage writer.
+.

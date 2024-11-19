@@ -1,0 +1,13 @@
+# HSTS 1.0 Known Hosts database for GNU Wget.
+# Edit at your own risk.
+# <hostname>	<port>	<incl. subdomains>	<created>	<max-age>
+docbook.org	0	0	1732058024	31536000
+www.kernel.org	0	0	1732054507	31557600
+ftp.gnu.org	0	0	1732055246	63072000
+codeload.github.com	0	0	1732051211	31536000
+www.docbook.org	0	0	1732058024	31536000
+gitlab.freedesktop.org	0	1	1732059095	15724800
+www.sudo.ws	0	1	1732052294	15552000
+www.linuxfromscratch.org	0	0	1732058446	31536000
+files.pythonhosted.org	0	1	1732056649	31536000
+github.com	0	1	1732059357	31536000

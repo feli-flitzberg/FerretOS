@@ -1,0 +1,775 @@
+.\" Man page generated from reStructuredText.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "GIO" "" "" ""
+.SH NAME
+gio \- GIO commandline tool
+.\" This has to be duplicated from above to make it machine-readable by `reuse`:
+.\" SPDX-FileCopyrightText: 2015, 2019, 2020 Red Hat, Inc.
+.\" SPDX-FileCopyrightText: 2018, 2019 Endless Mobile, Inc.
+.\" SPDX-FileCopyrightText: 2018 segfault
+.\" SPDX-FileCopyrightText: 2020 Frederic Martinsons
+.\" SPDX-FileCopyrightText: 2022 Marco Trevisan
+.\" SPDX-License-Identifier: LGPL-2.1-or-later
+.
+.SH SYNOPSIS
+.nf
+\fBgio\fP help [\fICOMMAND\fP]
+\fBgio\fP version
+\fBgio\fP cat \fILOCATION\fP…
+\fBgio\fP copy [\fIOPTION\fP…] \fISOURCE\fP… \fIDESTINATION\fP
+\fBgio\fP info [\fIOPTION\fP…] \fILOCATION\fP…
+\fBgio\fP launch \fIDESKTOP\-FILE\fP [\fIFILE\-ARG\fP…]
+\fBgio\fP list [\fIOPTION\fP…] [\fILOCATION\fP…]
+\fBgio\fP mime \fIMIME\-TYPE\fP [\fIHANDLER\fP]
+\fBgio\fP mkdir [\fIOPTION\fP…] \fILOCATION\fP…
+\fBgio\fP monitor [\fIOPTION\fP…] [\fILOCATION\fP…]
+\fBgio\fP mount [\fIOPTION\fP…] [\fILOCATION\fP…]
+\fBgio\fP move [\fIOPTION\fP…] \fISOURCE\fP… \fIDESTINATION\fP
+\fBgio\fP open \fILOCATION\fP…
+\fBgio\fP rename \fILOCATION\fP \fINAME\fP
+\fBgio\fP remove [\fIOPTION\fP…] \fILOCATION\fP…
+\fBgio\fP save [\fIOPTION\fP…] \fIDESTINATION\fP
+\fBgio\fP set [\fIOPTION\fP…] \fILOCATION\fP \fIATTRIBUTE\fP \fIVALUE\fP…
+\fBgio\fP trash [\fIOPTION\fP…] [\fILOCATION\fP…]
+\fBgio\fP tree [\fIOPTION\fP…] [\fILOCATION\fP…]
+.fi
+.sp
+.SH DESCRIPTION
+.sp
+\fBgio\fP is a utility that makes many of the GIO features available from the
+commandline. In doing so, it provides commands that are similar to traditional
+utilities, but let you use GIO locations instead of local files: for example you
+can use something like \fBsmb://server/resource/file.txt\fP as a location.
+.sp
+Plain filenames which contain a colon will be interpreted as URIs with an
+unknown protocol. To avoid this, prefix them with a path such as \fB\&./\fP, or with
+the \fBfile:\fP protocol.
+.SH COMMANDS
+.sp
+\fBhelp\fP \fICOMMAND\fP
+.INDENT 0.0
+.INDENT 3.5
+Displays a short synopsis of the available commands or provides detailed help
+on a specific command.
+.UNINDENT
+.UNINDENT
+.sp
+\fBversion\fP
+.INDENT 0.0
+.INDENT 3.5
+Prints the GLib version to which \fBgio\fP belongs.
+.UNINDENT
+.UNINDENT
+.sp
+\fBcat\fP \fILOCATION\fP…
+.INDENT 0.0
+.INDENT 3.5
+Concatenates the given files and prints them to the standard output.
+.sp
+The \fBcat\fP command works just like the traditional \fBcat\fP utility.
+.sp
+Mote: just pipe through \fBcat\fP if you need its formatting options like
+\fB\-n\fP, \fB\-T\fP or other.
+.UNINDENT
+.UNINDENT
+.sp
+\fBcopy\fP [\fIOPTION\fP…] \fISOURCE\fP… \fIDESTINATION\fP
+.INDENT 0.0
+.INDENT 3.5
+Copies one or more files from \fBSOURCE\fP to \fBDESTINATION\fP\&. If more than one
+source is specified, the destination must be a directory.
+.sp
+The \fBcopy\fP command is similar to the traditional \fBcp\fP utility.
+.sp
+\fBOptions\fP
+.sp
+\fB\-T\fP, \fB\-\-no\-target\-directory\fP
+.INDENT 0.0
+.INDENT 3.5
+Don’t copy into \fBDESTINATION\fP even if it is a directory.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-p\fP, \fB\-\-progress\fP
+.INDENT 0.0
+.INDENT 3.5
+Show progress.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-i\fP, \fB\-\-interactive\fP
+.INDENT 0.0
+.INDENT 3.5
+Prompt for confirmation before overwriting files.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-preserve\fP
+.INDENT 0.0
+.INDENT 3.5
+Preserve all attributes of copied files.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-b\fP, \fB\-\-backup\fP
+.INDENT 0.0
+.INDENT 3.5
+Create backups of existing destination files.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-P\fP, \fB\-\-no\-dereference\fP
+.INDENT 0.0
+.INDENT 3.5
+Never follow symbolic links.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-default\-permissions\fP
+.INDENT 0.0
+.INDENT 3.5
+Use the default permissions of the current process for the destination file,
+rather than copying the permissions of the source file.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBinfo\fP [\fIOPTION\fP…] \fILOCATION\fP…
+.INDENT 0.0
+.INDENT 3.5
+Shows information about the given locations.
+.sp
+The \fBinfo\fP command is similar to the traditional \fBls\fP utility.
+.sp
+\fBOptions\fP
+.sp
+\fB\-w\fP, \fB\-\-query\-writable\fP
+.INDENT 0.0
+.INDENT 3.5
+List writable attributes.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-f\fP, \fB\-\-filesystem\fP
+.INDENT 0.0
+.INDENT 3.5
+Show information about the filesystem that the given locations reside on.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-a\fP, \fB\-\-attributes=<ATTRIBUTES>\fP
+.INDENT 0.0
+.INDENT 3.5
+The attributes to get.
+.sp
+Attributes can be specified with their GIO name, e.g. \fBstandard::icon\fP,
+or just by namespace, e.g. \fBunix\fP, or by \fB*\fP, which matches all
+attributes. Several attributes or groups of attributes can be specified,
+separated by commas.
+.sp
+By default, all attributes are listed.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-n\fP, \fB\-\-nofollow\-symlinks\fP
+.INDENT 0.0
+.INDENT 3.5
+Don’t follow symbolic links.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBlaunch\fP \fIDESKTOP\-FILE\fP [\fIFILE\-ARG\fP…]
+.INDENT 0.0
+.INDENT 3.5
+Launch a desktop file from any location given.
+.sp
+The \fBlaunch\fP command extends the behavior of the \fBopen\fP command by
+allowing any desktop file to be launched, not only those registered as file
+handlers.
+.UNINDENT
+.UNINDENT
+.sp
+\fBlist\fP [\fIOPTION\fP…] [\fILOCATION\fP…]
+.INDENT 0.0
+.INDENT 3.5
+Lists the contents of the given locations. If no location is given, the
+contents of the current directory are shown.
+.sp
+The \fBlist\fP command is similar to the traditional \fBls\fP utility.
+.sp
+\fBOptions\fP
+.sp
+\fB\-a\fP, \fB\-\-attributes=<ATTRIBUTES>\fP
+.INDENT 0.0
+.INDENT 3.5
+The attributes to get.
+.sp
+Attributes can be specified with their GIO name, e.g. \fBstandard::icon\fP, or
+just by namespace, e.g. \fBunix\fP, or by \fB*\fP, which matches all attributes.
+Several attributes or groups of attributes can be specified, separated by
+commas.
+.sp
+By default, all attributes are listed.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-h\fP, \fB\-\-hidden\fP
+.INDENT 0.0
+.INDENT 3.5
+Show hidden files.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-l\fP, \fB\-\-long\fP
+.INDENT 0.0
+.INDENT 3.5
+Use a long listing format.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-n\fP, \fB\-\-nofollow\-symlinks\fP
+.INDENT 0.0
+.INDENT 3.5
+Don’t follow symbolic links.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-d\fP, \fB\-\-print\-display\-names\fP
+.INDENT 0.0
+.INDENT 3.5
+Print display names.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-u\fP, \fB\-\-print\-uris\fP
+.INDENT 0.0
+.INDENT 3.5
+Print full URIs.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBmime\fP \fIMIME\-TYPE\fP [\fIHANDLER\fP]
+.INDENT 0.0
+.INDENT 3.5
+If no handler is given, the \fBmime\fP command lists the registered and
+recommended applications for the MIME type. If a handler is given, it is set
+as the default handler for the MIME type.
+.sp
+Handlers must be specified by their desktop file name, including the
+extension. Example: \fBorg.gnome.gedit.desktop\fP\&.
+.UNINDENT
+.UNINDENT
+.sp
+\fBmkdir\fP [\fIOPTION\fP…] \fILOCATION\fP…
+.INDENT 0.0
+.INDENT 3.5
+Creates directories.
+.sp
+The \fBmkdir\fP command is similar to the traditional \fBmkdir\fP utility.
+.sp
+\fBOptions\fP
+.sp
+\fB\-p\fP, \fB\-\-parent\fP
+.INDENT 0.0
+.INDENT 3.5
+Create parent directories when necessary.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBmonitor\fP [\fIOPTION\fP…] [\fILOCATION\fP…]
+.INDENT 0.0
+.INDENT 3.5
+Monitors files or directories for changes, such as creation deletion, content
+and attribute changes, and mount and unmount operations affecting the
+monitored locations.
+.sp
+The \fBmonitor\fP command uses the GIO file monitoring APIs to do its job. GIO
+has different implementations for different platforms. The most common
+implementation on Linux uses inotify.
+.sp
+\fBOptions\fP
+.sp
+\fB\-d\fP, \fB\-\-dir=<LOCATION>\fP
+.INDENT 0.0
+.INDENT 3.5
+Monitor the given location as a directory. Normally, the file type is used
+to determine whether to monitor as a file or as a directory.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-f\fP, \fB\-\-file=<LOCATION>\fP
+.INDENT 0.0
+.INDENT 3.5
+Monitor the given location as a file. Normally, the file type is used to
+determine whether to monitor as a file or as a directory.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-D\fP, \fB\-\-direct=<LOCATION>\fP
+.INDENT 0.0
+.INDENT 3.5
+Monitor the file directly. This allows changes made via hardlinks to be
+captured.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-s\fP, \fB\-\-silent=<LOCATION>\fP
+.INDENT 0.0
+.INDENT 3.5
+Monitor the file directly, but don’t report changes.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-n\fP, \fB\-\-no\-moves\fP
+.INDENT 0.0
+.INDENT 3.5
+Report moves and renames as simple deleted/created events.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-m\fP, \fB\-\-mounts\fP
+.INDENT 0.0
+.INDENT 3.5
+Watch for mount events.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBmount\fP [\fIOPTION\fP…] [\fILOCATION\fP…]
+.INDENT 0.0
+.INDENT 3.5
+Provides commandline access to various aspects of GIO’s mounting
+functionality.
+.sp
+Mounting refers to the traditional concept of arranging multiple file systems
+and devices in a single tree, rooted at \fB/\fP\&. Classical mounting happens in
+the kernel and is controlled by the mount utility. GIO expands this concept by
+introducing mount daemons that can make file systems available to GIO
+applications without kernel involvement.
+.sp
+GIO mounts can require authentication, and the \fBmount\fP command may ask for
+user IDs, passwords, and so on, when required.
+.sp
+\fBOptions\fP
+.sp
+\fB\-m\fP, \fB\-\-mountable\fP
+.INDENT 0.0
+.INDENT 3.5
+Mount as mountable.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-d\fP, \fB\-\-device=<ID>\fP
+.INDENT 0.0
+.INDENT 3.5
+Mount volume with device file, or other identifier.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-u\fP, \fB\-\-unmount\fP
+.INDENT 0.0
+.INDENT 3.5
+Unmount the location.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-e\fP, \fB\-\-eject\fP
+.INDENT 0.0
+.INDENT 3.5
+Eject the location.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-t\fP, \fB\-\-stop=<DEVICE>\fP
+.INDENT 0.0
+.INDENT 3.5
+Stop drive with device file.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-s\fP, \fB\-\-unmount\-scheme=<SCHEME>\fP
+.INDENT 0.0
+.INDENT 3.5
+Unmount all mounts with the given scheme.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-f\fP, \fB\-\-force\fP
+.INDENT 0.0
+.INDENT 3.5
+Ignore outstanding file operations when unmounting or ejecting.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-a\fP, \fB\-\-anonymous\fP
+.INDENT 0.0
+.INDENT 3.5
+Use an anonymous user when authenticating.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-l\fP, \fB\-\-list\fP
+.INDENT 0.0
+.INDENT 3.5
+List all GIO mounts.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-o\fP, \fB\-\-monitor\fP
+.INDENT 0.0
+.INDENT 3.5
+Monitor mount\-related events.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-i\fP, \fB\-\-detail\fP
+.INDENT 0.0
+.INDENT 3.5
+Show extra information.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-tcrypt\-pim\fP
+.INDENT 0.0
+.INDENT 3.5
+The numeric PIM when unlocking a VeraCrypt volume.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-tcrypt\-hidden\fP
+.INDENT 0.0
+.INDENT 3.5
+Mount a TCRYPT hidden volume.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-tcrypt\-system\fP
+.INDENT 0.0
+.INDENT 3.5
+Mount a TCRYPT system volume.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBmove\fP [\fIOPTION\fP…] \fISOURCE\fP… \fIDESTINATION\fP
+.INDENT 0.0
+.INDENT 3.5
+Moves one or more files from \fBSOURCE\fP to \fBDESTINATION\fP\&. If more than one
+source is specified, the destination must be a directory.
+.sp
+The \fBmove\fP command is similar to the traditional \fBmv\fP utility.
+.sp
+\fBOptions\fP
+.sp
+\fB\-T\fP, \fB\-\-no\-target\-directory\fP
+.INDENT 0.0
+.INDENT 3.5
+Don’t copy into \fBDESTINATION\fP even if it is a directory.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-p\fP, \fB\-\-progress\fP
+.INDENT 0.0
+.INDENT 3.5
+Show progress.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-i\fP, \fB\-\-interactive\fP
+.INDENT 0.0
+.INDENT 3.5
+Prompt for confirmation before overwriting files.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-b\fP, \fB\-\-backup\fP
+.INDENT 0.0
+.INDENT 3.5
+Create backups of existing destination files.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-C\fP, \fB\-\-no\-copy\-fallback\fP
+.INDENT 0.0
+.INDENT 3.5
+Don’t use copy and delete fallback.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBopen\fP \fILOCATION\fP…
+.INDENT 0.0
+.INDENT 3.5
+Opens files with the default application that is registered to handle files of
+this type.
+.sp
+GIO obtains this information from the shared\-mime\-info database, with per\-user
+overrides stored in \fB$XDG_DATA_HOME/applications/mimeapps.list\fP\&.
+.sp
+The \fBmime\fP command can be used to change the default handler for a MIME
+type.
+.sp
+Environment variables will not be set on the application, as it may be an
+existing process which is activated to handle the new file.
+.UNINDENT
+.UNINDENT
+.sp
+\fBrename\fP \fILOCATION\fP \fINAME\fP
+.INDENT 0.0
+.INDENT 3.5
+Renames a file.
+.sp
+The \fBrename\fP command is similar to the traditional \fBrename\fP utility.
+.UNINDENT
+.UNINDENT
+.sp
+\fBremove\fP [\fIOPTION\fP…] \fILOCATION\fP…
+.INDENT 0.0
+.INDENT 3.5
+Deletes each given file.
+.sp
+This command removes files irreversibly. If you want a reversible way to
+remove files, see the \fBtrash\fP command.
+.sp
+Note that not all URI schemes that are supported by GIO may allow deletion of
+files.
+.sp
+The \fBremove\fP command is similar to the traditional \fBrm\fP utility.
+.sp
+\fBOptions\fP
+.sp
+\fB\-f\fP, \fB\-\-force\fP
+.INDENT 0.0
+.INDENT 3.5
+Ignore non\-existent and non\-deletable files.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBsave\fP [\fIOPTION\fP…] \fIDESTINATION\fP
+.INDENT 0.0
+.INDENT 3.5
+Reads from standard input and saves the data to the given location.
+.sp
+This is similar to just redirecting output to a file using traditional shell
+syntax, but the \fBsave\fP command allows saving to location that GIO can write
+to.
+.sp
+\fBOptions\fP
+.sp
+\fB\-b\fP, \fB\-\-backup\fP
+.INDENT 0.0
+.INDENT 3.5
+Back up existing destination files.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-c\fP, \fB\-\-create\fP
+.INDENT 0.0
+.INDENT 3.5
+Only create the destination if it doesn’t exist yet.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-a\fP, \fB\-\-append\fP
+.INDENT 0.0
+.INDENT 3.5
+Append to the end of the file.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-p\fP, \fB\-\-private\fP
+.INDENT 0.0
+.INDENT 3.5
+When creating, restrict access to the current user.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-u\fP, \fB\-\-unlink\fP
+.INDENT 0.0
+.INDENT 3.5
+When replacing, replace as if the destination did not exist.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-v\fP, \fB\-\-print\-etag\fP
+.INDENT 0.0
+.INDENT 3.5
+Print the new ETag in the end.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-e\fP, \fB\-\-etag=<ETAG>\fP
+.INDENT 0.0
+.INDENT 3.5
+The ETag of the file that is overwritten.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBset\fP [\fIOPTION\fP…] \fILOCATION\fP \fIATTRIBUTE\fP \fIVALUE\fP…
+.INDENT 0.0
+.INDENT 3.5
+Sets a file attribute on a file.
+.sp
+File attributes can be specified with their GIO name, e.g \fBstandard::icon\fP\&.
+Note that not all GIO file attributes are writable. Use the
+\fB\-\-query\-writable\fP option of the \fBinfo\fP command to list writable file
+attributes.
+.sp
+If the \fBTYPE\fP is unset, \fBVALUE\fP does not have to be specified. If the
+\fBTYPE\fP is \fBstringv\fP, multiple values can be given.
+.sp
+\fBOptions\fP
+.sp
+\fB\-t\fP, \fB\-\-type=<TYPE>\fP
+.INDENT 0.0
+.INDENT 3.5
+Specifies the type of the attribute. Supported types are \fBstring\fP,
+\fBstringv\fP, \fBbytestring\fP, \fBboolean\fP, \fBuint32\fP, \fBint32\fP, \fBuint64\fP,
+\fBint64\fP and \fBunset\fP\&.
+.sp
+If the type is not specified, \fBstring\fP is assumed.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-d\fP, \fB\-\-delete\fP
+.INDENT 0.0
+.INDENT 3.5
+Unsets an attribute (same as setting its type to \fBunset\fP).
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-n\fP, \fB\-\-nofollow\-symlinks\fP
+.INDENT 0.0
+.INDENT 3.5
+Don’t follow symbolic links.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBtrash\fP [\fIOPTION\fP…] [\fILOCATION\fP…]
+.INDENT 0.0
+.INDENT 3.5
+Sends files or directories to the ‘Trashcan’ or restore them from ‘Trashcan’.
+This can be a different folder depending on where the file is located, and not
+all file systems support this concept. In the common case that the file lives
+inside a user’s home directory, the trash folder is \fB$XDG_DATA_HOME/Trash\fP\&.
+.sp
+Note that moving files to the trash does not free up space on the file system
+until the ‘Trashcan’ is emptied. If you are interested in deleting a file
+irreversibly, see the \fBremove\fP command.
+.sp
+Inspecting and emptying the ‘Trashcan’ is normally supported by graphical file
+managers such as Nautilus, but you can also see the trash with the command:
+\fBgio trash \-\-list\fP or \fBgio list trash://\fP\&.
+.sp
+\fBOptions\fP
+.sp
+\fB\-f\fP, \fB\-\-force\fP
+.INDENT 0.0
+.INDENT 3.5
+Ignore non\-existent and non\-deletable files.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-empty\fP
+.INDENT 0.0
+.INDENT 3.5
+Empty the trash.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-list\fP
+.INDENT 0.0
+.INDENT 3.5
+List files in the trash with their original locations.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-\-restore\fP
+.INDENT 0.0
+.INDENT 3.5
+Restore a file from trash to its original location. A URI beginning with
+\fBtrash://\fP is expected here. If the original directory doesn’t exist, it
+will be recreated.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.sp
+\fBtree\fP [\fIOPTION\fP…] [\fILOCATION\fP…]
+.INDENT 0.0
+.INDENT 3.5
+Lists the contents of the given locations recursively, in a tree\-like format.
+If no location is given, it defaults to the current directory.
+.sp
+The \fBtree\fP command is similar to the traditional \fBtree\fP utility.
+.sp
+\fBOptions\fP
+.sp
+\fB\-h\fP, \fB\-\-hidden\fP
+.INDENT 0.0
+.INDENT 3.5
+Show hidden files.
+.UNINDENT
+.UNINDENT
+.sp
+\fB\-l\fP, \fB\-\-follow\-symlinks\fP
+.INDENT 0.0
+.INDENT 3.5
+Follow symbolic links.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SH EXIT STATUS
+.sp
+On success, \fB0\fP is returned, a non\-zero failure code otherwise.
+.SH SEE ALSO
+.sp
+ <cat(1)> ,  <cp(1)> ,  <ls(1)> ,
+ <mkdir(1)> ,  <mv(1)> ,  <rm(1)> ,
+ <tree(1)> 
+.\" Generated by docutils manpage writer.
+.

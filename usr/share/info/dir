@@ -2570,6 +2570,7 @@ Localization
                                   conversion.
 
 Network applications
+* Wget: (wget).                 Non-interactive network downloader.
 * awkinet: (gawkinet).          TCP/IP Internetworking With ‘gawk’.
 
 Programming
@@ -2623,8 +2624,13 @@ Software libraries
 * Libc: (libc).                 C library.
 * libidn2: (libidn2).           Internationalized domain names (IDNA2008/TR46) 
                                   processing.
+* libtasn1: (libtasn1).         Library for Abstract Syntax Notation One 
+                                  (ASN.1).
 * mpfr: (mpfr).                 Multiple Precision Floating-Point Reliable 
                                   Library.
+
+System administration
+* parted: (parted).             GNU partitioning software
 
 Texinfo documentation system
 * Texinfo: (texinfo).           The GNU documentation format.

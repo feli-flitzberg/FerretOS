@@ -1,0 +1,101 @@
+Submitted By:            Xi Ruoyao <xry111 at xry111 dot site>
+Date:                    2024-08-21
+Initial Package Version: 2.13.3
+Upstream Status:         Applied
+Origin:                  Upstream Git repo (see the cherry picked from lines
+                         below)
+Description:             Fix a bogus warning from "xmlcatalog --create
+                         --noout" when the target file does not exist.
+
+From 88bc9f542ac4cc3de00a14a504c40c05abe6ba8e Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Mon, 19 Aug 2024 20:44:07 +0200
+Subject: [PATCH 1/2] Revert "catalog: Fetch XML catalog before dumping"
+
+This reverts commit 723b4de04015c5acccd3cda5dd60db7d00702064.
+
+(cherry picked from commit 4b0078781b9ec04cd681fc62788f4ce25b10c3b1)
+---
+ catalog.c | 21 +++------------------
+ 1 file changed, 3 insertions(+), 18 deletions(-)
+
+diff --git a/catalog.c b/catalog.c
+index ef0eef57..27af95f4 100644
+--- a/catalog.c
++++ b/catalog.c
+@@ -59,6 +59,9 @@
+ #define XML_SGML_DEFAULT_CATALOG "file://" SYSCONFDIR "/sgml/catalog"
+ #endif
+ 
++static xmlChar *xmlCatalogNormalizePublic(const xmlChar *pubID);
++static int xmlExpandCatalog(xmlCatalogPtr catal, const char *filename);
++
+ /************************************************************************
+  *									*
+  *			Types, all private				*
+@@ -173,21 +176,6 @@ static xmlRMutexPtr xmlCatalogMutex = NULL;
+  */
+ static int xmlCatalogInitialized = 0;
+ 
+-/************************************************************************
+- *									*
+- *			Forward declarations				*
+- *									*
+- ************************************************************************/
+-
+-static xmlChar *
+-xmlCatalogNormalizePublic(const xmlChar *pubID);
+-
+-static int
+-xmlExpandCatalog(xmlCatalogPtr catal, const char *filename);
+-
+-static int
+-xmlFetchXMLCatalogFile(xmlCatalogEntryPtr catal);
+-
+ /************************************************************************
+  *									*
+  *			Catalog error handlers				*
+@@ -538,9 +526,6 @@ static void xmlDumpXMLCatalogNode(xmlCatalogEntryPtr catal, xmlNodePtr catalog,
+ 	        case XML_CATA_BROKEN_CATALOG:
+ 	        case XML_CATA_CATALOG:
+ 		    if (cur == catal) {
+-                        if (cur->children == NULL) {
+-                            xmlFetchXMLCatalogFile(cur);
+-                        }
+ 			cur = cur->children;
+ 		        continue;
+ 		    }
+-- 
+2.46.0
+
+From a0fe33581f07ca6f95fcbc17064ca7d8b1fbf592 Mon Sep 17 00:00:00 2001
+From: Nick Wellnhofer <wellnhofer@aevum.de>
+Date: Mon, 19 Aug 2024 20:02:47 +0200
+Subject: [PATCH 2/2] xmlcatalog: Improved fix for #699
+
+(cherry picked from commit 8625db28925a9d443f213e9c18ea4be5d833ca46)
+---
+ xmlcatalog.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/xmlcatalog.c b/xmlcatalog.c
+index 588802b4..cfc55132 100644
+--- a/xmlcatalog.c
++++ b/xmlcatalog.c
+@@ -401,6 +401,13 @@ int main(int argc, char **argv) {
+ 	    if ((ret < 0) && (create)) {
+ 		xmlCatalogAdd(BAD_CAST "catalog", BAD_CAST argv[i], NULL);
+ 	    }
++
++            /*
++             * Catalogs are loaded lazily. Make sure that dumping works
++             * by the issuing a dummy request that forces the catalog to
++             * be loaded.
++             */
++            xmlCatalogResolvePublic(BAD_CAST "");
+ 	}
+ 	break;
+     }
+-- 
+2.46.0
+

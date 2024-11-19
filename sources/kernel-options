@@ -1,0 +1,6 @@
+add BTRFS_FS=yes/module
+add MSDOS_FS=yes/module
+add VFAT_FS=yes/module
+add JFS_FS=yes/module
+add FUSE_FS=yes/module
+add CUSE=yes/module
