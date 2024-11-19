@@ -58,29 +58,20 @@ pip3 install --no-index --no-user --find-links dist pyelftools
 #### Configuration
 
 ***Configuration files are made in a text editor (potentially outside chroot by
-root) until a text editor is available.***
+root until a text editor is available).***
 
 - Source packages installed in LFS are in `/sources/base`
 - Source packages installed in BLFS or beyond are in `/sources/extra`
 - `/usr/lib64` is a symlink to `/usr/lib` to deter problems
-- Timezone not configured to allow systemd-firstboot to work
 - Mailboxes disabled for `useradd`
 - Root password set
 - Add `pip` as link to `pip3`
 - Add `python` as link to `python3`
 - `PAGE` is set to `letter`
 - `/usr/lib/os-release` points to `/etc/os-release`
-- `LANG` is left unset to allow systemd-firstboot to work
-- Single network file that should match any network card found by systemd
-```
-# 10-base.network
-[Match]
-Name=*
-
-[Network]
-DHCP=yes
-UseDomains=true
-```
+- Make single systemd network file to match any found network devices
+  - Not sure it will enable more than one device, but it will at least enable the first
+- Add `noclear.conf` from 9.10 Systemd Usage & Configuration
 
 #### Build/Configure process
 
@@ -100,18 +91,20 @@ manually pruned
     - `chroot-net.sh` is already set up for this purpose
 - Ownership of gcc build directory is changed before installation
   - `chown -vR root:root $PWD`
-- Full `/etc/os-release` added before configure step
-  - Required for systemd-boot to be added by meson
+- Full `/etc/os-release` is added before systemd configure step
+  - Required for systemd-boot to configure correctly
 - `-D firstboot=false` is removed from systemd configuration stage
   - This image should boot anywhere, but some things can't be configured beforehand
-to accomodate this goal
 - `-D default-dnssec=no` is removed from systemd configuration stage
 - `-D ldconfig=false` is removed from systemd configuration stage
 - Machine id is not initialized to avoid compiling any reference to it in later packages
+- Timezone is not set to accomodate systemd-firstboot
+- `/etc/adjtime` is not used to accomodate multiple hardware setups
+- System locale is not set to accomodate systemd-firstboot
 - `/etc/fstab` is not created
   - As part of the [Bootloader Specification](https://uapi-group.org/specifications/specs/boot_loader_specification/)
-this file isn't needed by a spec-compliant bootloader to find root
-image
+this file isn't needed by a spec-compliant bootloader to find the root
+partition or data partitions
 
 ***If you work in a chroot and reinstall dbus via BLFS instructions, `$LFS/dev` will no
 longer unmount, and the host system will require a reboot. dbus will also warn about an

@@ -1,58 +1,3 @@
-tar -vxf sed-4.9.tar.xz 
-cd sed-4.9
-./configure --prefix=/usr && make && make install
-cd ..
-rm -rfv sed-4.9
-mv -v sed-4.9.tar.xz base/
-ls
-ls --color
-ls --help
-ls --color=auto
-tar -vxf psmisc-23.7.tar.xz 
-cd psmisc-23.7
-./configure --prefix=/usr && make && make install
-cd ..
-rm -rfv psmisc-23.7
-mv -v psmisc-23.7.tar.xz base
-ls
-tar -vxf gettext-0.22.5.tar.xz 
-cd gettext-0.22.5
-./configure --prefix=/usr --disable-static --docdir=/usr/share/doc/gettext-0.22.5 && make && make install && chmod -v 0755 /usr/lib/preloadable_libintl.so
-cd ..
-rm -rfv gettext-0.22.5
-mv -vf gettext-0.22.5.tar.xz base
-ls
-exit
-exit
-cd sources/
-ls
-tar -vxf bison-3.8.2.tar.xz 
-cd bison-3.8.2
-./configure --prefix=/usr --docdir=/usr/share/doc/bison-3.8.2 && make && make install
-cd ..
-rm -rfv bison-3.8.2
-mv -v bison-3.8.2.tar.xz base
-ls
-tar -vxf bash-5.2.32.tar.gz 
-cd bas
-cd bash-5.2.32
-./configure --prefix=/usr --without-bash-malloc --with-installed-readline bash_cv_strtold_broken=no --docdir=/usr/share/doc/bash-5.2.32 && make && make install && exec /usr/bin/bash --login
-cd ..
-rm -rfv bash-5.2.32
-mv -v bash-5.2.32.tar.gz base
-ls
-tar -vxf libtool-2.4.7.tar.xz 
-cd libtool-2.4.7
-./configure --prefix=/usr && make && make install && rm -fv /usr/lib/libltdl.a
-cd ..
-rm -rfv libtool-2.4.7
-mv -v libtool-2.4.7.tar.xz base
-l
-ls
-tar -vxf gdbm-1.24.tar.gz 
-cd gdbm-1.24
-./configure --prefix=/usr --disable-static --enable-libgdbm-compat && make && make install
-cd ..
 rm -rfv gdbm-1.24
 mv -v gdbm-1.24.tar.gz base
 ls
@@ -497,4 +442,59 @@ nano
 exit
 rm -fv LICENSE.txt 
 nano LICENSE.md
+exit
+nano /etc/systemd/network/10-base.network
+cat /etc/os-release 
+echo "solver" > /etc/hostname
+nano /etc/hosts
+nano /etc/vconsole.conf
+cat > /etc/inputrc << "EOF"
+# Begin /etc/inputrc
+# Modified by Chris Lynn <roryo@roryo.dynup.net>
+
+# Allow the command prompt to wrap to the next line
+set horizontal-scroll-mode Off
+
+# Enable 8-bit input
+set meta-flag On
+set input-meta On
+
+# Turns off 8th bit stripping
+set convert-meta Off
+
+# Keep the 8th bit for display
+set output-meta On
+
+# none, visible or audible
+set bell-style none
+
+# All of the following map the escape sequence of the value
+# contained in the 1st argument to the readline specific functions
+"\eOd": backward-word
+"\eOc": forward-word
+
+# for linux console
+"\e[1~": beginning-of-line
+"\e[4~": end-of-line
+"\e[5~": beginning-of-history
+"\e[6~": end-of-history
+"\e[3~": delete-char
+"\e[2~": quoted-insert
+
+# for xterm
+"\eOH": beginning-of-line
+"\eOF": end-of-line
+
+# for Konsole
+"\e[H": beginning-of-line
+"\e[F": end-of-line
+
+# End /etc/inputrc
+EOF
+
+nano /etc/inputrc 
+nano /etc/shells
+mkdir -pv /etc/systemd/system/getty@tty1.service.d
+nano /etc/systemd/system/getty@tty1.service.d
+nano /etc/systemd/system/getty@tty1.service.d/noclear.conf
 exit
