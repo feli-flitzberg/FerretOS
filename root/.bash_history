@@ -1,9 +1,3 @@
-install -vm755 dest/usr/lib/libncursesw.so.6.5 /usr/lib
-rm -v dest/usr/lib/libncursesw.so.6.5 
-sed -e 's/^#if.*XOPEN.*$/#if 1/' -i dest/usr/include/curses.h 
-cp -av dest/* /
-for lib in ncurses form panel menu ; do ln -sfv lib${lib}w.so /usr/lib/lib${lib}.so; ln -sfv ${lib}w.pc /usr/lib/pkgconfig/${lib}.pc; done
-ln -sfv libncursesw.so /usr/lib/libcurses.so
 cd ..
 rm -rfv ncurses-6.5
 mv -v ncurses-6.5.tar.gz base
@@ -497,4 +491,10 @@ find /usr/lib /usr/libexec -name \*.la -delete
 find /usr -depth -name $(uname -m)-lfs-linux-gnu\* | xargs rm -rfv
 userdel -r tester
 ls
+exit
+nano BY-NC-SA-4.0.license 
+nano LICENSE.md
+nano LICENSE.md
+nano LICENSE.md
+nano
 exit
