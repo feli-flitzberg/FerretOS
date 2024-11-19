@@ -1,0 +1,235 @@
+'\" t
+.TH "SD_PID_GET_OWNER_UID" "3" "" "systemd 256.4" "sd_pid_get_owner_uid"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+sd_pid_get_owner_uid, sd_pid_get_session, sd_pid_get_user_unit, sd_pid_get_unit, sd_pid_get_machine_name, sd_pid_get_slice, sd_pid_get_user_slice, sd_pid_get_cgroup, sd_pidfd_get_owner_uid, sd_pidfd_get_session, sd_pidfd_get_user_unit, sd_pidfd_get_unit, sd_pidfd_get_machine_name, sd_pidfd_get_slice, sd_pidfd_get_user_slice, sd_pidfd_get_cgroup, sd_peer_get_owner_uid, sd_peer_get_session, sd_peer_get_user_unit, sd_peer_get_unit, sd_peer_get_machine_name, sd_peer_get_slice, sd_peer_get_user_slice, sd_peer_get_cgroup \- Determine the owner uid of the user unit or session, or the session, user unit, system unit, container/VM or slice that a specific PID or socket peer belongs to
+.SH "SYNOPSIS"
+.sp
+.ft B
+.nf
+#include <systemd/sd\-login\&.h>
+.fi
+.ft
+.HP \w'int\ sd_pid_get_owner_uid('u
+.BI "int sd_pid_get_owner_uid(pid_t\ " "pid" ", uid_t\ *" "uid" ");"
+.HP \w'int\ sd_pid_get_session('u
+.BI "int sd_pid_get_session(pid_t\ " "pid" ", char\ **" "session" ");"
+.HP \w'int\ sd_pid_get_user_unit('u
+.BI "int sd_pid_get_user_unit(pid_t\ " "pid" ", char\ **" "unit" ");"
+.HP \w'int\ sd_pid_get_unit('u
+.BI "int sd_pid_get_unit(pid_t\ " "pid" ", char\ **" "unit" ");"
+.HP \w'int\ sd_pid_get_machine_name('u
+.BI "int sd_pid_get_machine_name(pid_t\ " "pid" ", char\ **" "name" ");"
+.HP \w'int\ sd_pid_get_slice('u
+.BI "int sd_pid_get_slice(pid_t\ " "pid" ", char\ **" "slice" ");"
+.HP \w'int\ sd_pid_get_user_slice('u
+.BI "int sd_pid_get_user_slice(pid_t\ " "pid" ", char\ **" "slice" ");"
+.HP \w'int\ sd_pid_get_cgroup('u
+.BI "int sd_pid_get_cgroup(pid_t\ " "pid" ", char\ **" "cgroup" ");"
+.HP \w'int\ sd_pidfd_get_owner_uid('u
+.BI "int sd_pidfd_get_owner_uid(int\ " "pidfd" ", uid_t\ *" "uid" ");"
+.HP \w'int\ sd_pidfd_get_session('u
+.BI "int sd_pidfd_get_session(int\ " "pidfd" ", char\ **" "session" ");"
+.HP \w'int\ sd_pidfd_get_user_unit('u
+.BI "int sd_pidfd_get_user_unit(int\ " "pidfd" ", char\ **" "unit" ");"
+.HP \w'int\ sd_pidfd_get_unit('u
+.BI "int sd_pidfd_get_unit(int\ " "pidfd" ", char\ **" "unit" ");"
+.HP \w'int\ sd_pidfd_get_machine_name('u
+.BI "int sd_pidfd_get_machine_name(int\ " "pidfd" ", char\ **" "name" ");"
+.HP \w'int\ sd_pidfd_get_slice('u
+.BI "int sd_pidfd_get_slice(int\ " "pidfd" ", char\ **" "slice" ");"
+.HP \w'int\ sd_pidfd_get_user_slice('u
+.BI "int sd_pidfd_get_user_slice(int\ " "pidfd" ", char\ **" "slice" ");"
+.HP \w'int\ sd_pidfd_get_cgroup('u
+.BI "int sd_pidfd_get_cgroup(int\ " "pidfd" ", char\ **" "cgroup" ");"
+.HP \w'int\ sd_peer_get_owner_uid('u
+.BI "int sd_peer_get_owner_uid(int\ " "fd" ", uid_t\ *" "uid" ");"
+.HP \w'int\ sd_peer_get_session('u
+.BI "int sd_peer_get_session(int\ " "fd" ", char\ **" "session" ");"
+.HP \w'int\ sd_peer_get_user_unit('u
+.BI "int sd_peer_get_user_unit(int\ " "fd" ", char\ **" "unit" ");"
+.HP \w'int\ sd_peer_get_unit('u
+.BI "int sd_peer_get_unit(int\ " "fd" ", char\ **" "unit" ");"
+.HP \w'int\ sd_peer_get_machine_name('u
+.BI "int sd_peer_get_machine_name(int\ " "fd" ", char\ **" "name" ");"
+.HP \w'int\ sd_peer_get_slice('u
+.BI "int sd_peer_get_slice(int\ " "fd" ", char\ **" "slice" ");"
+.HP \w'int\ sd_peer_get_user_slice('u
+.BI "int sd_peer_get_user_slice(int\ " "fd" ", char\ **" "slice" ");"
+.HP \w'int\ sd_peer_get_cgroup('u
+.BI "int sd_peer_get_cgroup(int\ " "fd" ", char\ **" "cgroup" ");"
+.SH "DESCRIPTION"
+.PP
+\fBsd_pid_get_owner_uid()\fR
+may be used to determine the Unix UID (user identifier) which owns the login session or systemd user unit of a process identified by the specified PID\&. For processes which are not part of a login session and not managed by a user manager, this function will fail with
+\fB\-ENODATA\fR\&.
+.PP
+\fBsd_pid_get_session()\fR
+may be used to determine the login session identifier of a process identified by the specified process identifier\&. The session identifier is a short string, suitable for usage in file system paths\&. Please note the login session may be limited to a stub process or two\&. User processes may instead be started from their systemd user manager, e\&.g\&. GUI applications started using DBus activation, as well as service processes which are shared between multiple logins of the same user\&. For processes which are not part of a login session, this function will fail with
+\fB\-ENODATA\fR\&. The returned string needs to be freed with the libc
+\fBfree\fR(3)
+call after use\&.
+.PP
+\fBsd_pid_get_user_unit()\fR
+may be used to determine the systemd user unit (i\&.e\&. user service or scope unit) identifier of a process identified by the specified PID\&. The unit name is a short string, suitable for usage in file system paths\&. For processes which are not managed by a user manager, this function will fail with
+\fB\-ENODATA\fR\&. The returned string needs to be freed with the libc
+\fBfree\fR(3)
+call after use\&.
+.PP
+\fBsd_pid_get_unit()\fR
+may be used to determine the systemd system unit (i\&.e\&. system service or scope unit) identifier of a process identified by the specified PID\&. The unit name is a short string, suitable for usage in file system paths\&. Note that not all processes are part of a system unit/service\&. For processes not being part of a systemd system unit, this function will fail with
+\fB\-ENODATA\fR\&. (More specifically, this call will not work for kernel threads\&.) The returned string needs to be freed with the libc
+\fBfree\fR(3)
+call after use\&.
+.PP
+\fBsd_pid_get_machine_name()\fR
+may be used to determine the name of the VM or container is a member of\&. The machine name is a short string, suitable for usage in file system paths\&. The returned string needs to be freed with the libc
+\fBfree\fR(3)
+call after use\&. For processes not part of a VM or container, this function fails with
+\fB\-ENODATA\fR\&.
+.PP
+\fBsd_pid_get_slice()\fR
+may be used to determine the slice unit the process is a member of\&. See
+\fBsystemd.slice\fR(5)
+for details about slices\&. The returned string needs to be freed with the libc
+\fBfree\fR(3)
+call after use\&.
+.PP
+Similarly,
+\fBsd_pid_get_user_slice()\fR
+returns the user slice (as managed by the user\*(Aqs systemd instance) of a process\&.
+.PP
+\fBsd_pid_get_cgroup()\fR
+returns the control group path of the specified process, relative to the root of the hierarchy\&. Returns the path without trailing slash, except for processes located in the root control group, where "/" is returned\&. To find the actual control group path in the file system, the returned path needs to be prefixed with
+/sys/fs/cgroup/
+(if the unified control group setup is used), or
+/sys/fs/cgroup/\fIHIERARCHY\fR/
+(if the legacy multi\-hierarchy control group setup is used)\&.
+.PP
+If the
+\fIpid\fR
+parameter of any of these functions is passed as 0, the operation is executed for the calling process\&.
+.PP
+The
+\fBsd_pidfd_get_owner_uid()\fR,
+\fBsd_pidfd_get_session()\fR,
+\fBsd_pidfd_get_user_unit()\fR,
+\fBsd_pidfd_get_unit()\fR,
+\fBsd_pidfd_get_machine_name()\fR,
+\fBsd_pidfd_get_slice()\fR,
+\fBsd_pidfd_get_user_slice()\fR
+and
+\fBsd_pidfd_get_cgroup()\fR
+calls operate similarly to their PID counterparts, but accept a
+\fBPIDFD\fR
+instead of a
+\fBPID\fR, which means they are not subject to recycle race conditions as the process is pinned by the file descriptor during the whole duration of the invocation\&. Note that these require a kernel that supports
+\fBPIDFD\fR\&. A suitable file descriptor may be acquired via
+\fBpidfd_open\fR(2)\&.
+.PP
+The
+\fBsd_peer_get_owner_uid()\fR,
+\fBsd_peer_get_session()\fR,
+\fBsd_peer_get_user_unit()\fR,
+\fBsd_peer_get_unit()\fR,
+\fBsd_peer_get_machine_name()\fR,
+\fBsd_peer_get_slice()\fR,
+\fBsd_peer_get_user_slice()\fR
+and
+\fBsd_peer_get_cgroup()\fR
+calls operate similarly to their PID counterparts, but accept a connected
+\fBAF_UNIX\fR
+socket and retrieve information about the connected peer process\&. Note that these fields are retrieved via
+/proc/, and hence are not suitable for authorization purposes, as they are subject to races\&.
+.SH "RETURN VALUE"
+.PP
+On success, these calls return 0 or a positive integer\&. On failure, these calls return a negative errno\-style error code\&.
+.SS "Errors"
+.PP
+Returned errors may indicate the following problems:
+.PP
+\fB\-ESRCH\fR
+.RS 4
+The specified PID does not refer to a running process\&.
+.RE
+.PP
+\fB\-EBADF\fR
+.RS 4
+The specified socket file descriptor was invalid\&.
+.RE
+.PP
+\fB\-ENODATA\fR
+.RS 4
+The given field is not specified for the described process or peer\&.
+.RE
+.PP
+\fB\-EINVAL\fR
+.RS 4
+An input parameter was invalid (out of range, or
+\fBNULL\fR, where that is not accepted)\&.
+.RE
+.PP
+\fB\-ENOMEM\fR
+.RS 4
+Memory allocation failed\&.
+.RE
+.SH "NOTES"
+.PP
+Functions described here are available as a shared library, which can be compiled against and linked to with the
+\fBlibsystemd\fR\ \&\fBpkg-config\fR(1)
+file\&.
+.PP
+Note that the login session identifier as returned by
+\fBsd_pid_get_session()\fR
+is completely unrelated to the process session identifier as returned by
+\fBgetsid\fR(2)\&.
+.SH "HISTORY"
+.PP
+\fBsd_peer_get_cgroup()\fR,
+\fBsd_peer_get_machine_name()\fR,
+\fBsd_peer_get_owner_uid()\fR,
+\fBsd_peer_get_session()\fR,
+\fBsd_peer_get_slice()\fR,
+\fBsd_peer_get_unit()\fR,
+\fBsd_peer_get_user_slice()\fR,
+\fBsd_peer_get_user_unit()\fR,
+\fBsd_pid_get_cgroup()\fR,
+\fBsd_pid_get_machine_name()\fR,
+\fBsd_pid_get_owner_uid()\fR,
+\fBsd_pid_get_session()\fR,
+\fBsd_pid_get_slice()\fR,
+\fBsd_pid_get_unit()\fR,
+\fBsd_pid_get_user_slice()\fR, and
+\fBsd_pid_get_user_unit()\fR
+were added in version 236\&.
+.PP
+\fBsd_pidfd_get_owner_uid()\fR,
+\fBsd_pidfd_get_session()\fR,
+\fBsd_pidfd_get_user_unit()\fR,
+\fBsd_pidfd_get_unit()\fR,
+\fBsd_pidfd_get_machine_name()\fR,
+\fBsd_pidfd_get_slice()\fR,
+\fBsd_pidfd_get_user_slice()\fR, and
+\fBsd_pidfd_get_cgroup()\fR
+were added in version 253\&.
+.SH "SEE ALSO"
+.PP
+\fBsystemd\fR(1), \fBsd-login\fR(3), \fBsd_session_is_active\fR(3), \fBgetsid\fR(2), \fBsystemd.slice\fR(5), \fBsystemd-machined.service\fR(8)

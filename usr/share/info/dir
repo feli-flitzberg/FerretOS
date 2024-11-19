@@ -34,7 +34,11 @@ Compression
 * Gzip: (gzip).                 General (de)compression of files (lzw).
 
 Development
+* libext2fs: (libext2fs).       The EXT2FS library.
 * libffi: (libffi).             Portable foreign function interface library.
+
+Editors
+* nano: (nano).                 Small and friendly text editor.
 
 GNU C library functions and macros
 * __fbufsize: (libc)Controlling Buffering.

@@ -1,0 +1,348 @@
+'\" t
+.TH "VARLINKCTL" "1" "" "systemd 256.4" "varlinkctl"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+varlinkctl \- Introspect with and invoke Varlink services
+.SH "SYNOPSIS"
+.HP \w'\fBvarlinkctl\fR\ 'u
+\fBvarlinkctl\fR [OPTIONS...] info \fIADDRESS\fR
+.HP \w'\fBvarlinkctl\fR\ 'u
+\fBvarlinkctl\fR [OPTIONS...] list\-interfaces \fIADDRESS\fR
+.HP \w'\fBvarlinkctl\fR\ 'u
+\fBvarlinkctl\fR [OPTIONS...] introspect \fIADDRESS\fR \fIINTERFACE\fR
+.HP \w'\fBvarlinkctl\fR\ 'u
+\fBvarlinkctl\fR [OPTIONS...] call \fIADDRESS\fR \fIMETHOD\fR [\fIARGUMENTS\fR]
+.HP \w'\fBvarlinkctl\fR\ 'u
+\fBvarlinkctl\fR [OPTIONS...] validate\-idl [\fIFILE\fR]
+.SH "DESCRIPTION"
+.PP
+\fBvarlinkctl\fR
+may be used to introspect and invoke
+\m[blue]\fBVarlink\fR\m[]\&\s-2\u[1]\d\s+2
+services\&.
+.PP
+Services are referenced by one of the following:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+A Varlink service reference starting with the
+"unix:"
+string, followed by an absolute
+\fBAF_UNIX\fR
+socket path, or by
+"@"
+and an arbitrary string (the latter for referencing sockets in the abstract namespace)\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+A Varlink service reference starting with the
+"exec:"
+string, followed by an absolute path of a binary to execute\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+A Varlink service reference starting with the
+"ssh:"
+string, followed by an SSH host specification, followed by
+":", followed by an absolute
+\fBAF_UNIX\fR
+socket path\&. (This requires OpenSSH 9\&.4 or newer on the server side, abstract namespace sockets are not supported\&.)
+.RE
+.PP
+For convenience these two simpler (redundant) service address syntaxes are also supported:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+A file system path to an
+\fBAF_UNIX\fR
+socket, either absolute (i\&.e\&. begins with
+"/") or relative (in which case it must begin with
+"\&./")\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+A file system path to an executable, either absolute or relative (as above, must begin with
+"/", resp\&.
+"\&./")\&.
+.RE
+.SH "COMMANDS"
+.PP
+The following commands are understood:
+.PP
+\fBinfo\fR \fIADDRESS\fR
+.RS 4
+Show brief information about the specified service, including vendor name and list of implemented interfaces\&. Expects a service address in one of the formats described above\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+\fBlist\-interfaces\fR \fIADDRESS\fR
+.RS 4
+Show list of interfaces implemented by the specified service\&. Expects a service address in one of the formats described above\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+\fBintrospect\fR \fIADDRESS\fR \fIINTERFACE\fR
+.RS 4
+Show interface definition of the specified interface provided by the specified service\&. Expects a service address in one of the formats described above and a Varlink interface name\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+\fBcall\fR \fIADDRESS\fR \fIMETHOD\fR [\fIARGUMENTS\fR]
+.RS 4
+Call the specified method of the specified service\&. Expects a service address in the format described above, a fully qualified Varlink method name, and a JSON arguments object\&. If the arguments object is not specified, it is read from STDIN instead\&. To pass an empty list of parameters, specify the empty object
+"{}"\&.
+.sp
+The reply parameters are written as JSON object to STDOUT\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+\fBvalidate\-idl\fR [\fIFILE\fR]
+.RS 4
+Reads a Varlink interface definition file, parses and validates it, then outputs it with syntax highlighting\&. This checks for syntax and internal consistency of the interface\&. Expects a file name to read the interface definition from\&. If omitted reads the interface definition from STDIN\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+\fBhelp\fR
+.RS 4
+Show command syntax help\&.
+.sp
+Added in version 255\&.
+.RE
+.SH "OPTIONS"
+.PP
+The following options are understood:
+.PP
+\fB\-\-more\fR
+.RS 4
+When used with
+\fBcall\fR: expect multiple method replies\&. If this flag is set the method call is sent with the
+\fBmore\fR
+flag set, which tells the service to generate multiple replies, if needed\&. The command remains running until the service sends a reply message that indicates it is the last in the series\&. This flag should be set only for method calls that support this mechanism\&.
+.sp
+If this mode is enabled output is automatically switched to JSON\-SEQ mode, so that individual reply objects can be easily discerned\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+\fB\-\-collect\fR
+.RS 4
+This is similar to
+\fB\-\-more\fR
+but collects all responses in a JSON array, and prints it, rather than in JSON_SEQ mode\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fB\-\-oneway\fR
+.RS 4
+When used with
+\fBcall\fR: do not expect a method reply\&. If this flag is set the method call is sent with the
+\fBoneway\fR
+flag set (the command exits immediately after), which tells the service not to generate a reply\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+\fB\-\-json=\fR\fB\fIMODE\fR\fR
+.RS 4
+Selects the JSON output formatting, one of
+"pretty"
+(for nicely indented, colorized output) or
+"short"
+(for terse output with minimal whitespace and no newlines), defaults to
+"short"\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+\fB\-j\fR
+.RS 4
+Equivalent to
+\fB\-\-json=pretty\fR
+when invoked interactively from a terminal\&. Otherwise equivalent to
+\fB\-\-json=short\fR, in particular when the output is piped to some other program\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+\fB\-\-no\-pager\fR
+.RS 4
+Do not pipe output into a pager\&.
+.RE
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Print a short help text and exit\&.
+.RE
+.PP
+\fB\-\-version\fR
+.RS 4
+Print a short version string and exit\&.
+.RE
+.SH "EXAMPLES"
+.PP
+\fBExample\ \&1.\ \&Investigating a Service\fR
+.PP
+The following three commands inspect the
+"io\&.systemd\&.Resolve"
+service implemented by
+\fBsystemd-resolved.service\fR(8), listing general service information and implemented interfaces, and then displaying the interface definition of its primary interface:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+$ varlinkctl info /run/systemd/resolve/io\&.systemd\&.Resolve
+    Vendor: The systemd Project
+   Product: systemd (systemd\-resolved)
+   Version: 254 (254\-1522\-g4790521^)
+       URL: https://systemd\&.io/
+Interfaces: io\&.systemd
+            io\&.systemd\&.Resolve
+            org\&.varlink\&.service
+$ varlinkctl list\-interfaces /run/systemd/resolve/io\&.systemd\&.Resolve
+io\&.systemd
+io\&.systemd\&.Resolve
+org\&.varlink\&.service
+$ varlinkctl introspect /run/systemd/resolve/io\&.systemd\&.Resolve io\&.systemd\&.Resolve
+interface io\&.systemd\&.Resolve
+type ResolvedAddress(
+        ifindex: ?int,
+        \&...
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+(Interface definition has been truncated in the example above, in the interest of brevity\&.)
+.PP
+\fBExample\ \&2.\ \&Invoking a Method\fR
+.PP
+The following command resolves a hostname via
+\fBsystemd-resolved.service\fR(8)\*(Aqs
+\fBResolveHostname\fR
+method call\&.
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+$ varlinkctl call /run/systemd/resolve/io\&.systemd\&.Resolve io\&.systemd\&.Resolve\&.ResolveHostname \*(Aq{"name":"systemd\&.io","family":2}\*(Aq \-j
+{
+        "addresses" : [
+                {
+                        "ifindex" : 2,
+                        "family" : 2,
+                        "address" : [
+                                185,
+                                199,
+                                111,
+                                153
+                        ]
+                }
+        ],
+        "name" : "systemd\&.io",
+        "flags" : 1048577
+}
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+\fBExample\ \&3.\ \&Investigating a Service Executable\fR
+.PP
+The following command inspects the
+/usr/lib/systemd/systemd\-pcrextend
+executable and the IPC APIs it provides\&. It then invokes a method on it:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+# varlinkctl info /usr/lib/systemd/systemd\-pcrextend
+    Vendor: The systemd Project
+   Product: systemd (systemd\-pcrextend)
+   Version: 254 (254\-1536\-g97734fb)
+       URL: https://systemd\&.io/
+Interfaces: io\&.systemd
+            io\&.systemd\&.PCRExtend
+            org\&.varlink\&.service
+# varlinkctl introspect /usr/lib/systemd/systemd\-pcrextend io\&.systemd\&.PCRExtend
+interface io\&.systemd\&.PCRExtend
+
+method Extend(
+        pcr: int,
+        text: ?string,
+        data: ?string
+) \-> ()
+# varlinkctl call /usr/lib/systemd/systemd\-pcrextend io\&.systemd\&.PCRExtend\&.Extend \*(Aq{"pcr":15,"text":"foobar"}\*(Aq
+{}
+.fi
+.if n \{\
+.RE
+.\}
+.SH "SEE ALSO"
+.PP
+\fBbusctl\fR(1), \m[blue]\fBVarlink\fR\m[]\&\s-2\u[1]\d\s+2
+.SH "NOTES"
+.IP " 1." 4
+Varlink
+.RS 4
+\%https://varlink.org/
+.RE

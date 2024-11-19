@@ -1,0 +1,182 @@
+'\" t
+.TH "CAPSULE@\&.SERVICE" "5" "" "systemd 256.4" "capsule@.service"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+capsule@.service \- System unit for the capsule service manager
+.SH "SYNOPSIS"
+.PP
+capsule@\fINAME\fR\&.service
+.SH "DESCRIPTION"
+.PP
+Service managers for capsules run in
+capsule@\fINAME\fR\&.service
+system units, with the capsule name as the instance identifier\&. Capsules are way to run additional instances of the service manager, under dynamic user IDs, i\&.e\&. UIDs that are allocated when the capsule service manager is started, and released when it is stopped\&.
+.PP
+In many ways
+capsule@\&.service
+is similar to the per\-user
+user@\&.service
+service manager, but there are a few important distinctions:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+The capsule service manager utilizes
+\fIDynamicUser=\fR
+(see
+\fBsystemd.exec\fR(5)) to allocate a new UID dynamically on invocation\&. The user name is automatically generated from the capsule name, by prefixing
+"c\-"\&. The UID is released when the service is terminated\&. The user service manager on the other hand operates under a statically allocated user ID that must be pre\-existing, before the user service manager is invoked\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+User service managers register themselves with
+\fBpam\fR(8), capsule service managers do not\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+User service managers typically read their configuration from a
+\fI$HOME\fR
+directory below
+/home/, capsule service managers from a
+\fI$HOME\fR
+directory below
+/var/lib/capsules/\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+User service managers are collectively contained in the
+user\&.slice
+unit, capsule service managers in
+capsule\&.slice\&. Also see
+\fBsystemd.special\fR(7)\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+User service managers start the user unit
+default\&.target
+initially\&. Capsule service managers invoke the user unit
+capsule@\&.target
+instead\&.
+.RE
+.PP
+The capsule service manager and the capsule\*(Aqs bus broker can be reached via the
+\fB\-\-capsule=\fR
+switch to
+\fBsystemctl\fR(1),
+\fBsystemd-run\fR(1)
+and
+\fBbusctl\fR(1)\&.
+.PP
+New capsules can be started via a simple
+\fBsystemctl start capsule@\fR\fB\fINAME\fR\fR\fB\&.service\fR
+command, and stopped via
+\fBsystemctl stop capsule@\fR\fB\fINAME\fR\fR\fB\&.service\fR\&. Starting a capsule will implicitly create a home directory
+/var/lib/capsules/\fINAME\fR/, if missing\&. A runtime directory is created as
+/run/capsules/\fINAME\fR/\&. To remove these resources use
+\fBsystemctl clean capsule@\fR\fB\fINAME\fR\fR\fB\&.service\fR, for example with the
+\fB\-\-what=all\fR
+switch\&.
+.PP
+The
+capsule@\&.service
+unit invokes a
+\fBsystemd \-\-user\fR
+service manager process\&. This means unit files are looked for according to the sames rules as for regular user service managers, for example in
+/var/lib/capsules/\fINAME\fR/\&.config/systemd/user/\&.
+.PP
+Capsule names may be chosen freely by the user, however, they must be suitable as UNIX filenames (i\&.e\&. 255 characters max, and contain no
+"/"), and when prefixed with
+"p\-"
+be suitable as a user name matching strict POSIX rules, see
+\m[blue]\fBUser/Group Name Syntax\fR\m[]\&\s-2\u[1]\d\s+2
+for details\&.
+.PP
+Added in version 256\&.
+.SH "EXAMPLES"
+.PP
+\fBExample\ \&1.\ \&Create a new capsule, invoke two programs in it (one interactively), terminate it, and clean everything up\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+# systemctl start capsule@tatze\&.service
+# systemd\-run \-\-capsule=tatze \-\-unit=sleeptest\&.service sleep 999
+# systemctl \-\-capsule=tatze status sleeptest\&.service
+# systemd\-run \-t \-\-capsule=tatze bash
+# systemctl \-\-capsule=tatze stop sleeptest\&.service
+# systemctl stop capsule@tatze\&.service
+# systemctl clean \-\-all capsule@tatze\&.service
+.fi
+.if n \{\
+.RE
+.\}
+.SH "SEE ALSO"
+.PP
+\fBsystemd\fR(1),
+\fBuser@.service\fR(5),
+\fBsystemd.service\fR(5),
+\fBsystemd.slice\fR(5),
+\fBsystemd.exec\fR(5),
+\fBsystemd.special\fR(7),
+\fBsystemctl\fR(1),
+\fBsystemd-run\fR(1),
+\fBbusctl\fR(1),
+\fBpam\fR(8)
+.SH "NOTES"
+.IP " 1." 4
+User/Group Name Syntax
+.RS 4
+\%https://systemd.io/USER_NAMES
+.RE

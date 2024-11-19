@@ -1,0 +1,175 @@
+'\" t
+.TH "SD_DEVICE_GET_SYSPATH" "3" "" "systemd 256.4" "sd_device_get_syspath"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+sd_device_get_syspath, sd_device_get_devpath, sd_device_get_sysname, sd_device_get_sysnum, sd_device_get_subsystem, sd_device_get_devtype, sd_device_get_devname, sd_device_get_devnum, sd_device_get_ifindex, sd_device_get_driver, sd_device_get_diskseq \- Returns various fields of device objects
+.SH "SYNOPSIS"
+.sp
+.ft B
+.nf
+#include <systemd/sd\-device\&.h>
+.fi
+.ft
+.HP \w'int\ sd_device_get_syspath('u
+.BI "int sd_device_get_syspath(sd_device\ *" "device" ", const\ char\ **" "ret" ");"
+.HP \w'int\ sd_device_get_devpath('u
+.BI "int sd_device_get_devpath(sd_device\ *" "device" ", const\ char\ **" "ret" ");"
+.HP \w'int\ sd_device_get_sysname('u
+.BI "int sd_device_get_sysname(sd_device\ *" "device" ", const\ char\ **" "ret" ");"
+.HP \w'int\ sd_device_get_sysnum('u
+.BI "int sd_device_get_sysnum(sd_device\ *" "device" ", const\ char\ **" "ret" ");"
+.HP \w'int\ sd_device_get_subsystem('u
+.BI "int sd_device_get_subsystem(sd_device\ *" "device" ", const\ char\ **" "ret" ");"
+.HP \w'int\ sd_device_get_devtype('u
+.BI "int sd_device_get_devtype(sd_device\ *" "device" ", const\ char\ **" "ret" ");"
+.HP \w'int\ sd_device_get_devname('u
+.BI "int sd_device_get_devname(sd_device\ *" "device" ", const\ char\ **" "ret" ");"
+.HP \w'int\ sd_device_get_devnum('u
+.BI "int sd_device_get_devnum(sd_device\ *" "device" ", dev_t\ *" "ret" ");"
+.HP \w'int\ sd_device_get_ifindex('u
+.BI "int sd_device_get_ifindex(sd_device\ *" "device" ", int\ *" "ret" ");"
+.HP \w'int\ sd_device_get_driver('u
+.BI "int sd_device_get_driver(sd_device\ *" "device" ", const\ char\ **" "ret" ");"
+.HP \w'int\ sd_device_get_diskseq('u
+.BI "int sd_device_get_diskseq(sd_device\ *" "device" ", uint64_t\ *" "ret" ");"
+.SH "DESCRIPTION"
+.PP
+\fBsd_device_get_syspath()\fR
+returns the sysfs path of the specified device record, including the
+/sys
+prefix\&. Example:
+/sys/devices/virtual/tty/tty7
+.PP
+\fBsd_device_get_devpath()\fR
+returns the sysfs path of the specified device record, excluding the
+/sys
+prefix\&. Example:
+/devices/virtual/tty/tty7
+.PP
+\fBsd_device_get_sysname()\fR
+returns the sysfs name of the specified device record, i\&.e\&. the last component of the sysfs path\&. Example:
+"tty7"
+for the device
+/sys/devices/virtual/tty/tty7
+.PP
+\fBsd_device_get_sysnum()\fR
+returns the sysfs device number of the specified device record, i\&.e\&. the numeric suffix of the last component of the sysfs path\&. Example:
+"7"
+for the device
+/sys/devices/virtual/tty/tty7
+.PP
+\fBsd_device_get_subsystem()\fR
+returns the kernel subsystem of the specified device record\&. This is a short string fitting into a filename, and thus does not contain a slash and cannot be empty\&. Example:
+"tty",
+"block"
+or
+"net"\&.
+.PP
+\fBsd_device_get_devtype()\fR
+returns the device type of the specified device record, if the subsystem manages multiple types of devices\&. Example: for devices of the
+"block"
+subsystem this can be
+"disk"
+or
+"partition"
+.PP
+\fBsd_device_get_devname()\fR
+returns the device node path of the specified device record if the device has a device node\&. Example: for
+/sys/devices/virtual/tty/tty7
+the string
+/dev/tty7
+is typically returned\&.
+.PP
+\fBsd_device_get_devnum()\fR
+returns the device node major/minor (i\&.e\&.
+\fBdev_t\fR) of the specified device record if the device has a device node (i\&.e\&. the one returned by
+\fBsd_device_get_devname()\fR)\&. For devices belonging to the
+"block"
+subsystem this refers to a block device node, in all other cases to a character device node\&. Example: for the
+/sys/devices/virtual/tty/tty7
+device this typically returns the device number with major/minor
+"4:7"\&.
+.PP
+\fBsd_device_get_ifindex()\fR
+returns the network interface index of the specified device record, if the device encapsulates a network interface device, i\&.e\&. belongs to the
+"net"
+subsystem\&. Example: the
+"lo"
+interface typically has interface index 1\&.
+.PP
+\fBsd_device_get_driver()\fR
+returns the kernel driver name attached to the device\&. Note that the driver field is set on the devices consumed by the driver, not on the device created by it\&. Example: a PCI device
+/sys/bus/pci/devices/0000:00:1f\&.6
+might be attached to a driver
+"e1000e"\&.
+.PP
+\fBsd_device_get_diskseq()\fR
+returns the kernel disk sequence number of the block device\&. This number monotonically increases whenever a backing medium of a block device changes without the device name changing, and is relevant for block devices encapsulating devices with changing media (e\&.g\&. floppy or CD\-ROM), or loopback block devices\&. Only defined for block devices, i\&.e\&. those of subsystem
+"block"\&.
+.SH "RETURN VALUE"
+.PP
+On success, these calls return 0 or a positive integer\&. On failure, they return a negative errno\-style error code\&.
+.SS "Errors"
+.PP
+Returned errors may indicate the following problems:
+.PP
+\fB\-EINVAL\fR
+.RS 4
+A specified parameter is invalid\&.
+.sp
+Added in version 251\&.
+.RE
+.PP
+\fB\-ENOENT\fR
+.RS 4
+The requested field is not present in the device record\&.
+.sp
+Added in version 251\&.
+.RE
+.SH "NOTES"
+.PP
+Functions described here are available as a shared library, which can be compiled against and linked to with the
+\fBlibsystemd\fR\ \&\fBpkg-config\fR(1)
+file\&.
+.PP
+The code described here uses
+\fBgetenv\fR(3), which is declared to be not multi\-thread\-safe\&. This means that the code calling the functions described here must not call
+\fBsetenv\fR(3)
+from a parallel thread\&. It is recommended to only do calls to
+\fBsetenv()\fR
+from an early phase of the program when no other threads have been started\&.
+.SH "HISTORY"
+.PP
+\fBsd_device_get_syspath()\fR,
+\fBsd_device_get_devpath()\fR,
+\fBsd_device_get_sysname()\fR,
+\fBsd_device_get_sysnum()\fR,
+\fBsd_device_get_subsystem()\fR,
+\fBsd_device_get_devtype()\fR,
+\fBsd_device_get_devname()\fR,
+\fBsd_device_get_devnum()\fR,
+\fBsd_device_get_ifindex()\fR,
+\fBsd_device_get_driver()\fR, and
+\fBsd_device_get_diskseq()\fR
+were added in version 251\&.
+.SH "SEE ALSO"
+.PP
+\fBsystemd\fR(1)

@@ -1,0 +1,800 @@
+'\" t
+.TH "SYSTEMD\-CRYPTENROLL" "1" "" "systemd 256.4" "systemd-cryptenroll"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+systemd-cryptenroll \- Enroll PKCS#11, FIDO2, TPM2 token/devices to LUKS2 encrypted volumes
+.SH "SYNOPSIS"
+.HP \w'\fBsystemd\-cryptenroll\fR\ 'u
+\fBsystemd\-cryptenroll\fR [OPTIONS...] [DEVICE]
+.SH "DESCRIPTION"
+.PP
+\fBsystemd\-cryptenroll\fR
+is a tool for enrolling hardware security tokens and devices into a LUKS2 encrypted volume, which may then be used to unlock the volume during boot\&. Specifically, it supports tokens and credentials of the following kind to be enrolled:
+.sp
+.RS 4
+.ie n \{\
+\h'-04' 1.\h'+01'\c
+.\}
+.el \{\
+.sp -1
+.IP "  1." 4.2
+.\}
+PKCS#11 security tokens and smartcards that may carry an RSA or EC key pair (e\&.g\&. various YubiKeys)
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04' 2.\h'+01'\c
+.\}
+.el \{\
+.sp -1
+.IP "  2." 4.2
+.\}
+FIDO2 security tokens that implement the
+"hmac\-secret"
+extension (most FIDO2 keys, including YubiKeys)
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04' 3.\h'+01'\c
+.\}
+.el \{\
+.sp -1
+.IP "  3." 4.2
+.\}
+TPM2 security devices
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04' 4.\h'+01'\c
+.\}
+.el \{\
+.sp -1
+.IP "  4." 4.2
+.\}
+Regular passphrases
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04' 5.\h'+01'\c
+.\}
+.el \{\
+.sp -1
+.IP "  5." 4.2
+.\}
+Recovery keys\&. These are similar to regular passphrases, however are randomly generated on the computer and thus generally have higher entropy than user\-chosen passphrases\&. Their character set has been designed to ensure they are easy to type in, while having high entropy\&. They may also be scanned off screen using QR codes\&. Recovery keys may be used for unlocking LUKS2 volumes wherever passphrases are accepted\&. They are intended to be used in combination with an enrolled hardware security token, as a recovery option when the token is lost\&.
+.RE
+.PP
+In addition, the tool may be used to enumerate currently enrolled security tokens and wipe a subset of them\&. The latter may be combined with the enrollment operation of a new security token, in order to update or replace enrollments\&.
+.PP
+The tool supports only LUKS2 volumes, as it stores token meta\-information in the LUKS2 JSON token area, which is not available in other encryption formats\&.
+.PP
+\fBsystemd\-cryptsetup\fR
+operates on the device backing
+/var/
+if no device is specified explicitly, and no wipe operation is requested\&. (Note that in the typical case where
+/var/
+is on the same file system as the root file system, this hence enrolls a key into the backing device of the root file system\&.)
+.SS "TPM2 PCRs and policies"
+.PP
+PCRs allow binding of the encryption of secrets to specific software versions and system state, so that the enrolled key is only accessible (may be "unsealed") if specific trusted software and/or configuration is used\&. Such bindings may be created with the option
+\fB\-\-tpm2\-pcrs=\fR
+described below\&.
+.PP
+Secrets may also be bound indirectly: a signed policy for a state of some combination of PCR values is provided, and the secret is bound to the public part of the key used to sign this policy\&. This means that the owner of a key can generate a sequence of signed policies, for specific software versions and system states, and the secret can be decrypted as long as the machine state matches one of those policies\&. For example, a vendor may provide such a policy for each kernel+initrd update, allowing users to encrypt secrets so that they can be decrypted when running any kernel+initrd signed by the vendor\&. Such bindings may be created with the options
+\fB\-\-tpm2\-public\-key=\fR,
+\fB\-\-tpm2\-public\-key\-pcrs=\fR,
+\fB\-\-tpm2\-signature=\fR
+described below\&.
+.PP
+See
+\m[blue]\fBLinux TPM PCR Registry\fR\m[]\&\s-2\u[1]\d\s+2
+for an authoritative list of PCRs and how they are updated\&. The table below contains a quick reference, describing in particular the PCRs modified by systemd\&.
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.B Table\ \&1.\ \&Well\-known PCR Definitions
+.TS
+allbox tab(:);
+lB lB lB.
+T{
+PCR
+T}:T{
+name
+T}:T{
+Explanation
+T}
+.T&
+l l l
+l l l
+l l l
+l l l
+l l l
+l l l
+l l l
+l l l
+l l l
+l l l
+l l l
+l l l
+l l l
+l l l
+l l l
+l l l.
+T{
+0
+T}:T{
+platform\-code
+T}:T{
+Core system firmware executable code; changes on firmware updates
+T}
+T{
+1
+T}:T{
+platform\-config
+T}:T{
+Core system firmware data/host platform configuration; typically contains serial and model numbers, changes on basic hardware/CPU/RAM replacements
+T}
+T{
+2
+T}:T{
+external\-code
+T}:T{
+Extended or pluggable executable code; includes option ROMs on pluggable hardware
+T}
+T{
+3
+T}:T{
+external\-config
+T}:T{
+Extended or pluggable firmware data; includes information about pluggable hardware
+T}
+T{
+4
+T}:T{
+boot\-loader\-code
+T}:T{
+Boot loader and additional drivers, PE binaries invoked by the boot loader; changes on boot loader updates\&. \fBsd-stub\fR(7) measures system extension images read from the ESP here too (see \fBsystemd-sysext\fR(8))\&.
+T}
+T{
+5
+T}:T{
+boot\-loader\-config
+T}:T{
+GPT/Partition table; changes when the partitions are added, modified, or removed
+T}
+T{
+7
+T}:T{
+secure\-boot\-policy
+T}:T{
+Secure Boot state; changes when UEFI SecureBoot mode is enabled/disabled, or firmware certificates (PK, KEK, db, dbx, \&...) changes\&.
+T}
+T{
+9
+T}:T{
+kernel\-initrd
+T}:T{
+The Linux kernel measures all initrds it receives into this PCR\&.
+T}
+T{
+10
+T}:T{
+ima
+T}:T{
+The IMA project measures its runtime state into this PCR\&.
+T}
+T{
+11
+T}:T{
+kernel\-boot
+T}:T{
+\fBsystemd-stub\fR(7) measures the ELF kernel image, embedded initrd and other payload of the PE image it is placed in into this PCR\&. \fBsystemd-pcrphase.service\fR(8) measures boot phase strings into this PCR at various milestones of the boot process\&.
+T}
+T{
+12
+T}:T{
+kernel\-config
+T}:T{
+\fBsystemd-boot\fR(7) measures the kernel command line into this PCR\&. \fBsystemd-stub\fR(7) measures any manually specified kernel command line (i\&.e\&. a kernel command line that overrides the one embedded in the unified PE image) and loaded credentials into this PCR\&.
+T}
+T{
+13
+T}:T{
+sysexts
+T}:T{
+\fBsystemd-stub\fR(7) measures any \fBsystemd-sysext\fR(8) images it passes to the booted kernel into this PCR\&.
+T}
+T{
+14
+T}:T{
+shim\-policy
+T}:T{
+The shim project measures its "MOK" certificates and hashes into this PCR\&.
+T}
+T{
+15
+T}:T{
+system\-identity
+T}:T{
+\fBsystemd-cryptsetup\fR(8) optionally measures the volume key of activated LUKS volumes into this PCR\&. \fBsystemd-pcrmachine.service\fR(8) measures the \fBmachine-id\fR(5) into this PCR\&. \fBsystemd-pcrfs@.service\fR(8) measures mount points, file system UUIDs, labels, partition UUIDs of the root and /var/ filesystems into this PCR\&.
+T}
+T{
+16
+T}:T{
+debug
+T}:T{
+Debug
+T}
+T{
+23
+T}:T{
+application\-support
+T}:T{
+Application Support
+T}
+.TE
+.sp 1
+.PP
+In general, encrypted volumes would be bound to some combination of PCRs 7, 11, and 14 (if shim/MOK is used)\&. In order to allow firmware and OS version updates, it is typically not advisable to use PCRs such as 0 and 2, since the program code they cover should already be covered indirectly through the certificates measured into PCR 7\&. Validation through certificates hashes is typically preferable over validation through direct measurements as it is less brittle in context of OS/firmware updates: the measurements will change on every update, but signatures should remain unchanged\&. See the
+\m[blue]\fBLinux TPM PCR Registry\fR\m[]\&\s-2\u[1]\d\s+2
+for more discussion\&.
+.SH "LIMITATIONS"
+.PP
+Note that currently when enrolling a new key of one of the five supported types listed above, it is required to first provide a passphrase, a recovery key, a FIDO2 token, or a TPM2 key\&. It\*(Aqs currently not supported to unlock a device with a PKCS#11 key in order to enroll a new PKCS#11 key\&. Thus, if in future key roll\-over is desired it\*(Aqs generally recommended to ensure a passphrase, a recovery key, a FIDO2 token, or a TPM2 key is always enrolled\&.
+.PP
+Also note that support for enrolling multiple FIDO2 tokens is currently limited\&. When multiple FIDO2 tokens are enrolled,
+\fBsystemd\-cryptsetup\fR
+will perform pre\-flight requests to attempt to identify which of the enrolled tokens are currently plugged in\&. However, this is not possible for FIDO2 tokens with user verification (UV, usually via biometrics), in which case it will fall back to attempting each enrolled token one by one\&. This will result in multiple prompts for PIN and user verification\&. This limitation does not apply to PKCS#11 tokens\&.
+.SH "COMPATIBILITY"
+.PP
+Security technology both in systemd and in the general industry constantly evolves\&. In order to provide best security guarantees, the way TPM2, FIDO2, PKCS#11 devices are enrolled is regularly updated in newer versions of systemd\&. Whenever this happens the following compatibility guarantees are given:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Old enrollments continue to be supported and may be unlocked with newer versions of
+\fBsystemd-cryptsetup@.service\fR(8)\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+The opposite is not guaranteed however: it might not be possible to unlock volumes with enrollments done with a newer version of
+\fBsystemd\-cryptenroll\fR
+with an older version of
+\fBsystemd\-cryptsetup\fR\&.
+.RE
+.PP
+That said, it is generally recommended to use matching versions of
+\fBsystemd\-cryptenroll\fR
+and
+\fBsystemd\-cryptsetup\fR, since this is best tested and supported\&.
+.PP
+It might be advisable to re\-enroll existing enrollments to take benefit of newer security features, as they are added to systemd\&.
+.SH "OPTIONS"
+.PP
+The following options are understood:
+.PP
+\fB\-\-password\fR
+.RS 4
+Enroll a regular password/passphrase\&. This command is mostly equivalent to
+\fBcryptsetup luksAddKey\fR, however may be combined with
+\fB\-\-wipe\-slot=\fR
+in one call, see below\&.
+.sp
+Added in version 248\&.
+.RE
+.PP
+\fB\-\-recovery\-key\fR
+.RS 4
+Enroll a recovery key\&. Recovery keys are mostly identical to passphrases, but are computer\-generated instead of being chosen by a human, and thus have a guaranteed high entropy\&. The key uses a character set that is easy to type in, and may be scanned off screen via a QR code\&.
+.sp
+Added in version 248\&.
+.RE
+.PP
+\fB\-\-unlock\-key\-file=\fR\fB\fIPATH\fR\fR
+.RS 4
+Use a file instead of a password/passphrase read from stdin to unlock the volume\&. Expects the PATH to the file containing your key to unlock the volume\&. Currently there is nothing like
+\fB\-\-key\-file\-offset=\fR
+or
+\fB\-\-key\-file\-size=\fR
+so this file has to only contain the full key\&.
+.sp
+Added in version 252\&.
+.RE
+.PP
+\fB\-\-unlock\-fido2\-device=\fR\fB\fIPATH\fR\fR
+.RS 4
+Use a FIDO2 device instead of a password/passphrase read from stdin to unlock the volume\&. Expects a
+hidraw
+device referring to the FIDO2 device (e\&.g\&.
+/dev/hidraw1)\&. Alternatively the special value
+"auto"
+may be specified, in order to automatically determine the device node of a currently plugged in security token (of which there must be exactly one)\&. This automatic discovery is unsupported if
+\fB\-\-fido2\-device=\fR
+option is also specified\&.
+.sp
+Added in version 253\&.
+.RE
+.PP
+\fB\-\-unlock\-tpm2\-device=\fR\fB\fIPATH\fR\fR
+.RS 4
+Use a TPM2 device instead of a password/passhprase read from stdin to unlock the volume\&. Expects a device node path referring to the TPM2 chip (e\&.g\&.
+/dev/tpmrm0)\&. Alternatively the special value
+"auto"
+may be specified, in order to automatically determine the device node of a currently discovered TPM2 device (of which there must be exactly one)\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fB\-\-pkcs11\-token\-uri=\fR\fB\fIURI\fR\fR
+.RS 4
+Enroll a PKCS#11 security token or smartcard (e\&.g\&. a YubiKey)\&. Expects a PKCS#11 URI that allows finding an X\&.509 certificate or a public key on the token\&. The URI must also be suitable to find a related private key after changing the type of object in it\&. Alternatively the special value
+"auto"
+may be specified, in order to automatically determine the suitable URI if a single security token containing a single key pair is plugged in\&. The special value
+"list"
+may be used to enumerate all suitable PKCS#11 tokens currently plugged in\&.
+.sp
+The PKCS#11 token must contain an RSA or EC key pair which will be used to unlock a LUKS2 volume\&. For RSA, a randomly generated volume key is encrypted with a public key in the token, and stored in the LUKS2 JSON token header area\&. To unlock a volume, the stored encrypted volume key will be decrypted with a private key in the token\&. For ECC, ECDH algorithm is used: we generate a pair of EC keys in the same EC group, then derive a shared secret using the generated private key and the public key in the token\&. The derived shared secret is used as a volume key\&. The generated public key is stored in the LUKS2 JSON token header area\&. The generated private key is erased\&. To unlock a volume, we derive the shared secret with the stored public key and a private key in the token\&.
+.sp
+In order to unlock a LUKS2 volume with an enrolled PKCS#11 security token, specify the
+\fBpkcs11\-uri=\fR
+option in the respective
+/etc/crypttab
+line:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+myvolume /dev/sda1 \- pkcs11\-uri=auto
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+See
+\fBcrypttab\fR(5)
+for a more comprehensive example of a
+\fBsystemd\-cryptenroll\fR
+invocation and its matching
+/etc/crypttab
+line\&.
+.sp
+Added in version 248\&.
+.RE
+.PP
+\fB\-\-fido2\-credential\-algorithm=\fR\fB\fISTRING\fR\fR
+.RS 4
+Specify COSE algorithm used in credential generation\&. The default value is
+"es256"\&. Supported values are
+"es256",
+"rs256"
+and
+"eddsa"\&.
+.sp
+"es256"
+denotes ECDSA over NIST P\-256 with SHA\-256\&.
+"rs256"
+denotes 2048\-bit RSA with PKCS#1\&.5 padding and SHA\-256\&.
+"eddsa"
+denotes EDDSA over Curve25519 with SHA\-512\&.
+.sp
+Note that your authenticator may choose not to support some algorithms\&.
+.sp
+Added in version 251\&.
+.RE
+.PP
+\fB\-\-fido2\-device=\fR\fB\fIPATH\fR\fR
+.RS 4
+Enroll a FIDO2 security token that implements the
+"hmac\-secret"
+extension (e\&.g\&. a YubiKey)\&. Expects a
+hidraw
+device referring to the FIDO2 device (e\&.g\&.
+/dev/hidraw1)\&. Alternatively the special value
+"auto"
+may be specified, in order to automatically determine the device node of a currently plugged in security token (of which there must be exactly one)\&. This automatic discovery is unsupported if
+\fB\-\-unlock\-fido2\-device=\fR
+option is also specified\&. The special value
+"list"
+may be used to enumerate all suitable FIDO2 tokens currently plugged in\&. Note that many hardware security tokens that implement FIDO2 also implement the older PKCS#11 standard\&. Typically FIDO2 is preferable, given it\*(Aqs simpler to use and more modern\&.
+.sp
+In order to unlock a LUKS2 volume with an enrolled FIDO2 security token, specify the
+\fBfido2\-device=\fR
+option in the respective
+/etc/crypttab
+line:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+myvolume /dev/sda1 \- fido2\-device=auto
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+See
+\fBcrypttab\fR(5)
+for a more comprehensive example of a
+\fBsystemd\-cryptenroll\fR
+invocation and its matching
+/etc/crypttab
+line\&.
+.sp
+Added in version 248\&.
+.RE
+.PP
+\fB\-\-fido2\-with\-client\-pin=\fR\fB\fIBOOL\fR\fR
+.RS 4
+When enrolling a FIDO2 security token, controls whether to require the user to enter a PIN when unlocking the volume (the FIDO2
+"clientPin"
+feature)\&. Defaults to
+"yes"\&. (Note: this setting is without effect if the security token does not support the
+"clientPin"
+feature at all, or does not allow enabling or disabling it\&.)
+.sp
+Added in version 249\&.
+.RE
+.PP
+\fB\-\-fido2\-with\-user\-presence=\fR\fB\fIBOOL\fR\fR
+.RS 4
+When enrolling a FIDO2 security token, controls whether to require the user to verify presence (tap the token, the FIDO2
+"up"
+feature) when unlocking the volume\&. Defaults to
+"yes"\&. (Note: this setting is without effect if the security token does not support the
+"up"
+feature at all, or does not allow enabling or disabling it\&.)
+.sp
+Added in version 249\&.
+.RE
+.PP
+\fB\-\-fido2\-with\-user\-verification=\fR\fB\fIBOOL\fR\fR
+.RS 4
+When enrolling a FIDO2 security token, controls whether to require user verification when unlocking the volume (the FIDO2
+"uv"
+feature)\&. Defaults to
+"no"\&. (Note: this setting is without effect if the security token does not support the
+"uv"
+feature at all, or does not allow enabling or disabling it\&.)
+.sp
+Added in version 249\&.
+.RE
+.PP
+\fB\-\-tpm2\-device=\fR\fB\fIPATH\fR\fR
+.RS 4
+Enroll a TPM2 security chip\&. Expects a device node path referring to the TPM2 chip (e\&.g\&.
+/dev/tpmrm0)\&. Alternatively the special value
+"auto"
+may be specified, in order to automatically determine the device node of a currently discovered TPM2 device (of which there must be exactly one)\&. The special value
+"list"
+may be used to enumerate all suitable TPM2 devices currently discovered\&.
+.sp
+In order to unlock a LUKS2 volume with an enrolled TPM2 security chip, specify the
+\fBtpm2\-device=\fR
+option in the respective
+/etc/crypttab
+line:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+myvolume /dev/sda1 \- tpm2\-device=auto
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+See
+\fBcrypttab\fR(5)
+for a more comprehensive example of a
+\fBsystemd\-cryptenroll\fR
+invocation and its matching
+/etc/crypttab
+line\&.
+.sp
+Use
+\fB\-\-tpm2\-pcrs=\fR
+(see below) to configure which TPM2 PCR indexes to bind the enrollment to\&.
+.sp
+Added in version 248\&.
+.RE
+.PP
+\fB\-\-tpm2\-device\-key=\fR\fB\fIPATH\fR\fR
+.RS 4
+Enroll a TPM2 security chip using its public key\&. Expects a path referring to the TPM2 public key in TPM2B_PUBLIC format\&. This cannot be used with
+\fB\-\-tpm2\-device=\fR, as it performs the same operation, but without connecting to the TPM2 security chip; instead the enrollment is calculated using the provided TPM2 key\&. This is useful in situations where the TPM2 security chip is not available at the time of enrollment\&.
+.sp
+The key, in most cases, should be the Storage Root Key (SRK) from a local TPM2 security chip\&. If a key from a different handle (not the SRK) is used, you must specify its handle index using
+\fB\-\-tpm2\-seal\-key\-handle=\fR\&.
+.sp
+The
+\fBsystemd-tpm2-setup.service\fR(8)
+service writes the SRK to
+/run/systemd/tpm2\-srk\-public\-key\&.tpm2b_public
+automatically during boot, in the correct format\&.
+.sp
+Alternatively, you may use
+\fBsystemd\-analyze srk\fR
+to retrieve the SRK from the TPM2 security chip explicitly\&. See
+\fBsystemd-analyze\fR(1)
+for details\&. Example:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+systemd\-analyze srk > srk\&.tpm2b_public
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+Added in version 255\&.
+.RE
+.PP
+\fB\-\-tpm2\-seal\-key\-handle=\fR\fB\fIHANDLE\fR\fR
+.RS 4
+Configures which parent key to use for sealing, using the TPM handle (index) of the key\&. This is used to "seal" (encrypt) a secret and must be used later to "unseal" (decrypt) the secret\&. Expects a hexadecimal 32bit integer, optionally prefixed with
+"0x"\&. Allowable values are any handle index in the persistent ("0x81000000"\-"0x81ffffff") or transient ("0x80000000"\-"0x80ffffff") ranges\&. Since transient handles are lost after a TPM reset, and may be flushed during TPM context switching, they should not be used except for very specific use cases, e\&.g\&. testing\&.
+.sp
+The default is the Storage Root Key (SRK) handle index
+"0x81000001"\&. A value of 0 will use the default\&. For the SRK handle, a new key will be created and stored in the TPM if one does not already exist; for any other handle, the key must already exist in the TPM at the specified handle index\&.
+.sp
+This should not be changed unless you know what you are doing\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+\fB\-\-tpm2\-pcrs=\fR\fB\fIPCR\fR\fI[+PCR\&.\&.\&.]\fR\fR
+.RS 4
+Configures the TPM2 PCRs (Platform Configuration Registers) to bind to when enrollment is requested via
+\fB\-\-tpm2\-device=\fR\&. Takes a list of PCR entries, where each entry starts with a name or numeric index in the range 0\&...23, optionally followed by
+":"
+and a hash algorithm name (specifying the PCR bank), optionally followed by
+"="
+and a hash digest value\&. Multiple PCR entries are separated by
+"+"\&. If not specified, the default is to use PCR 7 only\&. If an empty string is specified, binds the enrollment to no PCRs at all\&. See the table above for a list of available PCRs\&.
+.sp
+Example:
+\fB\-\-tpm2\-pcrs=boot\-loader\-code+platform\-config+boot\-loader\-config\fR
+specifies that PCR registers 4, 1, and 5 should be used\&.
+.sp
+Example:
+\fB\-\-tpm2\-pcrs=7:sha256\fR
+specifies that PCR register 7 from the SHA256 bank should be used\&.
+.sp
+Example:
+\fB\-\-tpm2\-pcrs=4:sha1=3a3f780f11a4b49969fcaa80cd6e3957c33b2275\fR
+specifies that PCR register 4 from the SHA1 bank should be used, and a hash digest value of 3a3f780f11a4b49969fcaa80cd6e3957c33b2275 will be used instead of reading the current PCR value\&.
+.sp
+Added in version 248\&.
+.RE
+.PP
+\fB\-\-tpm2\-with\-pin=\fR\fB\fIBOOL\fR\fR
+.RS 4
+When enrolling a TPM2 device, controls whether to require the user to enter a PIN when unlocking the volume in addition to PCR binding, based on TPM2 policy authentication\&. Defaults to
+"no"\&. Despite being called PIN, any character can be used, not just numbers\&.
+.sp
+Note that incorrect PIN entry when unlocking increments the TPM dictionary attack lockout mechanism, and may lock out users for a prolonged time, depending on its configuration\&. The lockout mechanism is a global property of the TPM,
+\fBsystemd\-cryptenroll\fR
+does not control or configure the lockout mechanism\&. You may use tpm2\-tss tools to inspect or configure the dictionary attack lockout, with
+\fBtpm2_getcap\fR(1)
+and
+\fBtpm2_dictionarylockout\fR(1)
+commands, respectively\&.
+.sp
+Added in version 251\&.
+.RE
+.PP
+\fB\-\-tpm2\-public\-key=\fR\fB\fIPATH\fR\fR, \fB\-\-tpm2\-public\-key\-pcrs=\fR\fB\fIPCR\fR\fI[+PCR\&.\&.\&.]\fR\fR, \fB\-\-tpm2\-signature=\fR\fB\fIPATH\fR\fR
+.RS 4
+Configures a TPM2 signed PCR policy to bind encryption to\&. The
+\fB\-\-tpm2\-public\-key=\fR
+option accepts a path to a PEM encoded RSA public key, to bind the encryption to\&. If this is not specified explicitly, but a file
+tpm2\-pcr\-public\-key\&.pem
+exists in one of the directories
+/etc/systemd/,
+/run/systemd/,
+/usr/lib/systemd/
+(searched in this order), it is automatically used\&. The
+\fB\-\-tpm2\-public\-key\-pcrs=\fR
+option takes a list of TPM2 PCR indexes to bind to (same syntax as
+\fB\-\-tpm2\-pcrs=\fR
+described above)\&. If not specified defaults to 11 (i\&.e\&. this binds the policy to any unified kernel image for which a PCR signature can be provided)\&.
+.sp
+Note the difference between
+\fB\-\-tpm2\-pcrs=\fR
+and
+\fB\-\-tpm2\-public\-key\-pcrs=\fR: the former binds decryption to the current, specific PCR values; the latter binds decryption to any set of PCR values for which a signature by the specified public key can be provided\&. The latter is hence more useful in scenarios where software updates shell be possible without losing access to all previously encrypted LUKS2 volumes\&. Like with
+\fB\-\-tpm2\-pcrs=\fR, names defined in the table above can also be used to specify the registers, for instance
+\fB\-\-tpm2\-public\-key\-pcrs=boot\-loader\-code+system\-identity\fR\&.
+.sp
+The
+\fB\-\-tpm2\-signature=\fR
+option takes a path to a TPM2 PCR signature file as generated by the
+\fBsystemd-measure\fR(1)
+tool\&. If this is not specified explicitly, a suitable signature file
+tpm2\-pcr\-signature\&.json
+is searched for in
+/etc/systemd/,
+/run/systemd/,
+/usr/lib/systemd/
+(in this order) and used\&. If a signature file is specified or found it is used to verify if the volume can be unlocked with it given the current PCR state, before the new slot is written to disk\&. This is intended as safety net to ensure that access to a volume is not lost if a public key is enrolled for which no valid signature for the current PCR state is available\&. If the supplied signature does not unlock the current PCR state and public key combination, no slot is enrolled and the operation will fail\&. If no signature file is specified or found no such safety verification is done\&.
+.sp
+Added in version 252\&.
+.RE
+.PP
+\fB\-\-tpm2\-pcrlock=\fR\fB\fIPATH\fR\fR
+.RS 4
+Configures a TPM2 pcrlock policy to bind encryption to\&. Expects a path to a pcrlock policy file as generated by the
+\fBsystemd-pcrlock\fR(1)
+tool\&. If a TPM2 device is enrolled and this option is not used but a file
+pcrlock\&.json
+is found in
+/run/systemd/
+or
+/var/lib/systemd/
+it is automatically used\&. Assign an empty string to turn this behaviour off\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+\fB\-\-wipe\-slot=\fR\fB\fISLOT\fR\fI[,SLOT\&.\&.\&.]\fR\fR
+.RS 4
+Wipes one or more LUKS2 key slots\&. Takes a comma separated list of numeric slot indexes, or the special strings
+"all"
+(for wiping all key slots),
+"empty"
+(for wiping all key slots that are unlocked by an empty passphrase),
+"password"
+(for wiping all key slots that are unlocked by a traditional passphrase),
+"recovery"
+(for wiping all key slots that are unlocked by a recovery key),
+"pkcs11"
+(for wiping all key slots that are unlocked by a PKCS#11 token),
+"fido2"
+(for wiping all key slots that are unlocked by a FIDO2 token),
+"tpm2"
+(for wiping all key slots that are unlocked by a TPM2 chip), or any combination of these strings or numeric indexes, in which case all slots matching either are wiped\&. As safety precaution an operation that wipes all slots without exception (so that the volume cannot be unlocked at all anymore, unless the volume key is known) is refused\&.
+.sp
+This switch may be used alone, in which case only the requested wipe operation is executed\&. It may also be used in combination with any of the enrollment options listed above, in which case the enrollment is completed first, and only when successful the wipe operation executed \(em and the newly added slot is always excluded from the wiping\&. Combining enrollment and slot wiping may thus be used to update existing enrollments:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+systemd\-cryptenroll /dev/sda1 \-\-wipe\-slot=tpm2 \-\-tpm2\-device=auto
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+The above command will enroll the TPM2 chip, and then wipe all previously created TPM2 enrollments on the LUKS2 volume, leaving only the newly created one\&. Combining wiping and enrollment may also be used to replace enrollments of different types, for example for changing from a PKCS#11 enrollment to a FIDO2 one:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+systemd\-cryptenroll /dev/sda1 \-\-wipe\-slot=pkcs11 \-\-fido2\-device=auto
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+Or for replacing an enrolled empty password by TPM2:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+systemd\-cryptenroll /dev/sda1 \-\-wipe\-slot=empty \-\-tpm2\-device=auto
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+Added in version 248\&.
+.RE
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Print a short help text and exit\&.
+.RE
+.PP
+\fB\-\-version\fR
+.RS 4
+Print a short version string and exit\&.
+.RE
+.SH "CREDENTIALS"
+.PP
+\fBsystemd\-cryptenroll\fR
+supports the service credentials logic as implemented by
+\fIImportCredential=\fR/\fILoadCredential=\fR/\fISetCredential=\fR
+(see
+\fBsystemd.exec\fR(5)
+for details)\&. The following credentials are used when passed in:
+.PP
+\fIcryptenroll\&.passphrase\fR, \fIcryptenroll\&.new\-passphrase\fR
+.RS 4
+May contain the passphrase to unlock the volume with/to newly enroll\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fIcryptenroll\&.tpm2\-pin\fR, \fIcryptenroll\&.new\-tpm2\-pin\fR
+.RS 4
+May contain the TPM2 PIN to unlock the volume with/to newly enroll\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fIcryptenroll\&.fido2\-pin\fR
+.RS 4
+If a FIDO2 token is enrolled this may contain the PIN of the token\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fIcryptenroll\&.pkcs11\-pin\fR
+.RS 4
+If a PKCS#11 token is enrolled this may contain the PIN of the token\&.
+.sp
+Added in version 256\&.
+.RE
+.SH "EXIT STATUS"
+.PP
+On success, 0 is returned, a non\-zero failure code otherwise\&.
+.SH "EXAMPLES"
+.PP
+\fBcrypttab\fR(5)
+and
+\fBsystemd-measure\fR(1)
+contain various examples employing
+\fBsystemd\-cryptenroll\fR\&.
+.SH "SEE ALSO"
+.PP
+\fBsystemd\fR(1), \fBsystemd-cryptsetup@.service\fR(8), \fBcrypttab\fR(5), \fBcryptsetup\fR(8), \fBsystemd-measure\fR(1)
+.SH "NOTES"
+.IP " 1." 4
+Linux TPM PCR Registry
+.RS 4
+\%https://uapi-group.org/specifications/specs/linux_tpm_pcr_registry/
+.RE

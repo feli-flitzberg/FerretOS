@@ -1,0 +1,142 @@
+'\" t
+.TH "SYSTEMD\-OOMD\&.SERVICE" "8" "" "systemd 256.4" "systemd-oomd.service"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+systemd-oomd.service, systemd-oomd \- A userspace out\-of\-memory (OOM) killer
+.SH "SYNOPSIS"
+.PP
+systemd\-oomd\&.service
+.PP
+/usr/lib/systemd/systemd\-oomd
+.SH "DESCRIPTION"
+.PP
+\fBsystemd\-oomd\fR
+is a system service that uses cgroups\-v2 and pressure stall information (PSI) to monitor and take corrective action before an OOM occurs in the kernel space\&.
+.PP
+You can enable monitoring and actions on units by setting
+\fIManagedOOMSwap=\fR
+and
+\fIManagedOOMMemoryPressure=\fR
+in the unit configuration, see
+\fBsystemd.resource-control\fR(5)\&.
+\fBsystemd\-oomd\fR
+retrieves information about such units from
+\fBsystemd\fR(1)
+when it starts and watches for subsequent changes\&.
+.PP
+Cgroups of units with
+\fIManagedOOMSwap=\fR
+or
+\fIManagedOOMMemoryPressure=\fR
+set to
+\fBkill\fR
+will be monitored\&.
+\fBsystemd\-oomd\fR
+periodically polls PSI statistics for the system and those cgroups to decide when to take action\&. If the configured limits are exceeded,
+\fBsystemd\-oomd\fR
+will select a cgroup to terminate, and send
+\fBSIGKILL\fR
+to all processes in it\&. Note that only descendant cgroups are eligible candidates for killing; the unit with its property set to
+\fBkill\fR
+is not a candidate (unless one of its ancestors set their property to
+\fBkill\fR)\&. Also only leaf cgroups and cgroups with
+memory\&.oom\&.group
+set to
+\fB1\fR
+are eligible candidates; see
+\fIOOMPolicy=\fR
+in
+\fBsystemd.service\fR(5)\&.
+.PP
+\fBoomctl\fR(1)
+can be used to list monitored cgroups and pressure information\&.
+.PP
+See
+\fBoomd.conf\fR(5)
+for more information about the configuration of this service\&.
+.SH "SYSTEM REQUIREMENTS AND CONFIGURATION"
+.PP
+The system must be running systemd with a full unified cgroup hierarchy for the expected cgroups\-v2 features\&. Furthermore, memory accounting must be turned on for all units monitored by
+\fBsystemd\-oomd\fR\&. The easiest way to turn on memory accounting is by ensuring the value for
+\fIDefaultMemoryAccounting=\fR
+is set to
+\fBtrue\fR
+in
+\fBsystemd-system.conf\fR(5)\&.
+.PP
+The kernel must be compiled with PSI support\&. This is available in Linux 4\&.20 and above\&.
+.PP
+It is highly recommended for the system to have swap enabled for
+\fBsystemd\-oomd\fR
+to function optimally\&. With swap enabled, the system spends enough time swapping pages to let
+\fBsystemd\-oomd\fR
+react\&. Without swap, the system enters a livelocked state much more quickly and may prevent
+\fBsystemd\-oomd\fR
+from responding in a reasonable amount of time\&. See
+\m[blue]\fB"In defence of swap: common misconceptions"\fR\m[]\&\s-2\u[1]\d\s+2
+for more details on swap\&. Any swap\-based actions on systems without swap will be ignored\&. While
+\fBsystemd\-oomd\fR
+can perform pressure\-based actions on such a system, the pressure increases will be more abrupt and may require more tuning to get the desired thresholds and behavior\&.
+.PP
+Be aware that if you intend to enable monitoring and actions on
+user\&.slice,
+user\-$UID\&.slice, or their ancestor cgroups, it is highly recommended that your programs be managed by the systemd user manager to prevent running too many processes under the same session scope (and thus avoid a situation where memory intensive tasks trigger
+\fBsystemd\-oomd\fR
+to kill everything under the cgroup)\&. If you\*(Aqre using a desktop environment like GNOME or KDE, it already spawns many session components with the systemd user manager\&.
+.SH "USAGE RECOMMENDATIONS"
+.PP
+\fIManagedOOMSwap=\fR
+works with the system\-wide swap values, so setting it on the root slice
+\-\&.slice, and allowing all descendant cgroups to be eligible candidates may make the most sense\&.
+.PP
+\fIManagedOOMMemoryPressure=\fR
+tends to work better on the cgroups below the root slice\&. For units which tend to have processes that are less latency sensitive (e\&.g\&.
+system\&.slice), a higher limit like the default of 60% may be acceptable, as those processes can usually ride out slowdowns caused by lack of memory without serious consequences\&. However, something like
+user@$UID\&.service
+may prefer a much lower value like 40%\&.
+.SH "OPTIONS"
+.PP
+\fB\-\-dry\-run\fR
+.RS 4
+Do a dry run of
+\fBsystemd\-oomd\fR: when a kill is triggered, print it to the log instead of killing the cgroup\&.
+.sp
+Added in version 253\&.
+.RE
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Print a short help text and exit\&.
+.RE
+.PP
+\fB\-\-version\fR
+.RS 4
+Print a short version string and exit\&.
+.RE
+.SH "SEE ALSO"
+.PP
+\fBsystemd\fR(1), \fBsystemd-system.conf\fR(5), \fBsystemd.resource-control\fR(5), \fBoomd.conf\fR(5), \fBoomctl\fR(1)
+.SH "NOTES"
+.IP " 1." 4
+"In defence of swap: common misconceptions"
+.RS 4
+\%https://chrisdown.name/2018/01/02/in-defence-of-swap.html
+.RE

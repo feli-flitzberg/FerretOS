@@ -1,0 +1,102 @@
+'\" t
+.TH "SYSTEMD\-STORAGETM\&.SERVICE" "8" "" "systemd 256.4" "systemd-storagetm.service"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+systemd-storagetm.service, systemd-storagetm \- Exposes all local block devices as NVMe\-TCP mass storage devices
+.SH "SYNOPSIS"
+.PP
+systemd\-storagetm\&.service
+.HP \w'\fB/usr/lib/systemd/systemd\-storagetm\fR\ 'u
+\fB/usr/lib/systemd/systemd\-storagetm\fR [OPTIONS...] [\fIDEVICE\fR]
+.SH "DESCRIPTION"
+.PP
+systemd\-storagetm\&.service
+is a service that exposes all local block devices as NVMe\-TCP mass storage devices\&. Its primary use\-case is to be invoked by the
+storage\-target\-mode\&.target
+unit that can be booted into\&.
+.if n \{\
+.sp
+.\}
+.RS 4
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBWarning\fR
+.ps -1
+.br
+.PP
+The NVMe disks are currently exposed without authentication or encryption, in read/write mode\&. This means network peers may read from and write to the device without any restrictions\&. This functionality should hence only be used in a local setup\&.
+.sp .5v
+.RE
+.PP
+Note that to function properly networking must be configured too\&. The recommended mechanism to boot into a storage target mode is by adding
+"rd\&.systemd\&.unit=storage\-target\-mode\&.target ip=link\-local"
+on the kernel command line\&. Note that
+"ip=link\-local"
+only configures link\-local IP, i\&.e\&. IPv4LL and IPv6LL, which means non\-routable addresses\&. This is done for security reasons, so that only systems on the local link can access the devices\&. Use
+"ip=dhcp"
+to assign routable addresses too\&. For further details see
+\fBsystemd-network-generator.service\fR(8)\&.
+.PP
+Unless the
+\fB\-\-all\fR
+switch is used expects one or more block devices or regular files to expose via NVMe\-TCP as argument\&.
+.SH "OPTIONS"
+.PP
+The following options are understood:
+.PP
+\fB\-\-nqn=\fR
+.RS 4
+Takes a string\&. If specified configures the NVMe Qualified Name to use for the exposed NVMe\-TCP mass storage devices\&. The NQN should follow the syntax described in
+\m[blue]\fBNVM Express Base Specification 2\&.0c\fR\m[]\&\s-2\u[1]\d\s+2, section 4\&.5 "NVMe Qualified Names"\&. Note that the NQN specified here will be suffixed with a dot and the block device name before it is exposed on the NVMe target\&. If not specified defaults to
+"nqn\&.2023\-10\&.io\&.systemd:storagetm\&.\fIID\fR", where ID is replaced by a 128bit ID derived from
+\fBmachine-id\fR(5)\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+\fB\-\-all\fR, \fB\-a\fR
+.RS 4
+If specified exposes all local block devices via NVMe\-TCP, current and future (i\&.e\&. it watches block devices come and go and updates the NVMe\-TCP list as needed)\&. Note that by default any block devices that originate on the same block device as the block device backing the current root file system are excluded\&. If the switch is specified twice this safety mechanism is disabled\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Print a short help text and exit\&.
+.RE
+.PP
+\fB\-\-version\fR
+.RS 4
+Print a short version string and exit\&.
+.RE
+.SH "SEE ALSO"
+.PP
+\fBsystemd\fR(1), \fBsystemd.special\fR(7)
+.SH "NOTES"
+.IP " 1." 4
+NVM Express Base Specification 2.0c
+.RS 4
+\%https://nvmexpress.org/wp-content/uploads/NVM-Express-Base-Specification-2.0c-2022.10.04-Ratified.pdf
+.RE

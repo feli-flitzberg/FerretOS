@@ -1,0 +1,136 @@
+'\" t
+.TH "POWEROFF" "8" "" "systemd 256.4" "poweroff"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+poweroff, reboot, halt \- Power off, reboot, or halt the machine
+.SH "SYNOPSIS"
+.HP \w'\fBpoweroff\fR\ 'u
+\fBpoweroff\fR [OPTIONS...]
+.HP \w'\fBreboot\fR\ 'u
+\fBreboot\fR [OPTIONS...]
+.HP \w'\fBhalt\fR\ 'u
+\fBhalt\fR [OPTIONS...]
+.SH "DESCRIPTION"
+.PP
+\fBpoweroff\fR,
+\fBreboot\fR, and
+\fBhalt\fR
+may be used to power off, reboot, or halt the machine\&. All three commands take the same options\&.
+.SH "OPTIONS"
+.PP
+The following options are understood:
+.PP
+\fB\-\-help\fR
+.RS 4
+Print a short help text and exit\&.
+.sp
+Added in version 253\&.
+.RE
+.PP
+\fB\-\-halt\fR
+.RS 4
+Halt the machine, regardless of which one of the three commands is invoked\&.
+.sp
+Added in version 253\&.
+.RE
+.PP
+\fB\-p\fR, \fB\-\-poweroff\fR
+.RS 4
+Power off the machine, when either
+\fBhalt\fR
+or
+\fBpoweroff\fR
+is invoked\&. This option is ignored when
+\fBreboot\fR
+is invoked\&.
+.sp
+Added in version 253\&.
+.RE
+.PP
+\fB\-\-reboot\fR
+.RS 4
+Reboot the machine, regardless of which one of the three commands is invoked\&.
+.sp
+Added in version 253\&.
+.RE
+.PP
+\fB\-f\fR, \fB\-\-force\fR
+.RS 4
+Force immediate power\-off, halt, or reboot\&. If specified, the command does not contact the init system\&. In most cases, filesystems are not properly unmounted before shutdown\&. For example, the command
+\fBreboot \-f\fR
+is mostly equivalent to
+\fBsystemctl reboot \-ff\fR, instead of
+\fBsystemctl reboot \-f\fR\&.
+.sp
+Added in version 253\&.
+.RE
+.PP
+\fB\-w\fR, \fB\-\-wtmp\-only\fR
+.RS 4
+Only write wtmp shutdown entry, do not actually power off, reboot, or halt\&.
+.sp
+Added in version 253\&.
+.RE
+.PP
+\fB\-d\fR, \fB\-\-no\-wtmp\fR
+.RS 4
+Do not write wtmp shutdown entry\&.
+.sp
+Added in version 253\&.
+.RE
+.PP
+\fB\-n\fR, \fB\-\-no\-sync\fR
+.RS 4
+Don\*(Aqt sync hard disks/storage media before power\-off, reboot, or halt\&.
+.sp
+Added in version 253\&.
+.RE
+.PP
+\fB\-\-no\-wall\fR
+.RS 4
+Do not send wall message before power\-off, reboot, or halt\&.
+.sp
+Added in version 253\&.
+.RE
+.SH "EXIT STATUS"
+.PP
+On success, 0 is returned, a non\-zero failure code otherwise\&.
+.SH "NOTES"
+.PP
+These commands are implemented in a way that preserves basic compatibility with the original SysV commands\&.
+\fBsystemctl\fR(1)
+verbs
+\fBpoweroff\fR,
+\fBreboot\fR,
+\fBhalt\fR
+provide the same functionality with some additional features\&.
+.PP
+Note that on many SysV systems
+\fBhalt\fR
+used to be synonymous to
+\fBpoweroff\fR, i\&.e\&. both commands would equally result in powering the machine off\&. systemd is more accurate here, and
+\fBhalt\fR
+results in halting the machine only (leaving power on), and
+\fBpoweroff\fR
+is required to actually power it off\&.
+.SH "SEE ALSO"
+.PP
+\fBsystemd\fR(1), \fBsystemctl\fR(1), \fBshutdown\fR(8), \fBwall\fR(1)

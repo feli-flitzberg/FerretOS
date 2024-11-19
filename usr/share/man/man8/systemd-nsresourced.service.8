@@ -1,0 +1,78 @@
+'\" t
+.TH "SYSTEMD\-NSRESOURCED\&.SERVICE" "8" "" "systemd 256.4" "systemd-nsresourced.service"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+systemd-nsresourced.service, systemd-nsresourced \- User Namespace Resource Delegation Service
+.SH "SYNOPSIS"
+.PP
+systemd\-nsresourced\&.service
+.PP
+/usr/lib/systemd/systemd\-nsresourced
+.SH "DESCRIPTION"
+.PP
+\fBsystemd\-nsresourced\fR
+is a system service that permits transient delegation of a a UID/GID range to a user namespace (see
+\fBuser_namespaces\fR(7)) allocated by a client, via a Varlink IPC API\&.
+.PP
+Unprivileged clients may allocate a user namespace, and then request a UID/GID range to be assigned to it via this service\&. The user namespace may then be used to run containers and other sandboxes, and/or apply it to an id\-mapped mount\&.
+.PP
+Allocations of UIDs/GIDs this way are transient: when a user namespace goes away, its UID/GID range is returned to the pool of available ranges\&. In order to ensure that clients cannot gain persistency in their transient UID/GID range a BPF\-LSM based policy is enforced that ensures that user namespaces set up this way can only write to file systems they allocate themselves or that are explicitly allowlisted via
+\fBsystemd\-nsresourced\fR\&.
+.PP
+\fBsystemd\-nsresourced\fR
+automatically ensures that any registered UID ranges show up in the system\*(Aqs NSS database via the
+\m[blue]\fBUser/Group Record Lookup API via Varlink\fR\m[]\&\s-2\u[1]\d\s+2\&.
+.PP
+Currently, only UID/GID ranges consisting of either exactly 1 or exactly 65536 UIDs/GIDs can be registered with this service\&. Moreover, UIDs and GIDs are always allocated together, and symmetrically\&.
+.PP
+The service provides API calls to allowlist mounts (referenced via their mount file descriptors as per Linux
+\fBfsmount()\fR
+API), to pass ownership of a cgroup subtree to the user namespace and to delegate a virtual Ethernet device pair to the user namespace\&. When used in combination this is sufficient to implement fully unprivileged container environments, as implemented by
+\fBsystemd-nspawn\fR(1), fully unprivileged
+\fIRootImage=\fR
+(see
+\fBsystemd.exec\fR(5)) or fully unprivileged disk image tools such as
+\fBsystemd-dissect\fR(1)\&.
+.PP
+This service provides one
+\m[blue]\fBVarlink\fR\m[]\&\s-2\u[2]\d\s+2
+service:
+\fBio\&.systemd\&.NamespaceResource\fR
+allows registering user namespaces, and assign mounts, cgroups and network interfaces to it\&.
+.SH "SEE ALSO"
+.PP
+\fBsystemd\fR(1),
+\fBsystemd-mountfsd.service\fR(8),
+\fBsystemd-nspawn\fR(1),
+\fBsystemd.exec\fR(5),
+\fBsystemd-dissect\fR(1),
+\fBuser_namespaces\fR(7)
+.SH "NOTES"
+.IP " 1." 4
+User/Group Record Lookup API via Varlink
+.RS 4
+\%https://systemd.io/USER_GROUP_API
+.RE
+.IP " 2." 4
+Varlink
+.RS 4
+\%https://varlink.org/
+.RE

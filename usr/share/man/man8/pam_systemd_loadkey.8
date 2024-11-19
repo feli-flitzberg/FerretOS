@@ -1,0 +1,143 @@
+'\" t
+.TH "PAM_SYSTEMD_LOADKEY" "8" "" "systemd 256.4" "pam_systemd_loadkey"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+pam_systemd_loadkey \- Read password from kernel keyring and set it as PAM authtok
+.SH "SYNOPSIS"
+.PP
+pam_systemd_loadkey\&.so
+.SH "DESCRIPTION"
+.PP
+\fBpam_systemd_loadkey\fR
+reads a NUL\-separated password list from the kernel keyring, and sets the last password in the list as the PAM authtok\&.
+.PP
+The password list is supposed to be stored in the "user" keyring of the root user, by an earlier call to
+\fBsystemd-ask-password\fR(1)
+with
+\fB\-\-keyname=\fR\&. You can pass the keyname to
+\fBpam_systemd_loadkey\fR
+via the
+\fBkeyname=\fR
+option\&.
+.SH "OPTIONS"
+.PP
+The following options are understood:
+.PP
+\fIkeyname=\fR
+.RS 4
+Takes a string argument which sets the keyname to read\&. The default is
+"cryptsetup"\&. During boot,
+\fBsystemd-cryptsetup@.service\fR(8)
+stores a passphrase or PIN in the keyring\&. The LUKS2 volume key can also be used, via the
+\fBlink\-volume\-key\fR
+option in
+\fBcrypttab\fR(5)\&.
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.B Table\ \&1.\ \& Possible values for \fIkeyname\fR\&.
+.TS
+allbox tab(:);
+lB lB.
+T{
+Value
+T}:T{
+Description
+T}
+.T&
+l l
+l l
+l l
+l l.
+T{
+cryptsetup
+T}:T{
+Passphrase or recovery key
+T}
+T{
+fido2\-pin
+T}:T{
+Security token PIN
+T}
+T{
+luks2\-pin
+T}:T{
+LUKS2 token PIN
+T}
+T{
+tpm2\-pin
+T}:T{
+TPM2 PIN
+T}
+.TE
+.sp 1
+Added in version 255\&.
+.RE
+.PP
+\fIdebug\fR
+.RS 4
+The module will log debugging information as it operates\&.
+.sp
+Added in version 255\&.
+.RE
+.SH "EXAMPLE"
+.PP
+This module is intended to be used when you use LUKS with a passphrase, enable autologin in the display manager, and want to unlock Gnome Keyring / KDE KWallet automatically\&. So in total, you only enter one password during boot\&.
+.PP
+You need to set the password of your Gnome Keyring/KWallet to the same as your LUKS passphrase\&. Then add the following lines to your display manager\*(Aqs PAM config under
+/etc/pam\&.d/
+(e\&.g\&.
+sddm\-autologin):
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+\-auth       optional    pam_systemd_loadkey\&.so
+\-auth       optional    pam_gnome_keyring\&.so
+\-session    optional    pam_gnome_keyring\&.so auto_start
+\-session    optional    pam_kwallet5\&.so auto_start
+    
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+And add the following lines to your display manager\*(Aqs systemd service file, so it can access root\*(Aqs keyring:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+[Service]
+KeyringMode=inherit
+    
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+In this setup, early during the boot process,
+\fBsystemd-cryptsetup@.service\fR(8)
+will ask for the passphrase and store it in the kernel keyring with the keyname
+"cryptsetup"\&. Then when the display manager does the autologin, pam_systemd_loadkey will read the passphrase from the kernel keyring, set it as the PAM authtok, and then pam_gnome_keyring and pam_kwallet5 will unlock with the same passphrase\&.

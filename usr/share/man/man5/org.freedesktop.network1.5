@@ -1,0 +1,390 @@
+'\" t
+.TH "ORG\&.FREEDESKTOP\&.NETWORK1" "5" "" "systemd 256.4" "org.freedesktop.network1"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+org.freedesktop.network1 \- The D\-Bus interface of systemd\-networkd
+.SH "INTRODUCTION"
+.PP
+\fBsystemd-networkd.service\fR(8)
+is a system service that manages and configures network interfaces\&. This page describes the D\-Bus interface\&.
+.SH "THE MANAGER OBJECT"
+.PP
+The service exposes the following interfaces on the Manager object on the bus:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+node /org/freedesktop/network1 {
+  interface org\&.freedesktop\&.network1\&.Manager {
+    methods:
+      ListLinks(out a(iso) links);
+      GetLinkByName(in  s name,
+                    out i ifindex,
+                    out o path);
+      GetLinkByIndex(in  i ifindex,
+                     out s name,
+                     out o path);
+      SetLinkNTP(in  i ifindex,
+                 in  as servers);
+      SetLinkDNS(in  i ifindex,
+                 in  a(iay) addresses);
+      SetLinkDNSEx(in  i ifindex,
+                   in  a(iayqs) addresses);
+      SetLinkDomains(in  i ifindex,
+                     in  a(sb) domains);
+      SetLinkDefaultRoute(in  i ifindex,
+                          in  b enable);
+      SetLinkLLMNR(in  i ifindex,
+                   in  s mode);
+      SetLinkMulticastDNS(in  i ifindex,
+                          in  s mode);
+      SetLinkDNSOverTLS(in  i ifindex,
+                        in  s mode);
+      SetLinkDNSSEC(in  i ifindex,
+                    in  s mode);
+      SetLinkDNSSECNegativeTrustAnchors(in  i ifindex,
+                                        in  as names);
+      RevertLinkNTP(in  i ifindex);
+      RevertLinkDNS(in  i ifindex);
+      RenewLink(in  i ifindex);
+      ForceRenewLink(in  i ifindex);
+      ReconfigureLink(in  i ifindex);
+      Reload();
+      DescribeLink(in  i ifindex,
+                   out s json);
+      Describe(out s json);
+    properties:
+      readonly s OperationalState = \*(Aq\&.\&.\&.\*(Aq;
+      readonly s CarrierState = \*(Aq\&.\&.\&.\*(Aq;
+      readonly s AddressState = \*(Aq\&.\&.\&.\*(Aq;
+      readonly s IPv4AddressState = \*(Aq\&.\&.\&.\*(Aq;
+      readonly s IPv6AddressState = \*(Aq\&.\&.\&.\*(Aq;
+      readonly s OnlineState = \*(Aq\&.\&.\&.\*(Aq;
+      @org\&.freedesktop\&.DBus\&.Property\&.EmitsChangedSignal("const")
+      readonly t NamespaceId = \&.\&.\&.;
+      @org\&.freedesktop\&.DBus\&.Property\&.EmitsChangedSignal("false")
+      readonly u NamespaceNSID = \&.\&.\&.;
+  };
+  interface org\&.freedesktop\&.DBus\&.Peer { \&.\&.\&. };
+  interface org\&.freedesktop\&.DBus\&.Introspectable { \&.\&.\&. };
+  interface org\&.freedesktop\&.DBus\&.Properties { \&.\&.\&. };
+};
+    
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.PP
+Provides information about the manager\&.
+.SS "Properties"
+.PP
+\fINamespaceId\fR
+contains the inode number of the network namespace that the network service runs in\&. A client may compare this with the inode number of its own network namespace to verify whether the service manages the same network namespace\&.
+.PP
+\fINamespaceNSID\fR
+contains the "nsid" identifier the kernel maintains for the network namespace, if there\*(Aqs one assigned\&.
+.SH "LINK OBJECT"
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+node /org/freedesktop/network1/link/_1 {
+  interface org\&.freedesktop\&.network1\&.Link {
+    methods:
+      SetNTP(in  as servers);
+      SetDNS(in  a(iay) addresses);
+      SetDNSEx(in  a(iayqs) addresses);
+      SetDomains(in  a(sb) domains);
+      SetDefaultRoute(in  b enable);
+      SetLLMNR(in  s mode);
+      SetMulticastDNS(in  s mode);
+      SetDNSOverTLS(in  s mode);
+      SetDNSSEC(in  s mode);
+      SetDNSSECNegativeTrustAnchors(in  as names);
+      RevertNTP();
+      RevertDNS();
+      Renew();
+      ForceRenew();
+      Reconfigure();
+      Describe(out s json);
+    properties:
+      readonly s OperationalState = \*(Aq\&.\&.\&.\*(Aq;
+      readonly s CarrierState = \*(Aq\&.\&.\&.\*(Aq;
+      readonly s AddressState = \*(Aq\&.\&.\&.\*(Aq;
+      readonly s IPv4AddressState = \*(Aq\&.\&.\&.\*(Aq;
+      readonly s IPv6AddressState = \*(Aq\&.\&.\&.\*(Aq;
+      readonly s OnlineState = \*(Aq\&.\&.\&.\*(Aq;
+      readonly s AdministrativeState = \*(Aq\&.\&.\&.\*(Aq;
+      @org\&.freedesktop\&.DBus\&.Property\&.EmitsChangedSignal("false")
+      readonly (tt) BitRates = \&.\&.\&.;
+  };
+  interface org\&.freedesktop\&.DBus\&.Peer { \&.\&.\&. };
+  interface org\&.freedesktop\&.DBus\&.Introspectable { \&.\&.\&. };
+  interface org\&.freedesktop\&.DBus\&.Properties { \&.\&.\&. };
+};
+    
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.PP
+Provides information about interfaces\&.
+.SH "NETWORK OBJECT"
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+node /org/freedesktop/network1/network/_1 {
+  interface org\&.freedesktop\&.network1\&.Network {
+    properties:
+      @org\&.freedesktop\&.DBus\&.Property\&.EmitsChangedSignal("const")
+      readonly s Description = \*(Aq\&.\&.\&.\*(Aq;
+      @org\&.freedesktop\&.DBus\&.Property\&.EmitsChangedSignal("const")
+      readonly s SourcePath = \*(Aq\&.\&.\&.\*(Aq;
+      @org\&.freedesktop\&.DBus\&.Property\&.EmitsChangedSignal("const")
+      readonly as MatchMAC = [\*(Aq\&.\&.\&.\*(Aq, \&.\&.\&.];
+      @org\&.freedesktop\&.DBus\&.Property\&.EmitsChangedSignal("const")
+      readonly as MatchPath = [\*(Aq\&.\&.\&.\*(Aq, \&.\&.\&.];
+      @org\&.freedesktop\&.DBus\&.Property\&.EmitsChangedSignal("const")
+      readonly as MatchDriver = [\*(Aq\&.\&.\&.\*(Aq, \&.\&.\&.];
+      @org\&.freedesktop\&.DBus\&.Property\&.EmitsChangedSignal("const")
+      readonly as MatchType = [\*(Aq\&.\&.\&.\*(Aq, \&.\&.\&.];
+      @org\&.freedesktop\&.DBus\&.Property\&.EmitsChangedSignal("const")
+      readonly as MatchName = [\*(Aq\&.\&.\&.\*(Aq, \&.\&.\&.];
+  };
+  interface org\&.freedesktop\&.DBus\&.Peer { \&.\&.\&. };
+  interface org\&.freedesktop\&.DBus\&.Introspectable { \&.\&.\&. };
+  interface org\&.freedesktop\&.DBus\&.Properties { \&.\&.\&. };
+};
+    
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+
+
+
+
+
+
+
+
+.PP
+Provides information about \&.network files\&.
+.SH "DHCP SERVER OBJECT"
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+node /org/freedesktop/network1/link/_1 {
+  interface org\&.freedesktop\&.network1\&.DHCPServer {
+    properties:
+      readonly a(uayayayayt) Leases = [\&.\&.\&.];
+  };
+  interface org\&.freedesktop\&.DBus\&.Peer { \&.\&.\&. };
+  interface org\&.freedesktop\&.DBus\&.Introspectable { \&.\&.\&. };
+  interface org\&.freedesktop\&.DBus\&.Properties { \&.\&.\&. };
+  interface org\&.freedesktop\&.network1\&.Link { \&.\&.\&. };
+};
+    
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+
+
+
+
+.PP
+Provides information about leases\&.
+.SH "DHCPV4 CLIENT OBJECT"
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+node /org/freedesktop/network1/link/_1 {
+  interface org\&.freedesktop\&.network1\&.DHCPv4Client {
+    properties:
+      readonly s State = \*(Aq\&.\&.\&.\*(Aq;
+  };
+  interface org\&.freedesktop\&.DBus\&.Peer { \&.\&.\&. };
+  interface org\&.freedesktop\&.DBus\&.Introspectable { \&.\&.\&. };
+  interface org\&.freedesktop\&.DBus\&.Properties { \&.\&.\&. };
+  interface org\&.freedesktop\&.network1\&.Link { \&.\&.\&. };
+};
+    
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+
+
+
+
+.PP
+Provides information about DHCPv4 client status\&.
+.SH "DHCPV6 CLIENT OBJECT"
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+node /org/freedesktop/network1/link/_1 {
+  interface org\&.freedesktop\&.network1\&.DHCPv6Client {
+    properties:
+      readonly s State = \*(Aq\&.\&.\&.\*(Aq;
+  };
+  interface org\&.freedesktop\&.DBus\&.Peer { \&.\&.\&. };
+  interface org\&.freedesktop\&.DBus\&.Introspectable { \&.\&.\&. };
+  interface org\&.freedesktop\&.DBus\&.Properties { \&.\&.\&. };
+  interface org\&.freedesktop\&.network1\&.Link { \&.\&.\&. };
+};
+    
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+
+
+
+
+.PP
+Provides information about DHCPv6 client status\&.
+.SH "EXAMPLES"
+.PP
+\fBExample\ \&1.\ \&Introspect org\&.freedesktop\&.network1\&.Manager on the bus\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+$ gdbus introspect \-\-system \e
+  \-\-dest org\&.freedesktop\&.network1 \e
+  \-\-object\-path /org/freedesktop/network1
+      
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+\fBExample\ \&2.\ \&Introspect org\&.freedesktop\&.network1\&.Link on the bus\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+$ gdbus introspect \-\-system \e
+  \-\-dest org\&.freedesktop\&.network1 \e
+  \-\-object\-path /org/freedesktop/network1/link/_11
+      
+.fi
+.if n \{\
+.RE
+.\}
+.SH "VERSIONING"
+.PP
+These D\-Bus interfaces follow
+\m[blue]\fBthe usual interface versioning guidelines\fR\m[]\&\s-2\u[1]\d\s+2\&.
+.SH "HISTORY"
+.SS "DHCPv4 Client Object"
+.PP
+\fIState\fR
+was added in version 255\&.
+.SS "DHCPv6 Client Object"
+.PP
+\fIState\fR
+was added in version 255\&.
+.SS "Manager Object"
+.PP
+\fINamespaceNSID\fR
+was added in version 256\&.
+.SH "NOTES"
+.IP " 1." 4
+the usual interface versioning guidelines
+.RS 4
+\%https://0pointer.de/blog/projects/versioning-dbus.html
+.RE

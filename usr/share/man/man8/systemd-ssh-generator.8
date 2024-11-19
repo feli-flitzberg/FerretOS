@@ -1,0 +1,183 @@
+'\" t
+.TH "SYSTEMD\-SSH\-GENERATOR" "8" "" "systemd 256.4" "systemd-ssh-generator"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+systemd-ssh-generator \- Generator for binding a socket\-activated SSH server to local \fBAF_VSOCK\fR and \fBAF_UNIX\fR sockets
+.SH "SYNOPSIS"
+.PP
+/usr/lib/systemd/system\-generators/systemd\-ssh\-generator
+.SH "DESCRIPTION"
+.PP
+\fBsystemd\-ssh\-generator\fR
+binds a socket\-activated SSH server to local
+\fBAF_VSOCK\fR
+and
+\fBAF_UNIX\fR
+sockets under certain conditions\&. It only has an effect if the
+\fBsshd\fR(8)
+binary is installed\&. Specifically, it does the following:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+If invoked in a VM with
+\fBAF_VSOCK\fR
+support, a socket\-activated SSH per\-connection service is bound to
+\fBAF_VSOCK\fR
+port 22\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+If invoked in a container environment with a writable directory
+/run/host/unix\-export/
+pre\-mounted it binds SSH to an
+\fBAF_UNIX\fR
+socket
+/run/host/unix\-export/ssh\&. The assumption is that this directory is bind mounted to the host side as well, and can be used to connect to the container from there\&. See
+\m[blue]\fBContainer Interface\fR\m[]\&\s-2\u[1]\d\s+2
+for more information about this interface\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+A local
+\fBAF_UNIX\fR
+socket
+/run/ssh\-unix\-local/socket
+is also bound, unconditionally\&. This may be used for SSH communication from the host to itself, without involving networking, for example to traverse security boundaries safely and with secure authentication\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Additional
+\fBAF_UNIX\fR
+and
+\fBAF_VSOCK\fR
+sockets are optionally bound, based on the
+\fIsystemd\&.ssh_listen=\fR
+kernel command line option or the
+ssh\&.listen
+system credential (see below)\&.
+.RE
+.PP
+See
+\fBsystemd-ssh-proxy\fR(1)
+for details on how to connect to these sockets via the
+\fBssh\fR
+client\&.
+.PP
+The
+\fIssh\&.authorized_keys\&.root\fR
+credential can be used to allow specific public keys to log in over SSH\&. See
+\fBsystemd.systemd-credentials\fR(7)
+for more information\&.
+.PP
+The generator will use a packaged
+sshd@\&.service
+service template file if one exists, and otherwise generate a suitable service template file\&.
+.PP
+systemd\-ssh\-generator
+implements
+\fBsystemd.generator\fR(7)\&.
+.SH "KERNEL COMMAND LINE"
+.PP
+systemd\-ssh\-generator
+understands the following
+\fBkernel-command-line\fR(7)
+parameters:
+.PP
+\fIsystemd\&.ssh_auto=\fR
+.RS 4
+This option takes an optional boolean argument, and defaults to yes\&. If enabled, the automatic binding to the
+\fBAF_VSOCK\fR
+and
+\fBAF_UNIX\fR
+sockets listed above is done\&. If disable, this is not done, except for those explicitly requested via
+\fIsystemd\&.ssh_listen=\fR
+on the kernel command line or via the
+\fIssh\&.listen\fR
+system credential\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fIsystemd\&.ssh_listen=\fR
+.RS 4
+This option configures an additional socket to bind SSH to\&. It may be used multiple times to bind multiple sockets\&. The syntax should follow the one of
+\fIListenStream=\fR, see
+\fBsystemd.socket\fR(5)
+for details\&. This functionality supports all socket families systemd supports, including
+\fBAF_INET\fR
+and
+\fBAF_INET6\fR\&.
+.sp
+Added in version 256\&.
+.RE
+.SH "CREDENTIALS"
+.PP
+\fBsystemd\-ssh\-generator\fR
+supports the system credentials logic\&. The following credentials are used when passed in:
+.PP
+\fIssh\&.listen\fR
+.RS 4
+This credential should be a text file, with each line referencing one additional socket to bind SSH to\&. The syntax should follow the one of
+\fIListenStream=\fR, see
+\fBsystemd.socket\fR(5)
+for details\&. This functionality supports all socket families systemd supports, including
+\fBAF_INET\fR
+and
+\fBAF_INET6\fR\&.
+.sp
+Added in version 256\&.
+.RE
+.SH "SEE ALSO"
+.PP
+\fBsystemd\fR(1), \fBkernel-command-line\fR(7), \fBsystemd.system-credentials\fR(7), \fBvsock\fR(7), \fBunix\fR(7), \fBssh\fR(1), \fBsshd\fR(8)
+.SH "NOTES"
+.IP " 1." 4
+Container Interface
+.RS 4
+\%https://systemd.io/CONTAINER_INTERFACE
+.RE

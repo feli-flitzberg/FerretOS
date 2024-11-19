@@ -1,0 +1,102 @@
+'\" t
+.TH "SYSTEMD\-STDIO\-BRIDGE" "1" "" "systemd 256.4" "systemd-stdio-bridge"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+systemd-stdio-bridge \- D\-Bus proxy
+.SH "SYNOPSIS"
+.HP \w'\fBsystemd\-stdio\-bridge\fR\ 'u
+\fBsystemd\-stdio\-bridge\fR [OPTIONS...]
+.SH "DESCRIPTION"
+.PP
+\fBsystemd\-stdio\-bridge\fR
+implements a proxy between STDIN/STDOUT and a D\-Bus bus\&. It expects to receive an open connection via STDIN/STDOUT when started, and will create a new connection to the specified bus\&. It will then forward messages between the two connections\&. This program is suitable for socket activation: the first connection may be a pipe or a socket and must be passed as either standard input, or as an open file descriptor according to the protocol described in
+\fBsd_listen_fds\fR(3)\&. The second connection will be made by default to the local system bus, but this can be influenced by the
+\fB\-\-user\fR,
+\fB\-\-system\fR,
+\fB\-\-machine=\fR, and
+\fB\-\-bus\-path=\fR
+options described below\&.
+.PP
+\fBsd-bus\fR(3)
+uses
+\fBsystemd\-stdio\-bridge\fR
+to forward D\-Bus connections over
+\fBssh\fR(1), or to connect to the bus of a different user, see
+\fBsd_bus_set_address\fR(3)\&.
+.SH "OPTIONS"
+.PP
+The following options are understood:
+.PP
+\fB\-\-user\fR
+.RS 4
+Talk to the service manager of the calling user, rather than the service manager of the system\&.
+.RE
+.PP
+\fB\-\-system\fR
+.RS 4
+Talk to the service manager of the system\&. This is the implied default\&.
+.RE
+.PP
+\fB\-M\fR, \fB\-\-machine=\fR
+.RS 4
+Execute operation on a local container\&. Specify a container name to connect to, optionally prefixed by a user name to connect as and a separating
+"@"
+character\&. If the special string
+"\&.host"
+is used in place of the container name, a connection to the local system is made (which is useful to connect to a specific user\*(Aqs user bus:
+"\-\-user \-\-machine=lennart@\&.host")\&. If the
+"@"
+syntax is not used, the connection is made as root user\&. If the
+"@"
+syntax is used either the left hand side or the right hand side may be omitted (but not both) in which case the local user name and
+"\&.host"
+are implied\&.
+.RE
+.PP
+\fB\-p \fR\fB\fIPATH\fR\fR, \fB\-\-bus\-path=\fR\fB\fIPATH\fR\fR
+.RS 4
+Path to the bus address\&. Default:
+"unix:path=/run/dbus/system_bus_socket"
+.sp
+Added in version 251\&.
+.RE
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Print a short help text and exit\&.
+.RE
+.PP
+\fB\-\-version\fR
+.RS 4
+Print a short version string and exit\&.
+.RE
+.SH "EXIT STATUS"
+.PP
+On success, 0 is returned, a non\-zero failure code otherwise\&.
+.SH "SEE ALSO"
+.PP
+\fBdbus-daemon\fR(1), \fBdbus-broker\fR(1), \m[blue]\fBD\-Bus\fR\m[]\&\s-2\u[1]\d\s+2, \fBsystemd\fR(1)
+.SH "NOTES"
+.IP " 1." 4
+D-Bus
+.RS 4
+\%https://www.freedesktop.org/wiki/Software/dbus
+.RE

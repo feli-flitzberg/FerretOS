@@ -1,0 +1,395 @@
+'\" t
+.TH "SYSTEMD\-GPT\-AUTO\-GENERATOR" "8" "" "systemd 256.4" "systemd-gpt-auto-generator"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+systemd-gpt-auto-generator \- Generator for automatically discovering and mounting root, /home/, /srv/, /var/ and /var/tmp/ partitions, as well as discovering and enabling swap partitions, based on GPT partition type GUIDs
+.SH "SYNOPSIS"
+.PP
+/usr/lib/systemd/system\-generators/systemd\-gpt\-auto\-generator
+.SH "DESCRIPTION"
+.PP
+systemd\-gpt\-auto\-generator
+is a unit generator that automatically discovers the root partition,
+/home/,
+/srv/,
+/var/,
+/var/tmp/, the EFI System Partition (ESP), the Extended Boot Loader Partition (XBOOTLDR), and swap partitions and creates mount and swap units for them, based on the partition type GUIDs of GUID partition tables (GPT)\&. See
+\m[blue]\fBUEFI Specification\fR\m[]\&\s-2\u[1]\d\s+2, chapter 5 for more details\&. It implements the
+\m[blue]\fBDiscoverable Partitions Specification\fR\m[]\&\s-2\u[2]\d\s+2\&.
+.PP
+Note that this generator has no effect on non\-GPT systems\&. It will also not create mount point configuration for directories which already contain files or if the mount point is explicitly configured in
+\fBfstab\fR(5)\&. Additionally no unit will be created for the ESP or the XBOOTLDR partition if mount entries are found in the
+/boot/
+or
+/efi/
+hierarchies in
+\fBfstab\fR(5)\&.
+.PP
+If the units this generator creates are overridden, for example by units in directories with higher precedence, drop\-ins and additional dependencies created by this generator might still be used\&.
+.PP
+This generator will only look for the root partition on the same physical disk where the EFI System Partition (ESP) is located\&. Note that support from the boot loader is required: the EFI variable
+\fILoaderDevicePartUUID\fR
+of the
+\fB4a67b082\-0a4c\-41cf\-b6c7\-440b29bb8c4f\fR
+vendor UUID is used to determine from which partition, and hence the disk, from which the system was booted\&. If the boot loader does not set this variable, this generator will not be able to detect the root partition\&. See the
+\m[blue]\fBBoot Loader Interface\fR\m[]\&\s-2\u[3]\d\s+2
+for details\&.
+.PP
+Similarly, this generator will only look for the other partitions on the same physical disk as the root partition\&. In this case, boot loader support is not required\&. These partitions will not be searched for on systems where the root file system is distributed on multiple disks, for example via btrfs RAID\&.
+.PP
+systemd\-gpt\-auto\-generator
+is useful for centralizing file system configuration in the partition table and making configuration in
+/etc/fstab
+or on the kernel command line unnecessary\&.
+.PP
+This generator looks for the partitions based on their partition type GUID\&. The following partition type GUIDs are identified:
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.B Table\ \&1.\ \&Partition Type GUIDs
+.TS
+allbox tab(:);
+lB lB lB lB lB.
+T{
+Partition Type
+T}:T{
+GUID
+T}:T{
+Name
+T}:T{
+Mount Point
+T}:T{
+Explanation
+T}
+.T&
+l l l l l
+l l l l l
+l l l l l
+l l l l l
+l l l l l
+l l l l l
+l l l l l
+l l l l l
+l l l l l
+l l l l l.
+T{
+\fBSD_GPT_ROOT_X86_64\fR
+T}:T{
+\fB4f68bce3\-e8cd\-4db1\-96e7\-fbcaf984b709\fR
+T}:T{
+Root Partition (x86\-64)
+T}:T{
+/
+T}:T{
+The first partition with this type UUID, located on the same disk as the ESP used for booting, is used as the root file system / on AMD64 / 64\-bit x86 systems\&.
+T}
+T{
+\fBSD_GPT_ROOT_ARM64\fR
+T}:T{
+\fBb921b045\-1df0\-41c3\-af44\-4c6f280d3fae\fR
+T}:T{
+Root Partition (64\-bit ARM)
+T}:T{
+/
+T}:T{
+The first partition with this type UUID, located on the same disk as the ESP used for booting, is used as the root file system / on AArch64 / 64\-bit ARM systems\&.
+T}
+T{
+\fBSD_GPT_ROOT_ALPHA\fR \fBSD_GPT_ROOT_ARC\fR \fBSD_GPT_ROOT_ARM\fR \fBSD_GPT_ROOT_ARM64\fR \fBSD_GPT_ROOT_IA64\fR \fBSD_GPT_ROOT_LOONGARCH64\fR \fBSD_GPT_ROOT_MIPS\fR \fBSD_GPT_ROOT_MIPS64\fR \fBSD_GPT_ROOT_MIPS_LE\fR \fBSD_GPT_ROOT_MIPS64_LE\fR \fBSD_GPT_ROOT_PARISC\fR \fBSD_GPT_ROOT_PPC\fR \fBSD_GPT_ROOT_PPC64\fR \fBSD_GPT_ROOT_PPC64_LE\fR \fBSD_GPT_ROOT_RISCV32\fR \fBSD_GPT_ROOT_RISCV64\fR \fBSD_GPT_ROOT_S390\fR \fBSD_GPT_ROOT_S390X\fR \fBSD_GPT_ROOT_TILEGX\fR \fBSD_GPT_ROOT_X86\fR \fBSD_GPT_ROOT_X86_64\fR \fBSD_GPT_USR_ALPHA\fR \fBSD_GPT_USR_ARC\fR \fBSD_GPT_USR_ARM\fR \fBSD_GPT_USR_IA64\fR \fBSD_GPT_USR_LOONGARCH64\fR \fBSD_GPT_USR_MIPS_LE\fR \fBSD_GPT_USR_MIPS64_LE\fR \fBSD_GPT_USR_PARISC\fR \fBSD_GPT_USR_PPC\fR \fBSD_GPT_USR_PPC64\fR \fBSD_GPT_USR_PPC64_LE\fR \fBSD_GPT_USR_RISCV32\fR \fBSD_GPT_USR_RISCV64\fR \fBSD_GPT_USR_S390\fR \fBSD_GPT_USR_S390X\fR \fBSD_GPT_USR_TILEGX\fR \fBSD_GPT_USR_X86\fR
+T}:T{
+\&...
+T}:T{
+Root partitions for other architectures
+T}:T{
+/
+T}:T{
+The first partition with the type UUID matching the architecture, located on the same disk as the ESP used for booting, is used as the root file system /\&. For the full list and constant values, see \m[blue]\fBDiscoverable Partitions Specification\fR\m[]\&\s-2\u[2]\d\s+2\&.
+T}
+T{
+\fBSD_GPT_HOME\fR
+T}:T{
+\fB933ac7e1\-2eb4\-4f13\-b844\-0e14e2aef915\fR
+T}:T{
+Home Partition
+T}:T{
+/home/
+T}:T{
+The first partition with this type UUID on the same disk as the root partition is mounted to /home/\&.
+T}
+T{
+\fBSD_GPT_SRV\fR
+T}:T{
+\fB3b8f8425\-20e0\-4f3b\-907f\-1a25a76f98e8\fR
+T}:T{
+Server Data Partition
+T}:T{
+/srv/
+T}:T{
+The first partition with this type UUID on the same disk as the root partition is mounted to /srv/\&.
+T}
+T{
+\fBSD_GPT_VAR\fR
+T}:T{
+\fB4d21b016\-b534\-45c2\-a9fb\-5c16e091fd2d\fR
+T}:T{
+Variable Data Partition
+T}:T{
+/var/
+T}:T{
+The first partition with this type UUID on the same disk as the root partition is mounted to /var/ \(em under the condition its partition UUID matches the first 128 bit of the HMAC\-SHA256 of the GPT type uuid of this partition keyed by the machine ID of the installation stored in \fBmachine-id\fR(5)\&.
+T}
+T{
+\fBSD_GPT_TMP\fR
+T}:T{
+\fB7ec6f557\-3bc5\-4aca\-b293\-16ef5df639d1\fR
+T}:T{
+Temporary Data Partition
+T}:T{
+/var/tmp/
+T}:T{
+The first partition with this type UUID on the same disk as the root partition is mounted to /var/tmp/\&.
+T}
+T{
+\fBSD_GPT_SWAP\fR
+T}:T{
+\fB0657fd6d\-a4ab\-43c4\-84e5\-0933c84b4f4f\fR
+T}:T{
+Swap
+T}:T{
+n/a
+T}:T{
+All partitions with this type UUID on the same disk as the root partition are used as swap\&.
+T}
+T{
+\fBSD_GPT_ESP\fR
+T}:T{
+\fBc12a7328\-f81f\-11d2\-ba4b\-00a0c93ec93b\fR
+T}:T{
+EFI System Partition (ESP)
+T}:T{
+/efi/ or /boot/
+T}:T{
+The first partition with this type UUID located on the same disk as the root partition is mounted to /boot/ or /efi/, see below\&.
+T}
+T{
+\fBSD_GPT_XBOOTLDR\fR
+T}:T{
+\fBbc13c2ff\-59e6\-4262\-a352\-b275fd6f7172\fR
+T}:T{
+Extended Boot Loader Partition
+T}:T{
+/boot/
+T}:T{
+The first partition with this type UUID located on the same disk as the root partition is mounted to /boot/, see below\&.
+T}
+.TE
+.sp 1
+.PP
+This generator understands the following attribute flags for partitions:
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.B Table\ \&2.\ \&Partition Attribute Flags
+.TS
+allbox tab(:);
+lB lB lB lB.
+T{
+Flag
+T}:T{
+Value
+T}:T{
+Applicable to
+T}:T{
+Explanation
+T}
+.T&
+l l l l
+l l l l
+l l l l.
+T{
+\fBSD_GPT_FLAG_READ_ONLY\fR
+T}:T{
+\fB0x1000000000000000\fR
+T}:T{
+/, /home/, /srv/, /var/, /var/tmp/, Extended Boot Loader Partition
+T}:T{
+Partition is mounted read\-only
+T}
+T{
+\fBSD_GPT_FLAG_NO_AUTO\fR
+T}:T{
+\fB0x8000000000000000\fR
+T}:T{
+/, /home/, /srv/, /var/, /var/tmp/, Extended Boot Loader Partition
+T}:T{
+Partition is not mounted automatically
+T}
+T{
+\fBSD_GPT_FLAG_NO_BLOCK_IO_PROTOCOL\fR
+T}:T{
+\fB0x0000000000000002\fR
+T}:T{
+EFI System Partition (ESP)
+T}:T{
+Partition is not mounted automatically
+T}
+.TE
+.sp 1
+.PP
+The
+/home/,
+/srv/,
+/var/,
+/var/tmp/
+and swap partitions may be encrypted in LUKS format\&. In this case, a device mapper device is set up under the names
+/dev/mapper/home,
+/dev/mapper/srv,
+/dev/mapper/var,
+/dev/mapper/tmp
+or
+/dev/mapper/swap\&. Note that this might create conflicts if the same partition is listed in
+/etc/crypttab
+with a different device mapper device name\&.
+.PP
+When systemd is running in the initrd the
+/
+partition may be encrypted with LUKS as well\&. In this case, a device mapper device is set up under the name
+/dev/mapper/root, and a
+sysroot\&.mount
+is set up that mounts the device under
+/sysroot\&. For more information, see
+\fBbootup\fR(7)\&.
+.PP
+The root partition can be specified by symlinking
+/run/systemd/volatile\-root
+to
+/dev/block/$major:$minor\&. This is especially useful if the root mount has been replaced by some form of volatile file system (overlayfs)\&.
+.PP
+Mount and automount units for the EFI System Partition (ESP) and Extended Boot Loader Partition (XBOOTLDR) are generated on EFI systems\&. If the disk contains an XBOOTLDR partition, as defined in the
+\m[blue]\fBBoot Loader Specification\fR\m[]\&\s-2\u[4]\d\s+2, it is made available at
+/boot/\&. This generator creates an automount unit; the mount will only be activated on\-demand when accessed\&. The mount point will be created if necessary\&.
+.PP
+The ESP is mounted to
+/boot/
+if that directory exists and is not used for XBOOTLDR, and otherwise to
+/efi/\&. Same as for
+/boot/, an automount unit is used\&. The mount point will be created if necessary\&.
+.PP
+No configuration is created for mount points that are configured in
+\fBfstab\fR(5)
+or when the target directory contains files\&.
+.PP
+When using this generator in conjunction with btrfs file systems, make sure to set the correct default subvolumes on them, using
+\fBbtrfs subvolume set\-default\fR\&.
+.PP
+If the system was booted via
+\fBsystemd-stub\fR(7)
+and the stub reported to userspace that the kernel image was measured to a TPM2 PCR, then any discovered root and
+/var/
+volume identifiers (and volume encryption key in case it is encrypted) will be automatically measured into PCR 15 on activation, via
+\fBsystemd-pcrfs@.service\fR(8)\&.
+.PP
+systemd\-gpt\-auto\-generator
+implements
+\fBsystemd.generator\fR(7)\&.
+.SH "KERNEL COMMAND LINE"
+.PP
+systemd\-gpt\-auto\-generator
+understands the following kernel command line parameters:
+.PP
+\fIsystemd\&.gpt_auto\fR, \fIrd\&.systemd\&.gpt_auto\fR
+.RS 4
+Those options take an optional boolean argument, and default to yes\&. The generator is enabled by default, and a false value may be used to disable it (e\&.g\&.
+"systemd\&.gpt_auto=0")\&.
+.sp
+Added in version 242\&.
+.RE
+.PP
+\fIsystemd\&.image_policy=\fR, \fIrd\&.systemd\&.image_policy=\fR
+.RS 4
+Takes an image dissection policy string as argument (as per
+\fBsystemd.image-policy\fR(7)), and allows enforcing a policy on dissection and use of the automatically discovered GPT partition table entries\&.
+.sp
+Added in version 254\&.
+.RE
+.PP
+\fIroot=\fR, \fIrootfstype=\fR, \fIrootflags=\fR
+.RS 4
+When
+\fIroot=\fR
+is used with the special value
+"gpt\-auto"
+(or if the parameter is not used at all), automatic discovery of the root partition based on the GPT partition type is enabled\&. Any other value disables this logic\&.
+.sp
+The
+\fIrootfstype=\fR
+and
+\fIrootflags=\fR
+are used to select the file system type and options when the root file system is automatically discovered\&.
+.sp
+Added in version 242\&.
+.RE
+.PP
+\fIrw\fR, \fIro\fR
+.RS 4
+Mount the root partition read\-write or read\-only
+\fIinitially\fR\&.
+.sp
+Note that unlike most kernel command line options these settings do not override configuration in the file system, and the file system may be remounted later\&. See
+\fBsystemd-remount-fs.service\fR(8)\&.
+.sp
+Added in version 242\&.
+.RE
+.PP
+\fIsystemd\&.swap=\fR
+.RS 4
+Takes a boolean argument or enables the option if specified without an argument\&. If disabled, automatic discovery of swap partition(s) based on GPT partition type is disabled\&. Defaults to enabled\&.
+.sp
+Added in version 254\&.
+.RE
+.SH "SEE ALSO"
+.PP
+\fBsystemd\fR(1), \fBsystemd.mount\fR(5), \fBsystemd.swap\fR(5), \fBsystemd-fstab-generator\fR(8), \fBsystemd-cryptsetup@.service\fR(8), \fBsystemd-pcrfs@.service\fR(8), \fBmachine-id\fR(5), \fBcryptsetup\fR(8), \fBfstab\fR(5), \fBbtrfs\fR(8)
+.SH "NOTES"
+.IP " 1." 4
+UEFI Specification
+.RS 4
+\%https://uefi.org/specifications
+.RE
+.IP " 2." 4
+Discoverable Partitions Specification
+.RS 4
+\%https://uapi-group.org/specifications/specs/discoverable_partitions_specification
+.RE
+.IP " 3." 4
+Boot Loader Interface
+.RS 4
+\%https://systemd.io/BOOT_LOADER_INTERFACE
+.RE
+.IP " 4." 4
+Boot Loader Specification
+.RS 4
+\%https://uapi-group.org/specifications/specs/boot_loader_specification
+.RE

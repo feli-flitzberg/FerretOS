@@ -1,0 +1,117 @@
+'\" t
+.TH "SYSTEMD\-XDG\-AUTOSTART\-GENERATOR" "8" "" "systemd 256.4" "systemd-xdg-autostart-generator"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+systemd-xdg-autostart-generator \- User unit generator for XDG autostart files
+.SH "SYNOPSIS"
+.PP
+/usr/lib/systemd/user\-generators/systemd\-xdg\-autostart\-generator
+.SH "DESCRIPTION"
+.PP
+systemd\-xdg\-autostart\-generator
+is a generator that creates \&.service units for
+\m[blue]\fBXDG autostart\fR\m[]\&\s-2\u[1]\d\s+2
+files\&. This permits desktop environments to delegate startup of these applications to
+\fBsystemd\fR(1)
+\&.
+.PP
+Units created by
+systemd\-xdg\-autostart\-generator
+can be started by the desktop environment using
+"xdg\-desktop\-autostart\&.target"\&. See
+\fBsystemd.special\fR(7)
+for more details\&.
+.PP
+XDG autostart may be conditionalized using both standardized and non\-standardized keys\&. In order to handle these, the generator may create one or more
+\fIExecCondition=\fR
+entries\&. For non\-standardized keys, well\-known helper binaries provided by Desktop Environments are used\&. All external helpers
+\fImust\fR
+detect their corresponding desktop environment and
+\fImust\fR
+return success when run in a different environment\&. This is important as all
+\fIExecCondition=\fR
+directives must succeed for an application to be started\&.
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.B Table\ \&1.\ \& Special XDG desktop file entries that are processed
+.TS
+allbox tab(:);
+lB lB.
+T{
+Entry
+T}:T{
+Handling
+T}
+.T&
+l l
+l l
+l l
+l l
+l l
+l l.
+T{
+\fIHidden=\fR, \fIX\-systemd\-skip=\fR
+T}:T{
+No service will be generated if set to true
+T}
+T{
+\fIOnlyShowIn=\fR, \fINotShowIn=\fR
+T}:T{
+\fIExecCondition=\fR using systemd\-xdg\-autostart\-condition
+T}
+T{
+\fITryExec=\fR
+T}:T{
+No service will be generated if the binary does not exist or cannot be executed
+T}
+T{
+\fIAutostartCondition=\fR (GNOME extension)
+T}:T{
+\fIExecCondition=\fR using gnome\-systemd\-autostart\-condition
+T}
+T{
+\fIX\-GNOME\-Autostart\-Phase=\fR
+T}:T{
+No service will be generated if set to any value
+T}
+T{
+\fIX\-KDE\-autostart\-condition=\fR
+T}:T{
+\fIExecCondition=\fR using kde\-systemd\-start\-condition
+T}
+.TE
+.sp 1
+.PP
+systemd\-xdg\-autostart\-generator
+implements
+\fBsystemd.generator\fR(7)\&.
+.SH "SEE ALSO"
+.PP
+\fBsystemd\fR(1), \fBsystemd.service\fR(5), \fBsystemd.target\fR(5)
+.SH "NOTES"
+.IP " 1." 4
+XDG autostart
+.RS 4
+\%https://specifications.freedesktop.org/autostart-spec/autostart-spec-latest.html
+.RE

@@ -1,0 +1,66 @@
+'\" t
+.TH "SD_EVENT_SOURCE_GET_EVENT" "3" "" "systemd 256.4" "sd_event_source_get_event"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+sd_event_source_get_event \- Retrieve the event loop of an event source
+.SH "SYNOPSIS"
+.sp
+.ft B
+.nf
+#include <systemd/sd\-event\&.h>
+.fi
+.ft
+.HP \w'sd_event*\ sd_event_source_get_event('u
+.BI "sd_event* sd_event_source_get_event(sd_event_source\ *" "source" ");"
+.SH "DESCRIPTION"
+.PP
+\fBsd_event_source_get_event()\fR
+may be used to retrieve the event loop object the event source object specified as
+\fIsource\fR
+is associated with\&. The event loop object is specified when creating an event source object with calls such as
+\fBsd_event_add_io\fR(3)
+or
+\fBsd_event_add_time\fR(3)\&.
+.SH "RETURN VALUE"
+.PP
+On success,
+\fBsd_event_source_get_event()\fR
+returns the associated event loop object\&. On failure, it returns
+\fBNULL\fR\&.
+.SH "NOTES"
+.PP
+Functions described here are available as a shared library, which can be compiled against and linked to with the
+\fBlibsystemd\fR\ \&\fBpkg-config\fR(1)
+file\&.
+.PP
+The code described here uses
+\fBgetenv\fR(3), which is declared to be not multi\-thread\-safe\&. This means that the code calling the functions described here must not call
+\fBsetenv\fR(3)
+from a parallel thread\&. It is recommended to only do calls to
+\fBsetenv()\fR
+from an early phase of the program when no other threads have been started\&.
+.SH "HISTORY"
+.PP
+\fBsd_event_source_get_event()\fR
+was added in version 229\&.
+.SH "SEE ALSO"
+.PP
+\fBsd-event\fR(3), \fBsd_event_add_io\fR(3), \fBsd_event_add_time\fR(3), \fBsd_event_add_signal\fR(3), \fBsd_event_add_child\fR(3), \fBsd_event_add_inotify\fR(3), \fBsd_event_add_defer\fR(3), \fBsd_event_source_set_userdata\fR(3)

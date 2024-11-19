@@ -1,0 +1,66 @@
+'\" t
+.TH "SD\-DEVICE" "3" "" "systemd 256.4" "sd-device"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+sd-device \- API for enumerating and introspecting local devices
+.SH "SYNOPSIS"
+.sp
+.ft B
+.nf
+#include <systemd/sd\-device\&.h>
+.fi
+.ft
+.HP \w'\fBpkg\-config\ \-\-cflags\ \-\-libs\ libsystemd\fR\ 'u
+\fBpkg\-config \-\-cflags \-\-libs libsystemd\fR
+.SH "DESCRIPTION"
+.PP
+sd\-device\&.h
+is part of
+\fBlibsystemd\fR(3)
+and provides an API to introspect and enumerate devices on the local system\&. It provides a programmatic interface to the database of devices and their properties mananaged by
+\fBsystemd-udevd.service\fR(8)\&. This API is a replacement for
+\fBlibudev\fR(3)
+and
+libudev\&.h\&.
+.PP
+See
+.RS 4
+\fBsd_device_get_syspath\fR(3),
+.RE
+.RS 4
+\fBsd_device_ref\fR(3)
+.RE
+for more information about the functions available\&.
+.SH "NOTES"
+.PP
+Functions described here are available as a shared library, which can be compiled against and linked to with the
+\fBlibsystemd\fR\ \&\fBpkg-config\fR(1)
+file\&.
+.PP
+The code described here uses
+\fBgetenv\fR(3), which is declared to be not multi\-thread\-safe\&. This means that the code calling the functions described here must not call
+\fBsetenv\fR(3)
+from a parallel thread\&. It is recommended to only do calls to
+\fBsetenv()\fR
+from an early phase of the program when no other threads have been started\&.
+.SH "SEE ALSO"
+.PP
+\fBsystemd\fR(1), \fBsd-event\fR(3), \fBudevadm\fR(8)

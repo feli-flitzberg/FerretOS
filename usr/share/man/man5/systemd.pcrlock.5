@@ -1,0 +1,293 @@
+'\" t
+.TH "SYSTEMD\&.PCRLOCK" "5" "" "systemd 256.4" "systemd.pcrlock"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+systemd.pcrlock, systemd.pcrlock.d \- PCR measurement prediction files
+.SH "SYNOPSIS"
+.PP
+.RS 4
+/etc/pcrlock\&.d/*\&.pcrlock
+.RE
+.RS 4
+/etc/pcrlock\&.d/*\&.pcrlock\&.d/*\&.pcrlock
+.RE
+.RS 4
+/run/pcrlock\&.d/*\&.pcrlock
+.RE
+.RS 4
+/run/pcrlock\&.d/*\&.pcrlock\&.d/*\&.pcrlock
+.RE
+.RS 4
+/var/lib/pcrlock\&.d/*\&.pcrlock
+.RE
+.RS 4
+/var/lib/pcrlock\&.d/*\&.pcrlock\&.d/*\&.pcrlock
+.RE
+.RS 4
+/usr/local/pcrlock\&.d/*\&.pcrlock
+.RE
+.RS 4
+/usr/local/pcrlock\&.d/*\&.pcrlock\&.d/*\&.pcrlock
+.RE
+.RS 4
+/usr/lib/pcrlock\&.d/*\&.pcrlock
+.RE
+.RS 4
+/usr/lib/pcrlock\&.d/*\&.pcrlock\&.d/*\&.pcrlock
+.RE
+.SH "DESCRIPTION"
+.PP
+*\&.pcrlock
+files define expected TPM2 PCR measurements of components involved in the boot process\&.
+\fBsystemd-pcrlock\fR(1)
+uses such pcrlock files to analyze and predict TPM2 PCR measurements\&. The pcrlock files are JSON arrays that follow a subset of the
+\m[blue]\fBTCG Canonical Event Log Format (CEL\-JSON)\fR\m[]\&\s-2\u[1]\d\s+2
+specification\&. Specifically the
+"recnum",
+"content", and
+"content_type"
+record fields are not used and ignored if present\&. Each pcrlock file defines one set of expected, ordered PCR measurements of a specific component of the boot\&.
+.PP
+*\&.pcrlock files may be placed in various
+\&.d/
+drop\-in directories (see above for a full list)\&. All matching files discovered in these directories are sorted alphabetically by their file name (without taking the actual directory they were found in into account): pcrlock files with alphabetically earlier names are expected to cover measurements done before those with alphabetically later names\&. In order to make positioning pcrlock files in the boot process convenient the files are expected (by convention, this is not enforced) to be named
+"\fINNN\fR\-\fIcomponent\fR\&.pcrlock"
+(where
+\fINNN\fR
+is a three\-digit decimal number), for example
+750\-enter\-initrd\&.pcrlock\&.
+.PP
+For various components of the boot process more than one alternative pcrlock file shall be supported (i\&.e\&. "variants")\&. For example to cover multiple kernels installed in parallel in the access policy, or multiple versions of the boot loader\&. This can be done by placing
+*\&.pcrlock\&.d/*\&.pcrlock
+in the drop\-in dirs, i\&.e\&. a common directory for a specific component, that contains one or more pcrlock files each covering one
+\fIvariant\fR
+of the component\&. Example:
+650\-kernel\&.pcrlock\&.d/6\&.5\&.5\-200\&.fc38\&.x86_64\&.pcrlock
+and
+650\-kernel\&.pcrlock\&.d/6\&.5\&.7\-100\&.fc38\&.x86_64\&.pcrlock
+.PP
+Use
+\fBsystemd\-pcrlock list\-components\fR
+to list all pcrlock files currently installed\&.
+.PP
+Use the various
+\fBlock\-*\fR
+commands of
+\fBsystemd\-pcrlock\fR
+to automatically generate suitable pcrlock files for various types of resources\&.
+.SH "WELL\-KNOWN COMPONENTS"
+.PP
+Components of the boot process may be defined freely by the administrator or OS vendor\&. The following components are well\-known however, and are defined by systemd\&. The list below is useful for ordering local pcrlock files properly against these components of the boot\&.
+.PP
+240\-secureboot\-policy\&.pcrlock
+.RS 4
+The SecureBoot policy, as recorded to PCR 7\&. May be generated via
+\fBsystemd\-pcrlock lock\-secureboot\-policy\fR\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+250\-firmware\-code\-early\&.pcrlock
+.RS 4
+Firmware code measurements, as recorded to PCR 0 and 2, up to the separator measurement (see
+400\-secureboot\-separator\&.pcrlock
+below)\&. May be generated via
+\fBsystemd\-pcrlock lock\-firmware\-code\fR\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+250\-firmware\-config\-early\&.pcrlock
+.RS 4
+Firmware configuration measurements, as recorded to PCR 1 and 3, up to the separator measurement (see
+400\-secureboot\-separator\&.pcrlock
+below)\&. May be generated via
+\fBsystemd\-pcrlock lock\-firmware\-config\fR\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+350\-action\-efi\-application\&.pcrlock
+.RS 4
+The EFI "Application" measurement done once by the firmware\&. Statically defined\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+400\-secureboot\-separator\&.pcrlock
+.RS 4
+The EFI "separator" measurement on PCR 7 done once by the firmware to indicate where firmware control transitions into boot loader/OS control\&. Statically defined\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+500\-separator\&.pcrlock
+.RS 4
+The EFI "separator" measurements on PCRs 0\-6 done once by the firmware to indicate where firmware control transitions into boot loader/OS control\&. Statically defined\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+550\-firmware\-code\-late\&.pcrlock
+.RS 4
+Firmware code measurements, as recorded to PCR 0 and 2, after the separator measurement (see
+400\-secureboot\-separator\&.pcrlock
+above)\&. May be generated via
+\fBsystemd\-pcrlock lock\-firmware\-code\fR\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+550\-firmware\-config\-late\&.pcrlock
+.RS 4
+Firmware configuration measurements, as recorded to PCR 1 and 3, after the separator measurement (see
+400\-secureboot\-separator\&.pcrlock
+above)\&. May be generated via
+\fBsystemd\-pcrlock lock\-firmware\-config\fR\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+600\-gpt\&.pcrlock
+.RS 4
+The GPT partition table of the booted medium, as recorded to PCR 5 by the firmware\&. May be generated via
+\fBsystemd\-pcrlock lock\-gpt\fR\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+620\-secureboot\-authority\&.pcrlock
+.RS 4
+The SecureBoot authority, as recorded to PCR 7\&. May be generated via
+\fBsystemd\-pcrlock lock\-secureboot\-authority\fR\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+700\-action\-efi\-exit\-boot\-services\&.pcrlock
+.RS 4
+The EFI action generated when
+\fBExitBootServices()\fR
+is generated, i\&.e\&. when the UEFI environment is left and the OS takes over\&. Covers the PCR 5 measurement\&. Statically defined\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+710\-kernel\-cmdline\&.pcrlock
+.RS 4
+The kernel command line, as measured by the Linux kernel to PCR 9\&. May be generated via
+\fBsystemd\-pcrlock lock\-kernel\-cmdline\fR\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+720\-kernel\-initrd\&.pcrlock
+.RS 4
+The kernel initrd, as measured by the Linux kernel to PCR 9\&. May be generated via
+\fBsystemd\-pcrlock lock\-kernel\-initrd\fR\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+750\-enter\-initrd\&.pcrlock
+.RS 4
+The measurement to PCR 11
+\fBsystemd-pcrphase-initrd.service\fR(8)
+makes when the initrd initializes\&. Statically defined\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+800\-leave\-initrd\&.pcrlock
+.RS 4
+The measurement to PCR 11
+\fBsystemd-pcrphase-initrd.service\fR(8)
+makes when the initrd finishes\&. Statically defined\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+820\-machine\-id\&.pcrlock
+.RS 4
+The measurement to PCR 15
+\fBsystemd-pcrmachine.service\fR(8)
+makes at boot, covering
+/etc/machine\-id
+contents\&. May be generated via
+\fBsystemd\-pcrlock lock\-machine\-id\fR\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+830\-root\-file\-system\&.pcrlock
+.RS 4
+The measurement to PCR 15
+\fBsystemd-pcrfs-root.service\fR(8)
+makes at boot, covering the root file system identity\&. May be generated via
+\fBsystemd\-pcrlock lock\-file\-system\fR\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+850\-sysinit\&.pcrlock
+.RS 4
+The measurement to PCR 11
+\fBsystemd-pcrphase-sysinit.service\fR(8)
+makes when the main userspace did basic initialization and will now proceed to start regular system services\&. Statically defined\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+900\-ready\&.pcrlock
+.RS 4
+The measurement to PCR 11
+\fBsystemd-pcrphase.service\fR(8)
+makes when the system fully booted up\&. Statically defined\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+950\-shutdown\&.pcrlock
+.RS 4
+The measurement to PCR 11
+\fBsystemd-pcrphase.service\fR(8)
+makes when the system begins shutdown\&. Statically defined\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+990\-final\&.pcrlock
+.RS 4
+The measurement to PCR 11
+\fBsystemd-pcrphase-sysinit.service\fR(8)
+makes when the system is close to finishing shutdown\&. Statically defined\&.
+.sp
+Added in version 255\&.
+.RE
+.SH "SEE ALSO"
+.PP
+\fBsystemd\fR(1), \fBsystemd-pcrlock\fR(1)
+.SH "NOTES"
+.IP " 1." 4
+TCG Canonical Event Log Format (CEL-JSON)
+.RS 4
+\%https://trustedcomputinggroup.org/resource/canonical-event-log-format/
+.RE

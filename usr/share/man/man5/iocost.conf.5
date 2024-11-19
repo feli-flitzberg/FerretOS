@@ -1,0 +1,104 @@
+'\" t
+.TH "IOCOST\&.CONF" "5" "" "systemd 256.4" "iocost.conf"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+iocost.conf \- Configuration files for the iocost solution manager
+.SH "SYNOPSIS"
+.PP
+/etc/systemd/iocost\&.conf
+/etc/systemd/iocost\&.conf\&.d/*\&.conf
+.SH "DESCRIPTION"
+.PP
+This file configures the behavior of
+"iocost", a tool mostly used by
+\fBsystemd-udevd\fR(8)
+rules to automatically apply I/O cost solutions to
+/sys/fs/cgroup/io\&.cost\&.*\&.
+.PP
+The qos and model values are calculated based on benchmarks collected on the
+\m[blue]\fBiocost\-benchmark\fR\m[]\&\s-2\u[1]\d\s+2
+project and turned into a set of solutions that go from most to least isolated\&. Isolation allows the system to remain responsive in face of high I/O load\&. Which solutions are available for a device can be queried from the udev metadata attached to it\&. By default the naive solution is used, which provides the most bandwidth\&.
+.SH "CONFIGURATION DIRECTORIES AND PRECEDENCE"
+.PP
+The default configuration is set during compilation, so configuration is only needed when it is necessary to deviate from those defaults\&. The main configuration file is loaded from one of the listed directories in order of priority, only the first file found is used:
+/etc/systemd/,
+/run/systemd/,
+/usr/local/lib/systemd/
+\&\s-2\u[2]\d\s+2,
+/usr/lib/systemd/\&. The vendor version of the file contains commented out entries showing the defaults as a guide to the administrator\&. Local overrides can also be created by creating drop\-ins, as described below\&. The main configuration file can also be edited for this purpose (or a copy in
+/etc/
+if it\*(Aqs shipped under
+/usr/), however using drop\-ins for local configuration is recommended over modifications to the main configuration file\&.
+.PP
+In addition to the main configuration file, drop\-in configuration snippets are read from
+/usr/lib/systemd/*\&.conf\&.d/,
+/usr/local/lib/systemd/*\&.conf\&.d/, and
+/etc/systemd/*\&.conf\&.d/\&. Those drop\-ins have higher precedence and override the main configuration file\&. Files in the
+*\&.conf\&.d/
+configuration subdirectories are sorted by their filename in lexicographic order, regardless of in which of the subdirectories they reside\&. When multiple files specify the same option, for options which accept just a single value, the entry in the file sorted last takes precedence, and for options which accept a list of values, entries are collected as they occur in the sorted files\&.
+.PP
+When packages need to customize the configuration, they can install drop\-ins under
+/usr/\&. Files in
+/etc/
+are reserved for the local administrator, who may use this logic to override the configuration files installed by vendor packages\&. Drop\-ins have to be used to override package drop\-ins, since the main configuration file has lower precedence\&. It is recommended to prefix all filenames in those subdirectories with a two\-digit number and a dash, to simplify the ordering\&. This also defines a concept of drop\-in priorities to allow OS vendors to ship drop\-ins within a specific range lower than the range used by users\&. This should lower the risk of package drop\-ins overriding accidentally drop\-ins defined by users\&. It is recommended to use the range 10\-40 for drop\-ins in
+/usr/
+and the range 60\-90 for drop\-ins in
+/etc/
+and
+/run/, to make sure that local and transient drop\-ins take priority over drop\-ins shipped by the OS vendor\&.
+.PP
+To disable a configuration file supplied by the vendor, the recommended way is to place a symlink to
+/dev/null
+in the configuration directory in
+/etc/, with the same filename as the vendor configuration file\&.
+.SH "OPTIONS"
+.PP
+All options are configured in the [IOCost] section:
+.PP
+\fITargetSolution=\fR
+.RS 4
+Chooses which I/O cost solution (identified by named string) should be used for the devices in this system\&. The known solutions can be queried from the udev metadata attached to the devices\&. If a device does not have the specified solution, the first one listed in
+\fIIOCOST_SOLUTIONS\fR
+is used instead\&.
+.sp
+E\&.g\&.
+"TargetSolution=isolated\-bandwidth"\&.
+.sp
+Added in version 254\&.
+.RE
+.SH "SEE ALSO"
+.PP
+\fBudevadm\fR(8), \m[blue]\fBThe iocost\-benchmarks github project\fR\m[]\&\s-2\u[1]\d\s+2, \m[blue]\fBThe resctl\-bench documentation details how the values are obtained\fR\m[]\&\s-2\u[3]\d\s+2
+.SH "NOTES"
+.IP " 1." 4
+iocost-benchmark
+.RS 4
+\%https://github.com/iocost-benchmark/iocost-benchmarks
+.RE
+.IP " 2." 4
+💣💥🧨💥💥💣 Please note that those configuration files must be available at all times. If
+/usr/local/
+is a separate partition, it may not be available during early boot, and must not be used for configuration.
+.IP " 3." 4
+The resctl-bench documentation details how the values are obtained
+.RS 4
+\%https://github.com/facebookexperimental/resctl-demo/tree/main/resctl-bench/doc
+.RE

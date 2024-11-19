@@ -1,0 +1,298 @@
+'\" t
+.TH "SYSTEMD\&.IMAGE\-POLICY" "7" "" "systemd 256.4" "systemd.image-policy"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+systemd.image-policy \- Disk Image Dissection Policy
+.SH "DESCRIPTION"
+.PP
+In systemd, whenever a disk image (DDI) implementing the
+\m[blue]\fBDiscoverable Partitions Specification\fR\m[]\&\s-2\u[1]\d\s+2
+is activated, a policy may be specified controlling which partitions to mount and what kind of cryptographic protection to require\&. Such a disk image dissection policy is a string that contains per\-partition\-type rules, separated by colons (":")\&. The individual rules consist of a partition identifier, an equal sign ("="), and one or more flags which may be set per partition\&. If multiple flags are specified per partition they are separated by a plus sign ("+")\&.
+.PP
+The partition identifiers currently defined are:
+\fBroot\fR,
+\fBusr\fR,
+\fBhome\fR,
+\fBsrv\fR,
+\fBesp\fR,
+\fBxbootldr\fR,
+\fBswap\fR,
+\fBroot\-verity\fR,
+\fBroot\-verity\-sig\fR,
+\fBusr\-verity\fR,
+\fBusr\-verity\-sig\fR,
+\fBtmp\fR,
+\fBvar\fR\&. These identifiers match the relevant partition types in the Discoverable Partitions Specification, but are agnostic to CPU architectures\&. If the partition identifier is left empty it defines the
+\fIdefault\fR
+policy for partitions defined in the Discoverable Partitions Specification for which no policy flags are explicitly listed in the policy string\&.
+.PP
+The following partition policy flags are defined that dictate the existence/absence, the use, and the protection level of partitions:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBunprotected\fR
+for partitions that shall exist and be used, but shall come without cryptographic protection, lacking both Verity authentication and LUKS encryption\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBverity\fR
+for partitions that shall exist and be used, with Verity authentication\&. (Note: if a DDI image carries a data partition, along with a Verity partition and a signature partition for it, and only the
+\fBverity\fR
+flag is set (\fBsigned\fR
+is not), then the image will be set up with Verity, but the signature data will not be used\&. Or in other words: any DDI with a set of partitions that qualify for
+\fBsignature\fR
+also implicitly qualifies for
+\fBverity\fR, and in fact also
+\fBunprotected\fR)\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBsigned\fR
+for partitions that shall exist and be used, with Verity authentication, which are also accompanied by a PKCS#7 signature of the Verity root hash\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBencrypted\fR
+for partitions which shall exist and be used and are encrypted with LUKS\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBunused\fR
+for partitions that shall exist but shall not be used\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBabsent\fR
+for partitions that shall not exist on the image\&.
+.RE
+.PP
+By setting a combination of the flags above, alternatives can be declared\&. For example the combination
+"unused+absent"
+means: the partition may exist (in which case it shall not be used) or may be absent\&. The combination of
+"unprotected+verity+signed+encrypted+unused+absent"
+may be specified via the special shortcut
+"open", and indicates that the partition may exist or may be absent, but if it exists is used, regardless of the protection level\&.
+.PP
+As special rule: if none of the flags above are set for a listed partition identifier, the default policy of
+\fBopen\fR
+is implied, i\&.e\&. setting none of these flags listed above means effectively all flags listed above will be set\&.
+.PP
+The following partition policy flags are defined that dictate the state of specific GPT partition flags:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBread\-only\-off\fR,
+\fBread\-only\-on\fR
+to require that the partitions have the read\-only partition flag off or on\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBgrowfs\-off\fR,
+\fBgrowfs\-on\fR
+to require that the partitions have the growfs partition flag off or on\&.
+.RE
+.PP
+If both
+\fBread\-only\-off\fR
+and
+\fBread\-only\-on\fR
+are set for a partition, then the state of the read\-only flag on the partition is not dictated by the policy\&. Setting neither flag is equivalent to setting both, i\&.e\&. setting neither of these two flags means effectively both will be set\&. A similar logic applies to
+\fBgrowfs\-off\fR/\fBgrowfs\-on\fR\&.
+.PP
+If partitions are not listed within an image policy string, the default policy flags are applied (configurable via an empty partition identifier, see above)\&. If no default policy flags are configured in the policy string, it is implied to be
+"absent+unused", except for the Verity partition and their signature partitions where the policy is automatically derived from minimal protection level of the data partition they protect, as encoded in the policy\&.
+.SH "SPECIAL POLICIES"
+.PP
+The special image policy string
+"*"
+is short for "use everything", i\&.e\&. is equivalent to:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+=verity+signed+encrypted+unprotected+unused+absent
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+The special image policy string
+"\-"
+is short for "use nothing", i\&.e\&. is equivalent to:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+=unused+absent
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+The special image policy string
+"~"
+is short for "everything must be absent", i\&.e\&. is equivalent to:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+=absent
+.fi
+.if n \{\
+.RE
+.\}
+.SH "USE"
+.PP
+Most systemd components that support operating with disk images support a
+\fB\-\-image\-policy=\fR
+command line option to specify the image policy to use, and default to relatively open policies (typically the
+"*"
+policy, as described above), under the assumption that trust in disk images is established before the images are passed to the program in question\&.
+.PP
+For the host image itself
+\fBsystemd-gpt-auto-generator\fR(8)
+is responsible for processing the GPT partition table and making use of the included discoverable partitions\&. It accepts an image policy via the kernel command line option
+\fBsystemd\&.image\-policy=\fR\&.
+.PP
+Note that image policies do not dictate how the components will mount and use disk images \(em they only dictate which parts to avoid and which protection level and arrangement to require while mounting/using them\&. For example,
+\fBsystemd-sysext\fR(8)
+only cares for the
+/usr/
+and
+/opt/
+trees inside a disk image, and thus ignores any
+/home/
+partitions (and similar) in all cases, which might be included in the image, regardless whether the configured image policy would allow access to it or not\&. Similar,
+\fBsystemd-nspawn\fR(1)
+is not going to make use of any discovered swap device, regardless if the policy would allow that or not\&.
+.PP
+Use the
+\fBimage\-policy\fR
+command of the
+\fBsystemd-analyze\fR(8)
+tool to analyze image policy strings, and determine what a specific policy string means for a specific partition\&.
+.SH "EXAMPLES"
+.PP
+The following image policy string dictates one read\-only Verity\-enabled
+/usr/
+partition must exist, plus encrypted root and swap partitions\&. All other partitions are ignored:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+usr=verity+read\-only\-on:root=encrypted:swap=encrypted
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+The following image policy string dictates an encrypted, writable root file system, and optional
+/srv/
+file system that must be encrypted if it exists and no swap partition may exist:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+root=encrypted+read\-only\-off:srv=encrypted+absent:swap=absent
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+The following image policy string dictates a single root partition that may be encrypted, but doesn\*(Aqt have to be, and ignores swap partitions, and uses all other partitions if they are available, possibly with encryption\&.
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+root=unprotected+encrypted:swap=absent+unused:=unprotected+encrypted+absent
+.fi
+.if n \{\
+.RE
+.\}
+.SH "SEE ALSO"
+.PP
+\fBsystemd\fR(1), \fBsystemd-dissect\fR(1), \fBsystemd-gpt-auto-generator\fR(8), \fBsystemd-sysext\fR(8), \fBsystemd-analyze\fR(8)
+.SH "NOTES"
+.IP " 1." 4
+Discoverable Partitions Specification
+.RS 4
+\%https://uapi-group.org/specifications/specs/discoverable_partitions_specification
+.RE

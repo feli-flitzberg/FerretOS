@@ -1,0 +1,749 @@
+'\" t
+.TH "IMPORTCTL" "1" "" "systemd 256.4" "importctl"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+importctl \- Download, import or export disk images
+.SH "SYNOPSIS"
+.HP \w'\fBimportctl\fR\ 'u
+\fBimportctl\fR [OPTIONS...] {COMMAND} [NAME...]
+.SH "DESCRIPTION"
+.PP
+\fBimportctl\fR
+may be used to download, import, and export disk images via
+\fBsystemd-importd.service\fR(8)\&.
+.PP
+\fBimportctl\fR
+operates both on block\-level disk images (such as DDIs) as well as file\-system\-level images (tarballs)\&. It supports disk images are one of the four following classes:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+VM images or full OS container images, that may be run via
+\fBsystemd-vmspawn\fR(1)
+or
+\fBsystemd-nspawn\fR(1), and managed via
+\fBmachinectl\fR(1)\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Portable service images, that may be attached an managed via
+\fBportablectl\fR(1)\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+System extension (sysext) images, that may be activated via
+\fBsystemd-sysext\fR(8)\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Configuration extension (confext) images, that may be activated via
+\fBsystemd-confext\fR(8)\&.
+.RE
+.PP
+When images are downloaded or imported they are placed in the following directories, depending on the
+\fB\-\-class=\fR
+parameter:
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.B Table\ \&1.\ \&Classes and Directories
+.TS
+allbox tab(:);
+lB lB.
+T{
+Class
+T}:T{
+Directory
+T}
+.T&
+l l
+l l
+l l
+l l.
+T{
+"machine"
+T}:T{
+/var/lib/machines/
+T}
+T{
+"portable"
+T}:T{
+/var/lib/portables/
+T}
+T{
+"sysext"
+T}:T{
+/var/lib/extensions/
+T}
+T{
+"confext"
+T}:T{
+/var/lib/confexts/
+T}
+.TE
+.sp 1
+.SH "COMMANDS"
+.PP
+The following commands are understood:
+.PP
+\fBpull\-tar\fR \fIURL\fR [\fINAME\fR]
+.RS 4
+Downloads a
+\&.tar
+image from the specified URL, and makes it available under the specified local name in the image directory for the selected
+\fB\-\-class=\fR\&. The URL must be of type
+"http://"
+or
+"https://", and must refer to a
+\&.tar,
+\&.tar\&.gz,
+\&.tar\&.xz
+or
+\&.tar\&.bz2
+archive file\&. If the local image name is omitted, it is automatically derived from the last component of the URL, with its suffix removed\&.
+.sp
+The image is verified before it is made available, unless
+\fB\-\-verify=no\fR
+is specified\&. Verification is done either via an inline signed file with the name of the image and the suffix
+\&.sha256
+or via separate
+SHA256SUMS
+and
+SHA256SUMS\&.gpg
+files\&. The signature files need to be made available on the same web server, under the same URL as the
+\&.tar
+file\&. With
+\fB\-\-verify=checksum\fR, only the SHA256 checksum for the file is verified, based on the
+\&.sha256
+suffixed file or the
+SHA256SUMS
+file\&. With
+\fB\-\-verify=signature\fR, the sha checksum file is first verified with the inline signature in the
+\&.sha256
+file or the detached GPG signature file
+SHA256SUMS\&.gpg\&. The public key for this verification step needs to be available in
+/usr/lib/systemd/import\-pubring\&.gpg
+or
+/etc/systemd/import\-pubring\&.gpg\&.
+.sp
+If
+\fB\-keep\-download=yes\fR
+is specified the image will be downloaded and stored in a read\-only subvolume/directory in the image directory that is named after the specified URL and its HTTP etag\&. A writable snapshot is then taken from this subvolume, and named after the specified local name\&. This behavior ensures that creating multiple instances of the same URL is efficient, as multiple downloads are not necessary\&. In order to create only the read\-only image, and avoid creating its writable snapshot, specify
+"\-"
+as local name\&.
+.sp
+Note that pressing C\-c during execution of this command will not abort the download\&. Use
+\fBcancel\-transfer\fR, described below\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fBpull\-raw\fR \fIURL\fR [\fINAME\fR]
+.RS 4
+Downloads a
+\&.raw
+disk image from the specified URL, and makes it available under the specified local name in the image directory for the selected
+\fB\-\-class=\fR\&. The URL must be of type
+"http://"
+or
+"https://"\&. The image must either be a
+\&.qcow2
+or raw disk image, optionally compressed as
+\&.gz,
+\&.xz, or
+\&.bz2\&. If the local name is omitted, it is automatically derived from the last component of the URL, with its suffix removed\&.
+.sp
+Image verification is identical for raw and tar images (see above)\&.
+.sp
+If the downloaded image is in
+\&.qcow2
+format it is converted into a raw image file before it is made available\&.
+.sp
+If
+\fB\-keep\-download=yes\fR
+is specified the image will be downloaded and stored in a read\-only file in the image directory that is named after the specified URL and its HTTP etag\&. A writable copy is then made from this file, and named after the specified local name\&. This behavior ensures that creating multiple instances of the same URL is efficient, as multiple downloads are not necessary\&. In order to create only the read\-only image, and avoid creating its writable copy, specify
+"\-"
+as local name\&.
+.sp
+Note that pressing C\-c during execution of this command will not abort the download\&. Use
+\fBcancel\-transfer\fR, described below\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fBimport\-tar\fR \fIFILE\fR [\fINAME\fR], \fBimport\-raw\fR \fIFILE\fR [\fINAME\fR]
+.RS 4
+Imports a TAR or RAW image, and places it under the specified name in the image directory for the image class selected via
+\fB\-\-class=\fR\&. When
+\fBimport\-tar\fR
+is used, the file specified as the first argument should be a tar archive, possibly compressed with xz, gzip or bzip2\&. It will then be unpacked into its own subvolume/directory\&. When
+\fBimport\-raw\fR
+is used, the file should be a qcow2 or raw disk image, possibly compressed with xz, gzip or bzip2\&. If the second argument (the resulting image name) is not specified, it is automatically derived from the file name\&. If the filename is passed as
+"\-", the image is read from standard input, in which case the second argument is mandatory\&.
+.sp
+No cryptographic validation is done when importing the images\&.
+.sp
+Much like image downloads, ongoing imports may be listed with
+\fBlist\fR
+and aborted with
+\fBcancel\-transfer\fR\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fBimport\-fs\fR \fIDIRECTORY\fR [\fINAME\fR]
+.RS 4
+Imports an image stored in a local directory into the image directory for the image class selected via
+\fB\-\-class=\fR
+and operates similarly to
+\fBimport\-tar\fR
+or
+\fBimport\-raw\fR, but the first argument is the source directory\&. If supported, this command will create a btrfs snapshot or subvolume for the new image\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fBexport\-tar\fR \fINAME\fR [\fIFILE\fR], \fBexport\-raw\fR \fINAME\fR [\fIFILE\fR]
+.RS 4
+Exports a TAR or RAW image and stores it in the specified file\&. The first parameter should be an image name\&. The second parameter should be a file path the TAR or RAW image is written to\&. If the path ends in
+"\&.gz", the file is compressed with gzip, if it ends in
+"\&.xz", with xz, and if it ends in
+"\&.bz2", with bzip2\&. If the path ends in neither, the file is left uncompressed\&. If the second argument is missing, the image is written to standard output\&. The compression may also be explicitly selected with the
+\fB\-\-format=\fR
+switch\&. This is in particular useful if the second parameter is left unspecified\&.
+.sp
+Much like image downloads and imports, ongoing exports may be listed with
+\fBlist\fR
+and aborted with
+\fBcancel\-transfer\fR\&.
+.sp
+Note that, currently, only directory and subvolume images may be exported as TAR images, and only raw disk images as RAW images\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fBlist\-transfer\fR
+.RS 4
+Shows a list of image downloads, imports and exports that are currently in progress\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fBcancel\-transfer\fR \fIID\fR\&...
+.RS 4
+Aborts a download, import or export of the image with the specified ID\&. To list ongoing transfers and their IDs, use
+\fBlist\fR\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fBlist\-images\fR
+.RS 4
+Shows a list of already downloaded/imported images\&.
+.sp
+Added in version 256\&.
+.RE
+.SH "OPTIONS"
+.PP
+The following options are understood:
+.PP
+\fB\-\-read\-only\fR
+.RS 4
+When used with
+\fBpull\-raw\fR,
+\fBpull\-tar\fR,
+\fBimport\-raw\fR,
+\fBimport\-tar\fR
+or
+\fBimport\-fs\fR
+a read\-only image is created\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fB\-\-verify=\fR
+.RS 4
+When downloading an image, specify whether the image shall be verified before it is made available\&. Takes one of
+"no",
+"checksum"
+and
+"signature"\&. If
+"no", no verification is done\&. If
+"checksum"
+is specified, the download is checked for integrity after the transfer is complete, but no signatures are verified\&. If
+"signature"
+is specified, the checksum is verified and the image\*(Aqs signature is checked against a local keyring of trustable vendors\&. It is strongly recommended to set this option to
+"signature"
+if the server and protocol support this\&. Defaults to
+"signature"\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fB\-\-force\fR
+.RS 4
+When downloading an image, and a local copy by the specified local name already exists, delete it first and replace it by the newly downloaded image\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fB\-\-format=\fR
+.RS 4
+When used with the
+\fBexport\-tar\fR
+or
+\fBexport\-raw\fR
+commands, specifies the compression format to use for the resulting file\&. Takes one of
+"uncompressed",
+"xz",
+"gzip",
+"bzip2"\&. By default, the format is determined automatically from the output image file name passed\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fB\-q\fR, \fB\-\-quiet\fR
+.RS 4
+Suppresses additional informational output while running\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fB\-H\fR, \fB\-\-host=\fR
+.RS 4
+Execute the operation remotely\&. Specify a hostname, or a username and hostname separated by
+"@", to connect to\&. The hostname may optionally be suffixed by a port ssh is listening on, separated by
+":", and then a container name, separated by
+"/", which connects directly to a specific container on the specified host\&. This will use SSH to talk to the remote machine manager instance\&. Container names may be enumerated with
+\fBmachinectl \-H \fR\fB\fIHOST\fR\fR\&. Put IPv6 addresses in brackets\&.
+.RE
+.PP
+\fB\-M\fR, \fB\-\-machine=\fR
+.RS 4
+Connect to
+\fBsystemd-import.service\fR(8)
+running in a local container, to perform the specified operation within the container\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fB\-\-class=\fR, \fB\-m\fR, \fB\-P\fR, \fB\-S\fR, \fB\-C\fR
+.RS 4
+Selects the image class for the downloaded images\&. This primarily selects the directory to download into\&. The
+\fB\-\-class=\fR
+switch takes
+"machine",
+"portable",
+"sysext"
+or
+"confext"
+as argument\&. The short options
+\fB\-m\fR,
+\fB\-P\fR,
+\fB\-S\fR,
+\fB\-C\fR
+are shortcuts for
+\fB\-\-class=machine\fR,
+\fB\-\-class=portable\fR,
+\fB\-\-class=sysext\fR,
+\fB\-\-class=confext\fR\&.
+.sp
+Note that
+\fB\-\-keep\-download=\fR
+defaults to true for
+\fB\-\-class=machine\fR
+and false otherwise, see below\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fB\-\-keep\-download=\fR, \fB\-N\fR
+.RS 4
+Takes a boolean argument\&. When specified with
+\fBpull\-raw\fR
+or
+\fBpull\-tar\fR, selects whether to download directly into the specified local image name, or whether to download into a read\-only copy first of which to make a writable copy after the download is completed\&. Defaults to true for
+\fB\-\-class=machine\fR, false otherwise\&.
+.sp
+The
+\fB\-N\fR
+switch is a shortcut for
+\fB\-\-keep\-download=no\fR\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fB\-\-json=\fR\fB\fIMODE\fR\fR
+.RS 4
+Shows output formatted as JSON\&. Expects one of
+"short"
+(for the shortest possible output without any redundant whitespace or line breaks),
+"pretty"
+(for a pretty version of the same, with indentation and line breaks) or
+"off"
+(to turn off JSON output, the default)\&.
+.RE
+.PP
+\fB\-j\fR
+.RS 4
+Equivalent to
+\fB\-\-json=pretty\fR
+if running on a terminal, and
+\fB\-\-json=short\fR
+otherwise\&.
+.RE
+.PP
+\fB\-\-no\-pager\fR
+.RS 4
+Do not pipe output into a pager\&.
+.RE
+.PP
+\fB\-\-no\-legend\fR
+.RS 4
+Do not print the legend, i\&.e\&. column headers and the footer with hints\&.
+.RE
+.PP
+\fB\-\-no\-ask\-password\fR
+.RS 4
+Do not query the user for authentication for privileged operations\&.
+.RE
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Print a short help text and exit\&.
+.RE
+.PP
+\fB\-\-version\fR
+.RS 4
+Print a short version string and exit\&.
+.RE
+.SH "EXAMPLES"
+.PP
+\fBExample\ \&1.\ \&Download an Ubuntu TAR image and open a shell in it\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+# importctl pull\-tar \-mN https://cloud\-images\&.ubuntu\&.com/jammy/current/jammy\-server\-cloudimg\-amd64\-root\&.tar\&.xz
+# systemd\-nspawn \-M jammy\-server\-cloudimg\-amd64\-root
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+This downloads and verifies the specified
+\&.tar
+image, and then uses
+\fBsystemd-nspawn\fR(1)
+to open a shell in it\&.
+.PP
+\fBExample\ \&2.\ \&Download an Ubuntu RAW image, set a root password in it, start it as a service\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+# importctl pull\-raw \-mN \e
+      https://cloud\-images\&.ubuntu\&.com/jammy/current/jammy\-server\-cloudimg\-amd64\-disk\-kvm\&.img \e
+      jammy
+# systemd\-firstboot \-\-image=/var/lib/machines/jammy\&.raw \-\-prompt\-root\-password \-\-force
+# machinectl start jammy
+# machinectl login jammy
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+This downloads the specified
+\&.raw
+image and makes it available under the local name
+"jammy"\&. Then, a root password is set with
+\fBsystemd-firstboot\fR(1)\&. Afterwards the machine is started as system service\&. With the last command a login prompt into the container is requested\&.
+.PP
+\fBExample\ \&3.\ \&Exports a container image as tar file\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+# importctl export\-tar \-m fedora myfedora\&.tar\&.xz
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+Exports the container
+"fedora"
+as an xz\-compressed tar file
+myfedora\&.tar\&.xz
+into the current directory\&.
+.SH "EXIT STATUS"
+.PP
+On success, 0 is returned, a non\-zero failure code otherwise\&.
+.SH "ENVIRONMENT"
+.PP
+\fI$SYSTEMD_LOG_LEVEL\fR
+.RS 4
+The maximum log level of emitted messages (messages with a higher log level, i\&.e\&. less important ones, will be suppressed)\&. Takes a comma\-separated list of values\&. A value may be either one of (in order of decreasing importance)
+\fBemerg\fR,
+\fBalert\fR,
+\fBcrit\fR,
+\fBerr\fR,
+\fBwarning\fR,
+\fBnotice\fR,
+\fBinfo\fR,
+\fBdebug\fR, or an integer in the range 0\&...7\&. See
+\fBsyslog\fR(3)
+for more information\&. Each value may optionally be prefixed with one of
+\fBconsole\fR,
+\fBsyslog\fR,
+\fBkmsg\fR
+or
+\fBjournal\fR
+followed by a colon to set the maximum log level for that specific log target (e\&.g\&.
+\fBSYSTEMD_LOG_LEVEL=debug,console:info\fR
+specifies to log at debug level except when logging to the console which should be at info level)\&. Note that the global maximum log level takes priority over any per target maximum log levels\&.
+.RE
+.PP
+\fI$SYSTEMD_LOG_COLOR\fR
+.RS 4
+A boolean\&. If true, messages written to the tty will be colored according to priority\&.
+.sp
+This setting is only useful when messages are written directly to the terminal, because
+\fBjournalctl\fR(1)
+and other tools that display logs will color messages based on the log level on their own\&.
+.RE
+.PP
+\fI$SYSTEMD_LOG_TIME\fR
+.RS 4
+A boolean\&. If true, console log messages will be prefixed with a timestamp\&.
+.sp
+This setting is only useful when messages are written directly to the terminal or a file, because
+\fBjournalctl\fR(1)
+and other tools that display logs will attach timestamps based on the entry metadata on their own\&.
+.RE
+.PP
+\fI$SYSTEMD_LOG_LOCATION\fR
+.RS 4
+A boolean\&. If true, messages will be prefixed with a filename and line number in the source code where the message originates\&.
+.sp
+Note that the log location is often attached as metadata to journal entries anyway\&. Including it directly in the message text can nevertheless be convenient when debugging programs\&.
+.RE
+.PP
+\fI$SYSTEMD_LOG_TID\fR
+.RS 4
+A boolean\&. If true, messages will be prefixed with the current numerical thread ID (TID)\&.
+.sp
+Note that the this information is attached as metadata to journal entries anyway\&. Including it directly in the message text can nevertheless be convenient when debugging programs\&.
+.RE
+.PP
+\fI$SYSTEMD_LOG_TARGET\fR
+.RS 4
+The destination for log messages\&. One of
+\fBconsole\fR
+(log to the attached tty),
+\fBconsole\-prefixed\fR
+(log to the attached tty but with prefixes encoding the log level and "facility", see
+\fBsyslog\fR(3),
+\fBkmsg\fR
+(log to the kernel circular log buffer),
+\fBjournal\fR
+(log to the journal),
+\fBjournal\-or\-kmsg\fR
+(log to the journal if available, and to kmsg otherwise),
+\fBauto\fR
+(determine the appropriate log target automatically, the default),
+\fBnull\fR
+(disable log output)\&.
+.RE
+.PP
+\fI$SYSTEMD_LOG_RATELIMIT_KMSG\fR
+.RS 4
+Whether to ratelimit kmsg or not\&. Takes a boolean\&. Defaults to
+"true"\&. If disabled, systemd will not ratelimit messages written to kmsg\&.
+.RE
+.PP
+\fI$SYSTEMD_PAGER\fR
+.RS 4
+Pager to use when
+\fB\-\-no\-pager\fR
+is not given; overrides
+\fI$PAGER\fR\&. If neither
+\fI$SYSTEMD_PAGER\fR
+nor
+\fI$PAGER\fR
+are set, a set of well\-known pager implementations are tried in turn, including
+\fBless\fR(1)
+and
+\fBmore\fR(1), until one is found\&. If no pager implementation is discovered no pager is invoked\&. Setting this environment variable to an empty string or the value
+"cat"
+is equivalent to passing
+\fB\-\-no\-pager\fR\&.
+.sp
+Note: if
+\fI$SYSTEMD_PAGERSECURE\fR
+is not set,
+\fI$SYSTEMD_PAGER\fR
+(as well as
+\fI$PAGER\fR) will be silently ignored\&.
+.RE
+.PP
+\fI$SYSTEMD_LESS\fR
+.RS 4
+Override the options passed to
+\fBless\fR
+(by default
+"FRSXMK")\&.
+.sp
+Users might want to change two options in particular:
+.PP
+\fBK\fR
+.RS 4
+This option instructs the pager to exit immediately when
+Ctrl+C
+is pressed\&. To allow
+\fBless\fR
+to handle
+Ctrl+C
+itself to switch back to the pager command prompt, unset this option\&.
+.sp
+If the value of
+\fI$SYSTEMD_LESS\fR
+does not include
+"K", and the pager that is invoked is
+\fBless\fR,
+Ctrl+C
+will be ignored by the executable, and needs to be handled by the pager\&.
+.RE
+.PP
+\fBX\fR
+.RS 4
+This option instructs the pager to not send termcap initialization and deinitialization strings to the terminal\&. It is set by default to allow command output to remain visible in the terminal even after the pager exits\&. Nevertheless, this prevents some pager functionality from working, in particular paged output cannot be scrolled with the mouse\&.
+.RE
+.sp
+Note that setting the regular
+\fI$LESS\fR
+environment variable has no effect for
+\fBless\fR
+invocations by systemd tools\&.
+.sp
+See
+\fBless\fR(1)
+for more discussion\&.
+.RE
+.PP
+\fI$SYSTEMD_LESSCHARSET\fR
+.RS 4
+Override the charset passed to
+\fBless\fR
+(by default
+"utf\-8", if the invoking terminal is determined to be UTF\-8 compatible)\&.
+.sp
+Note that setting the regular
+\fI$LESSCHARSET\fR
+environment variable has no effect for
+\fBless\fR
+invocations by systemd tools\&.
+.RE
+.PP
+\fI$SYSTEMD_PAGERSECURE\fR
+.RS 4
+Takes a boolean argument\&. When true, the "secure" mode of the pager is enabled; if false, disabled\&. If
+\fI$SYSTEMD_PAGERSECURE\fR
+is not set at all, secure mode is enabled if the effective UID is not the same as the owner of the login session, see
+\fBgeteuid\fR(2)
+and
+\fBsd_pid_get_owner_uid\fR(3)\&. In secure mode,
+\fBLESSSECURE=1\fR
+will be set when invoking the pager, and the pager shall disable commands that open or create new files or start new subprocesses\&. When
+\fI$SYSTEMD_PAGERSECURE\fR
+is not set at all, pagers which are not known to implement secure mode will not be used\&. (Currently only
+\fBless\fR(1)
+implements secure mode\&.)
+.sp
+Note: when commands are invoked with elevated privileges, for example under
+\fBsudo\fR(8)
+or
+\fBpkexec\fR(1), care must be taken to ensure that unintended interactive features are not enabled\&. "Secure" mode for the pager may be enabled automatically as describe above\&. Setting
+\fISYSTEMD_PAGERSECURE=0\fR
+or not removing it from the inherited environment allows the user to invoke arbitrary commands\&. Note that if the
+\fI$SYSTEMD_PAGER\fR
+or
+\fI$PAGER\fR
+variables are to be honoured,
+\fI$SYSTEMD_PAGERSECURE\fR
+must be set too\&. It might be reasonable to completely disable the pager using
+\fB\-\-no\-pager\fR
+instead\&.
+.RE
+.PP
+\fI$SYSTEMD_COLORS\fR
+.RS 4
+Takes a boolean argument\&. When true,
+\fBsystemd\fR
+and related utilities will use colors in their output, otherwise the output will be monochrome\&. Additionally, the variable can take one of the following special values:
+"16",
+"256"
+to restrict the use of colors to the base 16 or 256 ANSI colors, respectively\&. This can be specified to override the automatic decision based on
+\fI$TERM\fR
+and what the console is connected to\&.
+.RE
+.PP
+\fI$SYSTEMD_URLIFY\fR
+.RS 4
+The value must be a boolean\&. Controls whether clickable links should be generated in the output for terminal emulators supporting this\&. This can be specified to override the decision that
+\fBsystemd\fR
+makes based on
+\fI$TERM\fR
+and other conditions\&.
+.RE
+.SH "SEE ALSO"
+.PP
+\fBsystemd\fR(1), \fBsystemd-importd.service\fR(8), \fBsystemd-nspawn\fR(1), \fBsystemd-vmspawn\fR(1), \fBmachinectl\fR(1), \fBportablectl\fR(1), \fBsystemd-sysext\fR(8), \fBsystemd-confext\fR(8), \fBtar\fR(1), \fBxz\fR(1), \fBgzip\fR(1), \fBbzip2\fR(1)

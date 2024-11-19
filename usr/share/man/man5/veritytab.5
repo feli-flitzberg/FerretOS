@@ -1,0 +1,319 @@
+'\" t
+.TH "VERITYTAB" "5" "" "systemd 256.4" "veritytab"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+veritytab \- Configuration for verity block devices
+.SH "SYNOPSIS"
+.PP
+/etc/veritytab
+.SH "DESCRIPTION"
+.PP
+The
+/etc/veritytab
+file describes verity protected block devices that are set up during system boot\&.
+.PP
+Empty lines and lines starting with the
+"#"
+character are ignored\&. Each of the remaining lines describes one verity protected block device\&. Fields are delimited by white space\&.
+.PP
+Each line is in the form
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+\fIvolume\-name\fR \fIdata\-device\fR \fIhash\-device\fR \fIroothash\fR [\fIoptions\fR]
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+The first four fields are mandatory, the remaining one is optional\&.
+.PP
+The first field contains the name of the resulting verity volume; its block device is set up below
+/dev/mapper/\&.
+.PP
+The second field contains a path to the underlying block data device, or a specification of a block device via
+\fIUUID=\fR
+followed by the
+\fIUUID\fR\&.
+.PP
+The third field contains a path to the underlying block hash device, or a specification of a block device via
+\fIUUID=\fR
+followed by the
+\fIUUID\fR\&.
+.PP
+The fourth field is the
+\fIroothash\fR
+in hexadecimal\&.
+.PP
+The fifth field, if present, is a comma\-delimited list of options\&. The following options are recognized:
+.PP
+\fBsuperblock=\fR\fB\fIBOOL\fR\fR
+.RS 4
+Use dm\-verity with or without permanent on\-disk superblock\&.
+.sp
+Added in version 254\&.
+.RE
+.PP
+\fBformat=\fR\fB\fINUMBER\fR\fR
+.RS 4
+Specifies the hash version type\&. Format type
+"0"
+is original Chrome OS version\&. Format type
+"1"
+is modern version\&.
+.sp
+Added in version 254\&.
+.RE
+.PP
+\fBdata\-block\-size=\fR\fB\fIBYTES\fR\fR
+.RS 4
+Used block size for the data device\&. (Note kernel supports only page\-size as maximum here; Multiples of 512 bytes\&.)
+.sp
+Added in version 254\&.
+.RE
+.PP
+\fBhash\-block\-size=\fR\fB\fIBYTES\fR\fR
+.RS 4
+Used block size for the hash device\&. (Note kernel supports only page\-size as maximum here; Multiples of 512 bytes\&.)
+.sp
+Added in version 254\&.
+.RE
+.PP
+\fBdata\-blocks=\fR\fB\fIBLOCKS\fR\fR
+.RS 4
+Number of blocks of data device used in verification\&. If not specified, the whole device is used\&.
+.sp
+Added in version 254\&.
+.RE
+.PP
+\fBhash\-offset=\fR\fB\fIBYTES\fR\fR
+.RS 4
+Offset of hash area/superblock on
+"hash\-device"\&. (Multiples of 512 bytes\&.)
+.sp
+Added in version 254\&.
+.RE
+.PP
+\fBsalt=\fR\fB\fIHEX\fR\fR
+.RS 4
+Salt used for format or verification\&. Format is a hexadecimal string; 256 bytes long maximum;
+"\-"
+is the special value for empty\&.
+.sp
+Added in version 254\&.
+.RE
+.PP
+\fBuuid=\fR\fB\fIUUID\fR\fR
+.RS 4
+Use the provided
+\fIUUID\fR
+instead of generating new one\&. The
+\fIUUID\fR
+must be provided in standard
+UUID
+format, e\&.g\&.
+"12345678\-1234\-1234\-1234\-123456789abc"\&.
+.sp
+Added in version 254\&.
+.RE
+.PP
+\fBignore\-corruption\fR, \fBrestart\-on\-corruption\fR, \fBpanic\-on\-corruption\fR
+.RS 4
+Defines what to do if a data verity problem is detected (data corruption)\&. Without these options kernel fails the
+IO
+operation with
+I/O
+error\&. With
+\fB\-\-ignore\-corruption\fR
+option the corruption is only logged\&. With
+\fB\-\-restart\-on\-corruption\fR
+or
+\fB\-\-panic\-on\-corruption\fR
+the kernel is restarted (panicked) immediately\&. (You have to provide way how to avoid restart loops\&.)
+.sp
+Added in version 248\&.
+.RE
+.PP
+\fBignore\-zero\-blocks\fR
+.RS 4
+Instruct kernel to not verify blocks that are expected to contain zeroes and always directly return zeroes instead\&.
+.if n \{\
+.sp
+.\}
+.RS 4
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBWarning\fR
+.ps -1
+.br
+Use this option only in very specific cases\&. This option is available since Linux kernel version 4\&.5\&.
+.sp .5v
+.RE
+Added in version 248\&.
+.RE
+.PP
+\fBcheck\-at\-most\-once\fR
+.RS 4
+Instruct kernel to verify blocks only the first time they are read from the data device, rather than every time\&.
+.if n \{\
+.sp
+.\}
+.RS 4
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBWarning\fR
+.ps -1
+.br
+It provides a reduced level of security because only offline tampering of the data device\*(Aqs content will be detected, not online tampering\&. This option is available since Linux kernel version 4\&.17\&.
+.sp .5v
+.RE
+Added in version 248\&.
+.RE
+.PP
+\fBhash=\fR\fB\fIHASH\fR\fR
+.RS 4
+Hash algorithm for dm\-verity\&. This should be the name of the algorithm, like "sha1"\&. For default see
+\fBveritysetup \-\-help\fR\&.
+.sp
+Added in version 254\&.
+.RE
+.PP
+\fBfec\-device=\fR\fB\fIPATH\fR\fR
+.RS 4
+Use forward error correction (FEC) to recover from corruption if hash verification fails\&. Use encoding data from the specified device\&. The fec device argument can be block device or file image\&. If fec device path doesn\*(Aqt exist, it will be created as file\&. Note: block sizes for data and hash devices must match\&. Also, if the verity data_device is encrypted the fec_device should be too\&.
+.sp
+Added in version 254\&.
+.RE
+.PP
+\fBfec\-offset=\fR\fB\fIBYTES\fR\fR
+.RS 4
+This is the offset, in bytes, from the start of the
+FEC
+device to the beginning of the encoding data\&. (Aligned on 512 bytes\&.)
+.sp
+Added in version 254\&.
+.RE
+.PP
+\fBfec\-roots=\fR\fB\fINUM\fR\fR
+.RS 4
+Number of generator roots\&. This equals to the number of parity bytes in the encoding data\&. In RS(M, N) encoding, the number of roots is M\-N\&. M is 255 and M\-N is between 2 and 24 (including)\&.
+.sp
+Added in version 254\&.
+.RE
+.PP
+\fBroot\-hash\-signature=\fR\fB\fIPATH\fR\fR\fB|base64:\fR\fB\fIHEX\fR\fR
+.RS 4
+A base64 string encoding the root hash signature prefixed by
+"base64:"
+or a path to roothash signature file used to verify the root hash (in kernel)\&. This feature requires Linux kernel version 5\&.4 or more recent\&.
+.sp
+Added in version 248\&.
+.RE
+.PP
+\fB_netdev\fR
+.RS 4
+Marks this veritysetup device as requiring network\&. It will be started after the network is available, similarly to
+\fBsystemd.mount\fR(5)
+units marked with
+\fB_netdev\fR\&. The service unit to set up this device will be ordered between
+remote\-fs\-pre\&.target
+and
+remote\-veritysetup\&.target, instead of
+veritysetup\-pre\&.target
+and
+veritysetup\&.target\&.
+.sp
+Hint: if this device is used for a mount point that is specified in
+\fBfstab\fR(5), the
+\fB_netdev\fR
+option should also be used for the mount point\&. Otherwise, a dependency loop might be created where the mount point will be pulled in by
+local\-fs\&.target, while the service to configure the network is usually only started
+\fIafter\fR
+the local file system has been mounted\&.
+.sp
+Added in version 248\&.
+.RE
+.PP
+\fBnoauto\fR
+.RS 4
+This device will not be added to
+veritysetup\&.target\&. This means that it will not be automatically enabled on boot, unless something else pulls it in\&. In particular, if the device is used for a mount point, it\*(Aqll be enabled automatically during boot, unless the mount point itself is also disabled with
+\fBnoauto\fR\&.
+.sp
+Added in version 248\&.
+.RE
+.PP
+\fBnofail\fR
+.RS 4
+This device will not be a hard dependency of
+veritysetup\&.target\&. It\*(Aqll still be pulled in and started, but the system will not wait for the device to show up and be enabled, and boot will not fail if this is unsuccessful\&. Note that other units that depend on the enabled device may still fail\&. In particular, if the device is used for a mount point, the mount point itself also needs to have the
+\fBnofail\fR
+option, or the boot will fail if the device is not enabled successfully\&.
+.sp
+Added in version 248\&.
+.RE
+.PP
+\fBx\-initrd\&.attach\fR
+.RS 4
+Setup this verity protected block device in the initrd, similarly to
+\fBsystemd.mount\fR(5)
+units marked with
+\fBx\-initrd\&.mount\fR\&.
+.sp
+Although it\*(Aqs not necessary to mark the mount entry for the root file system with
+\fBx\-initrd\&.mount\fR,
+\fBx\-initrd\&.attach\fR
+is still recommended with the verity protected block device containing the root file system as otherwise systemd will attempt to detach the device during the regular system shutdown while it\*(Aqs still in use\&. With this option the device will still be detached but later after the root file system is unmounted\&.
+.sp
+All other verity protected block devices that contain file systems mounted in the initrd should use this option\&.
+.sp
+Added in version 248\&.
+.RE
+.PP
+At early boot and when the system manager configuration is reloaded, this file is translated into native systemd units by
+\fBsystemd-veritysetup-generator\fR(8)\&.
+.SH "EXAMPLES"
+.PP
+\fBExample\ \&1.\ \&/etc/veritytab example\fR
+.PP
+Set up two verity protected block devices\&. One using device blocks, another using files\&.
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+usr  PARTUUID=783e45ae\-7aa3\-484a\-beef\-a80ff9c19cbb PARTUUID=21dc1dfe\-4c33\-8b48\-98a9\-918a22eb3e37 36e3f740ad502e2c25e2a23d9c7c17bf0fdad2300b7580842d4b7ec1fb0fa263 auto
+data /etc/data /etc/hash a5ee4b42f70ae1f46a08a7c92c2e0a20672ad2f514792730f5d49d7606ab8fdf auto
+.fi
+.if n \{\
+.RE
+.\}
+.SH "SEE ALSO"
+.PP
+\fBsystemd\fR(1), \fBsystemd-veritysetup@.service\fR(8), \fBsystemd-veritysetup-generator\fR(8), \fBfstab\fR(5), \fBveritysetup\fR(8)

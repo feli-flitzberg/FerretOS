@@ -1,0 +1,85 @@
+'\" t
+.TH "SYSTEMD\-INTEGRITYSETUP@\&.SERVICE" "8" "" "systemd 256.4" "systemd-integritysetup@.service"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+systemd-integritysetup@.service, systemd-integritysetup \- Disk integrity protection logic
+.SH "SYNOPSIS"
+.PP
+systemd\-integritysetup@\&.service
+.PP
+/usr/lib/systemd/systemd\-integritysetup
+.SH "DESCRIPTION"
+.PP
+systemd\-integritysetup@\&.service
+is a service responsible for setting up integrity protected block devices\&. It should be instantiated for each device that requires integrity protection\&.
+.PP
+At early boot and when the system manager configuration is reloaded, entries from
+\fBintegritytab\fR(5)
+are converted into
+systemd\-integritysetup@\&.service
+units by
+\fBsystemd-integritysetup-generator\fR(8)\&.
+.PP
+systemd\-integritysetup@\&.service
+calls
+\fBsystemd\-integritysetup\fR\&.
+.SH "COMMANDS"
+.PP
+The following commands are understood by
+\fBsystemd\-integritysetup\fR:
+.PP
+\fBattach\fR \fIvolume\fR \fIdevice\fR [\fIkey\-file|\-\fR] [\fIoption(s)|\-\fR]
+.RS 4
+Create a block device
+\fIvolume\fR
+using
+\fIdevice\fR\&. See
+\fBintegritytab\fR(5)
+and
+\m[blue]\fBKernel dm\-integrity\fR\m[]\&\s-2\u[1]\d\s+2
+documentation for details\&.
+.sp
+Added in version 250\&.
+.RE
+.PP
+\fBdetach\fR \fIvolume\fR
+.RS 4
+Detach (destroy) the block device
+\fIvolume\fR\&.
+.sp
+Added in version 250\&.
+.RE
+.PP
+\fBhelp\fR
+.RS 4
+Print short information about command syntax\&.
+.sp
+Added in version 250\&.
+.RE
+.SH "SEE ALSO"
+.PP
+\fBsystemd\fR(1), \fBintegritytab\fR(5), \fBsystemd-integritysetup-generator\fR(8), \fBintegritysetup\fR(8)
+.SH "NOTES"
+.IP " 1." 4
+Kernel dm-integrity
+.RS 4
+\%https://docs.kernel.org/admin-guide/device-mapper/dm-integrity.html
+.RE

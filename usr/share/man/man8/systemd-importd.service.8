@@ -1,0 +1,50 @@
+'\" t
+.TH "SYSTEMD\-IMPORTD\&.SERVICE" "8" "" "systemd 256.4" "systemd-importd.service"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+systemd-importd.service, systemd-importd \- VM and container image import and export service
+.SH "SYNOPSIS"
+.PP
+systemd\-importd\&.service
+.PP
+/usr/lib/systemd/systemd\-importd
+.SH "DESCRIPTION"
+.PP
+\fBsystemd\-importd\fR
+is a system service that allows importing, exporting and downloading of disk images\&. It provides the implementation for
+\fBimportctl\fR(1)\*(Aqs
+\fBpull\-raw\fR,
+\fBpull\-tar\fR,
+\fBimport\-raw\fR,
+\fBimport\-tar\fR,
+\fBimport\-fs\fR,
+\fBexport\-raw\fR, and
+\fBexport\-tar\fR
+commands\&.
+.PP
+See
+\fBorg.freedesktop.import1\fR(5)
+and
+\fBorg.freedesktop.LogControl1\fR(5)
+for a description of the D\-Bus API\&.
+.SH "SEE ALSO"
+.PP
+\fBsystemd\fR(1), \fBimportctl\fR(1), \fBsystemd-machined.service\fR(8), \fBsystemd-nspawn\fR(1)

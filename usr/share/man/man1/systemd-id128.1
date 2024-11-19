@@ -1,0 +1,213 @@
+'\" t
+.TH "SYSTEMD\-ID128" "1" "" "systemd 256.4" "systemd-id128"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+systemd-id128 \- Generate and print sd\-128 identifiers
+.SH "SYNOPSIS"
+.HP \w'\fBsystemd\-id128\fR\ 'u
+\fBsystemd\-id128\fR [OPTIONS...] new
+.HP \w'\fBsystemd\-id128\fR\ 'u
+\fBsystemd\-id128\fR [OPTIONS...] machine\-id
+.HP \w'\fBsystemd\-id128\fR\ 'u
+\fBsystemd\-id128\fR [OPTIONS...] boot\-id
+.HP \w'\fBsystemd\-id128\fR\ 'u
+\fBsystemd\-id128\fR [OPTIONS...] invocation\-id
+.HP \w'\fBsystemd\-id128\fR\ 'u
+\fBsystemd\-id128\fR [OPTIONS...] show [NAME|UUID...]
+.SH "DESCRIPTION"
+.PP
+\fBid128\fR
+may be used to conveniently print
+\fBsd-id128\fR(3)
+UUIDs\&. What identifier is printed depends on the specific verb\&.
+.PP
+With
+\fBnew\fR, a new random identifier will be generated\&.
+.PP
+With
+\fBmachine\-id\fR, the identifier of the current machine will be printed\&. See
+\fBmachine-id\fR(5)\&.
+.PP
+With
+\fBboot\-id\fR, the identifier of the current boot will be printed\&.
+.PP
+With
+\fBinvocation\-id\fR, the identifier of the current service invocation will be printed\&. This is available in systemd services\&. See
+\fBsystemd.exec\fR(5)\&.
+.PP
+With
+\fBshow\fR, well\-known IDs are printed (for now, only GPT partition type UUIDs), along with brief identifier strings\&. When no arguments are specified, all known IDs are shown\&. When arguments are specified, they may be the identifiers or ID values of one or more known IDs, which are then printed with their name, or arbitrary IDs, which are then printed with a placeholder name\&. Combine with
+\fB\-\-uuid\fR
+to list the IDs in UUID style, i\&.e\&. the way GPT partition type UUIDs are usually shown\&.
+.PP
+\fBmachine\-id\fR,
+\fBboot\-id\fR, and
+\fBshow\fR
+may be combined with the
+\fB\-\-app\-specific=\fR\fB\fIapp\-id\fR\fR
+switch to generate application\-specific IDs\&. See
+\fBsd_id128_get_machine\fR(3)
+for the discussion when this is useful\&. Support for
+\fBshow \-\-app\-specific=\fR
+was added in version 255\&.
+.SH "OPTIONS"
+.PP
+The following options are understood:
+.PP
+\fB\-p\fR, \fB\-\-pretty\fR
+.RS 4
+Generate output as programming language snippets\&.
+.sp
+Added in version 240\&.
+.RE
+.PP
+\fB\-P\fR, \fB\-\-value\fR
+.RS 4
+Only print the value\&. May be combined with
+\fB\-u\fR/\fB\-\-uuid\fR\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+\fB\-a \fR\fB\fIapp\-id\fR\fR, \fB\-\-app\-specific=\fR\fB\fIapp\-id\fR\fR
+.RS 4
+With this option, identifiers will be printed that are the result of hashing the application identifier
+\fIapp\-id\fR
+and another ID\&. The
+\fIapp\-id\fR
+argument must be a valid sd\-id128 string identifying the application\&. When used with
+\fBmachine\-id\fR, the other ID will be the machine ID as described in
+\fBmachine-id\fR(5), when used with
+\fBboot\-id\fR, the other ID will be the boot ID, and when used with
+\fBshow\fR, the other ID or IDs should be specified via the positional arguments\&.
+.sp
+Added in version 240\&.
+.RE
+.PP
+\fB\-u\fR, \fB\-\-uuid\fR
+.RS 4
+Generate output as a UUID formatted in the "canonical representation", with five groups of digits separated by hyphens\&. See the Wikipedia entry for
+\m[blue]\fBUniversally Unique Identifiers\fR\m[]\&\s-2\u[1]\d\s+2
+for more discussion\&.
+.sp
+Added in version 244\&.
+.RE
+.PP
+\fB\-\-no\-pager\fR
+.RS 4
+Do not pipe output into a pager\&.
+.RE
+.PP
+\fB\-\-no\-legend\fR
+.RS 4
+Do not print the legend, i\&.e\&. column headers and the footer with hints\&.
+.RE
+.PP
+\fB\-\-json=\fR\fB\fIMODE\fR\fR
+.RS 4
+Shows output formatted as JSON\&. Expects one of
+"short"
+(for the shortest possible output without any redundant whitespace or line breaks),
+"pretty"
+(for a pretty version of the same, with indentation and line breaks) or
+"off"
+(to turn off JSON output, the default)\&.
+.RE
+.PP
+\fB\-j\fR
+.RS 4
+Equivalent to
+\fB\-\-json=pretty\fR
+if running on a terminal, and
+\fB\-\-json=short\fR
+otherwise\&.
+.RE
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Print a short help text and exit\&.
+.RE
+.PP
+\fB\-\-version\fR
+.RS 4
+Print a short version string and exit\&.
+.RE
+.SH "EXIT STATUS"
+.PP
+On success 0 is returned, and a non\-zero failure code otherwise\&.
+.SH "EXAMPLES"
+.PP
+\fBExample\ \&1.\ \&Show a well\-known UUID\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+$ systemd\-id128 show \-\-value user\-home
+773f91ef66d449b5bd83d683bf40ad16
+
+$ systemd\-id128 show \-\-value \-\-uuid user\-home
+773f91ef\-66d4\-49b5\-bd83\-d683bf40ad16
+
+$ systemd\-id128 show 773f91ef\-66d4\-49b5\-bd83\-d683bf40ad16
+NAME      ID
+user\-home 773f91ef66d449b5bd83d683bf40ad16
+      
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+\fBExample\ \&2.\ \&Generate an application\-specific UUID\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+$ systemd\-id128 machine\-id \-u
+3a9d668b\-4db7\-4939\-8a4a\-5e78a03bffb7
+
+$ systemd\-id128 new \-u
+1fb8f24b\-02df\-458d\-9659\-cc8ace68e28a
+
+$ systemd\-id128 machine\-id \-u \-a 1fb8f24b\-02df\-458d\-9659\-cc8ace68e28a
+47b82cb1\-5339\-43da\-b2a6\-1c350aef1bd1
+
+$ systemd\-id128 \-Pu show 3a9d668b\-4db7\-4939\-8a4a\-5e78a03bffb7 \e
+    \-a 1fb8f24b\-02df\-458d\-9659\-cc8ace68e28a
+47b82cb1\-5339\-43da\-b2a6\-1c350aef1bd1
+      
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+On a given machine with the ID 3a9d668b\-4db7\-4939\-8a4a\-5e78a03bffb7, for the application 1fb8f24b\-02df\-458d\-9659\-cc8ace68e28a, we generate an application\-specific machine ID (47b82cb1\-5339\-43da\-b2a6\-1c350aef1bd1)\&. If we want to later recreate the same calculation on a different machine, we need to specify both IDs explicitly as parameters to
+\fBshow\fR\&.
+.SH "SEE ALSO"
+.PP
+\fBsystemd\fR(1), \fBsd-id128\fR(3), \fBsd_id128_get_machine\fR(3)
+.SH "NOTES"
+.IP " 1." 4
+Universally Unique Identifiers
+.RS 4
+\%https://en.wikipedia.org/wiki/Universally_unique_identifier#Format
+.RE

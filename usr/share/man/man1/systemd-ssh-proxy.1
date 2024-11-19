@@ -1,0 +1,132 @@
+'\" t
+.TH "SYSTEMD\-SSH\-PROXY" "1" "" "systemd 256.4" "systemd-ssh-proxy"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+systemd-ssh-proxy \- SSH client plugin for connecting to \fBAF_VSOCK\fR and \fBAF_UNIX\fR sockets
+.SH "SYNOPSIS"
+.sp
+.nf
+Host unix/* vsock/*
+    ProxyCommand /usr/lib/systemd/systemd\-ssh\-proxy %h %p
+    ProxyUseFdpass yes
+.fi
+.HP \w'\fB/usr/lib/systemd/systemd\-ssh\-proxy\fR\ 'u
+\fB/usr/lib/systemd/systemd\-ssh\-proxy\fR [ADDRESS] [PORT]
+.SH "DESCRIPTION"
+.PP
+\fBsystemd\-ssh\-proxy\fR
+is a small "proxy" plugin for the
+\fBssh\fR(1)
+tool that allows connecting to
+\fBAF_UNIX\fR
+and
+\fBAF_VSOCK\fR
+sockets\&. It implements the interface defined by
+ssh\*(Aqs
+\fIProxyCommand\fR
+configuration option\&. It\*(Aqs supposed to be used with an
+\fBssh_config\fR(5)
+configuration fragment like the following:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+Host unix/* vsock/*
+    ProxyCommand /usr/lib/systemd/systemd\-ssh\-proxy %h %p
+    ProxyUseFdpass yes
+    CheckHostIP no
+
+Host \&.host
+    ProxyCommand /usr/lib/systemd/systemd\-ssh\-proxy unix/run/ssh\-unix\-local/socket %p
+    ProxyUseFdpass yes
+    CheckHostIP no
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+A configuration fragment along these lines is by default installed into
+/etc/ssh/ssh_config\&.d/20\-systemd\-ssh\-proxy\&.conf\&.in\&.
+.PP
+With this in place, SSH connections to host string
+"unix/"
+followed by an absolute
+\fBAF_UNIX\fR
+file system path to a socket will be directed to the specified socket, which must be of type
+\fBSOCK_STREAM\fR\&. Similar, SSH connections to
+"vsock/"
+followed by an
+\fBAF_VSOCK\fR
+CID will result in an SSH connection made to that CID\&. Moreover connecting to
+"\&.host"
+will connect to the local host via SSH, without involving networking\&.
+.PP
+This tool is supposed to be used together with
+\fBsystemd-ssh-generator\fR(8)
+which when run inside a VM or container will bind SSH to suitable addresses\&.
+\fBsystemd\-ssh\-generator\fR
+is supposed to run in the container of VM guest, and
+\fBsystemd\-ssh\-proxy\fR
+is run on the host, in order to connect to the container or VM guest\&.
+.SH "EXIT STATUS"
+.PP
+On success, 0 is returned, a non\-zero failure code otherwise\&.
+.SH "EXAMPLES"
+.PP
+\fBExample\ \&1.\ \&Talk to a local VM with CID 4711\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+ssh vsock/4711
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+\fBExample\ \&2.\ \&Talk to the local host via ssh\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+ssh \&.host
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+or equivalent:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+ssh unix/run/ssh\-unix\-local/socket
+.fi
+.if n \{\
+.RE
+.\}
+.SH "SEE ALSO"
+.PP
+\fBsystemd\fR(1), \fBsystemd-ssh-generator\fR(8), \fBvsock\fR(7), \fBunix\fR(7), \fBssh\fR(1), \fBsshd\fR(8)

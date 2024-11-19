@@ -1,0 +1,253 @@
+'\" t
+.TH "SYSTEMD\-VPICK" "1" "" "systemd 256.4" "systemd-vpick"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+systemd-vpick \- Resolve paths to "\&.v/" versioned directories
+.SH "SYNOPSIS"
+.HP \w'\fBsystemd\-vpick\ \fR\fB[OPTIONS...]\fR\fB\ \fR\fB[PATH...]\fR\ 'u
+\fBsystemd\-vpick \fR\fB[OPTIONS...]\fR\fB \fR\fB[PATH...]\fR
+.SH "DESCRIPTION"
+.PP
+\fBsystemd\-vpick\fR
+resolves a file system path referencing a
+"\&.v/"
+versioned directory to a path to the newest (by version) file contained therein\&. This tool provides a command line interface for the
+\fBsystemd.v\fR(7)
+logic\&.
+.PP
+The tool expects a path to a
+"\&.v/"
+directory as argument (either directly, or with a triple underscore pattern as final component)\&. It then determines the newest file contained in that directory, and writes its path to standard output\&.
+.PP
+Unless the triple underscore pattern is passed as last component of the path, it is typically necessary to at least specify the
+\fB\-\-suffix=\fR
+switch to configure the file suffix to look for\&.
+.PP
+If the specified path does not reference a
+"\&.v/"
+path (i\&.e\&. neither the final component ends in
+"\&.v", nor the penultimate does or the final one does contain a triple underscore) it specified path is written unmodified to standard output\&.
+.SH "OPTIONS"
+.PP
+The following options are understood:
+.PP
+\fB\-\-basename=\fR, \fB\-B\fR
+.RS 4
+Overrides the "basename" of the files to look for, i\&.e\&. the part to the left of the variable part of the filenames\&. Normally this is derived automatically from the filename of the
+"\&.v"
+component of the specified path, or from the triple underscore pattern in the last component of the specified path\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fB\-V\fR
+.RS 4
+Explicitly configures the version to select\&. If specified, a filename with the specified version string will be looked for, instead of the newest version available\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fB\-A\fR
+.RS 4
+Explicitly configures the architecture to select\&. If specified, a filename with the specified architecture identifier will be looked for\&. If not specified only filenames with a locally supported architecture are considered, or those without any architecture identifier\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fB\-\-suffix=\fR, \fB\-S\fR
+.RS 4
+Configures the suffix of the filenames to consider\&. For the
+"\&.v/"
+logic it is necessary to specify the suffix to look for, and the
+"\&.v/"
+component must also carry the suffix immediately before
+"\&.v"
+in its name\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fB\-\-type=\fR, \fB\-t\fR
+.RS 4
+Configures the inode type to look for in the
+"\&.v/"
+directory\&. Takes one of
+"reg",
+"dir",
+"sock",
+"fifo",
+"blk",
+"chr",
+"lnk"
+as argument, each identifying an inode type\&. See
+\fBinode\fR(7)
+for details about inode types\&. If this option is used inodes not matching the specified type are filtered and not taken into consideration\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fB\-\-print=\fR, \fB\-p\fR
+.RS 4
+Configures what precisely to write to standard output\&. If not specified prints the full, resolved path of the newest matching file in the
+"\&.v/"
+directory\&. This switch can be set to one of the following:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+If set to
+"filename", will print only the filename instead of the full path of the resolved file\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+If set to
+"version", will print only the version of the resolved file\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+If set to
+"type", will print only the inode type of the resolved file (i\&.e\&. a string such as
+"reg"
+for regular files, or
+"dir"
+for directories)\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+If set to
+"arch", will print only the architecture of the resolved file\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+If set to
+"tries", will print only the tries left/tries done of the resolved file\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+If set to
+"all", will print all of the above in a simple tabular output\&.
+.RE
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fB\-\-resolve=\fR
+.RS 4
+Takes a boolean argument\&. If true the path to the versioned file is fully canonicalized (i\&.e\&. symlinks resolved, and redundant path components removed) before it is shown\&. If false (the default) this is not done, and the path is shown without canonicalization\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Print a short help text and exit\&.
+.RE
+.PP
+\fB\-\-version\fR
+.RS 4
+Print a short version string and exit\&.
+.RE
+.SH "EXAMPLES"
+.PP
+Use a command like the following to automatically pick the newest raw disk image from a
+"\&.v/"
+directory:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+$ systemd\-vpick \-\-suffix=\&.raw \-\-type=reg /var/lib/machines/quux\&.raw\&.v/
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+This will enumerate all regular files matching
+/var/lib/machines/quux\&.raw\&.v/quux*\&.raw, filter and sort them according to the rules described in
+\fBsystemd.v\fR(7), and then write the path to the newest (by version) file to standard output\&.
+.PP
+Use a command like the following to automatically pick the newest OS directory tree from a
+"\&.v/"
+directory:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+$ systemd\-vpick \-\-type=dir /var/lib/machines/waldo\&.v/
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+This will enumerate all directory inodes matching
+/var/lib/machines/waldo\&.v/waldo*, filter and sort them according to the rules described in
+\fBsystemd.v\fR(7), and then write the path to the newest (by version) directory to standard output\&.
+.PP
+For further examples see
+\fBsystemd.v\fR(7)\&.
+.SH "EXIT STATUS"
+.PP
+On success, 0 is returned, a non\-zero failure code otherwise\&.
+.SH "SEE ALSO"
+.PP
+\fBsystemd\fR(1), \fBsystemd.v\fR(7)

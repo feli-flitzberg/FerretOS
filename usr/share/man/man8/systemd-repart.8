@@ -1,0 +1,820 @@
+'\" t
+.TH "SYSTEMD\-REPART" "8" "" "systemd 256.4" "systemd-repart"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+systemd-repart, systemd-repart.service \- Automatically grow and add partitions
+.SH "SYNOPSIS"
+.HP \w'\fBsystemd\-repart\fR\ 'u
+\fBsystemd\-repart\fR [OPTIONS...] [\fI[BLOCKDEVICE]\fR...]
+.PP
+systemd\-repart\&.service
+.SH "DESCRIPTION"
+.PP
+\fBsystemd\-repart\fR
+creates partition tables, and adds or grows partitions, based on the configuration files described in
+\fBrepart.d\fR(5)\&.
+.PP
+\fBsystemd\-repart\fR
+is used when
+\fIbuilding\fR
+OS images, and also when
+\fIdeploying\fR
+images to automatically adjust them, during boot, to the system they are running on\&. This way the image can be minimal in size and may be augmented automatically at boot, taking possession of the disk space available\&.
+.PP
+If invoked with no arguments,
+\fBsystemd\-repart\fR
+operates on the block device backing the root file system partition of the running OS, thus adding and growing partitions of the booted OS itself\&. When called in the initrd, it operates on the block device backing
+/sysroot/
+instead, i\&.e\&. on the block device the system will soon transition into\&. If
+\fI\-\-image=\fR
+is used, it will operate on the specified device or image file\&. The
+systemd\-repart\&.service
+service is generally run at boot in the initrd, in order to augment the partition table of the OS before its partitions are mounted\&.
+.PP
+\fBsystemd\-repart\fR
+operations are mostly incremental: it grows existing partitions or adds new ones, but does not shrink, delete, or move existing partitions\&. The service is intended to be run on every boot, but when it detects that the partition table already matches the installed
+repart\&.d/*\&.conf
+configuration files, it executes no operation\&.
+.PP
+The following use cases are among those covered:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+The root partition may be grown to cover the whole available disk space\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+A
+/home/, swap, or
+/srv/
+partition can be added\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+A second (or third, \&...) root partition may be added, to cover A/B style setups where a second version of the root file system is alternatingly used for implementing update schemes\&. The deployed image would carry only a single partition ("A") but on first boot a second partition ("B") for this purpose is automatically created\&.
+.RE
+.PP
+The algorithm executed by
+\fBsystemd\-repart\fR
+is roughly as follows:
+.sp
+.RS 4
+.ie n \{\
+\h'-04' 1.\h'+01'\c
+.\}
+.el \{\
+.sp -1
+.IP "  1." 4.2
+.\}
+The
+repart\&.d/*\&.conf
+configuration files are loaded and parsed, and ordered by filename (without the directory prefix)\&. For each configuration file, drop\-in files are loaded from directories with same name as the configuration file with the suffix "\&.d" added\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04' 2.\h'+01'\c
+.\}
+.el \{\
+.sp -1
+.IP "  2." 4.2
+.\}
+The partition table on the block device is loaded and parsed, if present\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04' 3.\h'+01'\c
+.\}
+.el \{\
+.sp -1
+.IP "  3." 4.2
+.\}
+The existing partitions in the partition table are matched with the
+repart\&.d/*\&.conf
+files by GPT partition type UUID\&. The first existing partition of a specific type is assigned the first configuration file declaring the same type\&. The second existing partition of a specific type is then assigned the second configuration file declaring the same type, and so on\&. After this iterative assigning is complete, any existing partitions that have no matching configuration file are considered "foreign" and left as they are\&. And any configuration files for which no partition was matched are treated as requests to create a partition\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04' 4.\h'+01'\c
+.\}
+.el \{\
+.sp -1
+.IP "  4." 4.2
+.\}
+Partitions that shall be created are now allocated on the disk, taking the size constraints and weights declared in the configuration files into account\&. Free space is used within the limits set by size and padding requests\&. In addition, existing partitions that should be grown are grown\&. New partitions are always appended to the end of the partition table, taking the first partition table slot whose index is greater than the indexes of all existing partitions\&. Partitions are never reordered and thus partition numbers remain stable\&. When partitions are created, they are placed in the smallest area of free space that is large enough to satisfy the size and padding limits\&. This means that partitions might have different order on disk than in the partition table\&. Note that this allocation happens in memory only, the partition table on disk is not updated yet\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04' 5.\h'+01'\c
+.\}
+.el \{\
+.sp -1
+.IP "  5." 4.2
+.\}
+All existing partitions for which configuration files exist and which currently have no GPT partition label set will be assigned a label, either explicitly configured in the configuration or \(em if that\*(Aqs missing \(em derived automatically from the partition type\&. The same is done for all partitions that are newly created\&. These assignments are done in memory only, too, the disk is not updated yet\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04' 6.\h'+01'\c
+.\}
+.el \{\
+.sp -1
+.IP "  6." 4.2
+.\}
+Similarly, all existing partitions for which configuration files exist and which currently have an all\-zero identifying UUID will be assigned a new UUID\&. This UUID is cryptographically hashed from a common seed value together with the partition type UUID (and a counter in case multiple partitions of the same type are defined), see below\&. The same is done for all partitions that are created anew\&. These assignments are done in memory only, too, the disk is not updated yet\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04' 7.\h'+01'\c
+.\}
+.el \{\
+.sp -1
+.IP "  7." 4.2
+.\}
+Similarly, if the disk\*(Aqs volume UUID is all zeroes it is also initialized, also cryptographically hashed from the same common seed value\&. This is done in memory only too\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04' 8.\h'+01'\c
+.\}
+.el \{\
+.sp -1
+.IP "  8." 4.2
+.\}
+The disk space assigned to new partitions (i\&.e\&. what was previously free space) is now erased\&. Specifically, all file system signatures are removed, and if the device supports it, the
+\fBBLKDISCARD\fR
+I/O control command is issued to inform the hardware that the space is now empty\&. In addition any "padding" between partitions and at the end of the device is similarly erased\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04' 9.\h'+01'\c
+.\}
+.el \{\
+.sp -1
+.IP "  9." 4.2
+.\}
+The new partition table is finally written to disk\&. The kernel is asked to reread the partition table\&.
+.RE
+.PP
+As an exception to the normal incremental operation, when called in a special "factory reset" mode,
+\fBsystemd\-repart\fR
+may be used to erase existing partitions to reset an installation back to vendor defaults\&. This mode of operation is used when either the
+\fB\-\-factory\-reset=yes\fR
+switch is passed on the tool\*(Aqs command line, or the
+\fBsystemd\&.factory_reset=yes\fR
+option is specified on the kernel command line, or the
+\fIFactoryReset\fR
+EFI variable (vendor UUID
+\fB8cf2644b\-4b0b\-428f\-9387\-6d876050dc67\fR) is set to "yes"\&. It alters the algorithm above slightly: between the 3rd and the 4th step above any partition marked explicitly via the
+\fIFactoryReset=\fR
+boolean is deleted, and the algorithm restarted, thus immediately re\-creating these partitions anew empty\&.
+.PP
+Note that
+\fBsystemd\-repart\fR
+by default only changes partition tables, it does not create or resize any file systems within these partitions, unless the
+\fIFormat=\fR
+configuration option is specified\&. Also note that there are also separate mechanisms available for this purpose, for example
+\fBsystemd-growfs\fR(8)
+and
+\fBsystemd\-makefs\fR\&.
+.PP
+The UUIDs identifying the new partitions created (or assigned to existing partitions that have no UUID yet), as well as the disk as a whole are hashed cryptographically from a common seed value\&. This seed value is usually the
+\fBmachine-id\fR(5)
+of the system, so that the machine ID reproducibly determines the UUIDs assigned to all partitions\&. If the machine ID cannot be read (or the user passes
+\fB\-\-seed=random\fR, see below) the seed is generated randomly instead, so that the partition UUIDs are also effectively random\&. The seed value may also be set explicitly, formatted as UUID via the
+\fB\-\-seed=\fR
+option\&. By hashing these UUIDs from a common seed images prepared with this tool become reproducible and the result of the algorithm above deterministic\&.
+.PP
+The positional argument should specify the block device or a regular file to operate on\&. If
+\fB\-\-empty=create\fR
+is specified, the specified path is created as regular file, which is useful for generating disk images from scratch\&.
+.SH "OPTIONS"
+.PP
+The following options are understood:
+.PP
+\fB\-\-dry\-run=\fR
+.RS 4
+Takes a boolean\&. If this switch is not specified
+\fB\-\-dry\-run=yes\fR
+is the implied default\&. Controls whether
+systemd\-repart
+executes the requested re\-partition operations or whether it should only show what it would do\&. Unless
+\fB\-\-dry\-run=no\fR
+is specified
+systemd\-repart
+will not actually touch the device\*(Aqs partition table\&.
+.sp
+Added in version 245\&.
+.RE
+.PP
+\fB\-\-empty=\fR
+.RS 4
+Takes one of
+"refuse",
+"allow",
+"require",
+"force"
+or
+"create"\&. Controls how to operate on block devices that are entirely empty, i\&.e\&. carry no partition table/disk label yet\&. If this switch is not specified the implied default is
+"refuse"\&.
+.sp
+If
+"refuse"
+\fBsystemd\-repart\fR
+requires that the block device it shall operate on already carries a partition table and refuses operation if none is found\&. If
+"allow"
+the command will extend an existing partition table or create a new one if none exists\&. If
+"require"
+the command will create a new partition table if none exists so far, and refuse operation if one already exists\&. If
+"force"
+it will create a fresh partition table unconditionally, erasing the disk fully in effect\&. If
+"force"
+no existing partitions will be taken into account or survive the operation\&. Hence: use with care, this is a great way to lose all your data\&. If
+"create"
+a new loopback file is create under the path passed via the device node parameter, of the size indicated with
+\fB\-\-size=\fR, see below\&.
+.sp
+Added in version 245\&.
+.RE
+.PP
+\fB\-\-discard=\fR
+.RS 4
+Takes a boolean\&. If this switch is not specified
+\fB\-\-discard=yes\fR
+is the implied default\&. Controls whether to issue the
+\fBBLKDISCARD\fR
+I/O control command on the space taken up by any added partitions or on the space in between them\&. Usually, it\*(Aqs a good idea to issue this request since it tells the underlying hardware that the covered blocks shall be considered empty, improving performance\&. If operating on a regular file instead of a block device node, a sparse file is generated\&.
+.sp
+Added in version 245\&.
+.RE
+.PP
+\fB\-\-size=\fR
+.RS 4
+Takes a size in bytes, using the usual K, M, G, T suffixes, or the special value
+"auto"\&. If used the specified device node path must refer to a regular file, which is then grown to the specified size if smaller, before any change is made to the partition table\&. If specified as
+"auto"
+the minimal size for the disk image is automatically determined (i\&.e\&. the minimal sizes of all partitions are summed up, taking space for additional metadata into account)\&. This switch is not supported if the specified node is a block device\&. This switch has no effect if the file is already as large as the specified size or larger\&. The specified size is implicitly rounded up to multiples of 4096\&. When used with
+\fB\-\-empty=create\fR
+this specifies the initial size of the loopback file to create\&.
+.sp
+The
+\fB\-\-size=auto\fR
+option takes the sizes of pre\-existing partitions into account\&. However, it does not accommodate for partition tables that are not tightly packed: the configured partitions might still not fit into the backing device if empty space exists between pre\-existing partitions (or before the first partition) that cannot be fully filled by partitions to grow or create\&.
+.sp
+Also note that the automatic size determination does not take files or directories specified with
+\fBCopyFiles=\fR
+into account: operation might fail if the specified files or directories require more disk space then the configured per\-partition minimal size limit\&.
+.sp
+Added in version 246\&.
+.RE
+.PP
+\fB\-\-factory\-reset=\fR
+.RS 4
+Takes boolean\&. If this switch is not specified
+\fB\-\-factory=reset=no\fR
+is the implied default\&. Controls whether to operate in "factory reset" mode, see above\&. If set to true this will remove all existing partitions marked with
+\fIFactoryReset=\fR
+set to yes early while executing the re\-partitioning algorithm\&. Use with care, this is a great way to lose all your data\&. Note that partition files need to explicitly turn
+\fIFactoryReset=\fR
+on, as the option defaults to off\&. If no partitions are marked for factory reset this switch has no effect\&. Note that there are two other methods to request factory reset operation: via the kernel command line and via an EFI variable, see above\&.
+.sp
+Added in version 245\&.
+.RE
+.PP
+\fB\-\-can\-factory\-reset\fR
+.RS 4
+If this switch is specified the disk is not re\-partitioned\&. Instead it is determined if any existing partitions are marked with
+\fIFactoryReset=\fR\&. If there are the tool will exit with exit status zero, otherwise non\-zero\&. This switch may be used to quickly determine whether the running system supports a factory reset mechanism built on
+\fBsystemd\-repart\fR\&.
+.sp
+Added in version 245\&.
+.RE
+.PP
+\fB\-\-root=\fR
+.RS 4
+Takes a path to a directory to use as root file system when searching for
+repart\&.d/*\&.conf
+files, for the machine ID file to use as seed and for the
+\fICopyFiles=\fR
+and
+\fICopyBlocks=\fR
+source files and directories\&. By default when invoked on the regular system this defaults to the host\*(Aqs root file system
+/\&. If invoked from the initrd this defaults to
+/sysroot/, so that the tool operates on the configuration and machine ID stored in the root file system later transitioned into itself\&.
+.sp
+See
+\fB\-\-copy\-source=\fR
+for a more restricted option that only affects
+\fICopyFiles=\fR\&.
+.sp
+Added in version 245\&.
+.RE
+.PP
+\fB\-\-image=\fR
+.RS 4
+Takes a path to a disk image file or device to mount and use in a similar fashion to
+\fB\-\-root=\fR, see above\&.
+.sp
+Added in version 249\&.
+.RE
+.PP
+\fB\-\-image\-policy=\fR\fB\fIpolicy\fR\fR
+.RS 4
+Takes an image policy string as argument, as per
+\fBsystemd.image-policy\fR(7)\&. The policy is enforced when operating on the disk image specified via
+\fB\-\-image=\fR, see above\&. If not specified defaults to the
+"*"
+policy, i\&.e\&. all recognized file systems in the image are used\&.
+.RE
+.PP
+\fB\-\-seed=\fR
+.RS 4
+Takes a UUID as argument or the special value
+\fBrandom\fR\&. If a UUID is specified the UUIDs to assign to partitions and the partition table itself are derived via cryptographic hashing from it\&. If not specified it is attempted to read the machine ID from the host (or more precisely, the root directory configured via
+\fB\-\-root=\fR) and use it as seed instead, falling back to a randomized seed otherwise\&. Use
+\fB\-\-seed=random\fR
+to force a randomized seed\&. Explicitly specifying the seed may be used to generated strictly reproducible partition tables\&.
+.sp
+Added in version 245\&.
+.RE
+.PP
+\fB\-\-pretty=\fR
+.RS 4
+Takes a boolean argument\&. If this switch is not specified, it defaults to on when called from an interactive terminal and off otherwise\&. Controls whether to show a user friendly table and graphic illustrating the changes applied\&.
+.sp
+Added in version 245\&.
+.RE
+.PP
+\fB\-\-definitions=\fR
+.RS 4
+Takes a file system path\&. If specified the
+*\&.conf
+files are read from the specified directory instead of searching in
+/usr/lib/repart\&.d/*\&.conf,
+/etc/repart\&.d/*\&.conf,
+/run/repart\&.d/*\&.conf\&.
+.sp
+This parameter can be specified multiple times\&.
+.sp
+Added in version 245\&.
+.RE
+.PP
+\fB\-\-key\-file=\fR
+.RS 4
+Takes a file system path\&. Configures the encryption key to use when setting up LUKS2 volumes configured with the
+\fIEncrypt=key\-file\fR
+setting in partition files\&. Should refer to a regular file containing the key, or an
+\fBAF_UNIX\fR
+stream socket in the file system\&. In the latter case a connection is made to it and the key read from it\&. If this switch is not specified the empty key (i\&.e\&. zero length key) is used\&. This behaviour is useful for setting up encrypted partitions during early first boot that receive their user\-supplied password only in a later setup step\&.
+.sp
+Added in version 247\&.
+.RE
+.PP
+\fB\-\-private\-key=\fR
+.RS 4
+Takes a file system path\&. Configures the signing key to use when creating verity signature partitions with the
+\fIVerity=signature\fR
+setting in partition files\&.
+.sp
+Added in version 252\&.
+.RE
+.PP
+\fB\-\-private\-key\-source=\fR
+.RS 4
+Takes one of
+"file",
+"engine"
+or
+"provider"\&. In the latter two cases, it is followed by the name of a provider or engine, separated by colon, that will be passed to OpenSSL\*(Aqs "engine" or "provider" logic\&. Configures the signing mechanism to use when creating verity signature partitions with the
+\fIVerity=signature\fR
+setting in partition files\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fB\-\-certificate=\fR
+.RS 4
+Takes a file system path\&. Configures the PEM encoded X\&.509 certificate to use when creating verity signature partitions with the
+\fIVerity=signature\fR
+setting in partition files\&.
+.sp
+Added in version 252\&.
+.RE
+.PP
+\fB\-\-tpm2\-device=\fR, \fB\-\-tpm2\-pcrs=\fR
+.RS 4
+Configures the TPM2 device and list of PCRs to use for LUKS2 volumes configured with the
+\fIEncrypt=tpm2\fR
+option\&. These options take the same parameters as the identically named options to
+\fBsystemd-cryptenroll\fR(1)
+and have the same effect on partitions where TPM2 enrollment is requested\&.
+.sp
+Added in version 248\&.
+.RE
+.PP
+\fB\-\-tpm2\-device\-key=\fR\fB\fIPATH\fR\fR, \fB\-\-tpm2\-seal\-key\-handle=\fR\fB\fIHANDLE\fR\fR
+.RS 4
+Configures a TPM2 SRK key to bind encryption to\&. See
+\fBsystemd-cryptenroll\fR(1)
+for details on this option\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+\fB\-\-tpm2\-public\-key=\fR\fB\fIPATH\fR\fR, \fB\-\-tpm2\-public\-key\-pcrs=\fR\fB\fIPCR\fR\fI[+PCR\&.\&.\&.]\fR\fR
+.RS 4
+Configures a TPM2 signed PCR policy to bind encryption to\&. See
+\fBsystemd-cryptenroll\fR(1)
+for details on these two options\&.
+.sp
+Added in version 252\&.
+.RE
+.PP
+\fB\-\-tpm2\-pcrlock=\fR\fB\fIPATH\fR\fR
+.RS 4
+Configures a TPM2 pcrlock policy to bind encryption to\&. See
+\fBsystemd-cryptenroll\fR(1)
+for details on this option\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+\fB\-\-split=\fR\fB\fIBOOL\fR\fR
+.RS 4
+Enables generation of split artifacts from partitions configured with
+\fISplitName=\fR\&. If enabled, for each partition with
+\fISplitName=\fR
+set, a separate output file containing just the contents of that partition is generated\&. The output filename consists of the loopback filename suffixed with the name configured with
+\fISplitName=\fR\&. If the loopback filename ends with
+"\&.raw", the suffix is inserted before the
+"\&.raw"
+extension instead\&.
+.sp
+Note that
+\fB\-\-split\fR
+is independent from
+\fB\-\-dry\-run\fR\&. Even if
+\fB\-\-dry\-run\fR
+is enabled, split artifacts will still be generated from an existing image if
+\fB\-\-split\fR
+is enabled\&.
+.sp
+Added in version 252\&.
+.RE
+.PP
+\fB\-\-include\-partitions=\fR\fB\fIPARTITIONS\fR\fR, \fB\-\-exclude\-partitions=\fR\fB\fIPARTITIONS\fR\fR
+.RS 4
+These options specify which partition types
+\fBsystemd\-repart\fR
+should operate on\&. If
+\fB\-\-include\-partitions=\fR
+is used, all partitions that aren\*(Aqt specified are excluded\&. If
+\fB\-\-exclude\-partitions=\fR
+is used, all partitions that are specified are excluded\&. Both options take a comma separated list of GPT partition type UUIDs or identifiers (see
+\fIType=\fR
+in
+\fBrepart.d\fR(5))\&.
+.sp
+Added in version 253\&.
+.RE
+.PP
+\fB\-\-defer\-partitions=\fR\fB\fIPARTITIONS\fR\fR
+.RS 4
+This option specifies for which partition types
+\fBsystemd\-repart\fR
+should defer\&. All partitions that are deferred using this option are still taken into account when calculating the sizes and offsets of other partitions, but aren\*(Aqt actually written to the disk image\&. The net effect of this option is that if you run
+\fBsystemd\-repart\fR
+again without this option, the missing partitions will be added as if they had not been deferred the first time
+\fBsystemd\-repart\fR
+was executed\&.
+.sp
+Added in version 253\&.
+.RE
+.PP
+\fB\-\-sector\-size=\fR\fB\fIBYTES\fR\fR
+.RS 4
+This option allows configuring the sector size of the image produced by
+\fBsystemd\-repart\fR\&. It takes a value that is a power of
+"2"
+between
+"512"
+and
+"4096"\&. This option is useful when building images for disks that use a different sector size as the disk on which the image is produced\&.
+.sp
+Added in version 253\&.
+.RE
+.PP
+\fB\-\-architecture=\fR\fB\fIARCH\fR\fR
+.RS 4
+This option allows overriding the architecture used for architecture specific partition types\&. For example, if set to
+"arm64"
+a partition type of
+"root\-x86\-64"
+referenced in
+repart\&.d/
+drop\-ins will be patched dynamically to refer to
+"root\-arm64"
+instead\&. Takes one of
+"alpha",
+"arc",
+"arm",
+"arm64",
+"ia64",
+"loongarch64",
+"mips\-le",
+"mips64\-le",
+"parisc",
+"ppc",
+"ppc64",
+"ppc64\-le",
+"riscv32",
+"riscv64",
+"s390",
+"s390x",
+"tilegx",
+"x86"
+or
+"x86\-64"\&.
+.sp
+Added in version 254\&.
+.RE
+.PP
+\fB\-\-offline=\fR\fB\fIBOOL\fR\fR
+.RS 4
+Instructs
+\fBsystemd\-repart\fR
+to build the image offline\&. Takes a boolean or
+"auto"\&. Defaults to
+"auto"\&. If enabled, the image is built without using loop devices\&. This is useful to build images unprivileged or when loop devices are not available\&. If disabled, the image is always built using loop devices\&. If
+"auto",
+\fBsystemd\-repart\fR
+will build the image online if possible and fall back to building the image offline if loop devices are not available or cannot be accessed due to missing permissions\&.
+.sp
+Added in version 254\&.
+.RE
+.PP
+\fB\-\-copy\-from=\fR\fB\fIIMAGE\fR\fR
+.RS 4
+Instructs
+\fBsystemd\-repart\fR
+to synthesize partition definitions from the partition table in the given image\&. This option can be specified multiple times to synthesize definitions from each of the given images\&. The generated definitions will copy the partitions into the destination partition table\&. The copied partitions will have the same size, metadata and contents but might have a different partition number and might be located at a different offset in the destination partition table\&. These definitions can be combined with partition definitions read from regular partition definition files\&. The synthesized definitions take precedence over the definitions read from partition definition files\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+\fB\-\-copy\-source=\fR\fB\fIPATH\fR\fR, \fB\-s\fR \fIPATH\fR
+.RS 4
+Specifies a source directory all
+\fICopyFiles=\fR
+source paths shall be considered relative to\&. This is similar to
+\fB\-\-root=\fR, but exclusively applies to the
+\fICopyFiles=\fR
+setting\&. If
+\fB\-\-root=\fR
+and
+\fB\-\-copy\-source=\fR
+are used in combination the former applies as usual, except for
+\fICopyFiles=\fR
+where the latter takes precedence\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+\fB\-\-make\-ddi=\fR\fB\fITYPE\fR\fR
+.RS 4
+Takes one of
+"sysext",
+"confext"
+or
+"portable"\&. Generates a Discoverable Disk Image (DDI) for a system extension (sysext, see
+\fBsystemd-sysext\fR(8)
+for details), configuration extension (confext) or
+\m[blue]\fBportable service\fR\m[]\&\s-2\u[1]\d\s+2\&. The generated image will consist of a signed Verity
+"erofs"
+file system as root partition\&. In this mode of operation the partition definitions in
+/usr/lib/repart\&.d/*\&.conf
+and related directories are not read, and
+\fB\-\-definitions=\fR
+is not supported, as appropriate definitions for the selected DDI class will be chosen automatically\&.
+.sp
+Must be used in conjunction with
+\fB\-\-copy\-source=\fR
+to specify the file hierarchy to populate the DDI with\&. The specified directory should contain an
+etc/
+subdirectory if
+"confext"
+is selected\&. If
+"sysext"
+is selected it should contain either a
+usr/
+or
+opt/
+directory, or both\&. If
+"portable"
+is used a full OS file hierarchy can be provided\&.
+.sp
+This option implies
+\fB\-\-empty=create\fR,
+\fB\-\-size=auto\fR
+and
+\fB\-\-seed=random\fR
+(the latter two can be overridden)\&.
+.sp
+The private key and certificate for signing the DDI must be specified via the
+\fB\-\-private\-key=\fR
+and
+\fB\-\-certificate=\fR
+switches\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+\fB\-S\fR, \fB\-C\fR, \fB\-P\fR
+.RS 4
+Shortcuts for
+\fB\-\-make\-ddi=sysext\fR,
+\fB\-\-make\-ddi=confext\fR,
+\fB\-\-make\-ddi=portable\fR, respectively\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+\fB\-\-generate\-fstab=\fR\fB\fIPATH\fR\fR
+.RS 4
+Specifies a path where to write fstab entries for the mountpoints configured with
+\fBMountPoint=\fR
+in the root directory specified with
+\fB\-\-copy\-source=\fR
+or
+\fB\-\-root=\fR
+or in the host\*(Aqs root directory if neither is specified\&. Disabled by default\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fB\-\-generate\-crypttab=\fR\fB\fIPATH\fR\fR
+.RS 4
+Specifies a path where to write crypttab entries for the encrypted volumes configured with
+\fBEncryptedVolume=\fR
+in the root directory specified with
+\fB\-\-copy\-source=\fR
+or
+\fB\-\-root=\fR
+or in the host\*(Aqs root directory if neither is specified\&. Disabled by default\&.
+.sp
+Added in version 256\&.
+.RE
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Print a short help text and exit\&.
+.RE
+.PP
+\fB\-\-version\fR
+.RS 4
+Print a short version string and exit\&.
+.RE
+.PP
+\fB\-\-no\-pager\fR
+.RS 4
+Do not pipe output into a pager\&.
+.RE
+.PP
+\fB\-\-no\-legend\fR
+.RS 4
+Do not print the legend, i\&.e\&. column headers and the footer with hints\&.
+.RE
+.PP
+\fB\-\-json=\fR\fB\fIMODE\fR\fR
+.RS 4
+Shows output formatted as JSON\&. Expects one of
+"short"
+(for the shortest possible output without any redundant whitespace or line breaks),
+"pretty"
+(for a pretty version of the same, with indentation and line breaks) or
+"off"
+(to turn off JSON output, the default)\&.
+.RE
+.SH "EXIT STATUS"
+.PP
+On success, 0 is returned, and a non\-zero failure code otherwise\&.
+.SH "EXAMPLE"
+.PP
+\fBExample\ \&1.\ \&Generate a configuration extension image\fR
+.PP
+The following creates a configuration extension DDI (confext) for an
+/etc/motd
+update:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+mkdir \-p tree/etc/extension\-release\&.d
+echo "Hello World" >tree/etc/motd
+cat >tree/etc/extension\-release\&.d/extension\-release\&.my\-motd <<EOF
+ID=fedora
+VERSION_ID=38
+IMAGE_ID=my\-motd
+IMAGE_VERSION=7
+EOF
+systemd\-repart \-C \e
+  \-\-private\-key=privkey\&.pem \e
+  \-\-certificate=cert\&.crt \e
+  \-s tree/ \e
+  /var/lib/confexts/my\-motd\&.confext\&.raw
+systemd\-confext refresh
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+The DDI generated that way may be applied to the system with
+\fBsystemd-confext\fR(1)\&.
+.PP
+\fBExample\ \&2.\ \&Generate a system extension image and sign it via PKCS11\fR
+.PP
+The following creates a system extension DDI (sysext) for an
+/usr/foo
+update and signs it with a hardware token via PKCS11\&.
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+mkdir \-p tree/usr/lib/extension\-release\&.d
+echo "Hello World" >tree/usr/foo
+cat >tree/usr/lib/extension\-release\&.d/extension\-release\&.my\-foo <<EOF
+ID=fedora
+VERSION_ID=38
+IMAGE_ID=my\-foo
+IMAGE_VERSION=7
+EOF
+systemd\-repart \-\-make\-ddi=sysext \e
+  \-\-private\-key\-source=engine:pkcs11 \e
+  \-\-private\-key="pkcs11:model=PKCS%2315%20emulated;manufacturer=piv_II;serial=0123456789abcdef;token=Some%20Cert" \e
+  \-\-certificate=cert\&.crt \e
+  \-s tree/ \e
+  /var/lib/extensions/my\-foo\&.sysext\&.raw
+systemd\-sysext refresh
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+The DDI generated that way may be applied to the system with
+\fBsystemd-sysext\fR(1)\&.
+.SH "SEE ALSO"
+.PP
+\fBsystemd\fR(1), \fBrepart.d\fR(5), \fBmachine-id\fR(5), \fBsystemd-cryptenroll\fR(1), \fBportablectl\fR(1), \fBsystemd-sysext\fR(8)
+.SH "NOTES"
+.IP " 1." 4
+portable service
+.RS 4
+\%https://systemd.io/PORTABLE_SERVICES
+.RE

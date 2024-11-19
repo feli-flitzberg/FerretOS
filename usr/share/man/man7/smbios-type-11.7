@@ -1,0 +1,80 @@
+'\" t
+.TH "SMBIOS\-TYPE\-11" "7" "" "systemd 256.4" "smbios-type-11"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+smbios-type-11 \- SMBIOS Type 11 strings
+.SH "SYNOPSIS"
+.PP
+/sys/firmware/dmi/entries/11\-*/raw
+.SH "DESCRIPTION"
+.PP
+Various OS components process SMBIOS Type 11 vendor strings that a virtual machine manager (VMM) may set and a virtual machine (VM) receives\&. SMBIOS Type 11 vendor strings may play a similar role as
+\fBkernel-command-line\fR(1)
+parameters but generally are under control of the VMM rather than the boot loader or UKI\&.
+.PP
+For details on SMBIOS Type 11 see the
+\m[blue]\fBSystem Management BIOS\fR\m[]\&\s-2\u[1]\d\s+2
+specifications\&.
+.SH "STRINGS"
+.PP
+The following strings are supported:
+.PP
+\fIio\&.systemd\&.credential:\fR\fICREDENTIAL=VALUE\fR, \fIio\&.systemd\&.credential\&.binary:\fR\fICREDENTIAL=VALUE\fR
+.RS 4
+This allows passing additional system credentials into the system, in textual or binary (Base64) form\&. See
+\fBsystemd.exec\fR(5)
+and
+\m[blue]\fBSystem and Service Credentials\fR\m[]\&\s-2\u[2]\d\s+2
+for details\&.
+.sp
+Added in version 252\&.
+.RE
+.PP
+\fIio\&.systemd\&.stub\&.kernel\-cmdline\-extra=\fR\fICMDLINE\fR
+.RS 4
+This allows configuration of additional kernel command line options, and is read by the kernel UEFI stub\&. For details see
+\fBsystemd-stub\fR(1)\&.
+.sp
+Added in version 254\&.
+.RE
+.PP
+\fIio\&.systemd\&.boot\&.kernel\-cmdline\-extra=\fR\fICMDLINE\fR
+.RS 4
+This allows configuration of additional kernel command line options for Boot Loader Specification Type 1 entries, and is read by
+\fBsystemd\-boot\fR\&. For details see
+\fBsystemd-boot\fR(1)\&.
+.sp
+Added in version 256\&.
+.RE
+.SH "SEE ALSO"
+.PP
+\fBsystemd\fR(1), \fBkernel-command-line\fR(7), \fBsystemd.system-credentials\fR(7)
+.SH "NOTES"
+.IP " 1." 4
+System Management BIOS
+.RS 4
+\%https://www.dmtf.org/standards/smbios/
+.RE
+.IP " 2." 4
+System and Service Credentials
+.RS 4
+\%https://systemd.io/CREDENTIALS
+.RE

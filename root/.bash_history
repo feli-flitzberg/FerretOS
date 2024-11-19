@@ -1,150 +1,3 @@
-tar -vxf dejagnu-1.6.3.tar.gz 
-cd dejagnu-1.6.3
-mkdir build
-cd build
-../configure --prefix=/usr && make install
-cd ../..
-rm -rfv dejagnu-1.6.3
-mv -v dejagnu-1.6.3.tar.gz base
-ls
-tar -vxf pkgconf-2.3.0.tar.xz 
-cd pkgconf-2.3.0
-./configure --prefix=/usr --disable-static --docdir=/usr/share/doc/pkgconf-2.3.0 && make && make install
-ln -sv pkgconf /usr/bin/pkg-config
-ln -sv pkgconf.1 /usr/share/man/man1/pkg-config.1
-cd ..
-rm -rfv pkgconf-2.3.0
-mv -v pkgconf-2.3.0.tar.xz base
-ls
-tar -vxf binutils-2.43.1.tar.xz 
-cd binutils-2.43.1
-mkdir build
-cd build
-../configure --prefix=/usr --sysconfdir=/etc --enable-gold --enable-ld=default --enable-plugins --enable-shared --disable-werror --enable-64-bit-bfd --with-system-zlib --enable-default-hash-style=gnu && make tooldir=/usr && make -k check
-grep '^FAIL:' $(find -name '*.log')
-make tooldir=/usr install
-rm -fv /usr/lib/lib{bfd,ctf,ctf-nobfd,gprofng,opcodes,sframe}.a
-cd ../..
-rm -rfv binutils-2.43.1
-mv -v binutils-2.43.1.tar.xz base
-ls
-exit
-cd sources
-ls
-tar -vxf gmp-6.3.0.tar.xz 
-cd gmp-6.3.0
-./configure --prefix=/usr --enable-cxx --disable-static --docdir=/usr/share/doc/gmp-6.3.0 --disable-assembly
-./configure --prefix=/usr --enable-cxx --disable-static --docdir=/usr/share/doc/gmp-6.3.0 --disable-assembly --host=amd64-pc-linux-gnu
-make && make check 2>&1 | tee gmp-check-log
-awk '/# PASS:/{total+=$3} ; END{print total}' gmp-check-log 
-make install
-cd ..
-rm -rfv gmp-6.3.0
-mv -v gmp-6.3.0.tar.xz base
-ls
-tar -vxf mpfr-4.2.1.tar.xz 
-cd mpfr-4.2.1
-./configure --prefix=/usr --disable-static --enable-thread-safe --docdir=/usr/share/doc/mpfr-4.2.1 && make && make check
-cat INSTALL
-cd ..
-rm -rfv mpfr-4.2.1
-tar -vxf mpfr-4.2.1.tar.xz 
-cd mpfr-4.2.1
-./configure --prefix=/usr --disable-static --enable-thread-safe --enable-decimal-float=generic --docdir=/usr/share/doc/mpfr-4.2.1 && make && make check
-make install
-cd ..
-rm -rfv mpfr-4.2.1
-mv -v mpfr-4.2.1.tar.xz base
-ls
-tar -vxf mpc-1.3.1.tar.gz 
-cd mpc-1.3.1
-./configure --prefix=/usr --disable-static --docdir=/usr/share/doc/mpc-1.3.1
-make && make install
-cd ..
-rm -rfv mpc-1.3.1
-mv -v mpc-1.3.1.tar.gz base
-ls
-tar -vxf attr-2.5.2.tar.gz 
-cd attr-2.5.2
-./configure --prefix=/usr --disable-static --sysconfdir=/etc --docdir=/usr/share/doc/attr-2.5.2 && make && make install
-cd ..
-rm -rfv attr-2.5.2
-mv -v attr-2.5.2.tar.gz base
-ls
-tar -vxf acl-2.3.2.tar.xz 
-cd acl-2.3.2
-./configure --prefix=/usr --disable-static --docdir=/usr/share/doc/acl-2.3.2 && make && make install
-cd ..
-rm -rfv acl-2.3.2
-mv -v acl-2.3.2.tar.xz base
-ls
-tar -vxf libcap-2.70.tar.xz 
-cd libcap-2.70
-sed -i '/install -m.*STA/d' libcap/Makefile
-make prefix=/usr lib=lib && make prefix=/usr lib=lib install
-cd ..
-rm -rfv libcap-2.70
-mv -v libcap-2.70.tar.xz base
-ls
-tar -vxf libxcrypt-4.4.36.tar.xz 
-cd libxcrypt-4.4.36
-./configure --prefix=/usr --enable-hashes=strong,glibc --enable-obsolete-api=no --disable-static --disable-failure-tokens && make && make install
-cd ..
-rm -rfv libxcrypt-4.4.36
-mv -v libxcrypt-4.4.36.tar.xz base
-ls
-tar -vxf shadow-4.16.0.tar.xz 
-cd shadow-4.16.0
-sed -i 's/groups$(EXEEXT) //' src/Makefile.in
-find man -name Makefile.in -exec sed -i 's/groups\.1 / /'   {} \;
-find man -name Makefile.in -exec sed -i 's/getspnam\.3 / /' {} \;
-find man -name Makefile.in -exec sed -i 's/passwd\.5 / /'   {} \;
-sed -e 's:#ENCRYPT_METHOD DES:ENCRYPT_METHOD YESCRYPT:'     -e 's:/var/spool/mail:/var/mail:'                       -e '/PATH=/{s@/sbin:@@;s@/bin:@@}'                      -i etc/login.defs
-touch /usr/bin/passwd
-./configure --sysconfdir=/etc --disable-static --with-{b,yes}crypt --without-libbsd --with-group-name-max-length=32 && make && make exec_prefix=/usr install && make -C man install-man
-pwconv
-grpconv
-mkdir -pv /etc/default
-useradd -D --gid 999
-sed -i '/MAIL/s/yes/no/' /etc/default/useradd
-passwd root
-cd ..
-rm -rfv shadow-4.16.0
-mv -v shadow-4.16.0.tar.xz base
-ls
-exit
-cd sources
-ls
-tar -vxf gcc-14.2.0.tar.xz 
-cd gcc-14.2.0
-sed -e '/m64=/s/lib64/lib/' -i.orig gcc/config/i386/t-linux64
-mkdir build
-cd build
-../configure --prefix=/usr LD=ld --enable-languages=c,c++ --enable-default-pie --enable-default-ssp --enable-host-pie --disable-multilib --disable-bootstrap --disable-fixincludes --with-system-zlib --with-arch=x86-64 --with-tune=generic
-make && ulimit -s -H unlimited && sed -e '/cpython/d' -i ../gcc/testsuite/gcc.dg/plugin/plugin.exp && sed -e 's/no-pic /&-no-pie /' -i ../gcc/testsuite/gcc.target/i386/pr113689-1.c && sed -e 's/300000/(1|300000)/' -i ../libgomp/testsuite/libgomp.c-c++-common/pr109062.c && sed -e 's/{ target nonpic } //' -e '/GOTPCREL/d' -i ../gcc/testsuite/gcc.target/i386/fentryname3.c && chown -R tester . && su tester -c "PATH=$PATH make -k check"
-../contrib/test_summary | grep -A7 Summ
-chown -R root:root .
-make install
-ln -svr /usr/bin/cpp /usr/lib
-ln -sv gcc.1 /usr/share/man/man1/cc.1
-ln -sfv ../../libexec/gcc/$(gcc -dumpmachine)/14.2.0/liblto_plugin.so /usr/lib/bfd-plugins/
-echo 'int main(){}' > dummy.c
-cc dummy.c -v -Wl,--verbose &> dummy.log
-readelf -l a.out | grep ': /lib'
-grep -E -o '/usr/lib.*/S?crt[1in].*succeeded' dummy.log
-grep -B4 '^ /usr/include' dummy.log
-grep 'SEARCH.*/usr/lib' dummy.log |sed 's|; |\n|g'
-grep "/lib.*/libc.so.6 " dummy.log
-grep found dummy.log
-mkdir -pv /usr/share/gdb/auto-load/usr/lib
-mv -v /usr/lib/*gdb.py /usr/share/gdb/auto-load/usr/lib
-cd ../..
-rm -rfv gcc-14.2.0
-exit
-cd sources
-tar -vxf ncurses-6.5.tar.gz 
-cd ncurses-6.5
-./configure --prefix=/usr --mandir=/usr/share/man --with-shared --without-debug --without-normal --with-cxx-shared --enable-pc-files --with-pkg-config-libdir=/usr/lib/pkgconfig && make && make DESTDIR=$PWD/dest install
 install -vm755 dest/usr/lib/libncursesw.so.6.5 /usr/lib
 rm -v dest/usr/lib/libncursesw.so.6.5 
 sed -e 's/^#if.*XOPEN.*$/#if 1/' -i dest/usr/include/curses.h 
@@ -496,5 +349,152 @@ ls
 mv -v vim-9.1.0660.tar.gz base
 ls
 mv -v sysklogd-2.6.1.tar.gz extra
+ls
+exit
+cd sources/
+ls
+tar -vxf nano-8.1.tar.xz 
+cd nano-8.1
+./configure --prefix=/usr --sysconfdir=/etc --enable-utf8 --docdir=/usr/share/doc/nano-8.1 && make && make install
+nano doc/sample.nanorc
+nano
+nano
+mv -v /etc/nano.nanorc /etc/nanorc
+nano
+nano /etc/nanorc
+nano
+nano /etc/nanorc
+cd ..
+rm -rfv nano-8.1
+tar -vxf nano-8.1.tar.xz 
+nano nano-8.1/doc/sample.nanorc.in 
+nano /etc/nanorc
+nano
+rm -rfv nano-8.1
+mv -v nano-8.1.tar.xz extra
+ls
+tar -vxf MarkupSafe-2.1.5.tar.gz 
+cd MarkupSafe-2.1.5
+pip wheel -w dist --no-cache-dir --no-build-isolation --no-deps $PWD
+pip install --no-index --no-user --find-links dist Markupsafe
+cd ..
+rm -rfv MarkupSafe-2.1.5
+mv -v MarkupSafe-2.1.5.tar.gz base
+ls
+tar -vxf jinja2-3.1.4.tar.gz 
+cd jinja2-3.1.4
+pip3 wheel -w dist --no-cache-dir --no-build-isolation --no-deps $PWD
+pip install --no-index --no-user --find-links dist Jinja2
+cd ..
+rm -rfv jinja2-3.1.4
+mv -v jinja2-3.1.4.tar.gz base
+ls
+tar -vxf pyelftools-0.31.tar.gz 
+cd pyelftools-0.31
+pip wheel -w dist --no-cache-dir --no-build-isolation --no-deps $PWD
+pip install --no-index --no-user --find-links dist pyelftools
+cd ..
+rm -rfv pyelftools-0.31
+mv -v pyelftools-0.31.tar.gz extra
+ls
+mv -v systemd-man-pages-256.4.tar.xz base
+tar -vxf systemd-256.4.tar.gz 
+cd systemd-256.4
+sed -i -e 's/GROUP="render"/GROUP="video"/'        -e 's/GROUP="sgx", //' rules.d/50-udev-default.rules.in
+mkdir -v build
+cd build
+cat /etc/shadow
+cat /etc/passwd
+nano /etc/os-release
+ln -sv /etc/os-release /usr/lib/os-release
+meson setup .. --prefix=/usr --buildtype=release -D mode=release -D install-tests=false -D sysusers=false -D rpmmacrosdir=no -D homed=disabled -D userdb=false -D man=disabled -D pamconfdir=no -D dev-kvm-mode=0660 -D nobody-group=nogroup -D sysupdate=disabled -D ukify=disabled -D docdir=/usr/share/doc/systemd-256.4 -D default-dnssec=yes
+ninja
+ninja install
+tar -vxf ../../base/systemd-man-pages-256.4.tar.xz --no-same-owner --strip-components=1 -C /usr/share/man
+systemctl preset-all
+cd ../..
+rm -rfv systemd-256.4
+ls
+mv -v systemd-256.4.tar.gz base
+ls
+tar -vxf dbus-1.14.10.tar.xz 
+cd dbus-1.14.10
+./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --runstatedir=/run --enable-user-session --disable-static --disable-doxygen-docs --disable-xml-docs --docdir=/usr/share/doc/dbus-1.14.10 --with-system-socket=/run/dbus/system_bus_socket && make && make install
+ln -sfv /etc/machine-id /var/lib/dbus
+cd ..
+rm -rfv dbus-1.14.10
+mv -v dbus-1.14.10.tar.xz base
+ls
+tar -vxf man-db-2.12.1.tar.xz 
+cd man-db-2.12.1
+./configure --prefix=/usr --docdir=/usr/share/doc/man-db-2.12.1 --sysconfdir=/etc --disable-setuid --enable-cache-owner=bin --with-browser=/usr/bin/links --with-vgrind=/usr/bin/vgrind --with-grap=/usr/bin/grap && make && make install
+cd ..
+rm -rfv man-db-2.12.1
+mv -v man-db-2.12.1.tar.xz base
+ls
+tar -vxf procps-ng-4.0.4.tar.xz 
+cd procps-ng-4.0.4
+./configure --prefix=/usr --docdir=/usr/share/doc/procps-ng-4.0.4 --disable-static --disable-kill --with-systemd && make src_w_LDADD='$(LDADD) -lsystemd' && make install
+cd ..
+rm -rfv procps-ng-4.0.4
+mv -v procps-ng-4.0.4.tar.xz base
+ls
+tar -vxf util-linux-2.40.2.tar.xz 
+cd util-linux-2.40.2
+./configure --bindir=/usr/bin --libdir=/usr/lib --runstatedir=/run --sbindir=/usr/sbin --disable-chfn-chsh --disable-login --disable-nologin --disable-su --disable-setpriv --disable-runuser --disable-pylibmount --disable-liblastlog2 --disable-static --without-python ADJTIME_PATH=/var/lib/hwclock/adjtime --docdir=/usr/share/doc/util-linux-2.40.2 && make && make install
+cd ..
+rm -rfv util-linux-2.40.2
+mv -v util-linux-2.40.2.tar.xz base
+ls
+tar -vxf e2fsprogs-1.47.1.tar.gz 
+cd e2fsprogs-1.47.1
+mkdir build
+cd build
+../configure --prefix=/usr --sysconfdir=/etc --enable-elf-shlibs --disable-libblkid --disable-libuuid --disable-uuidd --disable-fsck && make && make install
+rm -fv /usr/lib/lib{com_err,e2p,ext2fs,ss}.a
+gunzip -v /usr/share/info/libext2fs.info.gz 
+install-info --dir-file=/usr/share/info/dir /usr/share/info/libext2fs.info 
+cd ../..
+rm -rfv e2fsprogs-1.47.1
+mv -v e2fsprogs-1.47.1.tar.gz base
+ls
+mv -v linux-6.11.7.tar.xz base
+ls
+cd ..
+save_usrlib="$(cd /usr/lib; ls ld-linux*[^g])
+             libc.so.6
+             libthread_db.so.1
+             libquadmath.so.0.0.0
+             libstdc++.so.6.0.33
+             libitm.so.1.0.0
+             libatomic.so.1.2.0"
+cd /usr/lib
+for LIB in $save_usrlib; do     objcopy --only-keep-debug --compress-debug-sections=zlib $LIB $LIB.dbg;     cp $LIB /tmp/$LIB;     strip --strip-unneeded /tmp/$LIB;     objcopy --add-gnu-debuglink=$LIB.dbg /tmp/$LIB;     install -vm755 /tmp/$LIB /usr/lib;     rm /tmp/$LIB; done
+online_usrbin="bash find strip"
+online_usrlib="libbfd-2.43.1.so
+               libsframe.so.1.0.0
+               libhistory.so.8.2
+               libncursesw.so.6.5
+               libm.so.6
+               libreadline.so.8.2
+               libz.so.1.3.1
+               libzstd.so.1.5.6
+               $(cd /usr/lib; find libnss*.so* -type f)"
+for BIN in $online_usrbin; do     cp /usr/bin/$BIN /tmp/$BIN;     strip --strip-unneeded /tmp/$BIN;     install -vm755 /tmp/$BIN /usr/bin;     rm /tmp/$BIN; done
+for LIB in $online_usrlib; do     cp /usr/lib/$LIB /tmp/$LIB;     strip --strip-unneeded /tmp/$LIB;     install -vm755 /tmp/$LIB /usr/lib;     rm /tmp/$LIB; done
+for i in $(find /usr/lib -type f -name \*.so* ! -name \*dbg)          $(find /usr/lib -type f -name \*.a)                          $(find /usr/{bin,sbin,libexec} -type f); do     case "$online_usrbin $online_usrlib $save_usrlib" in         *$(basename $i)* )             ;;         * ) strip --strip-unneeded $i;             ;;     esac; done
+unset BIN LIB save_usrlib online_usrbin online_usrlib
+cd ..
+cd ..
+cd tmp
+ls
+rm -fv cc*
+rm -rfv tst-bz26353XREApA/
+ls
+ls -a
+cd ..
+find /usr/lib /usr/libexec -name \*.la -delete
+find /usr -depth -name $(uname -m)-lfs-linux-gnu\* | xargs rm -rfv
+userdel -r tester
 ls
 exit

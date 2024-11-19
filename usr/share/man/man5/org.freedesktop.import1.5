@@ -1,0 +1,470 @@
+'\" t
+.TH "ORG\&.FREEDESKTOP\&.IMPORT1" "5" "" "systemd 256.4" "org.freedesktop.import1"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+org.freedesktop.import1 \- The D\-Bus interface of systemd\-importd
+.SH "INTRODUCTION"
+.PP
+\fBsystemd-importd.service\fR(8)
+is a system service which may be used to import, export and download disk images\&. These images can be used by tools such as
+\fBsystemd-nspawn\fR(1)
+to run local containers\&. The service is used as the backend for
+\fBimportctl pull\-raw\fR,
+\fBimportctl pull\-tar\fR
+and related commands\&. This page describes the D\-Bus interface\&.
+.PP
+Note that
+\fBsystemd-importd.service\fR(8)
+is mostly a small companion service for
+\fBsystemd-machined.service\fR(8)\&. Many operations to manipulate local container and VM images are hence available via the
+\fBsystemd\-machined\fR
+D\-Bus API, c\&.f\&.
+\fBorg.freedesktop.machine1\fR(5)\&.
+.SH "THE MANAGER OBJECT"
+.PP
+The service exposes the following interfaces on the Manager object on the bus:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+node /org/freedesktop/import1 {
+  interface org\&.freedesktop\&.import1\&.Manager {
+    methods:
+      ImportTar(in  h fd,
+                in  s local_name,
+                in  b force,
+                in  b read_only,
+                out u transfer_id,
+                out o transfer_path);
+      ImportTarEx(in  h fd,
+                  in  s local_name,
+                  in  s class,
+                  in  t flags,
+                  out u transfer_id,
+                  out o transfer_path);
+      ImportRaw(in  h fd,
+                in  s local_name,
+                in  b force,
+                in  b read_only,
+                out u transfer_id,
+                out o transfer_path);
+      ImportRawEx(in  h fd,
+                  in  s local_name,
+                  in  s class,
+                  in  t flags,
+                  out u transfer_id,
+                  out o transfer_path);
+      ImportFileSystem(in  h fd,
+                       in  s local_name,
+                       in  b force,
+                       in  b read_only,
+                       out u transfer_id,
+                       out o transfer_path);
+      ImportFileSystemEx(in  h fd,
+                         in  s local_name,
+                         in  s class,
+                         in  t flags,
+                         out u transfer_id,
+                         out o transfer_path);
+      ExportTar(in  s local_name,
+                in  h fd,
+                in  s format,
+                out u transfer_id,
+                out o transfer_path);
+      ExportTarEx(in  s local_name,
+                  in  s class,
+                  in  h fd,
+                  in  s format,
+                  in  t flags,
+                  out u transfer_id,
+                  out o transfer_path);
+      ExportRaw(in  s local_name,
+                in  h fd,
+                in  s format,
+                out u transfer_id,
+                out o transfer_path);
+      ExportRawEx(in  s local_name,
+                  in  s class,
+                  in  h fd,
+                  in  s format,
+                  in  t flags,
+                  out u transfer_id,
+                  out o transfer_path);
+      PullTar(in  s url,
+              in  s local_name,
+              in  s verify_mode,
+              in  b force,
+              out u transfer_id,
+              out o transfer_path);
+      PullTarEx(in  s url,
+                in  s local_name,
+                in  s class,
+                in  s verify_mode,
+                in  t flags,
+                out u transfer_id,
+                out o transfer_path);
+      PullRaw(in  s url,
+              in  s local_name,
+              in  s verify_mode,
+              in  b force,
+              out u transfer_id,
+              out o transfer_path);
+      PullRawEx(in  s url,
+                in  s local_name,
+                in  s class,
+                in  s verify_mode,
+                in  t flags,
+                out u transfer_id,
+                out o transfer_path);
+      ListTransfers(out a(usssdo) transfers);
+      ListTransfersEx(in  s class,
+                      in  t flags,
+                      out a(ussssdo) transfers);
+      CancelTransfer(in  u transfer_id);
+      ListImages(in  s class,
+                 in  t flags,
+                 out a(ssssbtttttt) images);
+    signals:
+      TransferNew(u transfer_id,
+                  o transfer_path);
+      TransferRemoved(u transfer_id,
+                      o transfer_path,
+                      s result);
+  };
+  interface org\&.freedesktop\&.DBus\&.Peer { \&.\&.\&. };
+  interface org\&.freedesktop\&.DBus\&.Introspectable { \&.\&.\&. };
+  interface org\&.freedesktop\&.DBus\&.Properties { \&.\&.\&. };
+};
+    
+.fi
+.if n \{\
+.RE
+.\}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.SS "Methods"
+.PP
+\fBImportTar()\fR/\fBImportTarEx()\fR
+and
+\fBImportRaw()\fR/\fBImportRawEx()\fR
+import a disk image and place it into the image directory\&. The first argument should be a file descriptor (opened for reading) referring to the tar or raw file to import\&. It should reference a file on disk, a pipe or a socket\&. When
+\fBImportTar()\fR/\fBImportTarEx()\fR
+is used the file descriptor should refer to a tar file, optionally compressed with
+\fBgzip\fR(1),
+\fBbzip2\fR(1), or
+\fBxz\fR(1)\&.
+\fBsystemd\-importd\fR
+will detect the used compression scheme (if any) automatically\&. When
+\fBImportRaw()\fR/\fBImportRawEx()\fR
+is used the file descriptor should refer to a raw or qcow2 disk image containing an MBR or GPT disk label, also optionally compressed with gzip, bzip2 or xz\&. In either case, if the file is specified as a file descriptor on disk, progress information is generated for the import operation (as in that case we know the total size on disk)\&. If a socket or pipe is specified, progress information is not available\&. The file descriptor argument is followed by a local name for the image\&. This should be a name suitable as a hostname and will be used to name the imported image below
+/var/lib/machines/\&. A tar import is placed as a directory tree or a
+\fBbtrfs\fR(8)
+subvolume below the image directory under the specified name with no suffix appended\&. A raw import is placed as a file in the image directory with the
+\&.raw
+suffix appended\&. In case of
+\fBImportTar()\fR/\fBImportRaw()\fR, if the
+\fBforce\fR
+argument is true, any pre\-existing image with the same name is removed before starting the operation\&. Otherwise, the operation fails if an image with the same name already exists\&. The
+\fBread_only\fR
+argument controls whether to create a writable or read\-only image\&. In case of
+\fBImportTarEx()\fR/\fBImportRawEx()\fR
+these boolean flags are provided via a 64bit flags parameter instead, with bit 0 mapping to the
+\fBforce\fR
+parameter, and bit 1 mapping to
+\fBread_only\fR\&. The
+\fBclass\fR
+parameter specifies the image class, and takes one of
+"machine",
+"portable",
+"sysext",
+"confext"\&. All four methods return immediately after starting the import, with the import transfer ongoing\&. They return a pair of transfer identifier and object path, which may be used to retrieve progress information about the transfer or to cancel it\&. The transfer identifier is a simple numeric identifier, the object path references an
+org\&.freedesktop\&.import1\&.Transfer
+object, see below\&. Listen for a
+\fBTransferRemoved()\fR
+signal for the transfer ID in order to detect when a transfer is complete\&. The returned transfer object is useful to determine the current progress or log output of the ongoing import operation\&.
+.PP
+\fBExportTar()\fR/\fBExportTarEx()\fR
+and
+\fBExportRaw()\fR/\fBExportRaw()\fR
+implement the reverse operation, and may be used to export a system image in order to place it in a tar or raw image\&. They take the machine name to export as their first parameter, followed by a file descriptor (opened for writing) where the tar or raw file will be written\&. It may either reference a file on disk or a pipe/socket\&. The third argument specifies in which compression format to write the image\&. It takes one of
+"uncompressed",
+"xz",
+"bzip2"
+or
+"gzip", depending on which compression scheme is required\&. The image written to the specified file descriptor will be a tar file in case of
+\fBExportTar()\fR/\fBExportTarEx()\fR
+or a raw disk image in case of
+\fBExportRaw()\fR/\fBExportRawEx()\fR\&. Note that currently raw disk images may not be exported as tar files, and vice versa\&. This restriction might be lifted eventually\&. The method returns a transfer identifier and object path for cancelling or tracking the export operation, similarly to
+\fBImportTar()\fR/\fBImportTarEx()\fR
+or
+\fBImportRaw()\fR/\fBImportRawEx()\fR
+as described above\&.
+\fBExportTarEx()\fR/\fBExportRawEx()\fR
+expect the image class as additional parameter, as well as a 64bit flags parameter that currently must be specified as zero\&.
+.PP
+\fBPullTar()\fR/\fBPullTarEx()\fR
+and
+\fBPullRaw()\fR/\fBPullRawEx()\fR
+may be used to download, verify and import a system image from a URL\&. They take a URL argument which should point to a tar or raw file on the
+"http://"
+or
+"https://"
+protocols, possibly compressed with xz, bzip2 or gzip\&. The second argument is a local name for the image\&. It should be suitable as a hostname, similarly to the matching argument of the
+\fBImportTar()\fR/\fBImportTarEx()\fR
+and
+\fBImportRaw()\fR/\fBImportRawEx()\fR
+methods above\&. The third argument indicates the verification mode for the image\&. It may be one of
+"no",
+"checksum",
+"signature"\&.
+"no"
+turns off any kind of verification of the image;
+"checksum"
+looks for a
+SHA256SUM
+file next to the downloaded image and verifies any SHA256 hash value in that file against the image;
+"signature"
+does the same but also tries to authenticate the
+SHA256SUM
+file via
+\fBgpg\fR(8)
+first\&. In case of
+\fBPullTar()\fR/\fBPullRaw()\fR
+the last argument indicates whether to replace a possibly pre\-existing image with the same local name (if
+"true"), or whether to fail (if
+"false")\&. In case of
+\fBPullTarEx()\fR/\fBPullRawEx()\fR
+the last argument is a 64bit flags parameter, where bit 0 controls the
+"force"
+flag, bit 1 is a
+"read_only"
+flag that controls whether the created image shall be marked read\-only, and bit 2 is a
+"keep_download"
+flag that indicates whether a pristine, read\-only copy of the downloaded image shell be kept, in addition for the local copy of the image\&. The
+\fB\&..._Ex()\fR
+variants also expect an image class string (as above)\&. Like the import and export calls above, these calls return a pair of transfer identifier and object path for the ongoing download\&.
+.PP
+\fBImportFileSystem()\fR/\fBImportFileSystemEx()\fR
+are similar to
+\fBImportTar()\fR/\fBImportTarEx()\fR
+but import a directory tree\&. The first argument must refer to a directory file descriptor for the source hierarchy to import\&.
+.PP
+\fBListTransfers()\fR/\fBListTransfersEx()\fR
+return a list of ongoing import, export or download operations as created with the six calls described above\&. They return an array of structures which consist of the numeric transfer identifier, a string indicating the operation (one of
+"import\-tar",
+"import\-raw",
+"export\-tar",
+"export\-raw",
+"pull\-tar"
+or
+"pull\-raw"), a string describing the remote file (in case of download operations this is the source URL, in case of import/export operations this is a short string describing the file descriptor passed in), a string with the local machine image name, the image class (only in case of
+\fBListTransfersEx()\fR; one of
+"machine",
+"portable",
+"sysext",
+"confext"), a progress value between 0\&.0 (for 0%) and 1\&.0 (for 100%), as well as the transfer object path\&.
+.PP
+\fBCancelTransfer()\fR
+may be used to cancel an ongoing import, export or download operation\&. Simply specify the transfer identifier to cancel the ongoing operation\&.
+.PP
+\fBListImages()\fR
+returns a list of currently installed images\&. It takes a image class string and a flags parameter\&. The image class is either the empty string or specifies one of the four image classes, by which it will then filter\&. The flags parameter must be zero at this time\&. It returns an array of items, each describing one image\&. The item fields are in order: the image class, the local image name, the image type, the image path, the read\-only flag, the creation and modification times (in microseconds since the UNIX epoch), as well as the current disk usage in bytes (both overall, and exclusive), as well as any size limit in bytes set on the image (both overall and exclusive)\&.
+.SS "Signals"
+.PP
+The
+\fBTransferNew()\fR
+signal is generated each time a new transfer is started with the import, export or download calls described above\&. It carries the transfer ID and object path that have just been created\&.
+.PP
+The
+\fBTransferRemoved()\fR
+signal is sent each time a transfer finishes, is canceled or fails\&. It also carries the transfer ID and object path, followed by a string indicating the result of the operation, which is one of
+"done"
+(on success),
+"canceled"
+or
+"failed"\&.
+.SH "THE TRANSFER OBJECT"
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+node /org/freedesktop/import1/transfer/_1 {
+  interface org\&.freedesktop\&.import1\&.Transfer {
+    methods:
+      Cancel();
+    signals:
+      LogMessage(u priority,
+                 s line);
+      ProgressUpdate(d progress);
+    properties:
+      @org\&.freedesktop\&.DBus\&.Property\&.EmitsChangedSignal("const")
+      readonly u Id = \&.\&.\&.;
+      @org\&.freedesktop\&.DBus\&.Property\&.EmitsChangedSignal("const")
+      readonly s Local = \*(Aq\&.\&.\&.\*(Aq;
+      @org\&.freedesktop\&.DBus\&.Property\&.EmitsChangedSignal("const")
+      readonly s Remote = \*(Aq\&.\&.\&.\*(Aq;
+      @org\&.freedesktop\&.DBus\&.Property\&.EmitsChangedSignal("const")
+      readonly s Type = \*(Aq\&.\&.\&.\*(Aq;
+      @org\&.freedesktop\&.DBus\&.Property\&.EmitsChangedSignal("const")
+      readonly s Verify = \*(Aq\&.\&.\&.\*(Aq;
+      @org\&.freedesktop\&.DBus\&.Property\&.EmitsChangedSignal("false")
+      readonly d Progress = \&.\&.\&.;
+  };
+  interface org\&.freedesktop\&.DBus\&.Peer { \&.\&.\&. };
+  interface org\&.freedesktop\&.DBus\&.Introspectable { \&.\&.\&. };
+  interface org\&.freedesktop\&.DBus\&.Properties { \&.\&.\&. };
+};
+    
+.fi
+.if n \{\
+.RE
+.\}
+
+
+
+
+
+
+
+
+
+
+.SS "Methods"
+.PP
+The
+\fBCancel()\fR
+method may be used to cancel the transfer\&. It takes no parameters\&. This method is pretty much equivalent to the
+\fBCancelTransfer()\fR
+method on the
+Manager
+interface (see above), but is exposed on the
+Transfer
+object itself instead of taking a transfer ID\&.
+.SS "Properties"
+.PP
+The
+\fIId\fR
+property exposes the numeric transfer ID of the transfer object\&.
+.PP
+The
+\fILocal\fR,
+\fIRemote\fR
+and
+\fIType\fR
+properties expose the local container name of this transfer, the remote source (in case of download: the URL, in case of import/export: a string describing the file descriptor passed in), and the type of operation (see the Manager\*(Aqs
+\fBListTransfer()\fR
+method above for an explanation of the possible values)\&.
+.PP
+The
+\fIVerify\fR
+property exposes the selected verification setting and is only defined for download operations (see above)\&.
+.PP
+The
+\fIProgress\fR
+property exposes the current progress of the transfer as a value between 0\&.0 and 1\&.0\&. To show a progress bar on screen we recommend to query this value in regular intervals, for example every 500\ \&ms or so\&.
+.SS "Signals"
+.PP
+The
+\fBLogMessage()\fR
+signal is emitted for log messages generated by a transfer\&. It carries a pair of syslog log level integer and log string\&.
+.PP
+The
+\fBProgressUpdate()\fR
+signal is emitted in regular intervals when new download progress information is available for a transfer\&. It carries a double precision floating pointer number between 0\&.0 and 1\&.0 indicating the transfer progress\&.
+.SH "EXAMPLES"
+.PP
+\fBExample\ \&1.\ \&Introspect org\&.freedesktop\&.import1\&.Manager on the bus\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+$ gdbus introspect \-\-system \e
+  \-\-dest org\&.freedesktop\&.import1 \e
+  \-\-object\-path /org/freedesktop/import1
+      
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+\fBExample\ \&2.\ \&Introspect org\&.freedesktop\&.import1\&.Transfer on the bus\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+$ gdbus introspect \-\-system \e
+  \-\-dest org\&.freedesktop\&.import1 \e
+  \-\-object\-path /org/freedesktop/import1/transfer/_1
+      
+.fi
+.if n \{\
+.RE
+.\}
+.SH "VERSIONING"
+.PP
+These D\-Bus interfaces follow
+\m[blue]\fBthe usual interface versioning guidelines\fR\m[]\&\s-2\u[1]\d\s+2\&.
+.SH "HISTORY"
+.SS "The Manager Object"
+.PP
+\fBImportTarEx()\fR,
+\fBImportRawEx()\fR,
+\fBImportFileSystemEx()\fR,
+\fBExportTarEx()\fR,
+\fBExportRawEx()\fR,
+\fBPullTarEx()\fR,
+\fBPullRawEx()\fR,
+\fBListTransfersEx()\fR,
+\fBListImages()\fR
+were added in version 256\&.
+.SS "Transfer Objects"
+.PP
+\fBProgressUpdate()\fR
+was added in version 256\&.
+.SH "NOTES"
+.IP " 1." 4
+the usual interface versioning guidelines
+.RS 4
+\%https://0pointer.de/blog/projects/versioning-dbus.html
+.RE

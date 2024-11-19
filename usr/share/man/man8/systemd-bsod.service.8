@@ -1,0 +1,72 @@
+'\" t
+.TH "SYSTEMD\-BSOD\&.SERVICE" "8" "" "systemd 256.4" "systemd-bsod"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+systemd-bsod.service, systemd-bsod \- Displays boot\-time emergency log message in full screen
+.SH "SYNOPSIS"
+.PP
+systemd\-bsod\&.service
+.HP \w'\fB/usr/lib/systemd/systemd\-bsod\fR\ 'u
+\fB/usr/lib/systemd/systemd\-bsod\fR [OPTIONS...]
+.SH "DESCRIPTION"
+.PP
+systemd\-bsod\&.service
+is used to display a blue screen which contains a message relating to a boot failure, including a QR code which can be scanned to get helpful information about the failure\&.
+.SH "OPTIONS"
+.PP
+The following options are understood by
+\fBsystemd\-bsod\fR:
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Print a short help text and exit\&.
+.RE
+.PP
+\fB\-\-version\fR
+.RS 4
+Print a short version string and exit\&.
+.RE
+.PP
+\fB\-c\fR, \fB\-\-continuous\fR
+.RS 4
+When specified,
+\fBsystemd\-bsod\fR
+waits continuously for changes in the journal if it doesn\*(Aqt find any emergency messages on the initial attempt\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+\fB\-\-tty=\fR\fB\fR
+.RS 4
+Specify the TTY to output to\&. By default
+\fBsystemd\-bsod\fR
+will automatically find a free VT to display the message on\&. If this option is specified a TTY may be selected explicitly\&. Use
+\fB\-\-tty=/dev/tty\fR
+to direct output to the terminal the command is invoked on\&.
+.sp
+Added in version 256\&.
+.RE
+.SH "EXIT STATUS"
+.PP
+On success (displaying the journal message successfully), 0 is returned, a non\-zero failure code otherwise\&.
+.SH "SEE ALSO"
+.PP
+\fBsystemd\fR(1)

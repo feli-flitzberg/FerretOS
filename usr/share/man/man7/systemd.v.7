@@ -1,0 +1,343 @@
+'\" t
+.TH "SYSTEMD\&.V" "7" "" "systemd 256.4" "systemd.v"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+systemd.v \- Directory with Versioned Resources
+.SH "DESCRIPTION"
+.PP
+In various places systemd components accept paths whose trailing components have the
+"\&.v/"
+suffix, pointing to a directory\&. These components will then automatically look for suitable files inside the directory, do a version comparison and open the newest file found (by version)\&. Available since version v256\&. Specifically, two expressions are supported:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+When looking for files with a suffix
+\fI\&.SUFFIX\fR, and a path
+\&...\fIPATH\fR/\fINAME\fR\fI\&.SUFFIX\fR\&.v/
+is specified, then all files
+\&...\fIPATH\fR/\fINAME\fR\fI\&.SUFFIX\fR\&.v/\fINAME\fR_*\fI\&.SUFFIX\fR
+are enumerated, filtered, sorted and the newest file used\&. The primary sorting key is the
+\fIvariable part\fR, here indicated by the wildcard
+"*"\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+When a path
+\&...\fIPATH\fR\&.v/\fINAME\fR___\fI\&.SUFFIX\fR
+is specified (i\&.e\&. the penultimate component of the path ends in
+"\&.v"
+and the final component contains a triple underscore), then all files
+\&...\fIPATH\fR\&.v/\fINAME\fR_*\fI\&.SUFFIX\fR
+are enumerated, filtered, sorted and the newest file used (again, by the
+\fIvariable part\fR, here indicated by the wildcard
+"*")\&.
+.RE
+.PP
+To illustrate this in an example, consider a directory
+/var/lib/machines/mymachine\&.raw\&.v/, which is populated with three files:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+mymachine_7\&.5\&.13\&.raw
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+mymachine_7\&.5\&.14\&.raw
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+mymachine_7\&.6\&.0\&.raw
+.RE
+.PP
+Invoke a tool such as
+\fBsystemd-nspawn\fR(1)
+with a command line like the following:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+# systemd\-nspawn \-\-image=/var/lib/machines/mymachine\&.raw\&.v \-\-boot
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+Then this would automatically be resolved to the equivalent of:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+# systemd\-nspawn \-\-image=/var/lib/machines/mymachine\&.raw\&.v/mymachine_7\&.6\&.0\&.raw \-\-boot
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+Much of systemd\*(Aqs functionality that expects a path to a disk image or OS directory hierarchy support the
+"\&.v/"
+versioned directory mechanism, for example
+\fBsystemd-nspawn\fR(1),
+\fBsystemd-dissect\fR(1)
+or the
+\fIRootDirectory=\fR/\fIRootImage=\fR
+settings of service files (see
+\fBsystemd.exec\fR(5))\&.
+.PP
+Use the
+\fBsystemd-vpick\fR(1)
+tool to resolve
+"\&.v/"
+paths from the command line, for example for usage in shell scripts\&.
+.SH "FILTERING AND SORTING"
+.PP
+The variable part of the filenames in the
+"\&.v/"
+directories are filtered and compared primarily with a version comparison, implementing
+\m[blue]\fBVersion Format Specification\fR\m[]\&\s-2\u[1]\d\s+2\&. However, additional rules apply:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+If the variable part is suffixed by one or two integer values ("tries left" and "tries done") in the formats
++\fILEFT\fR
+or
++\fILEFT\fR\-\fIDONE\fR, then these indicate usage attempt counters\&. The idea is that each time before a file is attempted to be used, its "tries left" counter is decreased, and the "tries done" counter increased (simply by renaming the file)\&. When the file is successfully used (which for example could mean for an OS image: successfully booted) the counters are removed from the file name, indicating that the file has been validated to work correctly\&. This mechanism mirrors the boot assessment counters defined by
+\m[blue]\fBAutomatic Boot Assessment\fR\m[]\&\s-2\u[2]\d\s+2\&. Any filenames with no boot counters or with a non\-zero "tries left" counter are sorted before filenames with a zero "tries left" counter\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Preceding the use counters (if they are specified), an optional CPU architecture identifier may be specified in the filename (separated from the version with an underscore), as defined in the architecture vocabulary of the
+\fIConditionArchitecture=\fR
+unit file setting, as documented in
+\fBsystemd.unit\fR(5)\&. Files whose name indicates an architecture not supported locally are filtered and not considered for the version comparison\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+The rest of the variable part is the version string\&.
+.RE
+.PP
+Or in other words, the files in the
+"\&.v/"
+directories should follow one of these naming structures:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fINAME\fR_\fIVERSION\fR\fI\&.SUFFIX\fR
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fINAME\fR_\fIVERSION\fR_\fIARCHITECTURE\fR\fI\&.SUFFIX\fR
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fINAME\fR_\fIVERSION\fR+\fILEFT\fR\fI\&.SUFFIX\fR
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fINAME\fR_\fIVERSION\fR+\fILEFT\fR\-\fIDONE\fR\fI\&.SUFFIX\fR
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fINAME\fR_\fIVERSION\fR_\fIARCHITECTURE\fR+\fILEFT\fR\fI\&.SUFFIX\fR
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fINAME\fR_\fIVERSION\fR_\fIARCHITECTURE\fR+\fILEFT\fR\-\fIDONE\fR\fI\&.SUFFIX\fR
+.RE
+.SH "EXAMPLE"
+.PP
+Here\*(Aqs a more comprehensive example, further extending the one described above\&. Consider a directory
+/var/lib/machines/mymachine\&.raw\&.v/, which is populated with the following files:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+mymachine_7\&.5\&.13\&.raw
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+mymachine_7\&.5\&.14_x86\-64\&.raw
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+mymachine_7\&.6\&.0_arm64\&.raw
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+mymachine_7\&.7\&.0_x86\-64+0\-5\&.raw
+.RE
+.PP
+Now invoke the following command on an x86\-64 machine:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+$ systemd\-vpick \-\-suffix=\&.raw /var/lib/machines/mymachine\&.raw\&.v/
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+This would resolve the specified path to
+/var/lib/machines/mymachine\&.raw\&.v/mymachine_7\&.5\&.14_x86\-64\&.raw\&. Explanation: even though
+mymachine_7\&.7\&.0_x86\-64+0\-5\&.raw
+has the newest version, it is not preferred because its tries left counter is zero\&. And even though
+mymachine_7\&.6\&.0_arm64\&.raw
+has the second newest version it is also not considered, in this case because we operate on an x86_64 system and the image is intended for arm64 CPUs\&. Finally, the
+mymachine_7\&.5\&.13\&.raw
+image is not considered because it is older than
+mymachine_7\&.5\&.14_x86\-64\&.raw\&.
+.SH "SEE ALSO"
+.PP
+\fBsystemd\fR(1), \fBsystemd-vpick\fR(1), \fBsystemd-nspawn\fR(1), \fBsystemd-dissect\fR(1), \fBsystemd.exec\fR(5), \fBsystemd-sysupdate\fR(1)
+.SH "NOTES"
+.IP " 1." 4
+Version Format Specification
+.RS 4
+\%https://uapi-group.org/specifications/specs/version_format_specification/
+.RE
+.IP " 2." 4
+Automatic Boot Assessment
+.RS 4
+\%https://systemd.io/AUTOMATIC_BOOT_ASSESSMENT/
+.RE

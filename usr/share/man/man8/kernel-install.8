@@ -1,0 +1,842 @@
+'\" t
+.TH "KERNEL\-INSTALL" "8" "" "systemd 256.4" "kernel-install"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+kernel-install \- Add and remove kernel and initrd images to and from the boot partition
+.SH "SYNOPSIS"
+.HP \w'\fBkernel\-install\fR\ 'u
+\fBkernel\-install\fR [OPTIONS...] add \fIKERNEL\-VERSION\fR \fIKERNEL\-IMAGE\fR [\fIINITRD\-FILE\fR...]
+.HP \w'\fBkernel\-install\fR\ 'u
+\fBkernel\-install\fR [OPTIONS...] add\-all
+.HP \w'\fBkernel\-install\fR\ 'u
+\fBkernel\-install\fR [OPTIONS...] remove \fIKERNEL\-VERSION\fR
+.HP \w'\fBkernel\-install\fR\ 'u
+\fBkernel\-install\fR [OPTIONS...] inspect [\fIKERNEL\-VERSION\fR] [\fIKERNEL\-IMAGE\fR] [\fIINITRD\-FILE\fR...]
+.HP \w'\fBkernel\-install\fR\ 'u
+\fBkernel\-install\fR [OPTIONS...] list
+.SH "DESCRIPTION"
+.PP
+\fBkernel\-install\fR
+is used to install and remove kernel and initrd images
+\&\s-2\u[1]\d\s+2
+to and from the boot partition, referred to as
+\fI$BOOT\fR
+here\&. It will usually be one of
+/boot/,
+/efi/, or
+/boot/efi/, see below\&.
+.PP
+\fBkernel\-install\fR
+will run the executable files ("plugins") located in the directory
+/usr/lib/kernel/install\&.d/
+and the local administration directory
+/etc/kernel/install\&.d/\&. All files are collectively sorted and executed in lexical order, regardless of the directory in which they live\&. However, files with identical filenames replace each other\&. Files in
+/etc/kernel/install\&.d/
+take precedence over files with the same name in
+/usr/lib/kernel/install\&.d/\&. This can be used to override a system\-supplied executables with a local file if needed; a symbolic link in
+/etc/kernel/install\&.d/
+with the same name as an executable in
+/usr/lib/kernel/install\&.d/, pointing to
+/dev/null, disables the executable entirely\&. Executables must have the extension
+"\&.install"; other extensions are ignored\&.
+.PP
+An executable placed in these directories should return
+\fB0\fR
+on success\&. It may also return
+\fB77\fR
+to cause the whole operation to terminate (executables later in lexical order will be skipped)\&.
+.SH "COMMANDS"
+.PP
+The following commands are understood:
+.PP
+\fBadd [[[\fR\fB\fIKERNEL\-VERSION\fR\fR\fB] \fR\fB\fIKERNEL\-IMAGE\fR\fR\fB] [\fR\fB\fIINITRD\-FILE\fR\fR\fB \&.\&.\&.]]\fR
+.RS 4
+This command takes a kernel version string and a path to a kernel image file as arguments\&. If the former is omitted, specified as an empty string or as "\-" it defaults to the current kernel version, i\&.e\&. the same string
+\fBuname \-r\fR
+returns\&. If the latter is omitted, specified as an empty string or as "\-" defaults to
+/usr/lib/modules/\fIKERNEL_VERSION\fR/vmlinuz\&. Optionally, one or more initrd images may be specified as well (note that plugins might generate additional ones)\&.
+.sp
+The executable files from
+/usr/lib/kernel/install\&.d/*\&.install
+and
+/etc/kernel/install\&.d/*\&.install
+(i\&.e\&. the plugins) are called with the following arguments:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+add \fIKERNEL\-VERSION\fR $BOOT/\fIENTRY\-TOKEN\fR/\fIKERNEL\-VERSION\fR/ \fIKERNEL\-IMAGE\fR \e
+          [\fIINITRD\-FILE\fR \&.\&.\&.]
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+The third argument directly refers to the path where to place kernel images, initrd images and other resources for
+\m[blue]\fBBoot Loader Specification\fR\m[]\&\s-2\u[2]\d\s+2
+Type #1 entries (the "entry directory")\&. If other boot loader schemes are used the parameter may be ignored\&.
+.sp
+The
+\fIENTRY\-TOKEN\fR
+string is typically the machine ID and is supposed to identify the local installation on the system\&. For details see below\&.
+.sp
+Two default plugins execute the following operations in this case:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBkernel\-install\fR
+creates
+$BOOT/\fIENTRY\-TOKEN\fR/\fIKERNEL\-VERSION\fR, if enabled (see
+\fI$KERNEL_INSTALL_LAYOUT\fR)\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+50\-depmod\&.install
+runs
+\fBdepmod\fR(8)
+for the
+\fIKERNEL\-VERSION\fR\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+90\-loaderentry\&.install
+copies
+\fIKERNEL\-IMAGE\fR
+to
+$BOOT/\fIENTRY\-TOKEN\fR/\fIKERNEL\-VERSION\fR/linux\&. If
+\fIINITRD\-FILE\fRs are provided, it also copies them to
+$BOOT/\fIENTRY\-TOKEN\fR/\fIKERNEL_VERSION\fR/\fIINITRD\-FILE\fR\&. This can also be used to prepend microcode before the actual initrd\&. It also creates a boot loader entry according to the
+\m[blue]\fBBoot Loader Specification\fR\m[]\&\s-2\u[2]\d\s+2
+(Type #1) in
+$BOOT/loader/entries/\fIENTRY\-TOKEN\fR\-\fIKERNEL\-VERSION\fR\&.conf\&. The title of the entry is the
+\fIPRETTY_NAME\fR
+parameter specified in
+/etc/os\-release
+or
+/usr/lib/os\-release
+(if the former is missing), or "Linux
+\fIKERNEL\-VERSION\fR", if unset\&.
+.sp
+If
+\fI$KERNEL_INSTALL_LAYOUT\fR
+is not "bls", this plugin does nothing\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+90\-uki\-copy\&.install
+copies a file
+uki\&.efi
+from
+\fI$KERNEL_INSTALL_STAGING_AREA\fR
+or if it does not exist the
+\fIKERNEL\-IMAGE\fR
+argument, only if it has a
+"\&.efi"
+extension, to
+$BOOT/EFI/Linux/\fIENTRY\-TOKEN\fR\-\fIKERNEL\-VERSION\fR\&.efi\&.
+.sp
+If
+\fI$KERNEL_INSTALL_LAYOUT\fR
+is not "uki", this plugin does nothing\&.
+.RE
+.sp
+Added in version 198\&.
+.RE
+.PP
+\fBadd\-all\fR
+.RS 4
+This is the same as
+\fBadd\fR
+(see above), but invokes the operation iteratively for every installed kernel in
+/usr/lib/modules/\&. This operation is only supported on systems where the kernel image is installed in
+/usr/lib/modules/\fIKERNEL\-VERSION\fR/vmlinuz\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+\fBremove \fR\fB\fIKERNEL\-VERSION\fR\fR
+.RS 4
+This command expects a kernel version string as single argument\&.
+.sp
+The executable files from
+/usr/lib/kernel/install\&.d/*\&.install
+and
+/etc/kernel/install\&.d/*\&.install
+(i\&.e\&. the plugins) are called with the following arguments:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+remove \fIKERNEL\-VERSION\fR $BOOT/\fIENTRY\-TOKEN\fR/\fIKERNEL\-VERSION\fR/
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+Afterwards,
+\fBkernel\-install\fR
+removes the entry directory
+$BOOT/\fIENTRY\-TOKEN\fR/\fIKERNEL\-VERSION\fR/
+and its contents, if it exists\&.
+.sp
+Two default plugins execute the following operations in this case:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+50\-depmod\&.install
+removes the files generated by
+\fBdepmod\fR
+for this kernel again\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+90\-loaderentry\&.install
+removes the file
+$BOOT/loader/entries/\fIENTRY\-TOKEN\fR\-\fIKERNEL\-VERSION\fR\&.conf\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+90\-uki\-copy\&.install
+removes the file
+$BOOT/EFI/Linux/\fIENTRY\-TOKEN\fR\-\fIKERNEL\-VERSION\fR\&.efi\&.
+.RE
+.sp
+Added in version 198\&.
+.RE
+.PP
+\fBinspect [[[\fR\fB\fIKERNEL\-VERSION\fR\fR\fB] \fR\fB\fIKERNEL\-IMAGE\fR\fR\fB] [\fR\fB\fIINITRD\-FILE\fR\fR\fB \&.\&.\&.]]\fR
+.RS 4
+Takes the same parameters as
+\fBadd\fR\&.
+.sp
+Shows the various paths and parameters configured or auto\-detected\&. In particular shows the values of the various
+\fI$KERNEL_INSTALL_*\fR
+environment variables listed below, as they would be passed to plugins\&. The
+\fB\-\-json\fR
+option can be used to get the output of this verb as a JSON object\&.
+.sp
+Added in version 251\&.
+.RE
+.PP
+\fBlist\fR
+.RS 4
+Shows the various installed kernels\&. This enumerates the subdirectories of
+/usr/lib/modules/, and shows whether a kernel image is installed there\&.
+.sp
+Added in version 255\&.
+.RE
+.SH "COMPATIBILITY WITH THE KERNEL BUILD SYSTEM"
+.HP \w'\fBinstallkernel\fR\ 'u
+\fBinstallkernel\fR [OPTIONS...] VERSION VMLINUZ [MAP] [INSTALLATION\-DIR]
+.PP
+When invoked as
+\fBinstallkernel\fR, this program accepts arguments as specified by the kernel build system\*(Aqs
+\fBmake install\fR
+command\&. The
+\fIVERSION\fR
+and
+\fIVMLINUZ\fR
+parameters specify the kernel version and the kernel binary\&. The other two parameters (\fIMAP\fR
+and
+\fIINSTALLATION\-DIR\fR) are currently ignored\&.
+.SH "THE \FI$BOOT\FR PARTITION"
+.PP
+The partition where the kernels and
+\m[blue]\fBBoot Loader Specification\fR\m[]\&\s-2\u[2]\d\s+2
+snippets are located is called
+\fI$BOOT\fR\&.
+\fBkernel\-install\fR
+determines the location of this partition by checking
+/efi/,
+/boot/, and
+/boot/efi/
+in turn\&. The first location where
+$BOOT/loader/entries/
+or
+$BOOT/\fIENTRY\-TOKEN\fR/
+exists is used\&.
+.SH "OPTIONS"
+.PP
+The following options are understood:
+.PP
+\fB\-\-esp\-path=\fR
+.RS 4
+Path to the EFI System Partition (ESP)\&. If not specified,
+/efi/,
+/boot/, and
+/boot/efi/
+are checked in turn\&. It is recommended to mount the ESP to
+/efi/, if possible\&.
+.RE
+.PP
+\fB\-\-boot\-path=\fR
+.RS 4
+Path to the Extended Boot Loader partition, as defined in the
+\m[blue]\fBBoot Loader Specification\fR\m[]\&\s-2\u[2]\d\s+2\&. If not specified,
+/boot/
+is checked\&. It is recommended to mount the Extended Boot Loader partition to
+/boot/, if possible\&.
+.RE
+.PP
+\fB\-\-make\-entry\-directory=yes|no|auto\fR
+.RS 4
+Controls creation and deletion of the
+\m[blue]\fBBoot Loader Specification\fR\m[]\&\s-2\u[2]\d\s+2
+Type #1 entry directory on the file system containing resources such as kernel and initrd images during
+\fBadd\fR
+and
+\fBremove\fR, respectively\&. The directory is named after the entry token, and is placed immediately below the boot root directory\&. When
+"auto", the directory is created or removed only when the install layout is
+"bls"\&. Defaults to
+"auto"\&.
+.sp
+Added in version 254\&.
+.RE
+.PP
+\fB\-\-entry\-token=\fR
+.RS 4
+Controls how to name and identify boot loader entries for this kernel installation or deletion\&. Takes one of
+"auto",
+"machine\-id",
+"os\-id",
+"os\-image\-id", or an arbitrary string prefixed by
+"literal:"
+as argument\&.
+.sp
+If set to
+\fBmachine\-id\fR
+the entries are named after the machine ID of the running system (e\&.g\&.
+"b0e793a9baf14b5fa13ecbe84ff637ac")\&. See
+\fBmachine-id\fR(5)
+for details about the machine ID concept and file\&.
+.sp
+If set to
+\fBos\-id\fR
+the entries are named after the OS ID of the running system, i\&.e\&. the
+\fIID=\fR
+field of
+\fBos-release\fR(5)
+(e\&.g\&.
+"fedora")\&. Similarly, if set to
+\fBos\-image\-id\fR
+the entries are named after the OS image ID of the running system, i\&.e\&. the
+\fIIMAGE_ID=\fR
+field of
+os\-release
+(e\&.g\&.
+"vendorx\-cashier\-system")\&.
+.sp
+If set to
+\fBauto\fR
+(the default), the
+/etc/kernel/entry\-token
+(or
+$KERNEL_INSTALL_CONF_ROOT/entry\-token) file will be read if it exists, and the stored value used\&. Otherwise if the local machine ID is initialized it is used\&. Otherwise
+\fIIMAGE_ID=\fR
+from
+os\-release
+will be used, if set\&. Otherwise,
+\fIID=\fR
+from
+os\-release
+will be used, if set\&. Otherwise a randomly generated machine ID is used\&.
+.sp
+Using the machine ID for naming the entries is generally preferable, however there are cases where using the other identifiers is a good option\&. Specifically: if the identification data that the machine ID entails shall not be stored on the (unencrypted)
+\fI$BOOT_ROOT\fR
+partition, or if the ID shall be generated on first boot and is not known when the entries are prepared\&. Note that using the machine ID has the benefit that multiple parallel installations of the same OS can coexist on the same medium, and they can update their boot loader entries independently\&. When using another identifier (such as the OS ID or the OS image ID), parallel installations of the same OS would try to use the same entry name\&. To support parallel installations, the installer must use a different entry token when adding a second installation\&.
+.sp
+Added in version 254\&.
+.RE
+.PP
+\fB\-v\fR, \fB\-\-verbose\fR
+.RS 4
+Output additional information about operations being performed\&.
+.sp
+Added in version 242\&.
+.RE
+.PP
+\fB\-\-root=\fR\fB\fIroot\fR\fR
+.RS 4
+Takes a directory path as an argument\&. All paths will be prefixed with the given alternate
+\fIroot\fR
+path, including config search paths\&. This is useful to operate on a system image mounted to the specified directory instead of the host system itself\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+\fB\-\-image=\fR\fB\fIimage\fR\fR
+.RS 4
+Takes a path to a disk image file or block device node\&. If specified, all operations are applied to the file system in the indicated disk image\&. This option is similar to
+\fB\-\-root=\fR, but operates on file systems stored in disk images or block devices\&. The disk image should either contain just a file system or a set of file systems within a GPT partition table, following the
+\m[blue]\fBDiscoverable Partitions Specification\fR\m[]\&\s-2\u[3]\d\s+2\&. For further information on supported disk images, see
+\fBsystemd-nspawn\fR(1)\*(Aqs switch of the same name\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Print a short help text and exit\&.
+.RE
+.PP
+\fB\-\-version\fR
+.RS 4
+Print a short version string and exit\&.
+.RE
+.PP
+\fB\-\-no\-pager\fR
+.RS 4
+Do not pipe output into a pager\&.
+.RE
+.PP
+\fB\-\-json=\fR\fB\fIMODE\fR\fR
+.RS 4
+Shows output formatted as JSON\&. Expects one of
+"short"
+(for the shortest possible output without any redundant whitespace or line breaks),
+"pretty"
+(for a pretty version of the same, with indentation and line breaks) or
+"off"
+(to turn off JSON output, the default)\&.
+.RE
+.PP
+\fB\-\-image\-policy=\fR\fB\fIpolicy\fR\fR
+.RS 4
+Takes an image policy string as argument, as per
+\fBsystemd.image-policy\fR(7)\&. The policy is enforced when operating on the disk image specified via
+\fB\-\-image=\fR, see above\&. If not specified defaults to the
+"*"
+policy, i\&.e\&. all recognized file systems in the image are used\&.
+.RE
+.PP
+\fB\-\-no\-legend\fR
+.RS 4
+Do not print the legend, i\&.e\&. column headers and the footer with hints\&.
+.RE
+.SH "ENVIRONMENT VARIABLES"
+.SS "Environment variables exported for plugins"
+.PP
+If
+\fB\-\-verbose\fR
+is used,
+\fI$KERNEL_INSTALL_VERBOSE=1\fR
+will be exported for plugins\&. They may output additional logs in this case\&.
+.PP
+\fI$KERNEL_INSTALL_IMAGE_TYPE=uki|pe|unknown\fR
+is set for the plugins to specify the type of the kernel image\&.
+.PP
+uki
+.RS 4
+Unified kernel image\&.
+.sp
+Added in version 254\&.
+.RE
+.PP
+pe
+.RS 4
+PE binary\&.
+.sp
+Added in version 254\&.
+.RE
+.PP
+unknown
+.RS 4
+Unknown type\&.
+.sp
+Added in version 254\&.
+.RE
+.PP
+\fI$KERNEL_INSTALL_MACHINE_ID\fR
+is set for the plugins to the desired machine\-id to use\&. It\*(Aqs always a 128\-bit ID\&. Normally it\*(Aqs read from
+/etc/machine\-id, but it can also be overridden via
+\fI$MACHINE_ID\fR
+(see below)\&. If not specified via these methods, a fallback value will generated by
+\fBkernel\-install\fR
+and used only for a single invocation\&.
+.PP
+\fI$KERNEL_INSTALL_ENTRY_TOKEN\fR
+is set for the plugins to the desired entry "token" to use\&. It\*(Aqs an identifier that shall be used to identify the local installation, and is often the machine ID, i\&.e\&. same as
+\fI$KERNEL_INSTALL_MACHINE_ID\fR, but might also be a different type of identifier, for example a fixed string or the
+\fIID=\fR,
+\fIIMAGE_ID=\fR
+values from
+/etc/os\-release\&. The string passed here will be used to name Boot Loader Specification entries, or the directories the kernel image and initial RAM disk images are placed into\&.
+.PP
+Note that while
+\fI$KERNEL_INSTALL_ENTRY_TOKEN\fR
+and
+\fI$KERNEL_INSTALL_MACHINE_ID\fR
+are often set to the same value, the latter is guaranteed to be a valid 32 character ID in lowercase hexadecimals while the former can be any short string\&. The entry token to use is read from
+/etc/kernel/entry\-token, if it exists\&. Otherwise a few possible candidates below
+\fI$BOOT\fR
+are checked for Boot Loader Specification Type 1 entry directories, and if found the entry token is derived from that\&. If that is not successful,
+\fI$KERNEL_INSTALL_MACHINE_ID\fR
+is used as fallback\&.
+.PP
+\fI$KERNEL_INSTALL_BOOT_ROOT\fR
+is set for the plugins to the absolute path of the root directory (mount point, usually) of the hierarchy where boot loader entries, kernel images, and associated resources should be placed\&. This usually is the path where the XBOOTLDR partition or the ESP (EFI System Partition) are mounted, and also conceptually referred to as
+\fI$BOOT\fR\&. Can be overridden by setting
+\fI$BOOT_ROOT\fR
+(see below)\&.
+.PP
+\fI$KERNEL_INSTALL_LAYOUT=auto|bls|uki|other|\&.\&.\&.\fR
+is set for the plugins to specify the installation layout\&. Additional layout names may be defined by convention\&. If a plugin uses a special layout, it\*(Aqs encouraged to declare its own layout name and configure
+\fIlayout=\fR
+in
+install\&.conf
+upon initial installation\&. The following values are currently understood:
+.PP
+bls
+.RS 4
+Standard
+\m[blue]\fBBoot Loader Specification\fR\m[]\&\s-2\u[2]\d\s+2
+Type #1 layout, compatible with
+\fBsystemd-boot\fR(7): entries in
+$BOOT/loader/entries/\fIENTRY\-TOKEN\fR\-\fIKERNEL\-VERSION\fR[+\fITRIES\fR]\&.conf, kernel and initrds under
+$BOOT/\fIENTRY\-TOKEN\fR/\fIKERNEL\-VERSION\fR/
+.sp
+Implemented by
+90\-loaderentry\&.install\&.
+.sp
+Added in version 250\&.
+.RE
+.PP
+uki
+.RS 4
+Standard
+\m[blue]\fBBoot Loader Specification\fR\m[]\&\s-2\u[2]\d\s+2
+Type #2 layout, compatible with
+\fBsystemd-boot\fR(7): unified kernel images under
+$BOOT/EFI/Linux
+as
+$BOOT/EFI/Linux/\fIENTRY\-TOKEN\fR\-\fIKERNEL\-VERSION\fR[+\fITRIES\fR]\&.efi\&.
+.sp
+Implemented by
+90\-uki\-copy\&.install\&.
+.sp
+Added in version 253\&.
+.RE
+.PP
+other
+.RS 4
+Some other layout not understood natively by
+\fBkernel\-install\fR\&.
+.sp
+Added in version 250\&.
+.RE
+.PP
+auto
+.RS 4
+Pick the layout automatically\&. If the kernel is a UKI set layout to
+\fBuki\fR\&. If not default to
+\fBbls\fR
+if
+$BOOT/loader/entries\&.srel
+with content
+"type1"
+or
+$BOOT/\fIENTRY\-TOKEN\fR
+exists, or
+\fBother\fR
+otherwise\&.
+.sp
+Leaving layout blank has the same effect\&. This is the default\&.
+.sp
+Added in version 254\&.
+.RE
+.PP
+\fI$KERNEL_INSTALL_INITRD_GENERATOR\fR
+and
+\fI$KERNEL_INSTALL_UKI_GENERATOR\fR
+are set for plugins to select the initrd and/or UKI generator\&. This may be configured as
+\fIinitrd_generator=\fR
+and
+\fIuki_generator=\fR
+in
+install\&.conf, see below\&.
+.PP
+\fI$KERNEL_INSTALL_STAGING_AREA\fR
+is set for plugins to a path to a directory\&. Plugins may drop files in that directory, and they will be installed as part of the loader entry, based on the file name and extension: Files named
+initrd*
+will be installed as
+\fIINITRD\-FILE\fRs, and files named
+microcode*
+will be prepended before
+\fIINITRD\-FILE\fRs\&.
+.SS "Environment variables understood by kernel\-install"
+.PP
+\fI$KERNEL_INSTALL_CONF_ROOT\fR
+can be set to override the location of the configuration files read by
+\fBkernel\-install\fR\&. When set,
+install\&.conf,
+entry\-token, and other files will be read from this directory only\&. Note that this path is relative to the host, and in particular
+\fIsymlinks in this directory are resolved relative to the host\fR, even if
+\fB\-\-root=\fR\fB\fIroot\fR\fR
+is used\&. This means that it is generally
+\fInot\fR
+correct to use this variable to specify a directory underneath
+\fIroot\fR
+if symlinks are used there\&.
+.PP
+\fI$KERNEL_INSTALL_PLUGINS\fR
+can be set to override the list of plugins executed by
+\fBkernel\-install\fR\&. The argument is a whitespace\-separated list of paths\&.
+"KERNEL_INSTALL_PLUGINS=:"
+may be used to prevent any plugins from running\&.
+.PP
+\fI$MACHINE_ID\fR
+can be set for
+\fBkernel\-install\fR
+to override
+\fI$KERNEL_INSTALL_MACHINE_ID\fR, the machine ID\&.
+.PP
+\fI$BOOT_ROOT\fR
+can be set for
+\fBkernel\-install\fR
+to override
+\fI$KERNEL_INSTALL_BOOT_ROOT\fR, the installation location for boot entries\&.
+.PP
+The last two variables may also be set in
+install\&.conf\&. Variables set in the environment take precedence over the values specified in the config file\&.
+.SH "EXIT STATUS"
+.PP
+If every executable returns 0 or 77, 0 is returned, and a non\-zero failure code otherwise\&.
+.SH "FILES"
+.PP
+/etc/kernel/install\&.d/*\&.install, /usr/lib/kernel/install\&.d/*\&.install
+.RS 4
+Drop\-in files which are executed by
+\fBkernel\-install\fR\&.
+.sp
+Added in version 198\&.
+.RE
+.PP
+/etc/kernel/cmdline, /usr/lib/kernel/cmdline, /proc/cmdline
+.RS 4
+Specifies the kernel command line to use\&. The first of the files that is found will be used\&.
+\fI$KERNEL_INSTALL_CONF_ROOT\fR
+may be used to override the search path; see below for details\&.
+.sp
+Added in version 198\&.
+.RE
+.PP
+/etc/kernel/devicetree, /usr/lib/kernel/devicetree
+.RS 4
+Specifies the partial path to the file containing the device tree blob to install with the kernel and use at boot\&. The first of the files that is found will be used\&.
+\fI$KERNEL_INSTALL_CONF_ROOT\fR
+may be used to override the search path; see below for details\&.
+.sp
+The
+devicetree
+file contains a path, and this path specifies a location relative to the kernel install tree\&. A set of locations is checked, including in particular
+/usr/lib/modules/\fIKERNEL_VERSION\fR/dtb/, which is the recommended location to place the dtb files under\&. For example, with
+"broadcom/bcm2711\-rpi\-4\-b\&.dtb"
+in the
+devicetree
+file, the device tree blob for the Raspberry Pi 4 Model B would be installed, and the actual file would be
+/usr/lib/modules/\fIKERNEL_VERSION\fR/dtb/broadcom/bcm2711\-rpi\-4\-b\&.dtb\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+/etc/kernel/tries
+.RS 4
+Read by
+90\-loaderentry\&.install
+and
+90\-uki\-copy\&.install\&. If this file exists, a numeric value is read from it and the naming of the generated entry file or UKI is altered to include it as
+$BOOT/loader/entries/\fIENTRY\-TOKEN\fR\-\fIKERNEL\-VERSION\fR+\fITRIES\fR\&.conf
+or
+$BOOT/EFI/Linux/\fIENTRY\-TOKEN\fR\-\fIKERNEL\-VERSION\fR+\fITRIES\fR\&.efi, respectively\&. This is useful for boot loaders such as
+\fBsystemd-boot\fR(7)
+which implement boot attempt counting with a counter embedded in the entry file name\&.
+\fI$KERNEL_INSTALL_CONF_ROOT\fR
+may be used to override the search path; see below for details\&.
+.sp
+Added in version 240\&.
+.RE
+.PP
+/etc/kernel/entry\-token
+.RS 4
+If this file exists it is read and used as "entry token" for this system, i\&.e\&. is used for naming Boot Loader Specification entries\&. See
+\fI$KERNEL_INSTALL_ENTRY_TOKEN\fR
+above for details\&.
+\fI$KERNEL_INSTALL_CONF_ROOT\fR
+may be used to override the search path; see below for details\&.
+.sp
+Added in version 251\&.
+.RE
+.PP
+/etc/machine\-id
+.RS 4
+The content of this file specifies the machine identification
+\fIMACHINE\-ID\fR\&.
+.sp
+Added in version 198\&.
+.RE
+.PP
+/etc/os\-release, /usr/lib/os\-release
+.RS 4
+Read by
+90\-loaderentry\&.install\&. If available,
+\fIPRETTY_NAME=\fR
+is read from these files and used as the title of the boot menu entry\&. Otherwise,
+"Linux \fIKERNEL\-VERSION\fR"
+will be used\&.
+.sp
+Added in version 198\&.
+.RE
+.PP
+/etc/kernel/install\&.conf, /run/kernel/install\&.conf, /usr/local/lib/kernel/install\&.conf, /usr/lib/kernel/install\&.conf, /etc/kernel/install\&.conf\&.d/*\&.conf, /run/kernel/install\&.conf\&.d/*\&.conf, /usr/local/lib/kernel/install\&.conf\&.d/*\&.conf, /usr/lib/kernel/install\&.conf\&.d/*\&.conf
+.RS 4
+Configuration file with options for
+\fBkernel\-install\fR, as a series of
+\fIKEY=\fR\fIVALUE\fR
+assignments, compatible with shell syntax, following the same rules as described in
+\fBos-release\fR(5)\&. The first of the files that is found will be used\&.
+\fI$KERNEL_INSTALL_CONF_ROOT\fR
+may be used to override the search path; see below for details\&. Drop\-in files may also be used to extend the configuration with overrides, see
+\fBsystemd.unit\fR(5)\&.
+.sp
+Currently, the following keys are supported:
+\fIMACHINE_ID=\fR,
+\fIBOOT_ROOT=\fR,
+\fIlayout=\fR,
+\fIinitrd_generator=\fR,
+\fIuki_generator=\fR\&. See the Environment variables section above for details\&.
+.sp
+Added in version 250\&.
+.RE
+.PP
+/etc/kernel/uki\&.conf
+.RS 4
+Ini\-style configuration file for
+\fBukify\fR(1)
+which is only effective when
+\fI$KERNEL_INSTALL_LAYOUT\fR
+or
+\fIlayout=\fR
+in
+install\&.conf
+is set to
+\fBuki\fR
+and
+\fI$KERNEL_INSTALL_UKI_GENERATOR\fR
+or
+\fIuki_generator=\fR
+in
+install\&.conf
+is set to
+\fBukify\fR, or is unset\&.
+\fI$KERNEL_INSTALL_CONF_ROOT\fR
+may be used to override the search path; see below for details\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+/usr/lib/modules/\fIKERNEL\-VERSION/\fR
+.RS 4
+Location for installed kernel modules and other kernel related resources\&. For each locally installed kernel a directory named after the kernel version (\fBuname \-r\fR) is kept\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+/usr/lib/modules/\fIKERNEL\-VERSION/vmlinuz\fR
+.RS 4
+Location for installed kernel images\&. This is the recommended location for OS package managers to install kernel images into (as applicable), from which
+\fBkernel\-install add\fR
+then copies it into the final boot partition\&.
+.sp
+Added in version 255\&.
+.RE
+.PP
+For various cases listed above, if the
+\fI$KERNEL_INSTALL_CONF_ROOT\fR
+environment variable is set, it will override the search path\&. The files will be loaded
+\fIonly\fR
+from the directory specified by the environment variable\&. When the variable is not set, the listed paths are tried in turn, and the first file that exists is used\&.
+.SH "SEE ALSO"
+.PP
+\fBmachine-id\fR(5), \fBos-release\fR(5), \fBdepmod\fR(8), \fBsystemd-boot\fR(7), \fBukify\fR(1), \m[blue]\fBBoot Loader Specification\fR\m[]\&\s-2\u[2]\d\s+2
+.SH "NOTES"
+.IP " 1." 4
+Nowadays actually CPIO archives used as an "initramfs", rather than "initrd". See
+\fBbootup\fR(7)
+for an explanation.
+.IP " 2." 4
+Boot Loader Specification
+.RS 4
+\%https://uapi-group.org/specifications/specs/boot_loader_specification
+.RE
+.IP " 3." 4
+Discoverable Partitions Specification
+.RS 4
+\%https://uapi-group.org/specifications/specs/discoverable_partitions_specification
+.RE

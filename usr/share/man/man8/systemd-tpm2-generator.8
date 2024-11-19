@@ -1,0 +1,53 @@
+'\" t
+.TH "SYSTEMD\-TPM2\-GENERATOR" "8" "" "systemd 256.4" "systemd-tpm2-generator"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+systemd-tpm2-generator \- Generator for inserting TPM2 synchronization point in the boot process
+.SH "SYNOPSIS"
+.PP
+/usr/lib/systemd/system\-generators/systemd\-tpm2\-generator
+.SH "DESCRIPTION"
+.PP
+systemd\-tpm2\-generator
+is a generator that adds a
+\fIWants=\fR
+dependency from
+sysinit\&.target
+to
+tpm2\&.target
+when it detects that the firmware discovered a TPM2 device but the OS kernel so far did not\&.
+tpm2\&.target
+is supposed to act as synchronization point for all services that require TPM2 device access\&. See
+\fBsystemd.special\fR(7)
+for details\&.
+.PP
+The
+\fBsystemd\&.tpm2_wait=\fR
+kernel command line option may be used to override behaviour of the generator\&. It accepts a boolean value: if true then
+tpm2\&.target
+will be added as synchronization point even if the firmware has not detected a TPM2 device\&. If false, the target will not be inserted even if firmware reported a device but the OS kernel doesn\*(Aqt expose a device for it yet\&. The latter might be useful in environments where a suitable TPM2 driver for the available hardware is not available\&.
+.PP
+systemd\-tpm2\-generator
+implements
+\fBsystemd.generator\fR(7)\&.
+.SH "SEE ALSO"
+.PP
+\fBsystemd\fR(1), \fBsystemd.special\fR(7), \fBkernel-command-line\fR(7)
