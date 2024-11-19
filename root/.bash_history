@@ -1,6 +1,3 @@
-cd ..
-rm -rfv ncurses-6.5
-mv -v ncurses-6.5.tar.gz base
 tar -vxf sed-4.9.tar.xz 
 cd sed-4.9
 ./configure --prefix=/usr && make && make install
@@ -497,4 +494,7 @@ nano LICENSE.md
 nano LICENSE.md
 nano LICENSE.md
 nano
+exit
+rm -fv LICENSE.txt 
+nano LICENSE.md
 exit
