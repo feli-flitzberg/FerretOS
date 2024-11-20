@@ -16,6 +16,14 @@ File: dir	Node: Top	This is the top of the INFO tree
 
 Archiving
 * Tar: (tar).                   Making tape (or disk) archives.
+* Xorrecord: (xorrecord).       Emulates CD/DVD/BD program cdrecord
+* Xorriso: (xorriso).           Burns ISO 9660 on CD, DVD, BD.
+* Xorriso-dd-target: (xorriso-dd-target).
+                                Device evaluator and disk image copier for 
+                                  GNU/Linux
+* Xorriso-tcltk: (xorriso-tcltk).
+                                Educational GUI frontend for xorriso
+* Xorrisofs: (xorrisofs).       Emulates ISO 9660 program mkisofs
 
 Basics
 * Bash: (bash).                 The GNU Bourne-Again SHell.
@@ -2650,6 +2658,7 @@ Software libraries
                                   Library.
 
 System administration
+* Which: (which).               Show full path of commands.
 * parted: (parted).             GNU partitioning software
 
 System Administration

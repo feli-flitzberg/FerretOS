@@ -1,0 +1,18 @@
+prefix=/usr
+exec_prefix=/usr
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+usbids=/usr/share/hwdata/usb.ids
+
+Name: usbutils
+Description: usbutils    This is a collection of USB tools for use on Linux and BSD systems\
+ to query what type of USB devices are connected to the system. This is to be run on a USB host\
+  (i.e. a machine you plug USB devices into), not on a USB device (i.e. a device you plug into a USB host.)
+
+Version: 017
+URL: https://github.com/gregkh/usbutils
+Requires: libusb-1.0 >= 1.0.14  libudev >= 196
+Conflicts:
+Libs: -L${libdir}
+Libs.private: -lusb-1.0 -ludev
+Cflags: -g -O2 -I/usr/include/libusb-1.0 

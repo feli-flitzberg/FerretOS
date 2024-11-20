@@ -8,3 +8,4 @@ run/*
 !run/gitkeep
 tmp/*
 !tmp/gitkeep
+sources/linux-6.11.7/*

@@ -1,0 +1,183 @@
+Submitted By:            Douglas R. Reno <renodr at linuxfromscratch dot org>
+Date:                    2024-08-20
+Initial Package Version: 17.04
+Upstream Status:         Abandoned
+Origin:                  OpenSUSE
+Description:             Fixes three security vulnerabilities in p7zip. One of
+                         them is in the code for writing 7Zip objects, while the
+                         other two occur when processing NTFS volumes. These
+                         issues are all rated at 8.1/10, and are classified as
+                         remote code execution issues. The vulnerabilities in
+                         question are CVE-2021-3465, CVE-2023-52168, and
+                         CVE-2024-52169.
+
+diff -Naurp p7zip-17.04.orig/CPP/7zip/Archive/NtfsHandler.cpp p7zip-17.04/CPP/7zip/Archive/NtfsHandler.cpp
+--- p7zip-17.04.orig/CPP/7zip/Archive/NtfsHandler.cpp	2021-04-03 22:11:06.000000000 -0500
++++ p7zip-17.04/CPP/7zip/Archive/NtfsHandler.cpp	2024-08-20 16:08:30.118158130 -0500
+@@ -71,6 +71,7 @@ struct CHeader
+ {
+   unsigned SectorSizeLog;
+   unsigned ClusterSizeLog;
++  unsigned MftRecordSizeLog;
+   // Byte MediaType;
+   UInt32 NumHiddenSectors;
+   UInt64 NumSectors;
+@@ -159,11 +160,44 @@ bool CHeader::Parse(const Byte *p)
+   G64(p + 0x30, MftCluster);
+   // G64(p + 0x38, Mft2Cluster);
+   G64(p + 0x48, SerialNumber);
+-  UInt32 numClustersInMftRec;
+-  UInt32 numClustersInIndexBlock;
+-  G32(p + 0x40, numClustersInMftRec); // -10 means 2 ^10 = 1024 bytes.
+-  G32(p + 0x44, numClustersInIndexBlock);
+-  return (numClustersInMftRec < 256 && numClustersInIndexBlock < 256);
++
++  /*
++    numClusters_per_MftRecord:
++    numClusters_per_IndexBlock:
++    only low byte from 4 bytes is used. Another 3 high bytes are zeros.
++      If the number is positive (number < 0x80),
++          then it represents the number of clusters.
++      If the number is negative (number >= 0x80),
++          then the size of the file record is 2 raised to the absolute value of this number.
++          example: (0xF6 == -10) means 2^10 = 1024 bytes.
++  */
++  {
++    UInt32 numClusters_per_MftRecord;
++    G32(p + 0x40, numClusters_per_MftRecord);
++    if (numClusters_per_MftRecord >= 0x100 || numClusters_per_MftRecord == 0)
++      return false;
++    if (numClusters_per_MftRecord < 0x80)
++    {
++      const int t = GetLog(numClusters_per_MftRecord);
++      if (t < 0)
++        return false;
++      MftRecordSizeLog = (unsigned)t + ClusterSizeLog;
++    }
++    else
++      MftRecordSizeLog = 0x100 - numClusters_per_MftRecord;
++    // what exact MFT record sizes are possible and supported by Windows?
++    // do we need to change this limit here?
++    const unsigned k_MftRecordSizeLog_MAX = 12;
++    if (MftRecordSizeLog > k_MftRecordSizeLog_MAX)
++      return false;
++    if (MftRecordSizeLog < SectorSizeLog)
++      return false;
++  }
++  {
++    UInt32 numClusters_per_IndexBlock;
++    G32(p + 0x44, numClusters_per_IndexBlock);
++    return (numClusters_per_IndexBlock < 0x100);
++  }
+ }
+ 
+ struct CMftRef
+@@ -266,8 +300,8 @@ bool CFileNameAttr::Parse(const Byte *p,
+   G32(p + 0x38, Attrib);
+   // G16(p + 0x3C, PackedEaSize);
+   NameType = p[0x41];
+-  unsigned len = p[0x40];
+-  if (0x42 + len > size)
++  const unsigned len = p[0x40];
++  if (0x42 + len * 2 > size)
+     return false;
+   if (len != 0)
+     GetString(p + 0x42, len, Name);
+@@ -1358,7 +1392,6 @@ struct CDatabase
+   CObjectVector<CMftRec> Recs;
+   CMyComPtr<IInStream> InStream;
+   CHeader Header;
+-  unsigned RecSizeLog;
+   UInt64 PhySize;
+ 
+   IArchiveOpenCallback *OpenCallback;
+@@ -1711,26 +1744,22 @@ HRESULT CDatabase::Open()
+  
+   SeekToCluster(Header.MftCluster);
+ 
+-  CMftRec mftRec;
+-  UInt32 numSectorsInRec;
+-
++  // we use ByteBuf for records reading.
++  // so the size of ByteBuf must be >= mftRecordSize
++  const size_t recSize = (size_t)1 << Header.MftRecordSizeLog;
++  const size_t kBufSize = MyMax((size_t)(1 << 15), recSize);
++  ByteBuf.Alloc(kBufSize);
++  RINOK(ReadStream_FALSE(InStream, ByteBuf, recSize))
++  {
++    const UInt32 allocSize = Get32(ByteBuf + 0x1C);
++    if (allocSize != recSize)
++      return S_FALSE;
++  }
++  // MftRecordSizeLog >= SectorSizeLog
++  const UInt32 numSectorsInRec = 1u << (Header.MftRecordSizeLog - Header.SectorSizeLog);
+   CMyComPtr<IInStream> mftStream;
++  CMftRec mftRec;
+   {
+-    UInt32 blockSize = 1 << 12;
+-    ByteBuf.Alloc(blockSize);
+-    RINOK(ReadStream_FALSE(InStream, ByteBuf, blockSize));
+-    
+-    {
+-      UInt32 allocSize = Get32(ByteBuf + 0x1C);
+-      int t = GetLog(allocSize);
+-      if (t < (int)Header.SectorSizeLog)
+-        return S_FALSE;
+-      RecSizeLog = t;
+-      if (RecSizeLog > 15)
+-        return S_FALSE;
+-    }
+-
+-    numSectorsInRec = 1 << (RecSizeLog - Header.SectorSizeLog);
+     if (!mftRec.Parse(ByteBuf, Header.SectorSizeLog, numSectorsInRec, 0, NULL))
+       return S_FALSE;
+     if (!mftRec.IsFILE())
+@@ -1745,25 +1774,18 @@ HRESULT CDatabase::Open()
+ 
+   // CObjectVector<CAttr> SecurityAttrs;
+ 
+-  UInt64 mftSize = mftRec.DataAttrs[0].Size;
++  const UInt64 mftSize = mftRec.DataAttrs[0].Size;
+   if ((mftSize >> 4) > Header.GetPhySize_Clusters())
+     return S_FALSE;
+ 
+-  const size_t kBufSize = (1 << 15);
+-  const size_t recSize = ((size_t)1 << RecSizeLog);
+-  if (kBufSize < recSize)
+-    return S_FALSE;
+-
+   {
+-    const UInt64 numFiles = mftSize >> RecSizeLog;
++    const UInt64 numFiles = mftSize >> Header.MftRecordSizeLog;
+     if (numFiles > (1 << 30))
+       return S_FALSE;
+     if (OpenCallback)
+     {
+       RINOK(OpenCallback->SetTotal(&numFiles, &mftSize));
+     }
+-    
+-    ByteBuf.Alloc(kBufSize);
+     Recs.ClearAndReserve((unsigned)numFiles);
+   }
+   
+@@ -2405,7 +2427,7 @@ STDMETHODIMP CHandler::GetArchivePropert
+       break;
+     }
+     case kpidSectorSize: prop = (UInt32)1 << Header.SectorSizeLog; break;
+-    case kpidRecordSize: prop = (UInt32)1 << RecSizeLog; break;
++    case kpidRecordSize: prop = (UInt32)1 << Header.MftRecordSizeLog; break;
+     case kpidId: prop = Header.SerialNumber; break;
+ 
+     case kpidIsTree: prop = true; break;
+diff -Naurp p7zip-17.04.orig/CPP/7zip/Common/StreamObjects.cpp p7zip-17.04/CPP/7zip/Common/StreamObjects.cpp
+--- p7zip-17.04.orig/CPP/7zip/Common/StreamObjects.cpp	2021-04-03 22:11:06.000000000 -0500
++++ p7zip-17.04/CPP/7zip/Common/StreamObjects.cpp	2024-08-20 16:05:22.760734154 -0500
+@@ -157,6 +157,8 @@ STDMETHODIMP CDynBufSeqOutStream::Write(
+ 
+ STDMETHODIMP CBufPtrSeqOutStream::Write(const void *data, UInt32 size, UInt32 *processedSize)
+ {
++  if (_buffer == nullptr || _size == _pos)
++     return E_FAIL;
+   size_t rem = _size - _pos;
+   if (rem > size)
+     rem = (size_t)size;

@@ -115,8 +115,27 @@ pip3 install --no-index --no-user --find-links dist pyelftools
     - Add (blfs) nettle 3.10 as dependency
   - Add (blfs) pinentry 1.3.1 as recommended dependency
   - Add (blfs) libusb 1.0.27 as optional dependency (for building ccid driver)
+- Add (blfs) hwdata 0.385
+- Add (blfs) p7zip 17.04
+- Add (blfs) pciutils 3.13.0
+- Add (external) exfat 1.4.0
+  - `./configure --prefix=/usr --enable-year2038`
+- Add (blfs) usbutils 017
+- Add (blfs) which 2.21
+- Add (blfs) rsync 3.3.0
+- Add (blfs) iw 6.9
+  - Add (blfs) libnl 3.10.0
+- Add (blfs) wpa-supplicant 2.11
+- Add (blfs) curl 8.11.0
+- Add (blfs) links 2.30
+  - Add (blfs) libevent 2.1.12 as recommended dependency
+- Add (blfs) libburn 1.5.6
+- Add (blfs) libisofs 1.5.6
+- Add (blfs) libisoburn 1.5.6
+- Add (external) tmux 3.5a
 - Add (external) [linux-firmware](https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/)
-  - Add (external) rdfind as dependency requirement
+  - Add (external) rdfind 1.6.0 as recommended dependency
+  - Package is made by packaging the git repo after checking for updates
 
 #### Configuration
 
@@ -154,7 +173,7 @@ root until a text editor is available).***
 - Add `/etc/bashrc` from BLFS
 - Add `/etc/dircolors`
 - Add `/etc/issue`
-
+- wpa-supplicant not configured
 #### Build/Configure process
 
 - `$LFS` is any directory accessible to both root and a regular user
@@ -186,8 +205,8 @@ manually pruned
 - Additional packages are added before building the kernel and finalizing the image
 - `/etc/fstab` is not created
   - As part of the [Bootloader Specification](https://uapi-group.org/specifications/specs/boot_loader_specification/)
-this file isn't needed by a spec-compliant bootloader to find the root
-partition or data partitions
+this file isn't needed by a spec-compliant bootloader to find the root partition or data
+partitions
 
 ***If you work in a chroot and reinstall dbus via BLFS instructions, `$LFS/dev` will no
 longer unmount, and the host system will require a reboot. dbus will also warn about an
