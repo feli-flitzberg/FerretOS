@@ -1,0 +1,411 @@
+.TH XFSCTL 3
+.SH NAME
+xfsctl \- control XFS filesystems and individual files
+.SH C SYNOPSIS
+.B #include <xfs/xfs.h>
+.HP
+.BI "int\ xfsctl(const char *" path ", int " fd ", int " cmd ", void *" ptr );
+.PP
+.BI "int platform_test_xfs_fd(int " fd );
+.br
+.BI "int platform_test_xfs_path(const char *" path );
+.SH DESCRIPTION
+Some functionality specific to the XFS filesystem is accessible to
+applications through platform-specific system call interfaces.
+These operations can be divided into two sections \- operations
+that operate on individual files, and operations that operate on
+the filesystem itself. Care should be taken when issuing
+.BR xfsctl ()
+calls to ensure the target path and file descriptor (both must
+be supplied) do indeed represent a file from an XFS filesystem.
+The
+.BR statfs (2)
+and
+.BR fstatfs (2)
+system calls can be used to determine whether or not an arbitrary
+path or file descriptor belong to an XFS filesystem.
+These are not portable however, so the routines
+.BR platform_test_xfs_fd ()
+and
+.BR platform_test_xfs_path ()
+provide a platform-independent mechanism.
+.SS File Operations
+In order to effect an operation on an individual file, the pathname
+and descriptor arguments passed to
+.B xfsctl
+identifies the file being operated on.
+The final argument described below refers to the final argument of
+.BR xfsctl .
+All of the data structures and macros mentioned below are defined in the
+.RI < xfs/xfs_fs.h >
+header file.
+.PP
+.B XFS_IOC_ALLOCSP
+.br
+.B XFS_IOC_ALLOCSP64
+.br
+.B XFS_IOC_FREESP
+.PD 0
+.TP
+.B XFS_IOC_FREESP64
+Alter storage space associated with a section of the ordinary
+file specified.  The section is specified by a variable of type
+.BR xfs_flock64_t ,
+pointed to by the final argument.
+The data type
+.B xfs_flock64_t
+contains the following members:
+.B l_whence
+is 0, 1, or 2 to indicate that the relative offset
+.B l_start
+will be measured from the start of the file, the current position, or
+the end of the file, respectively (i.e.,
+.B l_start
+is the offset from the position specified in
+.BR l_whence ).
+If the offset specified is before the current end of file, any data
+previously written into this section is no longer accessible.
+If the offset specified is beyond the current end of file, the file
+is grown and filled with zeroes.
+The
+.B l_len
+field is currently ignored, and should be set to zero.
+
+.BR XFS_IOC_ALLOCSP ,
+.BR XFS_IOC_ALLOCSP64 ,
+.B XFS_IOC_FREESP
+and
+.B XFS_IOC_FREESP64
+operations are all identical.
+
+These ioctls are no longer supported as of Linux 5.17.
+
+.TP
+.B XFS_IOC_FSSETDM
+Set the di_dmevmask and di_dmstate fields in an XFS on-disk inode.
+The only legitimate values for these fields are those
+previously returned in the
+.B bs_dmevmask
+and
+.B bs_dmstate
+fields of the bulkstat structure.
+The data referred to by the final argument is a
+.BR "struct fsdmidata" .
+This structure's members are
+.B fsd_dmevmask
+and
+.BR fsd_dmstate .
+The di_dmevmask
+field is set to the value in
+.BR fsd_dmevmask .
+The di_dmstate field is set to the value in
+.BR fsd_dmstate .
+This command is restricted to root or to processes with device
+management capabilities.
+Its sole purpose is to allow backup and restore programs to restore the
+aforementioned critical on-disk inode fields.
+This ioctl is not supported as of Linux 5.5.
+
+.TP
+.B XFS_IOC_DIOINFO
+Get information required to perform direct I/O on the specified file
+descriptor.
+Direct I/O is performed directly to and from a user's data buffer.
+Since the kernel's buffer cache is no longer between the two, the
+user's data buffer must conform to the same type of constraints as
+required for accessing a raw disk partition.
+The final argument points to a variable of type
+.BR "struct dioattr" ,
+which contains the following members:
+.B d_mem
+is the memory alignment requirement of the user's data buffer.
+.B d_miniosz
+specifies block size, minimum I/O request size, and I/O alignment.
+The size of all I/O requests must be a multiple of this amount and
+the value of the seek pointer at the time of the I/O request must
+also be an integer multiple of this amount.
+.B d_maxiosz
+is the maximum I/O request size which can be performed on the file
+descriptor.
+If an I/O request does not meet these constraints, the
+.BR read (2)
+or
+.BR write (2)
+will fail with EINVAL.
+All I/O requests are kept consistent with any data brought into
+the cache with an access through a non-direct I/O file descriptor.
+
+.PP
+.nf
+.B XFS_IOC_FSGETXATTR
+.B XFS_IOC_FSGETXATTRA
+.fi
+.PD 0
+.TP
+.B XFS_IOC_FSSETXATTR
+See
+.BR ioctl_xfs_fsgetxattr (2)
+for more information.
+
+.PP
+.nf
+.B XFS_IOC_GETBMAP
+.B XFS_IOC_GETBMAPA
+.fi
+.PD 0
+.TP
+.B XFS_IOC_GETBMAPX
+See
+.BR ioctl_getbmap (2)
+for more information.
+
+.PP
+.B XFS_IOC_RESVSP
+.TP
+.B XFS_IOC_RESVSP64
+This command is used to allocate space to a file.
+A range of bytes is specified using a pointer to a variable of type
+.B xfs_flock64_t
+in the final argument.
+The blocks are allocated, but not zeroed, and the file size does not change.
+If the XFS filesystem is configured to flag unwritten file extents,
+performance will be negatively affected when writing to preallocated space,
+since extra filesystem transactions are required to convert extent flags on
+the range of the file written.
+If
+.BR xfs_info (8)
+reports unwritten=1, then the filesystem was made to flag unwritten extents.
+
+.PP
+.B XFS_IOC_UNRESVSP
+.TP
+.B XFS_IOC_UNRESVSP64
+This command is used to free space from a file.
+A range of bytes is specified using a pointer to a variable of type
+.B xfs_flock64_t
+in the final argument.
+Partial filesystem blocks are zeroed, and whole filesystem blocks are
+removed from the file.  The file size does not change.
+
+.TP
+.B XFS_IOC_ZERO_RANGE
+This command is used to convert a range of a file to zeros without issuing data
+IO.
+A range of bytes is specified using a pointer to a variable of type
+.B xfs_flock64_t
+in the final argument.
+Blocks are preallocated for regions that span holes in the file, and the entire
+range is converted to unwritten extents.
+This operation is a fast method of overwriting any from the range specified
+with zeros without removing any blocks or having to write zeros to disk.
+Any subsequent read in the given range will return zeros until new data is
+written.
+This functionality requires filesystems to support unwritten extents.
+If
+.BR xfs_info (8)
+reports unwritten=1, then the filesystem was made to flag unwritten extents.
+
+.\" .TP
+.\" .B XFS_IOC_GETBIOSIZE
+.\" This command gets information about the preferred buffered I/O
+.\" size used by the system when performing buffered I/O (e.g.
+.\" standard Unix non-direct I/O) to and from the file.
+.\" The information is passed back in a structure of type
+.\" .B "struct biosize"
+.\" pointed to by the final argument.
+.\" biosize lengths are expressed in log base 2.
+.\" That is if the value is 14, then the true size is 2^14 (2 raised to
+.\" the 14th power).
+.\" The
+.\" .B biosz_read
+.\" field will contain the current value used by the system when reading
+.\" from the file.
+.\" Except at the end-of-file, the system will read from the file in
+.\" multiples of this length.
+.\" The
+.\" .B biosz_write
+.\" field will contain the current value used by the system when writing
+.\" to the file.
+.\" Except at the end-of-file, the system will write to the file in
+.\" multiples of this length.
+.\" The
+.\" .B dfl_biosz_read
+.\" and
+.\" .B dfl_biosz_write
+.\" will be set to the system default values for the opened file.
+.\" The
+.\" .B biosz_flags
+.\" field will be set to 1 if the current read or write value has been
+.\" explicitly set.
+.\"
+.\" .TP
+.\" .B XFS_IOC_SETBIOSIZE
+.\" This command sets information about the preferred buffered I/O size
+.\" used by the system when performing buffered I/O (e.g. standard Unix
+.\" non-direct I/O) to and from the file.
+.\" The information is passed in a structure of type
+.\" .B "struct biosize"
+.\" pointed to by the final argument.
+.\" Using smaller preferred I/O sizes can result in performance
+.\" improvements if the file is typically accessed using small
+.\" synchronous I/Os or if only a small amount of the file is accessed
+.\" using small random I/Os, resulting in little or no use of the
+.\" additional data read in near the random I/Os.
+.\"
+.\" To explicitly set the preferred I/O sizes, the
+.\" .B biosz_flags
+.\" field should be set to zero and the
+.\" .B biosz_read
+.\" and
+.\" .B biosz_write
+.\" fields should be set to the log base 2 of the desired read and
+.\" write lengths, respectively (e.g. 13 for 8K bytes, 14 for 16K
+.\" bytes, 15 for 32K bytes, etc.).  Valid values are 13-16
+.\" inclusive for machines with a 4K byte pagesize and 14-16 for
+.\" machines with a 16K byte pagesize.  The specified read and
+.\" write values must also result in lengths that are greater than
+.\" or equal to the filesystem block size.
+.\" The
+.\" .B dfl_biosz_read
+.\" and
+.\" .B dfl_biosz_write
+.\" fields are ignored.
+.\"
+.\" If biosizes have already been explicitly set due to a prior use
+.\" of
+.\" .BR XFS_IOC_SETBIOSIZE ,
+.\" and the requested sizes are larger than the
+.\" existing sizes, the
+.\" .I xfsctl
+.\" call will return successfully and the
+.\" system will use the smaller of the two sizes.  However, if
+.\" .B biosz_flags
+.\" is set to 1, the system will use the new values
+.\" regardless of whether the new sizes are larger or smaller than the old.
+.\"
+.\" To reset the biosize values to the defaults for the filesystem
+.\" that the file resides in, the
+.\" .B biosz_flags
+.\" field should be set to 2.
+.\" The remainder of the fields will be ignored in that case.
+.\"
+.\" Changes made by
+.\" .B XFS_IOC_SETBIOSIZE
+.\" are transient.
+.\" The sizes are reset to the default values once the reference count on the
+.\" file drops to zero (e.g. all open file descriptors to that file
+.\" have been closed).
+.\" See
+.\" .I mount(8)
+.\" for details on how to set the
+.\" default biosize values for a filesystem.
+
+.PP
+.nf
+.B XFS_IOC_PATH_TO_HANDLE
+.B XFS_IOC_PATH_TO_FSHANDLE
+.B XFS_IOC_FD_TO_HANDLE
+.B XFS_IOC_OPEN_BY_HANDLE
+.B XFS_IOC_READLINK_BY_HANDLE
+.B XFS_IOC_ATTR_LIST_BY_HANDLE
+.B XFS_IOC_ATTR_MULTI_BY_HANDLE
+.fi
+.PD 0
+.TP
+.B XFS_IOC_FSSETDM_BY_HANDLE
+These are all interfaces that are used to implement various
+.I libhandle
+functions (see
+.BR open_by_handle (3)).
+They are all subject to change and should not be called directly
+by applications.
+XFS_IOC_FSSETDM_BY_HANDLE is not supported as of Linux 5.5.
+
+.SS Filesystem Operations
+In order to effect one of the following operations, the pathname
+and descriptor arguments passed to
+.BR xfsctl ()
+can be any open file in the XFS filesystem in question.
+
+.PP
+.TP
+.B XFS_IOC_FSINUMBERS
+See
+.BR ioctl_xfs_fsinumbers (2)
+for more information.
+
+.TP
+.B XFS_IOC_FSGEOMETRY
+See
+.BR ioctl_xfs_fsgeometry (2)
+for more information.
+
+.TP
+.B XFS_IOC_AG_GEOMETRY
+See
+.BR ioctl_xfs_ag_geometry (2)
+for more information.
+
+.TP
+.BR XFS_IOC_FSBULKSTAT " or " XFS_IOC_FSBULKSTAT_SINGLE
+See
+.BR ioctl_xfs_fsbulkstat (2)
+for more information.
+
+.TP
+.B XFS_IOC_SCRUB_METADATA
+See
+.BR ioctl_xfs_scrub_metadata (2)
+for more information.
+
+.TP
+.B XFS_IOC_FSCOUNTS
+See
+.BR ioctl_xfs_fscounts (2)
+for more information.
+
+.TP
+.nf
+.B XFS_IOC_GET_RESBLKS
+.fi
+.TP
+.B XFS_IOC_SET_RESBLKS
+See
+.BR ioctl_xfs_getresblks (2)
+for more information.
+Save yourself a lot of frustration and avoid these ioctls.
+
+.TP
+.B XFS_IOC_GOINGDOWN
+See
+.BR ioctl_xfs_goingdown (2)
+for more information.
+
+.PP
+.nf
+.B XFS_IOC_THAW
+.B XFS_IOC_FREEZE
+.B XFS_IOC_FSGROWFSDATA
+.B XFS_IOC_FSGROWFSLOG
+.fi
+.TP
+.B XFS_IOC_FSGROWFSRT
+These interfaces are used to implement various filesystem internal
+operations on XFS filesystems.
+The remainder of these operations will not be described further
+as they are not of general use to applications.
+
+.SH SEE ALSO
+.BR ioctl_xfs_fsgetxattr (2),
+.BR ioctl_xfs_fsgeometry (2),
+.BR ioctl_xfs_fsbulkstat (2),
+.BR ioctl_xfs_scrub_metadata (2),
+.BR ioctl_xfs_fsinumbers (2),
+.BR ioctl_xfs_fscounts (2),
+.BR ioctl_xfs_getresblks (2),
+.BR ioctl_xfs_getbmap (2),
+.BR ioctl_xfs_goingdown (2),
+.BR fstatfs (2),
+.BR statfs (2),
+.BR xfs (5),
+.BR xfs_info (8).

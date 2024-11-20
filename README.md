@@ -85,6 +85,14 @@ pip3 install --no-index --no-user --find-links dist pyelftools
     - Add (blfs) pcre2 10.44 as recommended dependency
     - Add (blfs) shared-mime-info 2.4 as dependency
     - Add (blfs) desktop-file-utils 0.27 as dependency
+- Add (blfs) xfsprogs 6.9.0
+  - Add (blfs) inih 58 as dependency
+  - Add (blfs) liburcu 0.14.0 as dependency
+- Add (blfs) efivar 39
+  - Add (blfs) mandoc 1.14.6 as recommended dependency
+- Add (blfs) efibootmgr 18
+  - `EFIDIR=ferretos`
+  - `EFI_LOADER=systemd-bootx64.efi`
 - Add (external) [linux-firmware](https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/)
   - Add (external) rdfind as dependency requirement
 
@@ -165,16 +173,3 @@ invalid user account/ID. If working in a chroot prior to creating an image or US
 installation, re-initialize the machine id. It is also advised to only reinstall dbus in
 the chroot if you are sure you won't need the chroot environment after exiting that
 instance.***
-
-<!---  - For efibootmgr, the executable name is `systemd-bootx64.efi`
--- add strip-all.sh
--- add remove-la-files.sh
--- add rpm2cpio script
--- add initramfs scripts
--- set up /etc/skel before adding user
--- include starting scripts and LFS books in /etc/skel
--- include license files in /etc/skel
--- add user
---- ferretos
---- ferretos
---->

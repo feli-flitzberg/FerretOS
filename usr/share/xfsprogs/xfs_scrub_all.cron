@@ -1,0 +1,6 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
+# Copyright (C) 2018-2024 Oracle.  All Rights Reserved.
+# Author: Darrick J. Wong <djwong@kernel.org>
+#
+10 3 * * 0 root test -e /run/systemd/system || /usr/sbin/xfs_scrub_all

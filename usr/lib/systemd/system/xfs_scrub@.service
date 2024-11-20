@@ -1,0 +1,25 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
+# Copyright (C) 2018-2024 Oracle.  All Rights Reserved.
+# Author: Darrick J. Wong <djwong@kernel.org>
+
+[Unit]
+Description=Online XFS Metadata Check for %f
+OnFailure=xfs_scrub_fail@%i.service
+Documentation=man:xfs_scrub(8)
+
+[Service]
+Type=oneshot
+PrivateNetwork=true
+ProtectSystem=full
+ProtectHome=read-only
+# Disable private /tmp just in case %f is a path under /tmp.
+PrivateTmp=no
+AmbientCapabilities=CAP_SYS_ADMIN CAP_FOWNER CAP_DAC_OVERRIDE CAP_DAC_READ_SEARCH CAP_SYS_RAWIO
+NoNewPrivileges=yes
+User=nobody
+IOSchedulingClass=idle
+CPUSchedulingPolicy=idle
+Environment=SERVICE_MODE=1
+ExecStart=/usr/sbin/xfs_scrub -b -n %f
+SyslogIdentifier=%N

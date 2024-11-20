@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
+# Copyright (C) 2018-2024 Oracle.  All Rights Reserved.
+# Author: Darrick J. Wong <djwong@kernel.org>
+
+# Email logs of failed xfs_scrub unit runs
+
+recipient="$1"
+test -z "${recipient}" && exit 0
+mntpoint="$2"
+test -z "${mntpoint}" && exit 0
+hostname="$(hostname -f 2>/dev/null)"
+test -z "${hostname}" && hostname="${HOSTNAME}"
+
+mailer="$(command -v sendmail)"
+if [ ! -x "${mailer}" ]; then
+	echo "${mailer}: Mailer program not found."
+	exit 1
+fi
+
+# Turn the mountpoint into a properly escaped systemd instance name
+scrub_svc="$(systemd-escape --template "xfs_scrub@.service" --path "${mntpoint}")"
+
+(cat << ENDL
+To: $1
+From: <xfs_scrub@${hostname}>
+Subject: xfs_scrub failure on ${mntpoint}
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+
+So sorry, the automatic xfs_scrub of ${mntpoint} on ${hostname} failed.
+Please do not reply to this mesage.
+
+A log of what happened follows:
+ENDL
+systemctl status --full --lines 4294967295 "${scrub_svc}") | "${mailer}" -t -i
+exit "${PIPESTATUS[1]}"

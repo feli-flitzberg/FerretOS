@@ -4,3 +4,4 @@ add VFAT_FS=yes/module
 add JFS_FS=yes/module
 add FUSE_FS=yes/module
 add CUSE=yes/module
+add XFS_FS=yes/module
