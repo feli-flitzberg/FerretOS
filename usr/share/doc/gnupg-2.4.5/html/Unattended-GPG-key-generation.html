@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Unattended GPG key generation (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Unattended GPG key generation (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Unattended GPG key generation (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Unattended-Usage-of-GPG.html" rel="up" title="Unattended Usage of GPG">
+<link href="The-quick-key-manipulation-interface.html" rel="prev" title="The quick key manipulation interface">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Unattended-GPG-key-generation">
+<div class="nav-panel">
+<p>
+Previous: <a href="The-quick-key-manipulation-interface.html" accesskey="p" rel="prev">The quick key manipulation interface</a>, Up: <a href="Unattended-Usage-of-GPG.html" accesskey="u" rel="up">Unattended Usage</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Unattended-key-generation"><span>4.5.4 Unattended key generation<a class="copiable-link" href="#Unattended-key-generation"> &para;</a></span></h4>
+
+<p>The command <samp class="option">--generate-key</samp> may be used along with the option
+<samp class="option">--batch</samp> for unattended key generation.  This is the most
+flexible way of generating keys, but it is also the most complex one.
+Consider using the quick key manipulation interface described in the
+previous subsection &ldquo;The quick key manipulation interface&rdquo;.
+</p>
+<p>The parameters for the key are either read from stdin or given as a
+file on the command line.  The format of the parameter file is as
+follows: Text only, line length is limited to about 1000 characters.
+UTF-8 encoding must be used to specify non-ASCII characters.  Empty
+lines are ignored.  Leading and trailing white space is ignored.  A
+hash sign as the first non white space character indicates a comment
+line.  Control statements are indicated by a leading percent sign,
+their arguments are separated by white space from the keyword.
+Parameters are specified by a keyword, followed by a colon; arguments
+are separated by white space.  The first parameter must be
+&lsquo;<samp class="samp">Key-Type</samp>&rsquo; but control statements may be placed anywhere.  The
+order of the parameters does not matter except for &lsquo;<samp class="samp">Key-Type</samp>&rsquo;.
+The parameters are only used for the generated keyblock (primary and
+subkeys); parameters from previous sets are not used.  Some syntax
+checks may be performed.  Key commences when either the end of the
+parameter file is reached, the next &lsquo;<samp class="samp">Key-Type</samp>&rsquo; parameter is
+encountered, or the control statement &lsquo;<samp class="samp">%commit</samp>&rsquo; is encountered.
+</p>
+<p>Control statements:
+</p>
+<dl class="table">
+<dt>%echo <var class="var">text</var></dt>
+<dd><p>Print <var class="var">text</var> as diagnostic.
+</p>
+</dd>
+<dt>%dry-run</dt>
+<dd><p>Suppress actual key generation (useful for syntax checking).
+</p>
+</dd>
+<dt>%commit</dt>
+<dd><p>Perform the key generation.  Note that an implicit commit is done at
+the next Key-Type parameter.
+</p>
+</dd>
+<dt>%pubring <var class="var">filename</var></dt>
+<dd><p>Do not write the key to the default or commandline given keyring but
+to <var class="var">filename</var>.  This must be given before the first commit to take
+place, duplicate specification of the same filename is ignored, the
+last filename before a commit is used.  The filename is used until a
+new filename is used (at commit points) and all keys are written to
+that file. If a new filename is given, this file is created (and
+overwrites an existing one).
+</p>
+<p>See the previous subsection &ldquo;Ephemeral home directories&rdquo; for a more
+robust way to contain side-effects.
+</p>
+</dd>
+<dt>%secring <var class="var">filename</var></dt>
+<dd><p>This option is a no-op for GnuPG 2.1 and later.
+</p>
+<p>See the previous subsection &ldquo;Ephemeral home directories&rdquo;.
+</p>
+</dd>
+<dt>%ask-passphrase</dt>
+<dt>%no-ask-passphrase</dt>
+<dd><p>This option is a no-op since GnuPG version 2.1.
+</p>
+</dd>
+<dt>%no-protection</dt>
+<dd><p>Using this option allows the creation of keys without any passphrase
+protection.  This option is mainly intended for regression tests.
+</p>
+</dd>
+<dt>%transient-key</dt>
+<dd><p>If given the keys are created using a faster and a somewhat less
+secure random number generator.  This option may be used for keys
+which are only used for a short time and do not require full
+cryptographic strength.  It takes only effect if used together with
+the control statement &lsquo;<samp class="samp">%no-protection</samp>&rsquo;.
+</p>
+</dd>
+</dl>
+
+<p>General Parameters:
+</p>
+<dl class="table">
+<dt>Key-Type: <var class="var">algo</var></dt>
+<dd><p>Starts a new parameter block by giving the type of the primary
+key. The algorithm must be capable of signing.  This is a required
+parameter.  <var class="var">algo</var> may either be an OpenPGP algorithm number or a
+string with the algorithm name.  The special value &lsquo;<samp class="samp">default</samp>&rsquo; may
+be used for <var class="var">algo</var> to create the default key type; in this case a
+&lsquo;<samp class="samp">Key-Usage</samp>&rsquo; shall not be given and &lsquo;<samp class="samp">default</samp>&rsquo; also be used
+for &lsquo;<samp class="samp">Subkey-Type</samp>&rsquo;.
+</p>
+</dd>
+<dt>Key-Length: <var class="var">nbits</var></dt>
+<dd><p>The requested length of the generated key in bits.  The default is
+returned by running the command &lsquo;<samp class="samp">gpg --gpgconf-list</samp>&rsquo;.
+For ECC keys this parameter is ignored.
+</p>
+</dd>
+<dt>Key-Curve: <var class="var">curve</var></dt>
+<dd><p>The requested elliptic curve of the generated key.  This is a required
+parameter for ECC keys.  It is ignored for non-ECC keys.
+</p>
+</dd>
+<dt>Key-Grip: <var class="var">hexstring</var></dt>
+<dd><p>This is optional and used to generate a CSR or certificate for an
+already existing key.  Key-Length will be ignored when given.
+</p>
+</dd>
+<dt>Key-Usage: <var class="var">usage-list</var></dt>
+<dd><p>Space or comma delimited list of key usages.  Allowed values are
+&lsquo;<samp class="samp">encrypt</samp>&rsquo;, &lsquo;<samp class="samp">sign</samp>&rsquo;, and &lsquo;<samp class="samp">auth</samp>&rsquo;.  This is used to
+generate the key flags.  Please make sure that the algorithm is
+capable of this usage.  Note that OpenPGP requires that all primary
+keys are capable of certification, so no matter what usage is given
+here, the &lsquo;<samp class="samp">cert</samp>&rsquo; flag will be on.  If no &lsquo;<samp class="samp">Key-Usage</samp>&rsquo; is
+specified and the &lsquo;<samp class="samp">Key-Type</samp>&rsquo; is not &lsquo;<samp class="samp">default</samp>&rsquo;, all allowed
+usages for that particular algorithm are used; if it is not given but
+&lsquo;<samp class="samp">default</samp>&rsquo; is used the usage will be &lsquo;<samp class="samp">sign</samp>&rsquo;.
+</p>
+</dd>
+<dt>Subkey-Type: <var class="var">algo</var></dt>
+<dd><p>This generates a secondary key (subkey).  Currently only one subkey
+can be handled.  See also &lsquo;<samp class="samp">Key-Type</samp>&rsquo; above.
+</p>
+</dd>
+<dt>Subkey-Length: <var class="var">nbits</var></dt>
+<dd><p>Length of the secondary key (subkey) in bits.  The default is returned
+by running the command &lsquo;<samp class="samp">gpg --gpgconf-list</samp>&rsquo;.
+</p>
+</dd>
+<dt>Subkey-Curve: <var class="var">curve</var></dt>
+<dd><p>Key curve for a subkey; similar to &lsquo;<samp class="samp">Key-Curve</samp>&rsquo;.
+</p>
+</dd>
+<dt>Subkey-Usage: <var class="var">usage-list</var></dt>
+<dd><p>Key usage lists for a subkey; similar to &lsquo;<samp class="samp">Key-Usage</samp>&rsquo;.
+</p>
+</dd>
+<dt>Passphrase: <var class="var">string</var></dt>
+<dd><p>If you want to specify a passphrase for the secret key, enter it here.
+Default is to use the Pinentry dialog to ask for a passphrase.
+</p>
+</dd>
+<dt>Name-Real: <var class="var">name</var></dt>
+<dt>Name-Comment: <var class="var">comment</var></dt>
+<dt>Name-Email: <var class="var">email</var></dt>
+<dd><p>The three parts of a user name.  Remember to use UTF-8 encoding here.
+If you don&rsquo;t give any of them, no user ID is created.
+</p>
+</dd>
+<dt>Expire-Date: <var class="var">iso-date</var>|(<var class="var">number</var>[d|w|m|y])</dt>
+<dd><p>Set the expiration date for the key (and the subkey).  It may either
+be entered in ISO date format (e.g. &quot;20000815T145012&quot;) or as number of
+days, weeks, month or years after the creation date.  The special
+notation &quot;seconds=N&quot; is also allowed to specify a number of seconds
+since creation.  Without a letter days are assumed.  Note that there
+is no check done on the overflow of the type used by OpenPGP for
+timestamps.  Thus you better make sure that the given value make
+sense.  Although OpenPGP works with time intervals, GnuPG uses an
+absolute value internally and thus the last year we can represent is
+2105.
+</p>
+</dd>
+<dt>Creation-Date: <var class="var">iso-date</var></dt>
+<dd><p>Set the creation date of the key as stored in the key information and
+which is also part of the fingerprint calculation.  Either a date like
+&quot;1986-04-26&quot; or a full timestamp like &quot;19860426T042640&quot; may be used.
+The time is considered to be UTC.  The special notation &quot;seconds=N&quot;
+may be used to directly specify a the number of seconds since Epoch
+(Unix time).  If it is not given the current time is used.
+</p>
+</dd>
+<dt>Preferences: <var class="var">string</var></dt>
+<dd><p>Set the cipher, hash, and compression preference values for this key.
+This expects the same type of string as the sub-command &lsquo;<samp class="samp">setpref</samp>&rsquo;
+in the <samp class="option">--edit-key</samp> menu.
+</p>
+</dd>
+<dt>Revoker: <var class="var">algo</var>:<var class="var">fpr</var> [sensitive]</dt>
+<dd><p>Add a designated revoker to the generated key.  Algo is the public key
+algorithm of the designated revoker (i.e. RSA=1, DSA=17, etc.)
+<var class="var">fpr</var> is the fingerprint of the designated revoker.  <var class="var">fpr</var> may
+not contain spaces or colons.  The optional &lsquo;<samp class="samp">sensitive</samp>&rsquo; flag
+marks the designated revoker as sensitive information.  Only v4 and v5
+keys may be designated revokers.
+</p>
+</dd>
+<dt>Keyserver: <var class="var">string</var></dt>
+<dd><p>This is an optional parameter that specifies the preferred keyserver
+URL for the key.
+</p>
+</dd>
+<dt>Handle: <var class="var">string</var></dt>
+<dd><p>This is an optional parameter only used with the status lines
+KEY_CREATED and KEY_NOT_CREATED.  <var class="var">string</var> may be up to 100
+characters and should not contain spaces.  It is useful for batch key
+generation to associate a key parameter block with a status line.
+</p>
+</dd>
+</dl>
+
+<p>Here is an example on how to create a key in an ephemeral home directory:
+</p><div class="example smallexample">
+<pre class="example-preformatted">$ export GNUPGHOME=&quot;$(mktemp -d)&quot;
+$ cat &gt;foo &lt;&lt;EOF
+     %echo Generating a basic OpenPGP key
+     Key-Type: DSA
+     Key-Length: 1024
+     Subkey-Type: ELG-E
+     Subkey-Length: 1024
+     Name-Real: Joe Tester
+     Name-Comment: with stupid passphrase
+     Name-Email: joe@foo.bar
+     Expire-Date: 0
+     Passphrase: abc
+     # Do a commit here, so that we can later print &quot;done&quot; :-)
+     %commit
+     %echo done
+EOF
+$ gpg --batch --generate-key foo
+ [...]
+$ gpg --list-secret-keys
+/tmp/tmp.0NQxB74PEf/pubring.kbx
+-------------------------------
+sec   dsa1024 2016-12-16 [SCA]
+      768E895903FC1C44045C8CB95EEBDB71E9E849D0
+uid           [ultimate] Joe Tester (with stupid passphrase) &lt;joe@foo.bar&gt;
+ssb   elg1024 2016-12-16 [E]
+</pre></div>
+
+<p>If you want to create a key with the default algorithms you would use
+these parameters:
+</p><div class="example smallexample">
+<pre class="example-preformatted">     %echo Generating a default key
+     Key-Type: default
+     Subkey-Type: default
+     Name-Real: Joe Tester
+     Name-Comment: with stupid passphrase
+     Name-Email: joe@foo.bar
+     Expire-Date: 0
+     Passphrase: abc
+     # Do a commit here, so that we can later print &quot;done&quot; :-)
+     %commit
+     %echo done
+</pre></div>
+
+
+
+
+
+
+
+
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Previous: <a href="The-quick-key-manipulation-interface.html">The quick key manipulation interface</a>, Up: <a href="Unattended-Usage-of-GPG.html">Unattended Usage</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

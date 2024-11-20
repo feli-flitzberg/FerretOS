@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Agent GET_PASSPHRASE (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Agent GET_PASSPHRASE (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Agent GET_PASSPHRASE (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Agent-Protocol.html" rel="up" title="Agent Protocol">
+<link href="Agent-CLEAR_005fPASSPHRASE.html" rel="next" title="Agent CLEAR_PASSPHRASE">
+<link href="Agent-ISTRUSTED.html" rel="prev" title="Agent ISTRUSTED">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Agent-GET_005fPASSPHRASE">
+<div class="nav-panel">
+<p>
+Next: <a href="Agent-CLEAR_005fPASSPHRASE.html" accesskey="n" rel="next">Remove a cached passphrase</a>, Previous: <a href="Agent-ISTRUSTED.html" accesskey="p" rel="prev">Importing a Root Certificate</a>, Up: <a href="Agent-Protocol.html" accesskey="u" rel="up">Agent&rsquo;s Assuan Protocol</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Ask-for-a-passphrase"><span>2.6.7 Ask for a passphrase<a class="copiable-link" href="#Ask-for-a-passphrase"> &para;</a></span></h4>
+
+<p>This function is usually used to ask for a passphrase to be used for
+symmetric encryption, but may also be used by programs which need
+special handling of passphrases.  This command uses a syntax which helps
+clients to use the agent with minimum effort.
+</p>
+<div class="example">
+<pre class="example-preformatted">  GET_PASSPHRASE [--data] [--check] [--no-ask] [--repeat[=N]] \
+                 [--qualitybar] <var class="var">cache_id</var>                \
+                 [<var class="var">error_message</var> <var class="var">prompt</var> <var class="var">description</var>]
+</pre></div>
+
+<p><var class="var">cache_id</var> is expected to be a string used to identify a cached
+passphrase.  Use a <code class="code">X</code> to bypass the cache.  With no other
+arguments the agent returns a cached passphrase or an error.  By
+convention either the hexified fingerprint of the key shall be used for
+<var class="var">cache_id</var> or an arbitrary string prefixed with the name of the
+calling application and a colon: Like <code class="code">gpg:somestring</code>.
+</p>
+<p><var class="var">error_message</var> is either a single <code class="code">X</code> for no error message or
+a string to be shown as an error message like (e.g. &quot;invalid
+passphrase&quot;).  Blanks must be percent escaped or replaced by <code class="code">+</code>&rsquo;.
+</p>
+<p><var class="var">prompt</var> is either a single <code class="code">X</code> for a default prompt or the
+text to be shown as the prompt.  Blanks must be percent escaped or
+replaced by <code class="code">+</code>.
+</p>
+<p><var class="var">description</var> is a text shown above the entry field.  Blanks must be
+percent escaped or replaced by <code class="code">+</code>.
+</p>
+<p>The agent either returns with an error or with a OK followed by the hex
+encoded passphrase.  Note that the length of the strings is implicitly
+limited by the maximum length of a command.  If the option
+<samp class="option">--data</samp> is used, the passphrase is not returned on the OK line
+but by regular data lines; this is the preferred method.
+</p>
+<p>If the option <samp class="option">--check</samp> is used, the standard passphrase
+constraints checks are applied.  A check is not done if the passphrase
+has been found in the cache.
+</p>
+<p>If the option <samp class="option">--no-ask</samp> is used and the passphrase is not in the
+cache the user will not be asked to enter a passphrase but the error
+code <code class="code">GPG_ERR_NO_DATA</code> is returned.
+</p>
+<p>If the option <samp class="option">--qualitybar</samp> is used and a minimum passphrase
+length has been configured, a visual indication of the entered
+passphrase quality is shown.
+</p>
+<div class="example">
+<pre class="example-preformatted">  CLEAR_PASSPHRASE <var class="var">cache_id</var>
+</pre></div>
+
+<p>may be used to invalidate the cache entry for a passphrase.  The
+function returns with OK even when there is no cached passphrase.
+</p>
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Agent-CLEAR_005fPASSPHRASE.html">Remove a cached passphrase</a>, Previous: <a href="Agent-ISTRUSTED.html">Importing a Root Certificate</a>, Up: <a href="Agent-Protocol.html">Agent&rsquo;s Assuan Protocol</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

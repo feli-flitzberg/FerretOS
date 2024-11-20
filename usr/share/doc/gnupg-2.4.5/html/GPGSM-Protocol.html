@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>GPGSM Protocol (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="GPGSM Protocol (Using the GNU Privacy Guard)">
+<meta name="keywords" content="GPGSM Protocol (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Invoking-GPGSM.html" rel="up" title="Invoking GPGSM">
+<link href="Unattended-Usage.html" rel="prev" title="Unattended Usage">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="GPGSM-Protocol">
+<div class="nav-panel">
+<p>
+Previous: <a href="Unattended-Usage.html" accesskey="p" rel="prev">Unattended Usage</a>, Up: <a href="Invoking-GPGSM.html" accesskey="u" rel="up">Invoking GPGSM</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="The-Protocol-the-Server-Mode-Uses"><span>5.6 The Protocol the Server Mode Uses<a class="copiable-link" href="#The-Protocol-the-Server-Mode-Uses"> &para;</a></span></h3>
+
+<p>Description of the protocol used to access <code class="command">GPGSM</code>.
+<code class="command">GPGSM</code> does implement the Assuan protocol and in addition
+provides a regular command line interface which exhibits a full client
+to this protocol (but uses internal linking).  To start
+<code class="command">gpgsm</code> as a server the command line the option
+<code class="code">--server</code> must be used.  Additional options are provided to
+select the communication method (i.e. the name of the socket).
+</p>
+<p>We assume that the connection has already been established; see the
+Assuan manual for details.
+</p>
+
+
+<ul class="mini-toc">
+<li><a href="GPGSM-ENCRYPT.html" accesskey="1">Encrypting a Message</a></li>
+<li><a href="GPGSM-DECRYPT.html" accesskey="2">Decrypting a message</a></li>
+<li><a href="GPGSM-SIGN.html" accesskey="3">Signing a Message</a></li>
+<li><a href="GPGSM-VERIFY.html" accesskey="4">Verifying a Message</a></li>
+<li><a href="GPGSM-GENKEY.html" accesskey="5">Generating a Key</a></li>
+<li><a href="GPGSM-LISTKEYS.html" accesskey="6">List available keys</a></li>
+<li><a href="GPGSM-EXPORT.html" accesskey="7">Export certificates</a></li>
+<li><a href="GPGSM-IMPORT.html" accesskey="8">Import certificates</a></li>
+<li><a href="GPGSM-DELETE.html" accesskey="9">Delete certificates</a></li>
+<li><a href="GPGSM-GETAUDITLOG.html">Retrieve an audit log</a></li>
+<li><a href="GPGSM-GETINFO.html">Return information about the process</a></li>
+<li><a href="GPGSM-OPTION.html">Session options</a></li>
+</ul>
+</div>
+
+
+
+</body>
+</html>

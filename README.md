@@ -93,6 +93,28 @@ pip3 install --no-index --no-user --find-links dist pyelftools
 - Add (blfs) efibootmgr 18
   - `EFIDIR=ferretos`
   - `EFI_LOADER=systemd-bootx64.efi`
+- Add (blfs) iso-codes 4.17.0
+  - Debian has removed the previous version, so we move to the next available version
+- Add (blfs) lsof 4.99.0
+  - Add (blfs) libtirpc 1.3.5 as dependency
+- Add (blfs) tree 2.1.3
+- Add (blfs) gpm 1.20.7
+- Add (blfs) gnupg 2.4.5
+  - Add (blfs) libassuan 3.0.1 as dependency
+    - Add (blfs) libgpg-error 1.50 as dependency
+  - Add (blfs) libgcrypt 1.11.0 as dependency
+  - Add (blfs) libksba 1.6.7 as dependency
+  - Add (blfs) npth 1.7 as dependency
+  - Add (blfs) openldap 2.6.8 as dependency
+    - Add (blfs) cyrus-sasl 2.1.28 as recommended dependency
+      - Problems in including `time.h` in multiple files
+        - Remove `#ifdef ... #endif` from around `#include <time.h>` in `lib/saslutil.c`
+        - Add `#include <time.h>` to `plugins/cram.c`
+      - Add (blfs) lmdb 0.9.31 as recommended dependency
+  - Add (blfs) gnutls 3.8.7.1 as recommended dependency
+    - Add (blfs) nettle 3.10 as dependency
+  - Add (blfs) pinentry 1.3.1 as recommended dependency
+  - Add (blfs) libusb 1.0.27 as optional dependency (for building ccid driver)
 - Add (external) [linux-firmware](https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/)
   - Add (external) rdfind as dependency requirement
 

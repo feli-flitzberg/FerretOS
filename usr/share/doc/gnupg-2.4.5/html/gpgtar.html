@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>gpgtar (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="gpgtar (Using the GNU Privacy Guard)">
+<meta name="keywords" content="gpgtar (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Helper-Tools.html" rel="up" title="Helper Tools">
+<link href="gpg_002dcheck_002dpattern.html" rel="next" title="gpg-check-pattern">
+<link href="gpgparsemail.html" rel="prev" title="gpgparsemail">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="gpgtar">
+<div class="nav-panel">
+<p>
+Next: <a href="gpg_002dcheck_002dpattern.html" accesskey="n" rel="next">Check a passphrase on stdin against the patternfile</a>, Previous: <a href="gpgparsemail.html" accesskey="p" rel="prev">Parse a mail message into an annotated format</a>, Up: <a href="Helper-Tools.html" accesskey="u" rel="up">Helper Tools</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="Encrypt-or-sign-files-into-an-archive"><span>10.10 Encrypt or sign files into an archive<a class="copiable-link" href="#Encrypt-or-sign-files-into-an-archive"> &para;</a></span></h3>
+
+
+
+
+<p><code class="command">gpgtar</code> encrypts or signs files into an archive.  It is an
+gpg-ized tar using the same format as used by PGP&rsquo;s PGP Zip.
+</p>
+
+<p><code class="command">gpgtar</code> is invoked this way:
+</p>
+<div class="example">
+<pre class="example-preformatted">gpgtar [options] <var class="var">filename1</var> [<var class="var">filename2</var>, ...] <var class="var">directory</var> [<var class="var">directory2</var>, ...]
+</pre></div>
+
+
+<p><code class="command">gpgtar</code> understands these options:
+</p>
+<dl class="table">
+<dt><a id="index-create"></a><span><code class="code">--create</code><a class="copiable-link" href="#index-create"> &para;</a></span></dt>
+<dd><p>Put given files and directories into a vanilla &ldquo;ustar&rdquo; archive.
+</p>
+</dd>
+<dt><a id="index-extract"></a><span><code class="code">--extract</code><a class="copiable-link" href="#index-extract"> &para;</a></span></dt>
+<dd><p>Extract all files from a vanilla &ldquo;ustar&rdquo; archive.
+If no file name is given (or it is &quot;-&quot;) the archive is taken from
+stdin.
+</p>
+</dd>
+<dt><a id="index-encrypt-2"></a><span><code class="code">--encrypt</code><a class="copiable-link" href="#index-encrypt-2"> &para;</a></span></dt>
+<dt><code class="code">-e</code></dt>
+<dd><p>Encrypt given files and directories into an archive.  This option may
+be combined with option <samp class="option">--symmetric</samp> for an archive that may
+be decrypted via a secret key or a passphrase.
+</p>
+</dd>
+<dt><a id="index-decrypt-2"></a><span><code class="code">--decrypt</code><a class="copiable-link" href="#index-decrypt-2"> &para;</a></span></dt>
+<dt><code class="code">-d</code></dt>
+<dd><p>Extract all files from an encrypted archive.   If no file name is given
+(or it is &quot;-&quot;) the archive is taken from stdin.
+</p>
+</dd>
+<dt><code class="code">--sign</code></dt>
+<dt><code class="code">-s</code></dt>
+<dd><p>Make a signed archive from the given files and directories.  This can
+be combined with option <samp class="option">--encrypt</samp> to create a signed and then
+encrypted archive.
+</p>
+</dd>
+<dt><a id="index-list_002darchive"></a><span><code class="code">--list-archive</code><a class="copiable-link" href="#index-list_002darchive"> &para;</a></span></dt>
+<dt><code class="code">-t</code></dt>
+<dd><p>List the contents of the specified archive.  If no file name is given
+(or it is &quot;-&quot;) the archive is taken from stdin.
+</p>
+</dd>
+<dt><code class="code">--symmetric</code></dt>
+<dt><code class="code">-c</code></dt>
+<dd><p>Encrypt with a symmetric cipher using a passphrase.  The default
+symmetric cipher used is AES-128, but may be chosen with the
+<samp class="option">--cipher-algo</samp> option to <code class="command">gpg</code>.
+</p>
+</dd>
+<dt><a id="index-recipient-2"></a><span><code class="code">--recipient <var class="var">user</var></code><a class="copiable-link" href="#index-recipient-2"> &para;</a></span></dt>
+<dt><code class="code">-r <var class="var">user</var></code></dt>
+<dd><p>Encrypt for user id <var class="var">user</var>. For details see <code class="command">gpg</code>.
+</p>
+</dd>
+<dt><a id="index-local_002duser-2"></a><span><code class="code">--local-user <var class="var">user</var></code><a class="copiable-link" href="#index-local_002duser-2"> &para;</a></span></dt>
+<dt><code class="code">-u <var class="var">user</var></code></dt>
+<dd><p>Use <var class="var">user</var> as the key to sign with.  For details see <code class="command">gpg</code>.
+</p>
+</dd>
+<dt><a id="index-output-3"></a><span><code class="code">--output <var class="var">file</var></code><a class="copiable-link" href="#index-output-3"> &para;</a></span></dt>
+<dt><code class="code">-o <var class="var">file</var></code></dt>
+<dd><p>Write the archive to the specified file <var class="var">file</var>.
+</p>
+</dd>
+<dt><a id="index-verbose-11"></a><span><code class="code">--verbose</code><a class="copiable-link" href="#index-verbose-11"> &para;</a></span></dt>
+<dt><code class="code">-v</code></dt>
+<dd><p>Enable extra informational output.
+</p>
+</dd>
+<dt><a id="index-quiet-7"></a><span><code class="code">--quiet</code><a class="copiable-link" href="#index-quiet-7"> &para;</a></span></dt>
+<dt><code class="code">-q</code></dt>
+<dd><p>Try to be as quiet as possible.
+</p>
+</dd>
+<dt><a id="index-skip_002dcrypto"></a><span><code class="code">--skip-crypto</code><a class="copiable-link" href="#index-skip_002dcrypto"> &para;</a></span></dt>
+<dd><p>Skip all crypto operations and create or extract vanilla &ldquo;ustar&rdquo;
+archives.
+</p>
+</dd>
+<dt><a id="index-dry_002drun-1"></a><span><code class="code">--dry-run</code><a class="copiable-link" href="#index-dry_002drun-1"> &para;</a></span></dt>
+<dd><p>Do not actually output the extracted files.
+</p>
+</dd>
+<dt><a id="index-directory"></a><span><code class="code">--directory <var class="var">dir</var></code><a class="copiable-link" href="#index-directory"> &para;</a></span></dt>
+<dt><code class="code">-C <var class="var">dir</var></code></dt>
+<dd><p>Extract the files into the directory <var class="var">dir</var>.  The default is to
+take the directory name from the input filename.  If no input filename
+is known a directory named <samp class="file">GPGARCH</samp> is used.  For tarball
+creation, switch to directory <var class="var">dir</var> before performing any
+operations.
+</p>
+</dd>
+<dt><code class="code">--files-from <var class="var">file</var></code></dt>
+<dt><code class="code">-T <var class="var">file</var></code></dt>
+<dd><p>Take the file names to work from the file <var class="var">file</var>; one file per
+line.
+</p>
+</dd>
+<dt><a id="index-null"></a><span><code class="code">--null</code><a class="copiable-link" href="#index-null"> &para;</a></span></dt>
+<dd><p>Modify option <samp class="option">--files-from</samp> to use a binary nul instead of a
+linefeed to separate file names.
+</p>
+</dd>
+<dt><a id="index-utf8_002dstrings-1"></a><span><code class="code">--utf8-strings</code><a class="copiable-link" href="#index-utf8_002dstrings-1"> &para;</a></span></dt>
+<dd><p>Assume that the file names read by <samp class="option">--files-from</samp> are UTF-8
+encoded.  This option has an effect only on Windows where the active
+code page is otherwise assumed.
+</p>
+</dd>
+<dt><a id="index-openpgp-1"></a><span><code class="code">--openpgp</code><a class="copiable-link" href="#index-openpgp-1"> &para;</a></span></dt>
+<dd><p>This option has no effect because OpenPGP encryption and signing is
+the default.
+</p>
+</dd>
+<dt><a id="index-cms"></a><span><code class="code">--cms</code><a class="copiable-link" href="#index-cms"> &para;</a></span></dt>
+<dd><p>This option is reserved and shall not be used.  It will eventually be
+used to encrypt or sign using the CMS protocol; but that is not yet
+implemented.
+</p>
+</dd>
+<dt><a id="index-batch-2"></a><span><code class="code">--batch</code><a class="copiable-link" href="#index-batch-2"> &para;</a></span></dt>
+<dd><p>Use batch mode.  Never ask but use the default action.  This option is
+passed directly to <code class="command">gpg</code>.
+</p>
+</dd>
+<dt><a id="index-yes-1"></a><span><code class="code">--yes</code><a class="copiable-link" href="#index-yes-1"> &para;</a></span></dt>
+<dd><p>Assume &quot;yes&quot; on most questions.  Often used together with
+<samp class="option">--batch</samp> to overwrite existing files.  This option is passed
+directly to <code class="command">gpg</code>.
+</p>
+</dd>
+<dt><a id="index-no-1"></a><span><code class="code">--no</code><a class="copiable-link" href="#index-no-1"> &para;</a></span></dt>
+<dd><p>Assume &quot;no&quot; on most questions.  This option is passed directly to
+<code class="command">gpg</code>.
+</p>
+</dd>
+<dt><a id="index-require_002dcompliance-2"></a><span><code class="code">--require-compliance</code><a class="copiable-link" href="#index-require_002dcompliance-2"> &para;</a></span></dt>
+<dd><p>This option is passed directly to <code class="command">gpg</code>.
+</p>
+</dd>
+<dt><a id="index-status_002dfd-4"></a><span><code class="code">--status-fd <var class="var">n</var></code><a class="copiable-link" href="#index-status_002dfd-4"> &para;</a></span></dt>
+<dd><p>Write special status strings to the file descriptor <var class="var">n</var>.
+See the file DETAILS in the documentation for a listing of them.
+</p>
+</dd>
+<dt><a id="index-with_002dlog"></a><span><code class="code">--with-log</code><a class="copiable-link" href="#index-with_002dlog"> &para;</a></span></dt>
+<dd><p>When extracting an encrypted tarball also write a log file with the
+gpg output to a file named after the extraction directory with the
+suffix &quot;.log&quot;.
+</p>
+</dd>
+<dt><a id="index-set_002dfilename-1"></a><span><code class="code">--set-filename <var class="var">file</var></code><a class="copiable-link" href="#index-set_002dfilename-1"> &para;</a></span></dt>
+<dd><p>Use the last component of <var class="var">file</var> as the output directory.  The
+default is to take the directory name from the input filename.  If no
+input filename is known a directory named <samp class="file">GPGARCH</samp> is used.
+This option is deprecated in favor of option <samp class="option">--directory</samp>.
+</p>
+</dd>
+<dt><a id="index-no_002dcompress-1"></a><span><code class="code">--no-compress</code><a class="copiable-link" href="#index-no_002dcompress-1"> &para;</a></span></dt>
+<dd><p>This option tells gpg to disable compression (i.e. using option -z0).
+It is useful for archiving only large files which are are already
+compressed (e.g. a set of videos).
+</p>
+</dd>
+<dt><a id="index-gpg"></a><span><code class="code">--gpg <var class="var">gpgcmd</var></code><a class="copiable-link" href="#index-gpg"> &para;</a></span></dt>
+<dd><p>Use the specified command <var class="var">gpgcmd</var> instead of <code class="command">gpg</code>.
+</p>
+</dd>
+<dt><a id="index-gpg_002dargs"></a><span><code class="code">--gpg-args <var class="var">args</var></code><a class="copiable-link" href="#index-gpg_002dargs"> &para;</a></span></dt>
+<dd><p>Pass the specified extra options to <code class="command">gpg</code>.
+</p>
+</dd>
+<dt><a id="index-tar_002dargs"></a><span><code class="code">--tar-args <var class="var">args</var></code><a class="copiable-link" href="#index-tar_002dargs"> &para;</a></span></dt>
+<dd><p>Assume <var class="var">args</var> are standard options of the command <code class="command">tar</code>
+and parse them.  The only supported tar options are &quot;&ndash;directory&quot;,
+&quot;&ndash;files-from&quot;, and &quot;&ndash;null&quot; This is an obsolete options because those
+supported tar options can also be given directly.
+</p>
+</dd>
+<dt><a id="index-tar"></a><span><code class="code">--tar <var class="var">command</var></code><a class="copiable-link" href="#index-tar"> &para;</a></span></dt>
+<dd><p>This is a dummy option for backward compatibility.
+</p>
+</dd>
+<dt><a id="index-version-8"></a><span><code class="code">--version</code><a class="copiable-link" href="#index-version-8"> &para;</a></span></dt>
+<dd><p>Print version of the program and exit.
+</p>
+</dd>
+<dt><a id="index-help-8"></a><span><code class="code">--help</code><a class="copiable-link" href="#index-help-8"> &para;</a></span></dt>
+<dd><p>Display a brief help page and exit.
+</p>
+</dd>
+</dl>
+
+
+<p>The program returns 0 if everything was fine, 1 otherwise.
+</p>
+
+
+<p>Some examples:
+</p>
+<p>Encrypt the contents of directory <samp class="file">mydocs</samp> for user Bob to file
+<samp class="file">test1</samp>:
+</p>
+<div class="example">
+<pre class="example-preformatted">gpgtar --encrypt --output test1 -r Bob mydocs
+</pre></div>
+
+<p>List the contents of archive <samp class="file">test1</samp>:
+</p>
+<div class="example">
+<pre class="example-preformatted">gpgtar --list-archive test1
+</pre></div>
+
+
+
+
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="gpg_002dcheck_002dpattern.html">Check a passphrase on stdin against the patternfile</a>, Previous: <a href="gpgparsemail.html">Parse a mail message into an annotated format</a>, Up: <a href="Helper-Tools.html">Helper Tools</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

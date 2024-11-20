@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>addgnupghome (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="addgnupghome (Using the GNU Privacy Guard)">
+<meta name="keywords" content="addgnupghome (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Helper-Tools.html" rel="up" title="Helper Tools">
+<link href="gpgconf.html" rel="next" title="gpgconf">
+<link href="gpgv.html" rel="prev" title="gpgv">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="addgnupghome">
+<div class="nav-panel">
+<p>
+Next: <a href="gpgconf.html" accesskey="n" rel="next">Modify .gnupg home directories</a>, Previous: <a href="gpgv.html" accesskey="p" rel="prev">Verify OpenPGP signatures</a>, Up: <a href="Helper-Tools.html" accesskey="u" rel="up">Helper Tools</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="Create-_002egnupg-home-directories"><span>10.3 Create .gnupg home directories<a class="copiable-link" href="#Create-_002egnupg-home-directories"> &para;</a></span></h3>
+
+
+
+
+<p>If GnuPG is installed on a system with existing user accounts, it is
+sometimes required to populate the GnuPG home directory with existing
+files.  Especially a <samp class="file">trustlist.txt</samp> and a keybox with some
+initial certificates are often desired.  This script helps to do this
+by copying all files from <samp class="file">/etc/skel/.gnupg</samp> to the home
+directories of the accounts given on the command line.  It takes care
+not to overwrite existing GnuPG home directories.
+</p>
+<p><code class="command">addgnupghome</code> is invoked by root as:
+</p>
+<div class="example">
+<pre class="example-preformatted">addgnupghome account1 account2 ... accountn
+</pre></div>
+
+
+
+</div>
+
+
+
+</body>
+</html>

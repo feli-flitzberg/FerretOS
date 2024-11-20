@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Installation (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Installation (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Installation (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="index.html" rel="up" title="Top">
+<link href="Invoking-GPG_002dAGENT.html" rel="next" title="Invoking GPG-AGENT">
+<link href="index.html" rel="prev" title="Top">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+ul.mark-bullet {list-style-type: disc}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="chapter-level-extent" id="Installation">
+<div class="nav-panel">
+<p>
+Next: <a href="Invoking-GPG_002dAGENT.html" accesskey="n" rel="next">Invoking GPG-AGENT</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h2 class="chapter" id="A-short-installation-guide"><span>1 A short installation guide<a class="copiable-link" href="#A-short-installation-guide"> &para;</a></span></h2>
+
+<p>Unfortunately the installation guide has not been finished in time.
+Instead of delaying the release of GnuPG 2.0 even further, I decided to
+release without that guide.  The chapter on gpg-agent and gpgsm do
+include brief information on how to set up the whole thing.  Please
+watch the GnuPG website for updates of the documentation.  In the
+meantime you may search the GnuPG mailing list archives or ask on the
+gnupg-users mailing list for advise on how to solve problems or how to
+get that whole thing up and running.
+</p>
+<p>** Building the software
+</p>
+<p>Building the software is described in the file <samp class="file">INSTALL</samp>.  Given
+that you are already reading this documentation we can only give some
+extra hints.
+</p>
+<p>To comply with the rules on GNU systems you should have build time
+configured <code class="command">gnupg</code> using:
+</p>
+<div class="example">
+<pre class="example-preformatted">./configure --sysconfdir=/etc --localstatedir=/var
+</pre></div>
+
+<p>This is to make sure that system wide configuration files are searched
+in the directory <samp class="file">/etc</samp> and variable data below <samp class="file">/var</samp>;
+the default would be to also install them below <samp class="file">/usr/local</samp> where
+the binaries get installed.  If you selected to use the
+<samp class="option">--prefix=/</samp> you obviously don&rsquo;t need those option as they are
+the default then.
+</p>
+
+<p>** Notes on setting a root CA key to trusted
+</p>
+<p>X.509 is based on a hierarchical key infrastructure.  At the root of the
+tree a trusted anchor (root certificate) is required.  There are usually
+no other means of verifying whether this root certificate is trustworthy
+than looking it up in a list. GnuPG uses a file (<samp class="file">trustlist.txt</samp>)
+to keep track of all root certificates it knows about.  There are 3 ways
+to get certificates into this list:
+</p>
+<ul class="itemize mark-bullet">
+<li>Use the list which comes with GnuPG. However this list only
+contains a few root certificates.  Most installations will need more.
+
+</li><li>Let <code class="command">gpgsm</code> ask you whether you want to insert a new root
+certificate.  This feature is enabled by default; you may disable it
+using the option <samp class="option">no-allow-mark-trusted</samp> into
+<samp class="file">gpg-agent.conf</samp>.
+
+</li><li>Manually maintain the list of trusted root certificates. For a multi
+user installation this can be done once for all users on a machine.
+Specific changes on a per-user base are also possible.
+</li></ul>
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Invoking-GPG_002dAGENT.html">Invoking GPG-AGENT</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

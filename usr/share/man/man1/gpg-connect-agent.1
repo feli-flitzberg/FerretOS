@@ -1,0 +1,440 @@
+.\" Created from Texinfo source by yat2m 1.50
+.TH GPG-CONNECT-AGENT 1 2024-03-04 "GnuPG 2.4.5" "GNU Privacy Guard 2.4"
+.SH NAME
+.B gpg-connect-agent
+\- Communicate with a running agent
+.SH SYNOPSIS
+.B  gpg-connect-agent
+.RI [ options ] [commands]
+
+.SH DESCRIPTION
+The \fBgpg\-connect\-agent\fP is a utility to communicate with a
+running \fBgpg\-agent\fP.  It is useful to check out the commands
+\fBgpg\-agent\fP provides using the Assuan interface.  It might
+also be useful for scripting simple applications.  Input is expected
+at stdin and output gets printed to stdout.
+
+It is very similar to running \fBgpg\-agent\fP in server mode; but
+here we connect to a running instance.
+
+
+
+
+The following options may be used:
+
+.TP
+.B  \-\-dirmngr
+Connect to a running directory manager (keyserver client) instead of
+to the gpg-agent.  If a dirmngr is not running, start it.
+
+.TP
+.B  \-\-keyboxd
+Connect to a running keybox daemon instead of
+to the gpg-agent.  If a keyboxd is not running, start it.
+
+.TP
+.B  \-S
+.TQ
+.B  \-\-raw\-socket \fIname\fP
+Connect to socket \fIname\fP assuming this is an Assuan style server.
+Do not run any special initializations or environment checks.  This may
+be used to directly connect to any Assuan style socket server.
+
+.TP
+.B  \-E
+.TQ
+.B  \-\-exec
+Take the rest of the command line as a program and it's arguments and
+execute it as an Assuan server. Here is how you would run \fBgpgsm\fP:
+.RS 2
+.nf
+ gpg\-connect\-agent \-\-exec gpgsm \-\-server
+.fi
+.RE
+Note that you may not use options on the command line in this case.
+
+.TP
+.B  \-v
+.TQ
+.B  \-\-verbose
+Output additional information while running.
+
+.TP
+.B  \-q
+.TP
+.B  \-\-quiet
+Try to be as quiet as possible.
+
+.TP
+.B  \-\-homedir \fIdir\fP
+Set the name of the home directory to \fIdir\fP. If this option is not
+used, the home directory defaults to \(oq\fI~/.gnupg\fP\(cq.  It is only
+recognized when given on the command line.  It also overrides any home
+directory stated through the environment variable \(oq\fIGNUPGHOME\fP\(cq or
+(on Windows systems) by means of the Registry entry
+\fIHKCU\[rs]Software\[rs]GNU\[rs]GnuPG:HomeDir\fP.
+
+On Windows systems it is possible to install GnuPG as a portable
+application.  In this case only this command line option is
+considered, all other ways to set a home directory are ignored.
+
+.TP
+.B  \-\-chuid \fIuid\fP
+Change the current user to \fIuid\fP which may either be a number or a
+name.  This can be used from the root account to run gpg-connect-agent
+for another user.  If \fIuid\fP is not the current UID a standard PATH
+is set and the envvar GNUPGHOME is unset.  To override the latter the
+option \fB\-\-homedir\fP can be used.  This option has only an effect
+when used on the command line.  This option has currently no effect at
+all on Windows.
+
+.TP
+.B  \-\-no\-ext\-connect
+When using \fB\-S\fP or \fB\-\-exec\fP, \fBgpg\-connect\-agent\fP
+connects to the Assuan server in extended mode to allow descriptor
+passing.  This option makes it use the old mode.
+
+.TP
+.B  \-\-no\-autostart
+Do not start the gpg-agent or the dirmngr if it has not yet been
+started.
+
+.TP
+.B  \-\-no\-history
+In interactive mode the command line history is usually saved and
+restored to and from a file below the GnuPG home directory.  This
+option inhibits the use of that file.
+
+.TP
+.B  \-\-agent\-program \fIfile\fP
+Specify the agent program to be started if none is running.  The
+default value is determined by running \fBgpgconf\fP with the
+option \fB\-\-list\-dirs\fP.  Note that the pipe symbol (\fB|\fP) is
+used for a regression test suite hack and may thus not be used in the
+file name.
+
+.TP
+.B  \-\-dirmngr\-program \fIfile\fP
+Specify the directory manager (keyserver client) program to be started
+if none is running.  This has only an effect if used together with the
+option \fB\-\-dirmngr\fP.
+
+.TP
+.B  \-\-keyboxd\-program \fIfile\fP
+Specify the keybox daemon program to be started if none is running.
+This has only an effect if used together with the option
+\fB\-\-keyboxd\fP.
+
+.TP
+.B  \-r \fIfile\fP
+.TQ
+.B  \-\-run \fIfile\fP
+Run the commands from \fIfile\fP at startup and then continue with the
+regular input method.  Note, that commands given on the command line are
+executed after this file.
+
+.TP
+.B  \-s
+.TQ
+.B  \-\-subst
+Run the command \fB/subst\fP at startup.
+
+.TP
+.B  \-\-hex
+Print data lines in a hex format and the ASCII representation of
+non-control characters.
+
+.TP
+.B  \-\-decode
+Decode data lines.  That is to remove percent escapes but make sure that
+a new line always starts with a D and a space.
+
+.TP
+.B  \-u
+.TQ
+.B  \-\-unbuffered
+Set stdin and stdout into unbuffered I/O mode.  This this sometimes
+useful for scripting.
+
+
+.P
+
+.SH CONTROL COMMANDS
+
+While reading Assuan commands, gpg-agent also allows a few special
+commands to control its operation.  These control commands all start
+with a slash (\fB/\fP).
+
+
+.TP
+.B  /echo \fIargs\fP
+Just print \fIargs\fP.
+
+.TP
+.B  /let \fIname\fP \fIvalue\fP
+Set the variable \fIname\fP to \fIvalue\fP.  Variables are only
+substituted on the input if the \fB/subst\fP has been used.
+Variables are referenced by prefixing the name with a dollar sign and
+optionally include the name in curly braces.  The rules for a valid name
+are identically to those of the standard bourne shell.  This is not yet
+enforced but may be in the future.  When used with curly braces no
+leading or trailing white space is allowed.
+
+If a variable is not found, it is searched in the environment and if
+found copied to the table of variables.
+
+Variable functions are available: The name of the function must be
+followed by at least one space and the at least one argument.  The
+following functions are available:
+
+.RS
+.TP
+.B  get
+Return a value described by the argument.  Available arguments are:
+
+.RS
+.TP
+.B  cwd
+The current working directory.
+.TP
+.B  homedir
+The gnupg homedir.
+.TP
+.B  sysconfdir
+GnuPG's system configuration directory.
+.TP
+.B  bindir
+GnuPG's binary directory.
+.TP
+.B  libdir
+GnuPG's library directory.
+.TP
+.B  libexecdir
+GnuPG's library directory for executable files.
+.TP
+.B  datadir
+GnuPG's data directory.
+.TP
+.B  serverpid
+The PID of the current server. Command \fB/serverpid\fP must
+have been given to return a useful value.
+.RE
+
+.TP
+.B  unescape \fIargs\fP
+Remove C-style escapes from \fIargs\fP.  Note that \fB\[rs]0\fP and
+\fB\[rs]x00\fP terminate the returned string implicitly.  The string to be
+converted are the entire arguments right behind the delimiting space of
+the function name.
+
+.TP
+.B  unpercent \fIargs\fP
+.TQ
+.B  unpercent+ \fIargs\fP
+Remove percent style escaping from \fIargs\fP.  Note that \fB%00\fP
+terminates the string implicitly.  The string to be converted are the
+entire arguments right behind the delimiting space of the function
+name. \fBunpercent+\fP also maps plus signs to a spaces.
+
+.TP
+.B  percent \fIargs\fP
+.TQ
+.B  percent+ \fIargs\fP
+Escape the \fIargs\fP using percent style escaping.  Tabs, formfeeds,
+linefeeds, carriage returns and colons are escaped. \fBpercent+\fP also
+maps spaces to plus signs.
+
+.TP
+.B  errcode \fIarg\fP
+.TQ
+.B  errsource \fIarg\fP
+.TQ
+.B  errstring \fIarg\fP
+Assume \fIarg\fP is an integer and evaluate it using \fBstrtol\fP.  Return
+the gpg-error error code, error source or a formatted string with the
+error code and error source.
+
+
+.TP
+.B  +
+.TQ
+.B  \-
+.TQ
+.B  *
+.TQ
+.B  /
+.TQ
+.B  %
+Evaluate all arguments as long integers using \fBstrtol\fP and apply
+this operator.  A division by zero yields an empty string.
+
+.TP
+.B  !
+.TQ
+.B  |
+.TQ
+.B  &
+Evaluate all arguments as long integers using \fBstrtol\fP and apply
+the logical operators NOT, OR or AND.  The NOT operator works on the
+last argument only.
+
+
+.RE
+
+
+.TP
+.B  /definq \fIname\fP \fIvar\fP
+Use content of the variable \fIvar\fP for inquiries with \fIname\fP.
+\fIname\fP may be an asterisk (\fB*\fP) to match any inquiry.
+
+
+.TP
+.B  /definqfile \fIname\fP \fIfile\fP
+Use content of \fIfile\fP for inquiries with \fIname\fP.
+\fIname\fP may be an asterisk (\fB*\fP) to match any inquiry.
+
+.TP
+.B  /definqprog \fIname\fP \fIprog\fP
+Run \fIprog\fP for inquiries matching \fIname\fP and pass the
+entire line to it as command line arguments.
+
+.TP
+.B  /datafile \fIname\fP
+Write all data lines from the server to the file \fIname\fP.  The file
+is opened for writing and created if it does not exists.  An existing
+file is first truncated to 0.  The data written to the file fully
+decoded.  Using a single dash for \fIname\fP writes to stdout.  The
+file is kept open until a new file is set using this command or this
+command is used without an argument.
+
+.TP
+.B  /showdef
+Print all definitions
+
+.TP
+.B  /cleardef
+Delete all definitions
+
+.TP
+.B  /sendfd \fIfile\fP \fImode\fP
+Open \fIfile\fP in \fImode\fP (which needs to be a valid \fBfopen\fP
+mode string) and send the file descriptor to the server.  This is
+usually followed by a command like \fBINPUT FD\fP to set the
+input source for other commands.
+
+.TP
+.B  /recvfd
+Not yet implemented.
+
+.TP
+.B  /open \fIvar\fP \fIfile\fP [\fImode\fP]
+Open \fIfile\fP and assign the file descriptor to \fIvar\fP.  Warning:
+This command is experimental and might change in future versions.
+
+.TP
+.B  /close \fIfd\fP
+Close the file descriptor \fIfd\fP.  Warning: This command is
+experimental and might change in future versions.
+
+.TP
+.B  /showopen
+Show a list of open files.
+
+.TP
+.B  /serverpid
+Send the Assuan command \fBGETINFO pid\fP to the server and store
+the returned PID for internal purposes.
+
+.TP
+.B  /sleep
+Sleep for a second.
+
+.TP
+.B  /hex
+.TQ
+.B  /nohex
+Same as the command line option \fB\-\-hex\fP.
+
+.TP
+.B  /decode
+.TQ
+.B  /nodecode
+Same as the command line option \fB\-\-decode\fP.
+
+.TP
+.B  /subst
+.TQ
+.B  /nosubst
+Enable and disable variable substitution.  It defaults to disabled
+unless the command line option \fB\-\-subst\fP has been used.
+If /subst as been enabled once, leading whitespace is removed from
+input lines which makes scripts easier to read.
+
+.TP
+.B  /while \fIcondition\fP
+.TQ
+.B  /end
+These commands provide a way for executing loops.  All lines between
+the \fBwhile\fP and the corresponding \fBend\fP are executed as long
+as the evaluation of \fIcondition\fP yields a non-zero value or is the
+string \fBtrue\fP or \fByes\fP.  The evaluation is done by passing
+\fIcondition\fP to the \fBstrtol\fP function.  Example:
+
+.RS 2
+.nf
+  /subst
+  /let i 3
+  /while $i
+    /echo loop counter is $i
+    /let i ${\- $i 1}
+  /end
+.fi
+.RE
+
+.TP
+.B  /if \fIcondition\fP
+.TQ
+.B  /end
+These commands provide a way for conditional execution.  All lines between
+the \fBif\fP and the corresponding \fBend\fP are executed only if
+the evaluation of \fIcondition\fP yields a non-zero value or is the
+string \fBtrue\fP or \fByes\fP.  The evaluation is done by passing
+\fIcondition\fP to the \fBstrtol\fP function.
+
+.TP
+.B  /run \fIfile\fP
+Run commands from \fIfile\fP.
+
+.TP
+.B  /history \-\-clear
+Clear the command history.
+
+.TP
+.B  /bye
+Terminate the connection and the program.
+
+.TP
+.B  /help
+Print a list of available control commands.
+
+.P
+
+
+.SH SEE ALSO
+\fBgpg\-agent\fP(1),
+\fBscdaemon\fP(1)
+
+The full documentation for this tool is maintained as a Texinfo manual.
+If GnuPG and the info program are properly installed at your site, the
+command
+
+.RS 2
+.nf
+info gnupg
+.fi
+.RE
+
+should give you access to the complete manual including a menu structure
+and an index.
+
+

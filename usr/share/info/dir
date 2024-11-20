@@ -40,6 +40,9 @@ Development
 Editors
 * nano: (nano).                 Small and friendly text editor.
 
+Encryption
+* Nettle: (nettle).             A low-level cryptographic library.
+
 GNU C library functions and macros
 * __fbufsize: (libc)Controlling Buffering.
 * __flbf: (libc)Controlling Buffering.
@@ -2339,8 +2342,11 @@ GNU Gettext Utilities
 
 GNU libraries
 * gmp: (gmp).                   GNU Multiple Precision Arithmetic Library.
+* libksba: (ksba).              An X.509 Library.
 
 GNU Libraries
+* Assuan: (assuan).             An IPC library for non-persistent servers.
+* libgcrypt: (gcrypt).          Cryptographic function library.
 * libgomp: (libgomp).           GNU Offloading and Multi Processing Runtime 
                                   Library.
 * libitm: (libitm).             GNU Transactional Memory Library
@@ -2353,6 +2359,14 @@ GNU organization
 
 GNU Packages
 * mpc: (mpc)Multiple Precision Complex Library.
+
+GNU Utilities
+* dirmngr: (gnupg).             X.509 CRL and OCSP server.
+* dirmngr-client: (gnupg).      X.509 CRL and OCSP client.
+* gpg-agent: (gnupg).           The secret key daemon.
+* gpg2: (gnupg).                OpenPGP encryption and signing tool.
+* gpgsm: (gnupg).               S/MIME encryption and signing tool.
+* pinentry: (pinentry).         Securely ask for a passphrase or PIN.
 
 Individual utilities
 * Gawk Work Flow: (gawkworkflow)Overview.       Participating in ‘gawk’ 
@@ -2564,10 +2578,15 @@ Libraries
 * History: (history).           The GNU history library API.
 * RLuserman: (rluserman).       The GNU readline library User's Manual.
 * Readline: (readline).         The GNU readline library API.
+* libgpg-error: (gpgrt).        Error codes and common code for GnuPG.
 
 Localization
 * idn2: (libidn2)Invoking idn2. Internationalized Domain Name (IDNA2008/TR46) 
                                   conversion.
+
+Miscellaneous
+* Gpm: (gpm).                   Text-mode (non-X) mouse library and server 
+                                  daemon.
 
 Network applications
 * Wget: (wget).                 Non-interactive network downloader.
@@ -2621,6 +2640,7 @@ Software development
                                   files.
 
 Software libraries
+* GnuTLS: (gnutls).             GNU Transport Layer Security Library.
 * Libc: (libc).                 C library.
 * libidn2: (libidn2).           Internationalized domain names (IDNA2008/TR46) 
                                   processing.
@@ -2631,6 +2651,20 @@ Software libraries
 
 System administration
 * parted: (parted).             GNU partitioning software
+
+System Administration
+* certtool: (gnutls)certtool Invocation.
+                                Manipulate certificates and keys.
+* gnutls-cli-debug: (gnutls)gnutls-cli-debug Invocation.
+                                GnuTLS debug client.
+* gnutls-cli: (gnutls)gnutls-cli Invocation.
+                                GnuTLS test client.
+* gnutls-serv: (gnutls)gnutls-serv Invocation.
+                                GnuTLS test server.
+* psktool: (gnutls)psktool Invocation.
+                                Simple TLS-Pre-Shared-Keys manager.
+* srptool: (gnutls)srptool Invocation.
+                                Simple SRP password tool.
 
 Texinfo documentation system
 * Texinfo: (texinfo).           The GNU documentation format.

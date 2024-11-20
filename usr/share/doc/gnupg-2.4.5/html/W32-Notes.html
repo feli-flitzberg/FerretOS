@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>W32 Notes (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="W32 Notes (Using the GNU Privacy Guard)">
+<meta name="keywords" content="W32 Notes (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="System-Notes.html" rel="up" title="System Notes">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+ul.mark-bullet {list-style-type: disc}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="W32-Notes">
+<div class="nav-panel">
+<p>
+Up: <a href="System-Notes.html" accesskey="u" rel="up">Notes pertaining to certain OSes</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="Microsoft-Windows-Notes"><span>13.1 Microsoft Windows Notes<a class="copiable-link" href="#Microsoft-Windows-Notes"> &para;</a></span></h3>
+
+<p>Current limitations are:
+</p>
+<ul class="itemize mark-bullet">
+<li><code class="command">gpgconf</code> does not create backup files, so in case of trouble
+your configuration file might get lost.
+
+</li><li><code class="command">watchgnupg</code> is not available.  Logging to sockets is not
+possible.
+
+</li><li>The periodical smartcard status checking done by <code class="command">scdaemon</code> is
+not yet supported.
+
+</li></ul>
+
+
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Listing components (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Listing components (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Listing components (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="gpgconf.html" rel="up" title="gpgconf">
+<link href="Checking-programs.html" rel="next" title="Checking programs">
+<link href="Format-conventions.html" rel="prev" title="Format conventions">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Listing-components">
+<div class="nav-panel">
+<p>
+Next: <a href="Checking-programs.html" accesskey="n" rel="next">Checking programs</a>, Previous: <a href="Format-conventions.html" accesskey="p" rel="prev">Format conventions</a>, Up: <a href="gpgconf.html" accesskey="u" rel="up">Modify .gnupg home directories</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Listing-components-1"><span>10.4.3 Listing components<a class="copiable-link" href="#Listing-components-1"> &para;</a></span></h4>
+
+<p>The command <code class="code">--list-components</code> will list all components that can
+be configured with <code class="command">gpgconf</code>.  Usually, one component will
+correspond to one GnuPG-related program and contain the options of
+that program&rsquo;s configuration file that can be modified using
+<code class="command">gpgconf</code>.  However, this is not necessarily the case.  A
+component might also be a group of selected options from several
+programs, or contain entirely virtual options that have a special
+effect rather than changing exactly one option in one configuration
+file.
+</p>
+<p>A component is a set of configuration options that semantically belong
+together.  Furthermore, several changes to a component can be made in
+an atomic way with a single operation.  The GUI could for example
+provide a menu with one entry for each component, or a window with one
+tabulator sheet per component.
+</p>
+<p>The command <code class="code">--list-components</code> lists all available
+components, one per line.  The format of each line is:
+</p>
+<p><code class="code"><var class="var">name</var>:<var class="var">description</var>:<var class="var">pgmname</var>:</code>
+</p>
+<dl class="table">
+<dt><var class="var">name</var></dt>
+<dd><p>This field contains a name tag of the component.  The name tag is used
+to specify the component in all communication with <code class="command">gpgconf</code>.
+The name tag is to be used <em class="emph">verbatim</em>.  It is thus not in any
+escaped format.
+</p>
+</dd>
+<dt><var class="var">description</var></dt>
+<dd><p>The <em class="emph">string</em> in this field contains a human-readable description
+of the component.  It can be displayed to the user of the GUI for
+informational purposes.  It is <em class="emph">percent-escaped</em> and
+<em class="emph">localized</em>.
+</p>
+</dd>
+<dt><var class="var">pgmname</var></dt>
+<dd><p>The <em class="emph">string</em> in this field contains the absolute name of the
+program&rsquo;s file.  It can be used to unambiguously invoke that program.
+It is <em class="emph">percent-escaped</em>.
+</p></dd>
+</dl>
+
+<p>Example:
+</p><div class="example">
+<pre class="example-preformatted">$ gpgconf --list-components
+gpg:GPG for OpenPGP:/usr/local/bin/gpg2:
+gpg-agent:GPG Agent:/usr/local/bin/gpg-agent:
+scdaemon:Smartcard Daemon:/usr/local/bin/scdaemon:
+gpgsm:GPG for S/MIME:/usr/local/bin/gpgsm:
+dirmngr:Directory Manager:/usr/local/bin/dirmngr:
+</pre></div>
+
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Checking-programs.html">Checking programs</a>, Previous: <a href="Format-conventions.html">Format conventions</a>, Up: <a href="gpgconf.html">Modify .gnupg home directories</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Dirmngr Configuration (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Dirmngr Configuration (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Dirmngr Configuration (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Invoking-DIRMNGR.html" rel="up" title="Invoking DIRMNGR">
+<link href="Dirmngr-Signals.html" rel="next" title="Dirmngr Signals">
+<link href="Dirmngr-Options.html" rel="prev" title="Dirmngr Options">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="Dirmngr-Configuration">
+<div class="nav-panel">
+<p>
+Next: <a href="Dirmngr-Signals.html" accesskey="n" rel="next">Use of signals</a>, Previous: <a href="Dirmngr-Options.html" accesskey="p" rel="prev">Option Summary</a>, Up: <a href="Invoking-DIRMNGR.html" accesskey="u" rel="up">Invoking DIRMNGR</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="Configuration-1"><span>3.3 Configuration<a class="copiable-link" href="#Configuration-1"> &para;</a></span></h3>
+
+<p>Dirmngr makes use of several directories when running in daemon mode:
+There are a few configuration files to control the operation of
+dirmngr.  By default they may all be found in the current home
+directory (see <a class="pxref" href="Agent-Options.html#option-_002d_002dhomedir">option --homedir</a>).
+</p>
+<dl class="table">
+<dt><a id="index-dirmngr_002econf"></a><span><samp class="file">dirmngr.conf</samp><a class="copiable-link" href="#index-dirmngr_002econf"> &para;</a></span></dt>
+<dd><p>This is the standard configuration file read by <code class="command">dirmngr</code> on
+startup.  It may contain any valid long option; the leading two dashes
+may not be entered and the option may not be abbreviated.  This file
+is also read after a <code class="code">SIGHUP</code> however not all options will
+actually have an effect.  This default name may be changed on the
+command line (see <a class="pxref" href="Agent-Options.html#option-_002d_002doptions">option --options</a>).  You should backup this file.
+</p>
+</dd>
+<dt><samp class="file">/etc/gnupg/trusted-certs</samp></dt>
+<dd><p>This directory should be filled with certificates of Root CAs you
+are trusting in checking the CRLs and signing OCSP Responses.
+</p>
+<p>Usually these are the same certificates you use with the applications
+making use of dirmngr.  It is expected that each of these certificate
+files contain exactly one <abbr class="acronym">DER</abbr> encoded certificate in a file
+with the suffix <samp class="file">.crt</samp> or <samp class="file">.der</samp>.  <code class="command">dirmngr</code> reads
+those certificates on startup and when given a SIGHUP.  Certificates
+which are not readable or do not make up a proper X.509 certificate
+are ignored; see the log file for details.
+</p>
+<p>Applications using dirmngr (e.g. gpgsm) can request these
+certificates to complete a trust chain in the same way as with the
+extra-certs directory (see below).
+</p>
+<p>Note that for OCSP responses the certificate specified using the option
+<samp class="option">--ocsp-signer</samp> is always considered valid to sign OCSP requests.
+</p>
+</dd>
+<dt><samp class="file">/etc/gnupg/extra-certs</samp></dt>
+<dd><p>This directory may contain extra certificates which are preloaded
+into the internal cache on startup. Applications using dirmngr (e.g. gpgsm)
+can request cached certificates to complete a trust chain.
+This is convenient in cases you have a couple intermediate CA certificates
+or certificates usually used to sign OCSP responses.
+These certificates are first tried before going
+out to the net to look for them.  These certificates must also be
+<abbr class="acronym">DER</abbr> encoded and suffixed with <samp class="file">.crt</samp> or <samp class="file">.der</samp>.
+</p>
+</dd>
+<dt><samp class="file">~/.gnupg/crls.d</samp></dt>
+<dd><p>This directory is used to store cached CRLs.  The <samp class="file">crls.d</samp>
+part will be created by dirmngr if it does not exists but you need to
+make sure that the upper directory exists.
+</p>
+</dd>
+</dl>
+
+<p>Several options control the use of trusted certificates for TLS and
+CRLs.  Here is an Overview on the use and origin of those Root CA
+certificates:
+</p><dl class="table">
+<dt>System</dt>
+<dd>
+<p>These System root certificates are used by:  FIXME
+</p>
+<p>The origin of the system provided certificates depends on the
+platform.  On Windows all certificates from the Windows System Stores
+<code class="code">ROOT</code> and <code class="code">CA</code> are used.
+</p>
+<p>On other platforms the certificates are read from the first file found
+form this list: <samp class="file">/etc/ssl/ca-bundle.pem</samp>,
+<samp class="file">/etc/ssl/certs/ca-certificates.crt</samp>,
+<samp class="file">/etc/pki/tls/cert.pem</samp>,
+<samp class="file">/usr/local/share/certs/ca-root-nss.crt</samp>,
+<samp class="file">/etc/ssl/cert.pem</samp>.
+</p>
+</dd>
+<dt>GnuPG</dt>
+<dd>
+<p>The GnuPG specific certificates stored in the directory
+<samp class="file">/etc/gnupg/trusted-certs</samp> are only used to validate CRLs.
+</p>
+
+</dd>
+<dt>OpenPGP keyserver</dt>
+<dd>
+<p>For accessing the OpenPGP keyservers the only certificates used are
+those set with the configuration option <samp class="option">hkp-cacert</samp>.
+</p>
+</dd>
+<dt>OpenPGP keyserver pool</dt>
+<dd>
+<p>This is usually only one certificate read from the file
+<samp class="file">/usr/share/gnupg/gnupg/sks-keyservers.netCA.pem</samp>.  If this
+certificate exists it is used to access the special keyservers
+<code class="code">hkps.pool.sks-keyservers.net</code> (or <samp class="file">hkps://keys.gnupg.net</samp>).
+</p>
+</dd>
+</dl>
+
+<p>Please note that <code class="command">gpgsm</code> accepts Root CA certificates for its
+own purposes only if they are listed in its file <samp class="file">trustlist.txt</samp>.
+<code class="command">dirmngr</code> does not make use of this list - except FIXME.
+</p>
+
+
+
+<p>To be able to see diagnostics it is often useful to put at least the
+following lines into the configuration file
+<samp class="file">~/gnupg/dirmngr.conf</samp>:
+</p>
+<div class="example">
+<pre class="example-preformatted">log-file ~/dirmngr.log
+verbose
+</pre></div>
+
+<p>You may want to check the log file to see whether all desired root CA
+certificates are correctly loaded.
+</p>
+<p>To be able to perform OCSP requests you probably want to add the line:
+</p>
+<div class="example">
+<pre class="example-preformatted">allow-ocsp
+</pre></div>
+
+<p>To make sure that new options are read or that after the installation
+of a new GnuPG versions the right dirmngr version is running, you
+should kill an existing dirmngr so that a new instance is started as
+needed by the other components:
+</p>
+<div class="example">
+<pre class="example-preformatted">gpgconf --kill dirmngr
+</pre></div>
+
+<p>Direct interfaction with the dirmngr is possible by using the command
+</p>
+<div class="example">
+<pre class="example-preformatted">gpg-connect-agent --dirmngr
+</pre></div>
+
+<p>Enter <code class="code">HELP</code> at the prompt to see a list of commands and enter
+<code class="code">HELP</code> followed by a command name to get help on that command.
+</p>
+
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Dirmngr-Signals.html">Use of signals</a>, Previous: <a href="Dirmngr-Options.html">Option Summary</a>, Up: <a href="Invoking-DIRMNGR.html">Invoking DIRMNGR</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

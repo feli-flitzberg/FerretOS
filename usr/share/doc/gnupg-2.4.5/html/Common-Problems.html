@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Common Problems (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Common Problems (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Common Problems (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Debugging.html" rel="up" title="Debugging">
+<link href="Architecture-Details.html" rel="next" title="Architecture Details">
+<link href="Debugging-Hints.html" rel="prev" title="Debugging Hints">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+ul.mark-bullet {list-style-type: disc}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="Common-Problems">
+<div class="nav-panel">
+<p>
+Next: <a href="Architecture-Details.html" accesskey="n" rel="next">How the whole thing works internally</a>, Previous: <a href="Debugging-Hints.html" accesskey="p" rel="prev">Various hints on debugging</a>, Up: <a href="Debugging.html" accesskey="u" rel="up">How to solve problems</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="Commonly-Seen-Problems"><span>14.3 Commonly Seen Problems<a class="copiable-link" href="#Commonly-Seen-Problems"> &para;</a></span></h3>
+
+
+<ul class="itemize mark-bullet">
+<li>Error code &lsquo;<samp class="samp">Not supported</samp>&rsquo; from Dirmngr
+
+<p>Most likely the option <samp class="option">enable-ocsp</samp> is active for gpgsm
+but Dirmngr&rsquo;s OCSP feature has not been enabled using
+<samp class="option">allow-ocsp</samp> in <samp class="file">dirmngr.conf</samp>.
+</p>
+</li><li>The Curses based Pinentry does not work
+
+<p>The far most common reason for this is that the environment variable
+<code class="code">GPG_TTY</code> has not been set correctly.  Make sure that it has been
+set to a real tty device and not just to &lsquo;<samp class="samp">/dev/tty</samp>&rsquo;;
+i.e. &lsquo;<samp class="samp">GPG_TTY=tty</samp>&rsquo; is plainly wrong; what you want is
+&lsquo;<samp class="samp">GPG_TTY=`tty`</samp>&rsquo; &mdash; note the back ticks.  Also make sure that
+this environment variable gets exported, that is you should follow up
+the setting with an &lsquo;<samp class="samp">export GPG_TTY</samp>&rsquo; (assuming a Bourne style
+shell). Even for GUI based Pinentries; you should have set
+<code class="code">GPG_TTY</code>. See the section on installing the <code class="command">gpg-agent</code>
+on how to do it.
+</p>
+
+</li><li>SSH hangs while a popping up pinentry was expected
+
+<p>SSH has no way to tell the gpg-agent what terminal or X display it is
+running on.  So when remotely logging into a box where a gpg-agent with
+SSH support is running, the pinentry will get popped up on whatever
+display the gpg-agent has been started.  To solve this problem you may
+issue the command
+</p>
+<div class="example smallexample">
+<pre class="example-preformatted">echo UPDATESTARTUPTTY | gpg-connect-agent
+</pre></div>
+
+<p>and the next pinentry will pop up on your display or screen. However,
+you need to kill the running pinentry first because only one pinentry
+may be running at once.  If you plan to use ssh on a new display you
+should issue the above command before invoking ssh or any other service
+making use of ssh.
+</p>
+
+</li><li>Exporting a secret key without a certificate
+
+<p>It may happen that you have created a certificate request using
+<code class="command">gpgsm</code> but not yet received and imported the certificate from
+the CA.  However, you want to export the secret key to another machine
+right now to import the certificate over there then.  You can do this
+with a little trick but it requires that you know the approximate time
+you created the signing request.  By running the command
+</p>
+<div class="example smallexample">
+<pre class="example-preformatted">  ls -ltr ~/.gnupg/private-keys-v1.d
+</pre></div>
+
+<p>you get a listing of all private keys under control of <code class="command">gpg-agent</code>.
+Pick the key which best matches the creation time and run the command
+</p>
+<table class="cartouche" border="1"><tr><td>
+<div class="example smallexample">
+<pre class="example-preformatted">  /usr/libexec/gpg-protect-tool --p12-export \
+     ~/.gnupg/private-keys-v1.d/<var class="var">foo</var> &gt;<var class="var">foo</var>.p12
+</pre></div>
+</td></tr></table>
+
+<p>(Please adjust the path to <code class="command">gpg-protect-tool</code> to the appropriate
+location). <var class="var">foo</var> is the name of the key file you picked (it should
+have the suffix <samp class="file">.key</samp>).  A Pinentry box will pop up and ask you
+for the current passphrase of the key and a new passphrase to protect it
+in the pkcs#12 file.
+</p>
+<p>To import the created file on the machine you use this command:
+</p>
+<table class="cartouche" border="1"><tr><td>
+<div class="example smallexample">
+<pre class="example-preformatted">  /usr/libexec/gpg-protect-tool --p12-import --store  <var class="var">foo</var>.p12
+</pre></div>
+</td></tr></table>
+
+<p>You will be asked for the pkcs#12 passphrase and a new passphrase to
+protect the imported private key at its new location.
+</p>
+<p>Note that there is no easy way to match existing certificates with
+stored private keys because some private keys are used for Secure Shell
+or other purposes and don&rsquo;t have a corresponding certificate.
+</p>
+
+</li><li>A root certificate does not verify
+
+<p>A common problem is that the root certificate misses the required
+basicConstraints attribute and thus <code class="command">gpgsm</code> rejects this
+certificate.  An error message indicating &ldquo;no value&rdquo; is a sign for
+such a certificate.  You may use the <code class="code">relax</code> flag in
+<samp class="file">trustlist.txt</samp> to accept the certificate anyway.  Note that the
+fingerprint and this flag may only be added manually to
+<samp class="file">trustlist.txt</samp>.
+</p>
+</li><li>Error message: &ldquo;digest algorithm N has not been enabled&rdquo;
+
+<p>The signature is broken.  You may try the option
+<samp class="option">--extra-digest-algo SHA256</samp> to workaround the problem.  The
+number N is the internal algorithm identifier; for example 8 refers to
+SHA-256.
+</p>
+
+</li><li>The Windows version does not work under Wine
+
+<p>When running the W32 version of <code class="command">gpg</code> under Wine you may get
+an error messages like:
+</p>
+<div class="example smallexample">
+<pre class="example-preformatted">gpg: fatal: WriteConsole failed: Access denied
+</pre></div>
+
+<p>The solution is to use the command <code class="command">wineconsole</code>.
+</p>
+<p>Some operations like <samp class="option">--generate-key</samp> really want to talk to
+the console directly
+for increased security (for example to prevent the passphrase from
+appearing on the screen).  So, you should use <code class="command">wineconsole</code>
+instead of <code class="command">wine</code>, which will launch a windows console that
+implements those additional features.
+</p>
+
+</li><li>Why does GPG&rsquo;s &ndash;search-key list weird keys?
+
+<p>For performance reasons the keyservers do not check the keys the same
+way <code class="command">gpg</code> does.  It may happen that the listing of keys
+available on the keyservers shows keys with wrong user IDs or with user
+Ids from other keys.  If you try to import this key, the bad keys or bad
+user ids won&rsquo;t get imported, though.  This is a bit unfortunate but we
+can&rsquo;t do anything about it without actually downloading the keys.
+</p>
+</li></ul>
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Architecture-Details.html">How the whole thing works internally</a>, Previous: <a href="Debugging-Hints.html">Various hints on debugging</a>, Up: <a href="Debugging.html">How to solve problems</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

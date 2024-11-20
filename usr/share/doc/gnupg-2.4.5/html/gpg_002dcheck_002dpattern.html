@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>gpg-check-pattern (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="gpg-check-pattern (Using the GNU Privacy Guard)">
+<meta name="keywords" content="gpg-check-pattern (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Helper-Tools.html" rel="up" title="Helper Tools">
+<link href="gpgtar.html" rel="prev" title="gpgtar">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="gpg_002dcheck_002dpattern">
+<div class="nav-panel">
+<p>
+Previous: <a href="gpgtar.html" accesskey="p" rel="prev">Encrypt or sign files into an archive</a>, Up: <a href="Helper-Tools.html" accesskey="u" rel="up">Helper Tools</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="Check-a-passphrase-on-stdin-against-the-patternfile"><span>10.11 Check a passphrase on stdin against the patternfile<a class="copiable-link" href="#Check-a-passphrase-on-stdin-against-the-patternfile"> &para;</a></span></h3>
+
+
+
+
+<p><code class="command">gpg-check-pattern</code> checks a passphrase given on stdin against
+a specified pattern file.
+</p>
+<p>The pattern file is line based with comment lines beginning on the
+<em class="emph">first</em> position with a <code class="code">#</code>.  Empty lines and lines with
+only white spaces are ignored.  The actual pattern lines may either be
+verbatim string pattern and match as they are (trailing spaces are
+ignored) or extended regular expressions indicated by a <code class="code">/</code> or
+<code class="code">!/</code> in the first column and terminated by another <code class="code">/</code> or
+end of line.  If a regular expression starts with <code class="code">!/</code> the match
+result is reversed. By default all comparisons are case insensitive.
+</p>
+<p>Tag lines may be used to further control the operation of this tool.
+The currently defined tags are:
+</p>
+<dl class="table">
+<dt><code class="code">[icase]</code></dt>
+<dd><p>Switch to case insensitive comparison for all further patterns.  This
+is the default.
+</p>
+</dd>
+<dt><code class="code">[case]</code></dt>
+<dd><p>Switch to case sensitive comparison for all further patterns.
+</p>
+</dd>
+<dt><code class="code">[reject]</code></dt>
+<dd><p>Switch to reject mode.  This is the default mode.
+</p>
+</dd>
+<dt><code class="code">[accept]</code></dt>
+<dd><p>Switch to accept mode.
+</p></dd>
+</dl>
+
+<p>In the future more tags may be introduced and thus it is advisable not to
+start a plain pattern string with an open bracket.  The tags must be
+given verbatim on the line with no spaces to the left or any non white
+space characters to the right.
+</p>
+<p>In reject mode the program exits on the first match with an exit code
+of 1 (failure).  If at the end of the pattern list the reject mode is
+still active the program exits with code 0 (success).
+</p>
+<p>In accept mode blocks of patterns are used.  A block starts at the
+next pattern after an &quot;accept&quot; tag and ends with the last pattern
+before the next &quot;accept&quot; or &quot;reject&quot; tag or at the end of the pattern
+list.  If all patterns in a block match the program exits with an exit
+code of 0 (success).  If any pattern in a block do not match the next
+pattern block is evaluated.  If at the end of the pattern list the
+accept mode is still active the program exits with code 1 (failure).
+</p>
+
+
+
+<dl class="table">
+<dt><a id="index-verbose-12"></a><span><code class="code">--verbose</code><a class="copiable-link" href="#index-verbose-12"> &para;</a></span></dt>
+<dd><p>Enable extra informational output.
+</p>
+</dd>
+<dt><a id="index-check"></a><span><code class="code">--check</code><a class="copiable-link" href="#index-check"> &para;</a></span></dt>
+<dd><p>Run only a syntax check on the patternfile.
+</p>
+</dd>
+<dt><a id="index-null-1"></a><span><code class="code">--null</code><a class="copiable-link" href="#index-null-1"> &para;</a></span></dt>
+<dd><p>Input is expected to be null delimited.
+</p>
+</dd>
+</dl>
+
+
+
+
+
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Previous: <a href="gpgtar.html">Encrypt or sign files into an archive</a>, Up: <a href="Helper-Tools.html">Helper Tools</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

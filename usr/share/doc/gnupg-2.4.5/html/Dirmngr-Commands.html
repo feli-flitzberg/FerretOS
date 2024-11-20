@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Dirmngr Commands (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Dirmngr Commands (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Dirmngr Commands (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Invoking-DIRMNGR.html" rel="up" title="Invoking DIRMNGR">
+<link href="Dirmngr-Options.html" rel="next" title="Dirmngr Options">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="Dirmngr-Commands">
+<div class="nav-panel">
+<p>
+Next: <a href="Dirmngr-Options.html" accesskey="n" rel="next">Option Summary</a>, Up: <a href="Invoking-DIRMNGR.html" accesskey="u" rel="up">Invoking DIRMNGR</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="Commands-1"><span>3.1 Commands<a class="copiable-link" href="#Commands-1"> &para;</a></span></h3>
+
+
+<p>Commands are not distinguished from options except for the fact that
+only one command is allowed.
+</p>
+<dl class="table">
+<dt><a id="index-version-1"></a><span><code class="code">--version</code><a class="copiable-link" href="#index-version-1"> &para;</a></span></dt>
+<dd><p>Print the program version and licensing information.  Note that you cannot
+abbreviate this command.
+</p>
+</dd>
+<dt><a id="index-help-1"></a><span><code class="code">--help, -h</code><a class="copiable-link" href="#index-help-1"> &para;</a></span></dt>
+<dd><p>Print a usage message summarizing the most useful command-line options.
+Note that you cannot abbreviate this command.
+</p>
+</dd>
+<dt><a id="index-dump_002doptions-1"></a><span><code class="code">--dump-options</code><a class="copiable-link" href="#index-dump_002doptions-1"> &para;</a></span></dt>
+<dd><p>Print a list of all available options and commands.  Note that you cannot
+abbreviate this command.
+</p>
+</dd>
+<dt><a id="index-server-1"></a><span><code class="code">--server</code><a class="copiable-link" href="#index-server-1"> &para;</a></span></dt>
+<dd><p>Run in server mode and wait for commands on the <code class="code">stdin</code>.  The
+default mode is to create a socket and listen for commands there.
+This is only used for testing.
+</p>
+</dd>
+<dt><a id="index-daemon-1"></a><span><code class="code">--daemon</code><a class="copiable-link" href="#index-daemon-1"> &para;</a></span></dt>
+<dd><p>Run in background daemon mode and listen for commands on a socket.
+This is the way <code class="command">dirmngr</code> is started on demand by the other
+GnuPG components.  To force starting <code class="command">dirmngr</code> it is in
+general best to use <code class="code">gpgconf --launch dirmngr</code>.
+</p>
+</dd>
+<dt><a id="index-supervised-1"></a><span><code class="code">--supervised</code><a class="copiable-link" href="#index-supervised-1"> &para;</a></span></dt>
+<dd><p>Run in the foreground, sending logs to stderr, and listening on file
+descriptor 3, which must already be bound to a listening socket.  This
+option is deprecated and not supported on Windows.
+</p>
+</dd>
+<dt><a id="index-list_002dcrls"></a><span><code class="code">--list-crls</code><a class="copiable-link" href="#index-list_002dcrls"> &para;</a></span></dt>
+<dd><p>List the contents of the CRL cache on <code class="code">stdout</code>. This is probably
+only useful for debugging purposes.
+</p>
+</dd>
+<dt><a id="index-load_002dcrl"></a><span><code class="code">--load-crl <var class="var">file</var></code><a class="copiable-link" href="#index-load_002dcrl"> &para;</a></span></dt>
+<dd><p>This command requires a filename as additional argument, and it will
+make Dirmngr try to import the CRL in <var class="var">file</var> into it&rsquo;s cache.
+Note, that this is only possible if Dirmngr is able to retrieve the
+CA&rsquo;s certificate directly by its own means.  In general it is better
+to use <code class="code">gpgsm</code>&rsquo;s <code class="code">--call-dirmngr loadcrl filename</code> command
+so that <code class="code">gpgsm</code> can help dirmngr.
+</p>
+</dd>
+<dt><a id="index-fetch_002dcrl"></a><span><code class="code">--fetch-crl <var class="var">url</var></code><a class="copiable-link" href="#index-fetch_002dcrl"> &para;</a></span></dt>
+<dd><p>This command requires an URL as additional argument, and it will make
+dirmngr try to retrieve and import the CRL from that <var class="var">url</var> into
+it&rsquo;s cache.  This is mainly useful for debugging purposes.  The
+<code class="command">dirmngr-client</code> provides the same feature for a running dirmngr.
+</p>
+</dd>
+<dt><a id="index-shutdown"></a><span><code class="code">--shutdown</code><a class="copiable-link" href="#index-shutdown"> &para;</a></span></dt>
+<dd><p>This commands shuts down an running instance of Dirmngr.  This command
+has currently no effect.
+</p>
+</dd>
+<dt><a id="index-flush"></a><span><code class="code">--flush</code><a class="copiable-link" href="#index-flush"> &para;</a></span></dt>
+<dd><p>This command removes all CRLs from Dirmngr&rsquo;s cache.  Client requests
+will thus trigger reading of fresh CRLs.
+</p>
+</dd>
+</dl>
+
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Dirmngr-Options.html">Option Summary</a>, Up: <a href="Invoking-DIRMNGR.html">Invoking DIRMNGR</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

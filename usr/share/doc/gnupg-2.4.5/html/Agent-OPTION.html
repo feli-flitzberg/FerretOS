@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Agent OPTION (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Agent OPTION (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Agent OPTION (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Agent-Protocol.html" rel="up" title="Agent Protocol">
+<link href="Agent-GETINFO.html" rel="prev" title="Agent GETINFO">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Agent-OPTION">
+<div class="nav-panel">
+<p>
+Previous: <a href="Agent-GETINFO.html" accesskey="p" rel="prev">Return information about the process</a>, Up: <a href="Agent-Protocol.html" accesskey="u" rel="up">Agent&rsquo;s Assuan Protocol</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Set-options-for-the-session"><span>2.6.17 Set options for the session<a class="copiable-link" href="#Set-options-for-the-session"> &para;</a></span></h4>
+
+<p>Here is a list of session options which are not yet described with
+other commands.  The general syntax for an Assuan option is:
+</p>
+<div class="example smallexample">
+<pre class="example-preformatted">OPTION  <var class="var">key</var>=<var class="var">value</var>
+</pre></div>
+
+<p>Supported <var class="var">key</var>s are:
+</p>
+<dl class="table">
+<dt><code class="code">agent-awareness</code></dt>
+<dd><p>This may be used to tell gpg-agent of which gpg-agent version the
+client is aware of.  gpg-agent uses this information to enable
+features which might break older clients.
+</p>
+</dd>
+<dt><code class="code">putenv</code></dt>
+<dd><p>Change the session&rsquo;s environment to be used for the
+Pinentry.  Valid values are:
+</p>
+<dl class="table">
+<dt><code class="code"><var class="var">name</var></code></dt>
+<dd><p>Delete envvar <var class="var">name</var>
+  </p></dd>
+<dt><code class="code"><var class="var">name</var>=</code></dt>
+<dd><p>Set envvar <var class="var">name</var> to the empty string
+  </p></dd>
+<dt><code class="code"><var class="var">name</var>=<var class="var">value</var></code></dt>
+<dd><p>Set envvar <var class="var">name</var> to the string <var class="var">value</var>.
+  </p></dd>
+</dl>
+
+</dd>
+<dt><code class="code">use-cache-for-signing</code></dt>
+<dd><p>See Assuan command <code class="code">PKSIGN</code>.
+</p>
+</dd>
+<dt><code class="code">allow-pinentry-notify</code></dt>
+<dd><p>This does not need any value.  It is used to enable the
+PINENTRY_LAUNCHED inquiry.
+</p>
+</dd>
+<dt><code class="code">pinentry-mode</code></dt>
+<dd><p>This option is used to change the operation mode of the pinentry.  The
+following values are defined:
+</p>
+<dl class="table">
+<dt><code class="code">ask</code></dt>
+<dd><p>This is the default mode which pops up a pinentry as needed.
+</p>
+</dd>
+<dt><code class="code">cancel</code></dt>
+<dd><p>Instead of popping up a pinentry, return the error code
+  <code class="code">GPG_ERR_CANCELED</code>.
+</p>
+</dd>
+<dt><code class="code">error</code></dt>
+<dd><p>Instead of popping up a pinentry, return the error code
+  <code class="code">GPG_ERR_NO_PIN_ENTRY</code>.
+</p>
+</dd>
+<dt><code class="code">loopback</code></dt>
+<dd><p>Use a loopback pinentry.  This fakes a pinentry by using inquiries
+  back to the caller to ask for a passphrase.  This option may only be
+  set if the agent has been configured for that.
+  To disable this feature use <a class="ref" href="Agent-Options.html#option-_002d_002dno_002dallow_002dloopback_002dpinentry">option --no-allow-loopback-pinentry</a>.
+  </p></dd>
+</dl>
+
+</dd>
+<dt><code class="code">cache-ttl-opt-preset</code></dt>
+<dd><p>This option sets the cache TTL for new entries created by GENKEY and
+PASSWD commands when using the <samp class="option">--preset</samp> option.  It is not
+used a default value is used.
+</p>
+</dd>
+<dt><code class="code">s2k-count</code></dt>
+<dd><p>Instead of using the standard S2K count (which is computed on the
+fly), the given S2K count is used for new keys or when changing the
+passphrase of a key.  Values below 65536 are considered to be 0.  This
+option is valid for the entire session or until reset to 0.  This
+option is useful if the key is later used on boxes which are either
+much slower or faster than the actual box.
+</p>
+</dd>
+<dt><code class="code">pretend-request-origin</code></dt>
+<dd><p>This option switches the connection into a restricted mode which
+handles all further commands in the same way as they would be handled
+when originating from the extra or browser socket.  Note that this
+option is not available in the restricted mode.  Valid values for this
+option are:
+</p>
+<dl class="table">
+<dt><code class="code">none</code></dt>
+<dt><code class="code">local</code></dt>
+<dd><p>This is a NOP and leaves the connection in the standard way.
+</p>
+</dd>
+<dt><code class="code">remote</code></dt>
+<dd><p>Pretend to come from a remote origin in the same way as connections
+  from the <samp class="option">--extra-socket</samp>.
+</p>
+</dd>
+<dt><code class="code">browser</code></dt>
+<dd><p>Pretend to come from a local web browser in the same way as connections
+  from the <samp class="option">--browser-socket</samp>.
+  </p></dd>
+</dl>
+
+</dd>
+</dl>
+
+
+
+
+
+
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Previous: <a href="Agent-GETINFO.html">Return information about the process</a>, Up: <a href="Agent-Protocol.html">Agent&rsquo;s Assuan Protocol</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

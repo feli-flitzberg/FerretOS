@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Scdaemon Configuration (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Scdaemon Configuration (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Scdaemon Configuration (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Invoking-SCDAEMON.html" rel="up" title="Invoking SCDAEMON">
+<link href="Scdaemon-Examples.html" rel="next" title="Scdaemon Examples">
+<link href="Card-applications.html" rel="prev" title="Card applications">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="Scdaemon-Configuration">
+<div class="nav-panel">
+<p>
+Next: <a href="Scdaemon-Examples.html" accesskey="n" rel="next">Examples</a>, Previous: <a href="Card-applications.html" accesskey="p" rel="prev">Description of card applications</a>, Up: <a href="Invoking-SCDAEMON.html" accesskey="u" rel="up">Invoking the SCDAEMON</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="Configuration-files-2"><span>6.4 Configuration files<a class="copiable-link" href="#Configuration-files-2"> &para;</a></span></h3>
+
+<p>There are a few configuration files to control certain aspects of
+<code class="command">scdaemons</code>&rsquo;s operation. Unless noted, they are expected in the
+current home directory (see <a class="pxref" href="Agent-Options.html#option-_002d_002dhomedir">option --homedir</a>).
+</p>
+<dl class="table">
+<dt><a id="index-scdaemon_002econf"></a><span><samp class="file">scdaemon.conf</samp><a class="copiable-link" href="#index-scdaemon_002econf"> &para;</a></span></dt>
+<dd><p>This is the standard configuration file read by <code class="command">scdaemon</code> on
+startup.  It may contain any valid long option; the leading two dashes
+may not be entered and the option may not be abbreviated.  This default
+name may be changed on the command line (see <a class="pxref" href="Agent-Options.html#option-_002d_002doptions">option --options</a>).
+</p>
+</dd>
+<dt><a id="index-scd_002devent"></a><span><samp class="file">scd-event</samp><a class="copiable-link" href="#index-scd_002devent"> &para;</a></span></dt>
+<dd><p>If this file is present and executable, it will be called on every card
+reader&rsquo;s status change.  An example of this script is provided with the
+source code distribution.  This option is deprecated in favor of the
+<code class="command">DEVINFO --watch</code>.
+</p>
+</dd>
+<dt><samp class="file">reader_<var class="var">n</var>.status</samp></dt>
+<dd><p>This file is created by <code class="command">scdaemon</code> to let other applications now
+about reader status changes.  Its use is now deprecated in favor of
+<samp class="file">scd-event</samp>.
+</p>
+</dd>
+</dl>
+
+
+
+</div>
+
+
+
+</body>
+</html>

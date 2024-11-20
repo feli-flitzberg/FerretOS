@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Agent GENKEY (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Agent GENKEY (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Agent GENKEY (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Agent-Protocol.html" rel="up" title="Agent Protocol">
+<link href="Agent-IMPORT.html" rel="next" title="Agent IMPORT">
+<link href="Agent-PKSIGN.html" rel="prev" title="Agent PKSIGN">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Agent-GENKEY">
+<div class="nav-panel">
+<p>
+Next: <a href="Agent-IMPORT.html" accesskey="n" rel="next">Importing a Secret Key</a>, Previous: <a href="Agent-PKSIGN.html" accesskey="p" rel="prev">Signing a Hash</a>, Up: <a href="Agent-Protocol.html" accesskey="u" rel="up">Agent&rsquo;s Assuan Protocol</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Generating-a-Key"><span>2.6.3 Generating a Key<a class="copiable-link" href="#Generating-a-Key"> &para;</a></span></h4>
+
+<p>This is used to create a new keypair and store the secret key inside the
+active PSE &mdash; which is in most cases a Soft-PSE.  A not-yet-defined
+option allows choosing the storage location.  To get the secret key out
+of the PSE, a special export tool has to be used.
+</p>
+<div class="example">
+<pre class="example-preformatted">   GENKEY [--no-protection] [--preset] [&lt;cache_nonce&gt;]
+</pre></div>
+
+<p>Invokes the key generation process and the server will then inquire
+on the generation parameters, like:
+</p>
+<div class="example">
+<pre class="example-preformatted">   S: INQUIRE KEYPARM
+   C: D (genkey (rsa (nbits  1024)))
+   C: END
+</pre></div>
+
+<p>The format of the key parameters which depends on the algorithm is of
+the form:
+</p>
+<div class="example">
+<pre class="example-preformatted">    (genkey
+      (algo
+        (parameter_name_1 ....)
+          ....
+        (parameter_name_n ....)))
+</pre></div>
+
+<p>If everything succeeds, the server returns the *public key* in a SPKI
+like S-Expression like this:
+</p>
+<div class="example">
+<pre class="example-preformatted">     (public-key
+       (rsa
+ 	 (n &lt;mpi&gt;)
+ 	 (e &lt;mpi&gt;)))
+</pre></div>
+
+<p>Here is an example session:
+</p><table class="cartouche" border="1"><tr><td>
+<div class="example smallexample">
+<pre class="example-preformatted">   C: GENKEY
+   S: INQUIRE KEYPARM
+   C: D (genkey (rsa (nbits  1024)))
+   C: END
+   S: D (public-key
+   S: D   (rsa (n 326487324683264) (e 10001)))
+   S  OK key created
+</pre></div>
+</td></tr></table>
+
+<p>The <samp class="option">--no-protection</samp> option may be used to prevent prompting for a
+passphrase to protect the secret key while leaving the secret key unprotected.
+The <samp class="option">--preset</samp> option may be used to add the passphrase to the cache
+using the default cache parameters.
+</p>
+<p>The <samp class="option">--inq-passwd</samp> option may be used to create the key with a
+supplied passphrase.  When used the agent does an inquiry with the
+keyword <code class="code">NEWPASSWD</code> to retrieve that passphrase.  This option
+takes precedence over <samp class="option">--no-protection</samp>; however if the client
+sends a empty (zero-length) passphrase, this is identical to
+<samp class="option">--no-protection</samp>.
+</p>
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Agent-IMPORT.html">Importing a Secret Key</a>, Previous: <a href="Agent-PKSIGN.html">Signing a Hash</a>, Up: <a href="Agent-Protocol.html">Agent&rsquo;s Assuan Protocol</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

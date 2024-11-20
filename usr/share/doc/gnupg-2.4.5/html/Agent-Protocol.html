@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Agent Protocol (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Agent Protocol (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Agent Protocol (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Invoking-GPG_002dAGENT.html" rel="up" title="Invoking GPG-AGENT">
+<link href="Agent-Examples.html" rel="prev" title="Agent Examples">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="Agent-Protocol">
+<div class="nav-panel">
+<p>
+Previous: <a href="Agent-Examples.html" accesskey="p" rel="prev">Examples</a>, Up: <a href="Invoking-GPG_002dAGENT.html" accesskey="u" rel="up">Invoking GPG-AGENT</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="Agent_0027s-Assuan-Protocol"><span>2.6 Agent&rsquo;s Assuan Protocol<a class="copiable-link" href="#Agent_0027s-Assuan-Protocol"> &para;</a></span></h3>
+
+<p>Note: this section does only document the protocol, which is used by
+GnuPG components; it does not deal with the ssh-agent protocol.  To
+see the full specification of each command, use
+</p>
+<div class="example">
+<pre class="example-preformatted">  gpg-connect-agent 'help COMMAND' /bye
+</pre></div>
+
+<p>or just &rsquo;help&rsquo; to list all available commands.
+</p>
+<p>The <code class="command">gpg-agent</code> daemon is started on demand by the GnuPG
+components.
+</p>
+<p>To identify a key we use a thing called keygrip which is the SHA-1 hash
+of an canonical encoded S-Expression of the public key as used in
+Libgcrypt.  For the purpose of this interface the keygrip is given as a
+hex string.  The advantage of using this and not the hash of a
+certificate is that it will be possible to use the same keypair for
+different protocols, thereby saving space on the token used to keep the
+secret keys.
+</p>
+<p>The <code class="command">gpg-agent</code> may send status messages during a command or when
+returning from a command to inform a client about the progress or result of an
+operation.  For example, the <var class="var">INQUIRE_MAXLEN</var> status message may be sent
+during a server inquire to inform the client of the maximum usable length of
+the inquired data (which should not be exceeded).
+</p>
+
+<ul class="mini-toc">
+<li><a href="Agent-PKDECRYPT.html" accesskey="1">Decrypting a session key</a></li>
+<li><a href="Agent-PKSIGN.html" accesskey="2">Signing a Hash</a></li>
+<li><a href="Agent-GENKEY.html" accesskey="3">Generating a Key</a></li>
+<li><a href="Agent-IMPORT.html" accesskey="4">Importing a Secret Key</a></li>
+<li><a href="Agent-EXPORT.html" accesskey="5">Export a Secret Key</a></li>
+<li><a href="Agent-ISTRUSTED.html" accesskey="6">Importing a Root Certificate</a></li>
+<li><a href="Agent-GET_005fPASSPHRASE.html" accesskey="7">Ask for a passphrase</a></li>
+<li><a href="Agent-CLEAR_005fPASSPHRASE.html" accesskey="8">Remove a cached passphrase</a></li>
+<li><a href="Agent-PRESET_005fPASSPHRASE.html" accesskey="9">Set a passphrase for a keygrip</a></li>
+<li><a href="Agent-GET_005fCONFIRMATION.html">Ask for confirmation</a></li>
+<li><a href="Agent-HAVEKEY.html">Check whether a key is available</a></li>
+<li><a href="Agent-LEARN.html">Register a smartcard</a></li>
+<li><a href="Agent-PASSWD.html">Change a Passphrase</a></li>
+<li><a href="Agent-UPDATESTARTUPTTY.html">Change the standard display</a></li>
+<li><a href="Agent-GETEVENTCOUNTER.html">Get the Event Counters</a></li>
+<li><a href="Agent-GETINFO.html">Return information about the process</a></li>
+<li><a href="Agent-OPTION.html">Set options for the session</a></li>
+</ul>
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Previous: <a href="Agent-Examples.html">Examples</a>, Up: <a href="Invoking-GPG_002dAGENT.html">Invoking GPG-AGENT</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

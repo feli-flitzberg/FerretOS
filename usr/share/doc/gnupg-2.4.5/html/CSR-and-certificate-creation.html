@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>CSR and certificate creation (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="CSR and certificate creation (Using the GNU Privacy Guard)">
+<meta name="keywords" content="CSR and certificate creation (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Unattended-Usage.html" rel="up" title="Unattended Usage">
+<link href="Automated-signature-checking.html" rel="prev" title="Automated signature checking">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+ul.mark-bullet {list-style-type: disc}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="CSR-and-certificate-creation">
+<div class="nav-panel">
+<p>
+Previous: <a href="Automated-signature-checking.html" accesskey="p" rel="prev">Automated signature checking</a>, Up: <a href="Unattended-Usage.html" accesskey="u" rel="up">Unattended Usage</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="CSR-and-certificate-creation-1"><span>5.5.2 CSR and certificate creation<a class="copiable-link" href="#CSR-and-certificate-creation-1"> &para;</a></span></h4>
+
+<p>The command <samp class="option">--generate-key</samp> may be used along with the option
+<samp class="option">--batch</samp> to either create a certificate signing request (CSR)
+or an X.509 certificate.  This is controlled by a parameter file; the
+format of this file is as follows:
+</p>
+<ul class="itemize mark-bullet">
+<li>Text only, line length is limited to about 1000 characters.
+</li><li>UTF-8 encoding must be used to specify non-ASCII characters.
+</li><li>Empty lines are ignored.
+</li><li>Leading and trailing while space is ignored.
+</li><li>A hash sign as the first non white space character indicates
+a comment line.
+</li><li>Control statements are indicated by a leading percent sign, the
+arguments are separated by white space from the keyword.
+</li><li>Parameters are specified by a keyword, followed by a colon.  Arguments
+are separated by white space.
+</li><li>The first parameter must be &lsquo;<samp class="samp">Key-Type</samp>&rsquo;, control statements
+may be placed anywhere.
+</li><li>The order of the parameters does not matter except for &lsquo;<samp class="samp">Key-Type</samp>&rsquo;
+which must be the first parameter.  The parameters are only used for
+the generated CSR/certificate; parameters from previous sets are not
+used.  Some syntactically checks may be performed.
+</li><li>Key generation takes place when either the end of the parameter file
+is reached, the next &lsquo;<samp class="samp">Key-Type</samp>&rsquo; parameter is encountered or at the
+control statement &lsquo;<samp class="samp">%commit</samp>&rsquo; is encountered.
+</li></ul>
+
+<p>Control statements:
+</p>
+<dl class="table">
+<dt>%echo <var class="var">text</var></dt>
+<dd><p>Print <var class="var">text</var> as diagnostic.
+</p>
+</dd>
+<dt>%dry-run</dt>
+<dd><p>Suppress actual key generation (useful for syntax checking).
+</p>
+</dd>
+<dt>%commit</dt>
+<dd><p>Perform the key generation.  Note that an implicit commit is done at
+the next Key-Type parameter.
+</p>
+</dd>
+</dl>
+
+<p>General Parameters:
+</p>
+<dl class="table">
+<dt>Key-Type: <var class="var">algo</var></dt>
+<dd><p>Starts a new parameter block by giving the type of the primary
+key. The algorithm must be capable of signing.  This is a required
+parameter.  The supported values for <var class="var">algo</var> are &lsquo;<samp class="samp">rsa</samp>&rsquo;,
+&lsquo;<samp class="samp">ecdsa</samp>&rsquo;, and &lsquo;<samp class="samp">eddsa</samp>&rsquo;.
+</p>
+</dd>
+<dt>Key-Length: <var class="var">nbits</var></dt>
+<dd><p>The requested length of a generated key in bits.  Defaults to
+3072. The value is ignored for ECC algorithms.
+</p>
+</dd>
+<dt>Key-Grip: <var class="var">hexstring</var></dt>
+<dd><p>This is optional and used to generate a CSR or certificate for an
+already existing key.  Key-Length will be ignored when given.
+</p>
+</dd>
+<dt>Key-Usage: <var class="var">usage-list</var></dt>
+<dd><p>Space or comma delimited list of key usage, allowed values are
+&lsquo;<samp class="samp">encrypt</samp>&rsquo;, &lsquo;<samp class="samp">sign</samp>&rsquo; and &lsquo;<samp class="samp">cert</samp>&rsquo;.  This is used to generate
+the keyUsage extension.  Please make sure that the algorithm is
+capable of this usage.  Default is to allow encrypt and sign.
+</p>
+</dd>
+<dt>Name-DN: <var class="var">subject-name</var></dt>
+<dd><p>This is the Distinguished Name (DN) of the subject in RFC-2253 format.
+</p>
+</dd>
+<dt>Name-Email: <var class="var">string</var></dt>
+<dd><p>This is an email address for the altSubjectName.  This parameter is
+optional but may occur several times to add several email addresses to
+a certificate.
+</p>
+</dd>
+<dt>Name-DNS: <var class="var">string</var></dt>
+<dd><p>The is an DNS name for the altSubjectName.  This parameter is optional
+but may occur several times to add several DNS names to a certificate.
+</p>
+</dd>
+<dt>Name-URI: <var class="var">string</var></dt>
+<dd><p>This is an URI for the altSubjectName.  This parameter is optional but
+may occur several times to add several URIs to a certificate.
+</p></dd>
+</dl>
+
+<p>Additional parameters used to create a certificate (in contrast to a
+certificate signing request):
+</p>
+<dl class="table">
+<dt>Serial: <var class="var">sn</var></dt>
+<dd><p>If this parameter is given an X.509 certificate will be generated.
+<var class="var">sn</var> is expected to be a hex string representing an unsigned
+integer of arbitrary length.  The special value &lsquo;<samp class="samp">random</samp>&rsquo; can be
+used to create a 64 bit random serial number.
+</p>
+</dd>
+<dt>Issuer-DN: <var class="var">issuer-name</var></dt>
+<dd><p>This is the DN name of the issuer in RFC-2253 format.  If it is not set
+it will default to the subject DN and a special GnuPG extension will
+be included in the certificate to mark it as a standalone certificate.
+</p>
+</dd>
+<dt>Creation-Date: <var class="var">iso-date</var></dt>
+<dt>Not-Before: <var class="var">iso-date</var></dt>
+<dd><p>Set the notBefore date of the certificate.  Either a date like
+&lsquo;<samp class="samp">1986-04-26</samp>&rsquo; or &lsquo;<samp class="samp">1986-04-26 12:00</samp>&rsquo; or a standard ISO
+timestamp like &lsquo;<samp class="samp">19860426T042640</samp>&rsquo; may be used.  The time is
+considered to be UTC.  If it is not given the current date is used.
+</p>
+</dd>
+<dt>Expire-Date: <var class="var">iso-date</var></dt>
+<dt>Not-After: <var class="var">iso-date</var></dt>
+<dd><p>Set the notAfter date of the certificate.  Either a date like
+&lsquo;<samp class="samp">2063-04-05</samp>&rsquo; or &lsquo;<samp class="samp">2063-04-05 17:00</samp>&rsquo; or a standard ISO
+timestamp like &lsquo;<samp class="samp">20630405T170000</samp>&rsquo; may be used.  The time is
+considered to be UTC.  If it is not given a default value in the not
+too far future is used.
+</p>
+</dd>
+<dt>Signing-Key: <var class="var">keygrip</var></dt>
+<dd><p>This gives the keygrip of the key used to sign the certificate.  If it
+is not given a self-signed certificate will be created.  For
+compatibility with future versions, it is suggested to prefix the
+keygrip with a &lsquo;<samp class="samp">&amp;</samp>&rsquo;.
+</p>
+</dd>
+<dt>Hash-Algo: <var class="var">hash-algo</var></dt>
+<dd><p>Use <var class="var">hash-algo</var> for this CSR or certificate.  The supported hash
+algorithms are: &lsquo;<samp class="samp">sha1</samp>&rsquo;, &lsquo;<samp class="samp">sha256</samp>&rsquo;, &lsquo;<samp class="samp">sha384</samp>&rsquo; and
+&lsquo;<samp class="samp">sha512</samp>&rsquo;; they may also be specified with uppercase letters.  The
+default is &lsquo;<samp class="samp">sha256</samp>&rsquo;.
+</p>
+</dd>
+<dt>Authority-Key-Id: <var class="var">hexstring</var></dt>
+<dd><p>Insert the decoded value of <var class="var">hexstring</var> as authorityKeyIdentifier.
+If this is not given and an ECC algorithm is used the public part of
+the certified public key is used as authorityKeyIdentifier.  To
+inhibit any authorityKeyIdentifier use the special value <code class="code">none</code>
+for <var class="var">hexstring</var>.
+</p>
+</dd>
+<dt>Subject-Key-Id: <var class="var">hexstring</var></dt>
+<dd><p>Insert the decoded value of <var class="var">hexstring</var> as subjectKeyIdentifier.
+If this is not given and an ECC algorithm is used the public part of
+the signing key is used as authorityKeyIdentifier.  To inhibit any
+subjectKeyIdentifier use the special value <code class="code">none</code> for
+<var class="var">hexstring</var>.
+</p>
+</dd>
+</dl>
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Previous: <a href="Automated-signature-checking.html">Automated signature checking</a>, Up: <a href="Unattended-Usage.html">Unattended Usage</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

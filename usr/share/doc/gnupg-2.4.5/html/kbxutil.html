@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>kbxutil (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="kbxutil (Using the GNU Privacy Guard)">
+<meta name="keywords" content="kbxutil (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Debugging-Tools.html" rel="up" title="Debugging Tools">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="kbxutil">
+<div class="nav-panel">
+<p>
+Up: <a href="Debugging-Tools.html" accesskey="u" rel="up">Debugging Tools</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Scrutinizing-a-keybox-file"><span>14.1.1 Scrutinizing a keybox file<a class="copiable-link" href="#Scrutinizing-a-keybox-file"> &para;</a></span></h4>
+
+<p>A keybox is a file format used to store public keys along with meta
+information and indices.  The commonly used one is the file
+<samp class="file">pubring.kbx</samp> in the <samp class="file">.gnupg</samp> directory.  It contains all
+X.509 certificates as well as OpenPGP keys.
+</p>
+<p>When called the standard way, e.g.:
+</p>
+<p>&lsquo;<samp class="samp">kbxutil ~/.gnupg/pubring.kbx</samp>&rsquo;
+</p>
+<p>it lists all records (called <abbr class="acronym">blobs</abbr>) with there meta-information
+in a human readable format.
+</p>
+<p>To see statistics on the keybox in question, run it using
+</p>
+<p>&lsquo;<samp class="samp">kbxutil --stats ~/.gnupg/pubring.kbx</samp>&rsquo;
+</p>
+<p>and you get an output like:
+</p>
+<div class="example">
+<pre class="example-preformatted">Total number of blobs:       99
+               header:        1
+                empty:        0
+              openpgp:        0
+                 x509:       98
+          non flagged:       81
+       secret flagged:        0
+    ephemeral flagged:       17
+</pre></div>
+
+<p>In this example you see that the keybox does not have any OpenPGP keys
+but contains 98 X.509 certificates and a total of 17 keys or certificates
+are flagged as ephemeral, meaning that they are only temporary stored
+(cached) in the keybox and won&rsquo;t get listed using the usual commands
+provided by <code class="command">gpgsm</code> or <code class="command">gpg</code>. 81 certificates are stored
+in a standard way and directly available from <code class="command">gpgsm</code>.
+</p>
+<p>To find duplicated certificates and keyblocks in a keybox file (this
+should not occur but sometimes things go wrong), run it using
+</p>
+<p>&lsquo;<samp class="samp">kbxutil --find-dups ~/.gnupg/pubring.kbx</samp>&rsquo;
+</p>
+
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Controlling gpg-connect-agent (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Controlling gpg-connect-agent (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Controlling gpg-connect-agent (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="gpg_002dconnect_002dagent.html" rel="up" title="gpg-connect-agent">
+<link href="Invoking-gpg_002dconnect_002dagent.html" rel="prev" title="Invoking gpg-connect-agent">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Controlling-gpg_002dconnect_002dagent">
+<div class="nav-panel">
+<p>
+Previous: <a href="Invoking-gpg_002dconnect_002dagent.html" accesskey="p" rel="prev">List of all options</a>, Up: <a href="gpg_002dconnect_002dagent.html" accesskey="u" rel="up">Communicate with a running agent</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Control-commands"><span>10.7.2 Control commands<a class="copiable-link" href="#Control-commands"> &para;</a></span></h4>
+
+<p>While reading Assuan commands, gpg-agent also allows a few special
+commands to control its operation.  These control commands all start
+with a slash (<code class="code">/</code>).
+</p>
+<dl class="table">
+<dt><code class="code">/echo <var class="var">args</var></code></dt>
+<dd><p>Just print <var class="var">args</var>.
+</p>
+</dd>
+<dt><code class="code">/let <var class="var">name</var> <var class="var">value</var></code></dt>
+<dd><p>Set the variable <var class="var">name</var> to <var class="var">value</var>.  Variables are only
+substituted on the input if the <code class="command">/subst</code> has been used.
+Variables are referenced by prefixing the name with a dollar sign and
+optionally include the name in curly braces.  The rules for a valid name
+are identically to those of the standard bourne shell.  This is not yet
+enforced but may be in the future.  When used with curly braces no
+leading or trailing white space is allowed.
+</p>
+<p>If a variable is not found, it is searched in the environment and if
+found copied to the table of variables.
+</p>
+<p>Variable functions are available: The name of the function must be
+followed by at least one space and the at least one argument.  The
+following functions are available:
+</p>
+<dl class="table">
+<dt><code class="code">get</code></dt>
+<dd><p>Return a value described by the argument.  Available arguments are:
+</p>
+<dl class="table">
+<dt><code class="code">cwd</code></dt>
+<dd><p>The current working directory.
+</p></dd>
+<dt><code class="code">homedir</code></dt>
+<dd><p>The gnupg homedir.
+</p></dd>
+<dt><code class="code">sysconfdir</code></dt>
+<dd><p>GnuPG&rsquo;s system configuration directory.
+</p></dd>
+<dt><code class="code">bindir</code></dt>
+<dd><p>GnuPG&rsquo;s binary directory.
+</p></dd>
+<dt><code class="code">libdir</code></dt>
+<dd><p>GnuPG&rsquo;s library directory.
+</p></dd>
+<dt><code class="code">libexecdir</code></dt>
+<dd><p>GnuPG&rsquo;s library directory for executable files.
+</p></dd>
+<dt><code class="code">datadir</code></dt>
+<dd><p>GnuPG&rsquo;s data directory.
+</p></dd>
+<dt><code class="code">serverpid</code></dt>
+<dd><p>The PID of the current server. Command <code class="command">/serverpid</code> must
+have been given to return a useful value.
+</p></dd>
+</dl>
+
+</dd>
+<dt><code class="code">unescape <var class="var">args</var></code></dt>
+<dd><p>Remove C-style escapes from <var class="var">args</var>.  Note that <code class="code">\0</code> and
+<code class="code">\x00</code> terminate the returned string implicitly.  The string to be
+converted are the entire arguments right behind the delimiting space of
+the function name.
+</p>
+</dd>
+<dt><code class="code">unpercent <var class="var">args</var></code></dt>
+<dt><code class="code">unpercent+ <var class="var">args</var></code></dt>
+<dd><p>Remove percent style escaping from <var class="var">args</var>.  Note that <code class="code">%00</code>
+terminates the string implicitly.  The string to be converted are the
+entire arguments right behind the delimiting space of the function
+name. <code class="code">unpercent+</code> also maps plus signs to a spaces.
+</p>
+</dd>
+<dt><code class="code">percent <var class="var">args</var></code></dt>
+<dt><code class="code">percent+ <var class="var">args</var></code></dt>
+<dd><p>Escape the <var class="var">args</var> using percent style escaping.  Tabs, formfeeds,
+linefeeds, carriage returns and colons are escaped. <code class="code">percent+</code> also
+maps spaces to plus signs.
+</p>
+</dd>
+<dt><code class="code">errcode <var class="var">arg</var></code></dt>
+<dt><code class="code">errsource <var class="var">arg</var></code></dt>
+<dt><code class="code">errstring <var class="var">arg</var></code></dt>
+<dd><p>Assume <var class="var">arg</var> is an integer and evaluate it using <code class="code">strtol</code>.  Return
+the gpg-error error code, error source or a formatted string with the
+error code and error source.
+</p>
+
+</dd>
+<dt><code class="code">+</code></dt>
+<dt><code class="code">-</code></dt>
+<dt><code class="code">*</code></dt>
+<dt><code class="code">/</code></dt>
+<dt><code class="code">%</code></dt>
+<dd><p>Evaluate all arguments as long integers using <code class="code">strtol</code> and apply
+this operator.  A division by zero yields an empty string.
+</p>
+</dd>
+<dt><code class="code">!</code></dt>
+<dt><code class="code">|</code></dt>
+<dt><code class="code">&amp;</code></dt>
+<dd><p>Evaluate all arguments as long integers using <code class="code">strtol</code> and apply
+the logical operators NOT, OR or AND.  The NOT operator works on the
+last argument only.
+</p>
+
+</dd>
+</dl>
+
+
+</dd>
+<dt><code class="code">/definq <var class="var">name</var> <var class="var">var</var></code></dt>
+<dd><p>Use content of the variable <var class="var">var</var> for inquiries with <var class="var">name</var>.
+<var class="var">name</var> may be an asterisk (<code class="code">*</code>) to match any inquiry.
+</p>
+
+</dd>
+<dt><code class="code">/definqfile <var class="var">name</var> <var class="var">file</var></code></dt>
+<dd><p>Use content of <var class="var">file</var> for inquiries with <var class="var">name</var>.
+<var class="var">name</var> may be an asterisk (<code class="code">*</code>) to match any inquiry.
+</p>
+</dd>
+<dt><code class="code">/definqprog <var class="var">name</var> <var class="var">prog</var></code></dt>
+<dd><p>Run <var class="var">prog</var> for inquiries matching <var class="var">name</var> and pass the
+entire line to it as command line arguments.
+</p>
+</dd>
+<dt><code class="code">/datafile <var class="var">name</var></code></dt>
+<dd><p>Write all data lines from the server to the file <var class="var">name</var>.  The file
+is opened for writing and created if it does not exists.  An existing
+file is first truncated to 0.  The data written to the file fully
+decoded.  Using a single dash for <var class="var">name</var> writes to stdout.  The
+file is kept open until a new file is set using this command or this
+command is used without an argument.
+</p>
+</dd>
+<dt><code class="code">/showdef</code></dt>
+<dd><p>Print all definitions
+</p>
+</dd>
+<dt><code class="code">/cleardef</code></dt>
+<dd><p>Delete all definitions
+</p>
+</dd>
+<dt><code class="code">/sendfd <var class="var">file</var> <var class="var">mode</var></code></dt>
+<dd><p>Open <var class="var">file</var> in <var class="var">mode</var> (which needs to be a valid <code class="code">fopen</code>
+mode string) and send the file descriptor to the server.  This is
+usually followed by a command like <code class="code">INPUT FD</code> to set the
+input source for other commands.
+</p>
+</dd>
+<dt><code class="code">/recvfd</code></dt>
+<dd><p>Not yet implemented.
+</p>
+</dd>
+<dt><code class="code">/open <var class="var">var</var> <var class="var">file</var> [<var class="var">mode</var>]</code></dt>
+<dd><p>Open <var class="var">file</var> and assign the file descriptor to <var class="var">var</var>.  Warning:
+This command is experimental and might change in future versions.
+</p>
+</dd>
+<dt><code class="code">/close <var class="var">fd</var></code></dt>
+<dd><p>Close the file descriptor <var class="var">fd</var>.  Warning: This command is
+experimental and might change in future versions.
+</p>
+</dd>
+<dt><code class="code">/showopen</code></dt>
+<dd><p>Show a list of open files.
+</p>
+</dd>
+<dt><code class="code">/serverpid</code></dt>
+<dd><p>Send the Assuan command <code class="command">GETINFO pid</code> to the server and store
+the returned PID for internal purposes.
+</p>
+</dd>
+<dt><code class="code">/sleep</code></dt>
+<dd><p>Sleep for a second.
+</p>
+</dd>
+<dt><code class="code">/hex</code></dt>
+<dt><code class="code">/nohex</code></dt>
+<dd><p>Same as the command line option <samp class="option">--hex</samp>.
+</p>
+</dd>
+<dt><code class="code">/decode</code></dt>
+<dt><code class="code">/nodecode</code></dt>
+<dd><p>Same as the command line option <samp class="option">--decode</samp>.
+</p>
+</dd>
+<dt><code class="code">/subst</code></dt>
+<dt><code class="code">/nosubst</code></dt>
+<dd><p>Enable and disable variable substitution.  It defaults to disabled
+unless the command line option <samp class="option">--subst</samp> has been used.
+If /subst as been enabled once, leading whitespace is removed from
+input lines which makes scripts easier to read.
+</p>
+</dd>
+<dt><code class="code">/while <var class="var">condition</var></code></dt>
+<dt><code class="code">/end</code></dt>
+<dd><p>These commands provide a way for executing loops.  All lines between
+the <code class="code">while</code> and the corresponding <code class="code">end</code> are executed as long
+as the evaluation of <var class="var">condition</var> yields a non-zero value or is the
+string <code class="code">true</code> or <code class="code">yes</code>.  The evaluation is done by passing
+<var class="var">condition</var> to the <code class="code">strtol</code> function.  Example:
+</p>
+<div class="example smallexample">
+<pre class="example-preformatted">  /subst
+  /let i 3
+  /while $i
+    /echo loop counter is $i
+    /let i ${- $i 1}
+  /end
+</pre></div>
+
+</dd>
+<dt><code class="code">/if <var class="var">condition</var></code></dt>
+<dt><code class="code">/end</code></dt>
+<dd><p>These commands provide a way for conditional execution.  All lines between
+the <code class="code">if</code> and the corresponding <code class="code">end</code> are executed only if
+the evaluation of <var class="var">condition</var> yields a non-zero value or is the
+string <code class="code">true</code> or <code class="code">yes</code>.  The evaluation is done by passing
+<var class="var">condition</var> to the <code class="code">strtol</code> function.
+</p>
+</dd>
+<dt><code class="code">/run <var class="var">file</var></code></dt>
+<dd><p>Run commands from <var class="var">file</var>.
+</p>
+</dd>
+<dt><code class="code">/history --clear</code></dt>
+<dd><p>Clear the command history.
+</p>
+</dd>
+<dt><code class="code">/bye</code></dt>
+<dd><p>Terminate the connection and the program.
+</p>
+</dd>
+<dt><code class="code">/help</code></dt>
+<dd><p>Print a list of available control commands.
+</p>
+</dd>
+</dl>
+
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Previous: <a href="Invoking-gpg_002dconnect_002dagent.html">List of all options</a>, Up: <a href="gpg_002dconnect_002dagent.html">Communicate with a running agent</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

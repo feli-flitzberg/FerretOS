@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Agent Commands (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Agent Commands (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Agent Commands (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Invoking-GPG_002dAGENT.html" rel="up" title="Invoking GPG-AGENT">
+<link href="Agent-Options.html" rel="next" title="Agent Options">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="Agent-Commands">
+<div class="nav-panel">
+<p>
+Next: <a href="Agent-Options.html" accesskey="n" rel="next">Option Summary</a>, Up: <a href="Invoking-GPG_002dAGENT.html" accesskey="u" rel="up">Invoking GPG-AGENT</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="Commands"><span>2.1 Commands<a class="copiable-link" href="#Commands"> &para;</a></span></h3>
+
+<p>Commands are not distinguished from options except for the fact that
+only one command is allowed.
+</p>
+<dl class="table">
+<dt><a id="index-version"></a><span><code class="code">--version</code><a class="copiable-link" href="#index-version"> &para;</a></span></dt>
+<dd><p>Print the program version and licensing information.  Note that you cannot
+abbreviate this command.
+</p>
+</dd>
+<dt><a id="index-help"></a><span><code class="code">--help</code><a class="copiable-link" href="#index-help"> &para;</a></span></dt>
+<dt><code class="code">-h</code></dt>
+<dd><p>Print a usage message summarizing the most useful command-line options.
+Note that you cannot abbreviate this command.
+</p>
+</dd>
+<dt><a id="index-dump_002doptions"></a><span><code class="code">--dump-options</code><a class="copiable-link" href="#index-dump_002doptions"> &para;</a></span></dt>
+<dd><p>Print a list of all available options and commands.  Note that you cannot
+abbreviate this command.
+</p>
+</dd>
+<dt><a id="index-server"></a><span><code class="code">--server</code><a class="copiable-link" href="#index-server"> &para;</a></span></dt>
+<dd><p>Run in server mode and wait for commands on the <code class="code">stdin</code>.  The
+default mode is to create a socket and listen for commands there.
+</p>
+</dd>
+<dt><a id="index-daemon"></a><span><code class="code">--daemon [<var class="var">command line</var>]</code><a class="copiable-link" href="#index-daemon"> &para;</a></span></dt>
+<dd><p>Start the gpg-agent as a daemon; that is, detach it from the console
+and run it in the background.
+</p>
+<p>As an alternative you may create a new process as a child of
+gpg-agent: <code class="code">gpg-agent --daemon /bin/sh</code>.  This way you get a new
+shell with the environment setup properly; after you exit from this
+shell, gpg-agent terminates within a few seconds.
+</p>
+</dd>
+<dt><a id="index-supervised"></a><span><code class="code">--supervised</code><a class="copiable-link" href="#index-supervised"> &para;</a></span></dt>
+<dd><p>Run in the foreground, sending logs by default to stderr, and
+listening on provided file descriptors, which must already be bound to
+listening sockets.  This option is deprecated and not supported on
+Windows.
+</p>
+<p>If in <samp class="file">common.conf</samp> the option <samp class="option">no-autostart</samp> is set, any
+start attempts will be ignored.
+</p>
+<p>In &ndash;supervised mode, different file descriptors can be provided for
+use as different socket types (e.g. ssh, extra) as long as they are
+identified in the environment variable <code class="code">LISTEN_FDNAMES</code> (see
+sd_listen_fds(3) on some Linux distributions for more information on
+this convention).
+</p></dd>
+</dl>
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Agent-Options.html">Option Summary</a>, Up: <a href="Invoking-GPG_002dAGENT.html">Invoking GPG-AGENT</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

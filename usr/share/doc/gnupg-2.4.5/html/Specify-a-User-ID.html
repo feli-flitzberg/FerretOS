@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Specify a User ID (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Specify a User ID (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Specify a User ID (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="index.html" rel="up" title="Top">
+<link href="Trust-Values.html" rel="next" title="Trust Values">
+<link href="Invoking-SCDAEMON.html" rel="prev" title="Invoking SCDAEMON">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+ul.mark-bullet {list-style-type: disc}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="chapter-level-extent" id="Specify-a-User-ID">
+<div class="nav-panel">
+<p>
+Next: <a href="Trust-Values.html" accesskey="n" rel="next">Trust Values</a>, Previous: <a href="Invoking-SCDAEMON.html" accesskey="p" rel="prev">Invoking the SCDAEMON</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h2 class="chapter" id="How-to-Specify-a-User-Id"><span>7 How to Specify a User Id<a class="copiable-link" href="#How-to-Specify-a-User-Id"> &para;</a></span></h2>
+<a class="anchor" id="how_002dto_002dspecify_002da_002duser_002did"></a>
+<p>There are different ways to specify a user ID to GnuPG.  Some of them
+are only valid for <code class="command">gpg</code> others are only good for
+<code class="command">gpgsm</code>.  Here is the entire list of ways to specify a key:
+</p>
+<ul class="itemize mark-bullet">
+<li>By key Id.
+This format is deduced from the length of the string and its content or
+<code class="code">0x</code> prefix. The key Id of an X.509 certificate are the low 64 bits
+of its SHA-1 fingerprint.  The use of key Ids is just a shortcut, for
+all automated processing the fingerprint should be used.
+
+<p>When using <code class="command">gpg</code> an exclamation mark (!) may be appended to
+force using the specified primary or secondary key and not to try and
+calculate which primary or secondary key to use.
+</p>
+<p>The last four lines of the example give the key ID in their long form as
+internally used by the OpenPGP protocol. You can see the long key ID
+using the option <samp class="option">--with-colons</samp>.
+</p>
+<table class="cartouche" border="1"><tr><td>
+<div class="example">
+<pre class="example-preformatted">234567C4
+0F34E556E
+01347A56A
+0xAB123456
+
+234AABBCC34567C4
+0F323456784E56EAB
+01AB3FED1347A5612
+0x234AABBCC34567C4
+</pre></div>
+</td></tr></table>
+
+
+
+</li><li>By fingerprint.
+This format is deduced from the length of the string and its content or
+the <code class="code">0x</code> prefix.  Note, that only the 20 byte version fingerprint
+is available with <code class="command">gpgsm</code> (i.e. the SHA-1 hash of the
+certificate).
+
+<p>When using <code class="command">gpg</code> an exclamation mark (!) may be appended to
+force using the specified primary or secondary key and not to try and
+calculate which primary or secondary key to use.
+</p>
+<p>The best way to specify a key Id is by using the fingerprint.  This
+avoids any ambiguities in case that there are duplicated key IDs.
+</p>
+<table class="cartouche" border="1"><tr><td>
+<div class="example">
+<pre class="example-preformatted">1234343434343434C434343434343434
+123434343434343C3434343434343734349A3434
+0E12343434343434343434EAB3484343434343434
+0xE12343434343434343434EAB3484343434343434
+</pre></div>
+</td></tr></table>
+
+<p><code class="command">gpgsm</code> also accepts colons between each pair of hexadecimal
+digits because this is the de-facto standard on how to present X.509
+fingerprints.  <code class="command">gpg</code> also allows the use of the space
+separated SHA-1 fingerprint as printed by the key listing commands.
+</p>
+</li><li>By exact match on OpenPGP user ID.
+This is denoted by a leading equal sign. It does not make sense for
+X.509 certificates.
+
+<table class="cartouche" border="1"><tr><td>
+<div class="example">
+<pre class="example-preformatted">=Heinrich Heine &lt;heinrichh@uni-duesseldorf.de&gt;
+</pre></div>
+</td></tr></table>
+
+</li><li>By exact match on an email address.
+This is indicated by enclosing the email address in the usual way
+with left and right angles.
+
+<table class="cartouche" border="1"><tr><td>
+<div class="example">
+<pre class="example-preformatted">&lt;heinrichh@uni-duesseldorf.de&gt;
+</pre></div>
+</td></tr></table>
+
+
+</li><li>By partial match on an email address.
+This is indicated by prefixing the search string with an <code class="code">@</code>.
+This uses a substring search but considers only the mail address
+(i.e. inside the angle brackets).
+
+<table class="cartouche" border="1"><tr><td>
+<div class="example">
+<pre class="example-preformatted">@heinrichh
+</pre></div>
+</td></tr></table>
+
+</li><li>By exact match on the subject&rsquo;s DN.
+This is indicated by a leading slash, directly followed by the RFC-2253
+encoded DN of the subject.  Note that you can&rsquo;t use the string printed
+by <code class="code">gpgsm --list-keys</code> because that one has been reordered and modified
+for better readability; use <samp class="option">--with-colons</samp> to print the raw
+(but standard escaped) RFC-2253 string.
+
+<table class="cartouche" border="1"><tr><td>
+<div class="example">
+<pre class="example-preformatted">/CN=Heinrich Heine,O=Poets,L=Paris,C=FR
+</pre></div>
+</td></tr></table>
+
+</li><li>By exact match on the issuer&rsquo;s DN.
+This is indicated by a leading hash mark, directly followed by a slash
+and then directly followed by the RFC-2253 encoded DN of the issuer.
+This should return the Root cert of the issuer.  See note above.
+
+<table class="cartouche" border="1"><tr><td>
+<div class="example">
+<pre class="example-preformatted">#/CN=Root Cert,O=Poets,L=Paris,C=FR
+</pre></div>
+</td></tr></table>
+
+
+</li><li>By exact match on serial number and issuer&rsquo;s DN.
+This is indicated by a hash mark, followed by the hexadecimal
+representation of the serial number, then followed by a slash and the
+RFC-2253 encoded DN of the issuer. See note above.
+
+<table class="cartouche" border="1"><tr><td>
+<div class="example">
+<pre class="example-preformatted">#4F03/CN=Root Cert,O=Poets,L=Paris,C=FR
+</pre></div>
+</td></tr></table>
+
+</li><li>By keygrip.
+This is indicated by an ampersand followed by the 40 hex digits of a
+keygrip.  <code class="command">gpgsm</code> prints the keygrip when using the command
+<samp class="option">--dump-cert</samp>.
+
+<table class="cartouche" border="1"><tr><td>
+<div class="example">
+<pre class="example-preformatted">&amp;D75F22C3F86E355877348498CDC92BD21010A480
+</pre></div>
+</td></tr></table>
+
+
+</li><li>By substring match.
+This is the default mode but applications may want to explicitly
+indicate this by putting the asterisk in front.  Match is not case
+sensitive.
+
+<table class="cartouche" border="1"><tr><td>
+<div class="example">
+<pre class="example-preformatted">Heine
+*Heine
+</pre></div>
+</td></tr></table>
+
+</li><li>. and + prefixes
+These prefixes are reserved for looking up mails anchored at the end
+and for a word search mode.  They are not yet implemented and using
+them is undefined.
+
+</li></ul>
+
+<p>Please note that we have reused the hash mark identifier which was used
+in old GnuPG versions to indicate the so called local-id.  It is not
+anymore used and there should be no conflict when used with X.509 stuff.
+</p>
+<p>Using the RFC-2253 format of DNs has the drawback that it is not
+possible to map them back to the original encoding, however we don&rsquo;t
+have to do this because our key database stores this encoding as meta
+data.
+</p>
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Trust-Values.html">Trust Values</a>, Previous: <a href="Invoking-SCDAEMON.html">Invoking the SCDAEMON</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

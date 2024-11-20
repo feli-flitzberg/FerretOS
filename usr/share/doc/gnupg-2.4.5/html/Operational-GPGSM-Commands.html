@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Operational GPGSM Commands (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Operational GPGSM Commands (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Operational GPGSM Commands (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="GPGSM-Commands.html" rel="up" title="GPGSM Commands">
+<link href="Certificate-Management.html" rel="next" title="Certificate Management">
+<link href="General-GPGSM-Commands.html" rel="prev" title="General GPGSM Commands">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Operational-GPGSM-Commands">
+<div class="nav-panel">
+<p>
+Next: <a href="Certificate-Management.html" accesskey="n" rel="next">How to manage the certificates and keys</a>, Previous: <a href="General-GPGSM-Commands.html" accesskey="p" rel="prev">Commands not specific to the function</a>, Up: <a href="GPGSM-Commands.html" accesskey="u" rel="up">Commands</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Commands-to-select-the-type-of-operation-1"><span>5.1.2 Commands to select the type of operation<a class="copiable-link" href="#Commands-to-select-the-type-of-operation-1"> &para;</a></span></h4>
+
+<dl class="table">
+<dt><a id="index-encrypt-1"></a><span><code class="code">--encrypt</code><a class="copiable-link" href="#index-encrypt-1"> &para;</a></span></dt>
+<dd><p>Perform an encryption.  The keys the data is encrypted to must be set
+using the option <samp class="option">--recipient</samp>.
+</p>
+</dd>
+<dt><a id="index-decrypt-1"></a><span><code class="code">--decrypt</code><a class="copiable-link" href="#index-decrypt-1"> &para;</a></span></dt>
+<dd><p>Perform a decryption; the type of input is automatically determined.  It
+may either be in binary form or PEM encoded; automatic determination of
+base-64 encoding is not done.
+</p>
+</dd>
+<dt><a id="index-sign-1"></a><span><code class="code">--sign</code><a class="copiable-link" href="#index-sign-1"> &para;</a></span></dt>
+<dd><p>Create a digital signature.  The key used is either the fist one found
+in the keybox or those set with the <samp class="option">--local-user</samp> option.
+</p>
+</dd>
+<dt><a id="index-verify-1"></a><span><code class="code">--verify</code><a class="copiable-link" href="#index-verify-1"> &para;</a></span></dt>
+<dd><p>Check a signature file for validity.  Depending on the arguments a
+detached signature may also be checked.
+</p>
+</dd>
+<dt><a id="index-server-2"></a><span><code class="code">--server</code><a class="copiable-link" href="#index-server-2"> &para;</a></span></dt>
+<dd><p>Run in server mode and wait for commands on the <code class="code">stdin</code>.
+</p>
+</dd>
+<dt><a id="index-call_002ddirmngr"></a><span><code class="code">--call-dirmngr <var class="var">command</var> [<var class="var">args</var>]</code><a class="copiable-link" href="#index-call_002ddirmngr"> &para;</a></span></dt>
+<dd><p>Behave as a Dirmngr client issuing the request <var class="var">command</var> with the
+optional list of <var class="var">args</var>.  The output of the Dirmngr is printed
+stdout.  Please note that file names given as arguments should have an
+absolute file name (i.e. commencing with <code class="code">/</code>) because they are
+passed verbatim to the Dirmngr and the working directory of the
+Dirmngr might not be the same as the one of this client.  Currently it
+is not possible to pass data via stdin to the Dirmngr.  <var class="var">command</var>
+should not contain spaces.
+</p>
+<p>This is command is required for certain maintaining tasks of the dirmngr
+where a dirmngr must be able to call back to <code class="command">gpgsm</code>.  See the Dirmngr
+manual for details.
+</p>
+</dd>
+<dt><a id="index-call_002dprotect_002dtool"></a><span><code class="code">--call-protect-tool <var class="var">arguments</var></code><a class="copiable-link" href="#index-call_002dprotect_002dtool"> &para;</a></span></dt>
+<dd><p>Certain maintenance operations are done by an external program call
+<code class="command">gpg-protect-tool</code>; this is usually not installed in a directory
+listed in the PATH variable.  This command provides a simple wrapper to
+access this tool.  <var class="var">arguments</var> are passed verbatim to this command;
+use &lsquo;<samp class="samp">--help</samp>&rsquo; to get a list of supported operations.
+</p>
+
+</dd>
+</dl>
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Certificate-Management.html">How to manage the certificates and keys</a>, Previous: <a href="General-GPGSM-Commands.html">Commands not specific to the function</a>, Up: <a href="GPGSM-Commands.html">Commands</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

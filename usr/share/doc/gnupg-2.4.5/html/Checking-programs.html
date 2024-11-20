@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Checking programs (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Checking programs (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Checking programs (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="gpgconf.html" rel="up" title="gpgconf">
+<link href="Listing-options.html" rel="next" title="Listing options">
+<link href="Listing-components.html" rel="prev" title="Listing components">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Checking-programs">
+<div class="nav-panel">
+<p>
+Next: <a href="Listing-options.html" accesskey="n" rel="next">Listing options</a>, Previous: <a href="Listing-components.html" accesskey="p" rel="prev">Listing components</a>, Up: <a href="gpgconf.html" accesskey="u" rel="up">Modify .gnupg home directories</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Checking-programs-1"><span>10.4.4 Checking programs<a class="copiable-link" href="#Checking-programs-1"> &para;</a></span></h4>
+
+<p>The command <code class="code">--check-programs</code> is similar to
+<code class="code">--list-components</code> but works on backend programs and not on
+components.  It runs each program to test whether it is installed and
+runnable.  This also includes a syntax check of all config file options
+of the program.
+</p>
+<p>The command <code class="code">--check-programs</code> lists all available
+programs, one per line.  The format of each line is:
+</p>
+<p><code class="code"><var class="var">name</var>:<var class="var">description</var>:<var class="var">pgmname</var>:<var class="var">avail</var>:<var class="var">okay</var>:<var class="var">cfgfile</var>:<var class="var">line</var>:<var class="var">error</var>:</code>
+</p>
+<dl class="table">
+<dt><var class="var">name</var></dt>
+<dd><p>This field contains a name tag of the program which is identical to the
+name of the component.  The name tag is to be used <em class="emph">verbatim</em>.  It
+is thus not in any escaped format.  This field may be empty to indicate
+a continuation of error descriptions for the last name.  The description
+and pgmname fields are then also empty.
+</p>
+</dd>
+<dt><var class="var">description</var></dt>
+<dd><p>The <em class="emph">string</em> in this field contains a human-readable description
+of the component.  It can be displayed to the user of the GUI for
+informational purposes.  It is <em class="emph">percent-escaped</em> and
+<em class="emph">localized</em>.
+</p>
+</dd>
+<dt><var class="var">pgmname</var></dt>
+<dd><p>The <em class="emph">string</em> in this field contains the absolute name of the
+program&rsquo;s file.  It can be used to unambiguously invoke that program.
+It is <em class="emph">percent-escaped</em>.
+</p>
+</dd>
+<dt><var class="var">avail</var></dt>
+<dd><p>The <em class="emph">boolean value</em> in this field indicates whether the program is
+installed and runnable.
+</p>
+</dd>
+<dt><var class="var">okay</var></dt>
+<dd><p>The <em class="emph">boolean value</em> in this field indicates whether the program&rsquo;s
+config file is syntactically okay.
+</p>
+</dd>
+<dt><var class="var">cfgfile</var></dt>
+<dd><p>If an error occurred in the configuration file (as indicated by a false
+value in the field <code class="code">okay</code>), this field has the name of the failing
+configuration file.  It is <em class="emph">percent-escaped</em>.
+</p>
+</dd>
+<dt><var class="var">line</var></dt>
+<dd><p>If an error occurred in the configuration file, this field has the line
+number of the failing statement in the configuration file.
+It is an <em class="emph">unsigned number</em>.
+</p>
+</dd>
+<dt><var class="var">error</var></dt>
+<dd><p>If an error occurred in the configuration file, this field has the error
+text of the failing statement in the configuration file.  It is
+<em class="emph">percent-escaped</em> and <em class="emph">localized</em>.
+</p>
+</dd>
+</dl>
+
+<p>In the following example the <code class="command">dirmngr</code> is not runnable and the
+configuration file of <code class="command">scdaemon</code> is not okay.
+</p>
+<div class="example">
+<pre class="example-preformatted">$ gpgconf --check-programs
+gpg:GPG for OpenPGP:/usr/local/bin/gpg2:1:1:
+gpg-agent:GPG Agent:/usr/local/bin/gpg-agent:1:1:
+scdaemon:Smartcard Daemon:/usr/local/bin/scdaemon:1:0:
+gpgsm:GPG for S/MIME:/usr/local/bin/gpgsm:1:1:
+dirmngr:Directory Manager:/usr/local/bin/dirmngr:0:0:
+</pre></div>
+
+<p>The command <code class="code">--check-options&nbsp;<var class="var">component</var></code><!-- /@w --> will verify the
+configuration file in the same manner as <code class="code">--check-programs</code>, but
+only for the component <var class="var">component</var>.
+</p>
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Listing-options.html">Listing options</a>, Previous: <a href="Listing-components.html">Listing components</a>, Up: <a href="gpgconf.html">Modify .gnupg home directories</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

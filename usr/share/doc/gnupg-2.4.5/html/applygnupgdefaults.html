@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>applygnupgdefaults (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="applygnupgdefaults (Using the GNU Privacy Guard)">
+<meta name="keywords" content="applygnupgdefaults (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Helper-Tools.html" rel="up" title="Helper Tools">
+<link href="gpg_002dpreset_002dpassphrase.html" rel="next" title="gpg-preset-passphrase">
+<link href="gpgconf.html" rel="prev" title="gpgconf">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="applygnupgdefaults">
+<div class="nav-panel">
+<p>
+Next: <a href="gpg_002dpreset_002dpassphrase.html" accesskey="n" rel="next">Put a passphrase into the cache</a>, Previous: <a href="gpgconf.html" accesskey="p" rel="prev">Modify .gnupg home directories</a>, Up: <a href="Helper-Tools.html" accesskey="u" rel="up">Helper Tools</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="Run-gpgconf-for-all-users"><span>10.5 Run gpgconf for all users<a class="copiable-link" href="#Run-gpgconf-for-all-users"> &para;</a></span></h3>
+
+
+
+
+<p>This is a legacy script.  Modern application should use the per
+component global configuration files under <samp class="file">/etc/gnupg/</samp>.
+</p>
+<p>This script is a wrapper around <code class="command">gpgconf</code> to run it with the
+command <code class="code">--apply-defaults</code> for all real users with an existing
+GnuPG home directory.  Admins might want to use this script to update he
+GnuPG configuration files for all users after
+<samp class="file">/etc/gnupg/gpgconf.conf</samp> has been changed.  This allows enforcing
+certain policies for all users.  Note, that this is not a bulletproof way to
+force a user to use certain options.  A user may always directly edit
+the configuration files and bypass gpgconf.
+</p>
+<p><code class="command">applygnupgdefaults</code> is invoked by root as:
+</p>
+<div class="example">
+<pre class="example-preformatted">applygnupgdefaults
+</pre></div>
+
+
+</div>
+
+
+
+</body>
+</html>

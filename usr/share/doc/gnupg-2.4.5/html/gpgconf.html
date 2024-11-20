@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>gpgconf (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="gpgconf (Using the GNU Privacy Guard)">
+<meta name="keywords" content="gpgconf (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Helper-Tools.html" rel="up" title="Helper Tools">
+<link href="applygnupgdefaults.html" rel="next" title="applygnupgdefaults">
+<link href="addgnupghome.html" rel="prev" title="addgnupghome">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="gpgconf">
+<div class="nav-panel">
+<p>
+Next: <a href="applygnupgdefaults.html" accesskey="n" rel="next">Run gpgconf for all users</a>, Previous: <a href="addgnupghome.html" accesskey="p" rel="prev">Create .gnupg home directories</a>, Up: <a href="Helper-Tools.html" accesskey="u" rel="up">Helper Tools</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="Modify-_002egnupg-home-directories"><span>10.4 Modify .gnupg home directories<a class="copiable-link" href="#Modify-_002egnupg-home-directories"> &para;</a></span></h3>
+
+
+
+
+
+<p>The <code class="command">gpgconf</code> is a utility to automatically and reasonable
+safely query and modify configuration files in the <samp class="file">.gnupg</samp> home
+directory.  It is designed not to be invoked manually by the user, but
+automatically by graphical user interfaces (GUI).<a class="footnote" id="DOCF3" href="#FOOT3"><sup>3</sup></a>
+</p>
+<p><code class="command">gpgconf</code> provides access to the configuration of one or more
+components of the GnuPG system.  These components correspond more or
+less to the programs that exist in the GnuPG framework, like GPG,
+GPGSM, DirMngr, etc.  But this is not a strict one-to-one
+relationship.  Not all configuration options are available through
+<code class="command">gpgconf</code>.  <code class="command">gpgconf</code> provides a generic and abstract
+method to access the most important configuration options that can
+feasibly be controlled via such a mechanism.
+</p>
+<p><code class="command">gpgconf</code> can be used to gather and change the options
+available in each component, and can also provide their default
+values.  <code class="command">gpgconf</code> will give detailed type information that
+can be used to restrict the user&rsquo;s input without making an attempt to
+commit the changes.
+</p>
+<p><code class="command">gpgconf</code> provides the backend of a configuration editor.  The
+configuration editor would usually be a graphical user interface
+program that displays the current options, their default
+values, and allows the user to make changes to the options.  These
+changes can then be made active with <code class="command">gpgconf</code> again.  Such a
+program that uses <code class="command">gpgconf</code> in this way will be called GUI
+throughout this section.
+</p>
+
+
+<ul class="mini-toc">
+<li><a href="Invoking-gpgconf.html" accesskey="1">Invoking gpgconf</a></li>
+<li><a href="Format-conventions.html" accesskey="2">Format conventions</a></li>
+<li><a href="Listing-components.html" accesskey="3">Listing components</a></li>
+<li><a href="Checking-programs.html" accesskey="4">Checking programs</a></li>
+<li><a href="Listing-options.html" accesskey="5">Listing options</a></li>
+<li><a href="Changing-options.html" accesskey="6">Changing options</a></li>
+<li><a href="Listing-global-options.html" accesskey="7">Listing global options</a></li>
+<li><a href="Querying-versions.html" accesskey="8">Get and compare software versions.</a></li>
+<li><a href="Files-used-by-gpgconf.html" accesskey="9">Files used by gpgconf</a></li>
+</ul>
+</div>
+<div class="footnotes-segment">
+<hr>
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<h5 class="footnote-body-heading"><a id="FOOT3" href="#DOCF3">(3)</a></h5>
+<p>Please note
+that currently no locking is done, so concurrent access should be
+avoided.  There are some precautions to avoid corruption with
+concurrent usage, but results may be inconsistent and some changes may
+get lost.  The stateless design makes it difficult to provide more
+guarantees.</p>
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="applygnupgdefaults.html">Run gpgconf for all users</a>, Previous: <a href="addgnupghome.html">Create .gnupg home directories</a>, Up: <a href="Helper-Tools.html">Helper Tools</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

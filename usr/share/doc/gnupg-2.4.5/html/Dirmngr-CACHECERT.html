@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Dirmngr CACHECERT (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Dirmngr CACHECERT (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Dirmngr CACHECERT (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Dirmngr-Protocol.html" rel="up" title="Dirmngr Protocol">
+<link href="Dirmngr-VALIDATE.html" rel="next" title="Dirmngr VALIDATE">
+<link href="Dirmngr-CHECKOCSP.html" rel="prev" title="Dirmngr CHECKOCSP">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Dirmngr-CACHECERT">
+<div class="nav-panel">
+<p>
+Next: <a href="Dirmngr-VALIDATE.html" accesskey="n" rel="next">Validate a certificate for debugging</a>, Previous: <a href="Dirmngr-CHECKOCSP.html" accesskey="p" rel="prev">Validate a certificate using OCSP</a>, Up: <a href="Dirmngr-Protocol.html" accesskey="u" rel="up">Dirmngr&rsquo;s Assuan Protocol</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Put-a-certificate-into-the-internal-cache"><span>3.6.5 Put a certificate into the internal cache<a class="copiable-link" href="#Put-a-certificate-into-the-internal-cache"> &para;</a></span></h4>
+
+<p>Put a certificate into the internal cache.  This command might be
+useful if a client knows in advance certificates required for a test and
+wants to make sure they get added to the internal cache.  It is also
+helpful for debugging.  To get the actual certificate, this command
+immediately inquires it using
+</p>
+<div class="example">
+<pre class="example-preformatted">  S: INQUIRE TARGETCERT
+  C: D &lt;DER encoded certificate&gt;
+  C: END
+</pre></div>
+
+<p>Thus the caller is expected to return the certificate for the request
+as a binary blob.
+</p>
+<p>The return code is 0 for success; i.e. the certificate has not been
+successfully cached or one of the usual error codes from libgpg-error.
+</p>
+</div>
+
+
+
+</body>
+</html>

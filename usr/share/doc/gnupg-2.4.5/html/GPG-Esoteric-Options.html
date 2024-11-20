@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>GPG Esoteric Options (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="GPG Esoteric Options (Using the GNU Privacy Guard)">
+<meta name="keywords" content="GPG Esoteric Options (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="GPG-Options.html" rel="up" title="GPG Options">
+<link href="Deprecated-Options.html" rel="next" title="Deprecated Options">
+<link href="Compliance-Options.html" rel="prev" title="Compliance Options">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="GPG-Esoteric-Options">
+<div class="nav-panel">
+<p>
+Next: <a href="Deprecated-Options.html" accesskey="n" rel="next">Deprecated options</a>, Previous: <a href="Compliance-Options.html" accesskey="p" rel="prev">Compliance options</a>, Up: <a href="GPG-Options.html" accesskey="u" rel="up">Option Summary</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Doing-things-one-usually-doesn_0027t-want-to-do"><span>4.2.6 Doing things one usually doesn&rsquo;t want to do<a class="copiable-link" href="#Doing-things-one-usually-doesn_0027t-want-to-do"> &para;</a></span></h4>
+
+<dl class="table">
+<dt><a id="index-dry_002drun"></a><span><code class="code">-n</code><a class="copiable-link" href="#index-dry_002drun"> &para;</a></span></dt>
+<dt><code class="code">--dry-run</code></dt>
+<dd><p>Don&rsquo;t make any changes (this is not completely implemented).
+</p>
+</dd>
+<dt><a id="index-list_002donly"></a><span><code class="code">--list-only</code><a class="copiable-link" href="#index-list_002donly"> &para;</a></span></dt>
+<dd><p>Changes the behaviour of some commands. This is like <samp class="option">--dry-run</samp> but
+different in some cases. The semantic of this option may be extended in
+the future. Currently it only skips the actual decryption pass and
+therefore enables a fast listing of the encryption keys.
+</p>
+</dd>
+<dt><a id="index-interactive"></a><span><code class="code">-i</code><a class="copiable-link" href="#index-interactive"> &para;</a></span></dt>
+<dt><code class="code">--interactive</code></dt>
+<dd><p>Prompt before overwriting any files.
+</p>
+</dd>
+<dt><a id="index-compatibility_002dflags-1"></a><span><code class="code">--compatibility-flags <var class="var">flags</var></code><a class="copiable-link" href="#index-compatibility_002dflags-1"> &para;</a></span></dt>
+<dd><p>Set compatibility flags to work around problems due to non-compliant
+keys or data.  The <var class="var">flags</var> are given as a comma separated
+list of flag names and are OR-ed together.  The special flag &quot;none&quot;
+clears the list and allows one to start over with an empty list.  To get a
+list of available flags the sole word &quot;help&quot; can be used.
+</p>
+</dd>
+<dt><a id="index-debug_002dlevel-2"></a><span><code class="code">--debug-level <var class="var">level</var></code><a class="copiable-link" href="#index-debug_002dlevel-2"> &para;</a></span></dt>
+<dd><p>Select the debug level for investigating problems. <var class="var">level</var> may be
+a numeric value or by a keyword:
+</p>
+<dl class="table">
+<dt><code class="code">none</code></dt>
+<dd><p>No debugging at all.  A value of less than 1 may be used instead of
+  the keyword.
+  </p></dd>
+<dt><code class="code">basic</code></dt>
+<dd><p>Some basic debug messages.  A value between 1 and 2 may be used
+  instead of the keyword.
+  </p></dd>
+<dt><code class="code">advanced</code></dt>
+<dd><p>More verbose debug messages.  A value between 3 and 5 may be used
+  instead of the keyword.
+  </p></dd>
+<dt><code class="code">expert</code></dt>
+<dd><p>Even more detailed messages.  A value between 6 and 8 may be used
+  instead of the keyword.
+  </p></dd>
+<dt><code class="code">guru</code></dt>
+<dd><p>All of the debug messages you can get. A value greater than 8 may be
+  used instead of the keyword.  The creation of hash tracing files is
+  only enabled if the keyword is used.
+</p></dd>
+</dl>
+
+<p>How these messages are mapped to the actual debugging flags is not
+specified and may change with newer releases of this program. They are
+however carefully selected to best aid in debugging.
+</p>
+</dd>
+<dt><a id="index-debug-2"></a><span><code class="code">--debug <var class="var">flags</var></code><a class="copiable-link" href="#index-debug-2"> &para;</a></span></dt>
+<dd><p>Set debug flags.  All flags are or-ed and <var class="var">flags</var> may be given
+in C syntax (e.g. 0x0042) or as a comma separated list of flag names.
+To get a list of all supported flags the single word &quot;help&quot; can be
+used. This option is only useful for debugging and the behavior may
+change at any time without notice.
+</p>
+</dd>
+<dt><a id="index-debug_002dall-2"></a><span><code class="code">--debug-all</code><a class="copiable-link" href="#index-debug_002dall-2"> &para;</a></span></dt>
+<dd><p>Set all useful debugging flags.
+</p>
+</dd>
+<dt><a id="index-debug_002diolbf"></a><span><code class="code">--debug-iolbf</code><a class="copiable-link" href="#index-debug_002diolbf"> &para;</a></span></dt>
+<dd><p>Set stdout into line buffered mode.  This option is only honored when
+given on the command line.
+</p>
+</dd>
+<dt><a id="index-debug_002diolbf-1"></a><span><code class="code">--debug-set-iobuf-size <var class="var">n</var></code><a class="copiable-link" href="#index-debug_002diolbf-1"> &para;</a></span></dt>
+<dd><p>Change the buffer size of the IOBUFs to <var class="var">n</var> kilobyte.  Using 0
+prints the current size.  Note well: This is a maintainer only option
+and may thus be changed or removed at any time without notice.
+</p>
+</dd>
+<dt><a id="index-debug_002dallow_002dlarge_002dchunks"></a><span><code class="code">--debug-allow-large-chunks</code><a class="copiable-link" href="#index-debug_002dallow_002dlarge_002dchunks"> &para;</a></span></dt>
+<dd><p>To facilitate software tests and experiments this option allows one to
+specify a limit of up to 4 EiB (<code class="code">--chunk-size 62</code>).
+</p>
+</dd>
+<dt><a id="index-debug_002dignore_002dexpiration"></a><span><code class="code">--debug-ignore-expiration</code><a class="copiable-link" href="#index-debug_002dignore_002dexpiration"> &para;</a></span></dt>
+<dd><p>This option tries to override certain key expiration dates.  It is
+only useful for certain regression tests.
+</p>
+</dd>
+<dt><a id="index-faked_002dsystem_002dtime-2"></a><span><code class="code">--faked-system-time <var class="var">epoch</var></code><a class="copiable-link" href="#index-faked_002dsystem_002dtime-2"> &para;</a></span></dt>
+<dd><p>This option is only useful for testing; it sets the system time back
+or forth to <var class="var">epoch</var> which is the number of seconds elapsed since
+the year 1970.  Alternatively <var class="var">epoch</var> may be given as a full ISO
+time string (e.g. &quot;20070924T154812&quot;).
+</p>
+<p>If you suffix <var class="var">epoch</var> with an exclamation mark (!), the system time
+will appear to be frozen at the specified time.
+</p>
+</dd>
+<dt><a id="index-full_002dtimestrings"></a><span><code class="code">--full-timestrings</code><a class="copiable-link" href="#index-full_002dtimestrings"> &para;</a></span></dt>
+<dd><p>Change the format of printed creation and expiration times from just
+the date to the date and time.  This is in general not useful and the
+same information is anyway available in <samp class="option">--with-colons</samp> mode.
+These longer strings are also not well aligned with other printed
+data.
+</p>
+</dd>
+<dt><a id="index-enable_002dprogress_002dfilter"></a><span><code class="code">--enable-progress-filter</code><a class="copiable-link" href="#index-enable_002dprogress_002dfilter"> &para;</a></span></dt>
+<dd><p>Enable certain PROGRESS status outputs. This option allows frontends
+to display a progress indicator while gpg is processing larger files.
+There is a slight performance overhead using it.
+</p>
+</dd>
+<dt><a id="index-status_002dfd"></a><span><code class="code">--status-fd <var class="var">n</var></code><a class="copiable-link" href="#index-status_002dfd"> &para;</a></span></dt>
+<dd><p>Write special status strings to the file descriptor <var class="var">n</var>.
+See the file DETAILS in the documentation for a listing of them.
+</p>
+</dd>
+<dt><a id="index-status_002dfile"></a><span><code class="code">--status-file <var class="var">file</var></code><a class="copiable-link" href="#index-status_002dfile"> &para;</a></span></dt>
+<dd><p>Same as <samp class="option">--status-fd</samp>, except the status data is written to file
+<var class="var">file</var>.
+</p>
+</dd>
+<dt><a id="index-logger_002dfd"></a><span><code class="code">--logger-fd <var class="var">n</var></code><a class="copiable-link" href="#index-logger_002dfd"> &para;</a></span></dt>
+<dd><p>Write log output to file descriptor <var class="var">n</var> and not to STDERR.
+</p>
+</dd>
+<dt><a id="index-log_002dfile-2"></a><span><code class="code">--log-file <var class="var">file</var></code><a class="copiable-link" href="#index-log_002dfile-2"> &para;</a></span></dt>
+<dt><code class="code">--logger-file <var class="var">file</var></code></dt>
+<dd><p>Same as <samp class="option">--logger-fd</samp>, except the logger data is written to
+file <var class="var">file</var>.  Use <samp class="file">socket://</samp> to log to s socket.
+</p>
+</dd>
+<dt><a id="index-log_002dtime"></a><span><code class="code">--log-time</code><a class="copiable-link" href="#index-log_002dtime"> &para;</a></span></dt>
+<dd><p>Prefix all log output with a timestamp even if no log file is used.
+</p>
+</dd>
+<dt><a id="index-attribute_002dfd"></a><span><code class="code">--attribute-fd <var class="var">n</var></code><a class="copiable-link" href="#index-attribute_002dfd"> &para;</a></span></dt>
+<dd><p>Write attribute subpackets to the file descriptor <var class="var">n</var>. This is most
+useful for use with <samp class="option">--status-fd</samp>, since the status messages are
+needed to separate out the various subpackets from the stream delivered
+to the file descriptor.
+</p>
+</dd>
+<dt><a id="index-attribute_002dfile"></a><span><code class="code">--attribute-file <var class="var">file</var></code><a class="copiable-link" href="#index-attribute_002dfile"> &para;</a></span></dt>
+<dd><p>Same as <samp class="option">--attribute-fd</samp>, except the attribute data is written to
+file <var class="var">file</var>.
+</p>
+</dd>
+<dt><a id="index-comment"></a><span><code class="code">--comment <var class="var">string</var></code><a class="copiable-link" href="#index-comment"> &para;</a></span></dt>
+<dt><code class="code">--no-comments</code></dt>
+<dd><p>Use <var class="var">string</var> as a comment string in cleartext signatures and ASCII
+armored messages or keys (see <samp class="option">--armor</samp>). The default behavior is
+not to use a comment string. <samp class="option">--comment</samp> may be repeated multiple
+times to get multiple comment strings. <samp class="option">--no-comments</samp> removes
+all comments.  It is a good idea to keep the length of a single comment
+below 60 characters to avoid problems with mail programs wrapping such
+lines.  Note that comment lines, like all other header lines, are not
+protected by the signature.
+</p>
+</dd>
+<dt><a id="index-emit_002dversion"></a><span><code class="code">--emit-version</code><a class="copiable-link" href="#index-emit_002dversion"> &para;</a></span></dt>
+<dt><code class="code">--no-emit-version</code></dt>
+<dd><p>Force inclusion of the version string in ASCII armored output.  If
+given once only the name of the program and the major number is
+emitted, given twice the minor is also emitted, given thrice
+the micro is added, and given four times an operating system identification
+is also emitted.  <samp class="option">--no-emit-version</samp> (default) disables the version
+line.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-cert_002dnotation"></a>
+<a class="index-entry-id" id="index-set_002dnotation"></a>
+<a id="index-sig_002dnotation"></a><span><code class="code">--sig-notation {<var class="var">name</var>=<var class="var">value</var>}</code><a class="copiable-link" href="#index-sig_002dnotation"> &para;</a></span></dt>
+<dt><code class="code">--cert-notation {<var class="var">name</var>=<var class="var">value</var>}</code></dt>
+<dt><code class="code">-N, --set-notation {<var class="var">name</var>=<var class="var">value</var>}</code></dt>
+<dd><p>Put the name value pair into the signature as notation data.
+<var class="var">name</var> must consist only of printable characters or spaces, and
+must contain a &rsquo;@&rsquo; character in the form keyname@domain.example.com
+(substituting the appropriate keyname and domain name, of course).  This
+is to help prevent pollution of the IETF reserved notation
+namespace. The <samp class="option">--expert</samp> flag overrides the &rsquo;@&rsquo;
+check. <var class="var">value</var> may be any printable string; it will be encoded in
+UTF-8, so you should check that your <samp class="option">--display-charset</samp> is set
+correctly. If you prefix <var class="var">name</var> with an exclamation mark (!), the
+notation data will be flagged as critical
+(rfc4880:5.2.3.16). <samp class="option">--sig-notation</samp> sets a notation for data
+signatures. <samp class="option">--cert-notation</samp> sets a notation for key signatures
+(certifications). <samp class="option">--set-notation</samp> sets both.
+</p>
+<p>There are special codes that may be used in notation names. &quot;%k&quot; will
+be expanded into the key ID of the key being signed, &quot;%K&quot; into the
+long key ID of the key being signed, &quot;%f&quot; into the fingerprint of the
+key being signed, &quot;%s&quot; into the key ID of the key making the
+signature, &quot;%S&quot; into the long key ID of the key making the signature,
+&quot;%g&quot; into the fingerprint of the key making the signature (which might
+be a subkey), &quot;%p&quot; into the fingerprint of the primary key of the key
+making the signature, &quot;%c&quot; into the signature count from the OpenPGP
+smartcard, and &quot;%%&quot; results in a single &quot;%&quot;. %k, %K, and %f are only
+meaningful when making a key signature (certification), and %c is only
+meaningful when using the OpenPGP smartcard.
+</p>
+</dd>
+<dt><a id="index-known_002dnotation"></a><span><code class="code">--known-notation <var class="var">name</var></code><a class="copiable-link" href="#index-known_002dnotation"> &para;</a></span></dt>
+<dd><p>Adds <var class="var">name</var> to a list of known critical signature notations.  The
+effect of this is that gpg will not mark a signature with a critical
+signature notation of that name as bad.  Note that gpg already knows
+by default about a few critical signatures notation names.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-cert_002dpolicy_002durl"></a>
+<a class="index-entry-id" id="index-set_002dpolicy_002durl"></a>
+<a id="index-sig_002dpolicy_002durl"></a><span><code class="code">--sig-policy-url <var class="var">string</var></code><a class="copiable-link" href="#index-sig_002dpolicy_002durl"> &para;</a></span></dt>
+<dt><code class="code">--cert-policy-url <var class="var">string</var></code></dt>
+<dt><code class="code">--set-policy-url <var class="var">string</var></code></dt>
+<dd><p>Use <var class="var">string</var> as a Policy URL for signatures (rfc4880:5.2.3.20).  If
+you prefix it with an exclamation mark (!), the policy URL packet will
+be flagged as critical. <samp class="option">--sig-policy-url</samp> sets a policy url for
+data signatures. <samp class="option">--cert-policy-url</samp> sets a policy url for key
+signatures (certifications). <samp class="option">--set-policy-url</samp> sets both.
+</p>
+<p>The same %-expandos used for notation data are available here as well.
+</p>
+</dd>
+<dt><a id="index-sig_002dkeyserver_002durl"></a><span><code class="code">--sig-keyserver-url <var class="var">string</var></code><a class="copiable-link" href="#index-sig_002dkeyserver_002durl"> &para;</a></span></dt>
+<dd><p>Use <var class="var">string</var> as a preferred keyserver URL for data signatures. If
+you prefix it with an exclamation mark (!), the keyserver URL packet
+will be flagged as critical.
+</p>
+<p>The same %-expandos used for notation data are available here as well.
+</p>
+</dd>
+<dt><a id="index-set_002dfilename"></a><span><code class="code">--set-filename <var class="var">string</var></code><a class="copiable-link" href="#index-set_002dfilename"> &para;</a></span></dt>
+<dd><p>Use <var class="var">string</var> as the filename which is stored inside messages.
+This overrides the default, which is to use the actual filename of the
+file being encrypted.  Using the empty string for <var class="var">string</var>
+effectively removes the filename from the output.
+</p>
+</dd>
+<dt><a id="index-for_002dyour_002deyes_002donly"></a><span><code class="code">--for-your-eyes-only</code><a class="copiable-link" href="#index-for_002dyour_002deyes_002donly"> &para;</a></span></dt>
+<dt><code class="code">--no-for-your-eyes-only</code></dt>
+<dd><p>Set the &lsquo;for your eyes only&rsquo; flag in the message. This causes GnuPG to
+refuse to save the file unless the <samp class="option">--output</samp> option is given,
+and PGP to use a &quot;secure viewer&quot; with a claimed Tempest-resistant font
+to display the message. This option overrides <samp class="option">--set-filename</samp>.
+<samp class="option">--no-for-your-eyes-only</samp> disables this option.
+</p>
+</dd>
+<dt><a id="index-use_002dembedded_002dfilename"></a><span><code class="code">--use-embedded-filename</code><a class="copiable-link" href="#index-use_002dembedded_002dfilename"> &para;</a></span></dt>
+<dt><code class="code">--no-use-embedded-filename</code></dt>
+<dd><p>Try to create a file with a name as embedded in the data. This can be
+a dangerous option as it enables overwriting files by giving the
+sender control on how to store files.  Defaults to no.
+Note that the option <samp class="option">--output</samp> overrides this option.
+</p>
+<p>A better approach than using this option is to decrypt to a temporary
+filename and then rename that file to the embedded file name after
+checking that the embedded filename is harmless.  When using the
+<samp class="option">--status-fd</samp> option gpg tells the filename as part of the
+PLAINTEXT status message.  If the filename is important, the use of
+<code class="command">gpgtar</code> is another option because gpgtar will never overwrite
+a file but decrypt the files to a new directory.
+</p>
+<p>Note also that unless a modern version 5 signature is used the
+embedded filename is not part of the signed data.
+</p>
+
+
+</dd>
+<dt><a id="index-cipher_002dalgo"></a><span><code class="code">--cipher-algo <var class="var">name</var></code><a class="copiable-link" href="#index-cipher_002dalgo"> &para;</a></span></dt>
+<dd><p>Use <var class="var">name</var> as cipher algorithm. Running the program with the
+command <samp class="option">--version</samp> yields a list of supported algorithms. If
+this is not used the cipher algorithm is selected from the preferences
+stored with the key. In general, you do not want to use this option as
+it allows you to violate the OpenPGP standard.  The option
+<samp class="option">--personal-cipher-preferences</samp> is the safe way to accomplish the
+same thing.
+</p>
+</dd>
+<dt><a id="index-digest_002dalgo"></a><span><code class="code">--digest-algo <var class="var">name</var></code><a class="copiable-link" href="#index-digest_002dalgo"> &para;</a></span></dt>
+<dd><p>Use <var class="var">name</var> as the message digest algorithm. Running the program
+with the command <samp class="option">--version</samp> yields a list of supported
+algorithms. In general, you do not want to use this option as it
+allows you to violate the OpenPGP standard.  The option
+<samp class="option">--personal-digest-preferences</samp> is the safe way to accomplish
+the same thing.
+</p>
+</dd>
+<dt><a id="index-compress_002dalgo"></a><span><code class="code">--compress-algo <var class="var">name</var></code><a class="copiable-link" href="#index-compress_002dalgo"> &para;</a></span></dt>
+<dd><p>Use compression algorithm <var class="var">name</var>. &quot;zlib&quot; is RFC-1950 ZLIB
+compression. &quot;zip&quot; is RFC-1951 ZIP compression which is used by PGP.
+&quot;bzip2&quot; is a more modern compression scheme that can compress some
+things better than zip or zlib, but at the cost of more memory used
+during compression and decompression. &quot;uncompressed&quot; or &quot;none&quot;
+disables compression. If this option is not used, the default
+behavior is to examine the recipient key preferences to see which
+algorithms the recipient supports. If all else fails, ZIP is used for
+maximum compatibility.
+</p>
+<p>ZLIB may give better compression results than ZIP, as the compression
+window size is not limited to 8k. BZIP2 may give even better
+compression results than that, but will use a significantly larger
+amount of memory while compressing and decompressing. This may be
+significant in low memory situations. Note, however, that PGP (all
+versions) only supports ZIP compression. Using any algorithm other
+than ZIP or &quot;none&quot; will make the message unreadable with PGP. In
+general, you do not want to use this option as it allows you to
+violate the OpenPGP standard.  The option
+<samp class="option">--personal-compress-preferences</samp> is the safe way to accomplish
+the same thing.
+</p>
+</dd>
+<dt><a id="index-cert_002ddigest_002dalgo"></a><span><code class="code">--cert-digest-algo <var class="var">name</var></code><a class="copiable-link" href="#index-cert_002ddigest_002dalgo"> &para;</a></span></dt>
+<dd><p>Use <var class="var">name</var> as the message digest algorithm used when signing a
+key. Running the program with the command <samp class="option">--version</samp> yields a
+list of supported algorithms.  Be aware that if you choose an
+algorithm that GnuPG supports but other OpenPGP implementations do
+not, then some users will not be able to use the key signatures you
+make, or quite possibly your entire key.  Note also that a public key
+algorithm must be compatible with the specified digest algorithm; thus
+selecting an arbitrary digest algorithm may result in error messages
+from lower crypto layers or lead to security flaws.
+</p>
+
+</dd>
+<dt><a id="index-disable_002dcipher_002dalgo"></a><span><code class="code">--disable-cipher-algo <var class="var">name</var></code><a class="copiable-link" href="#index-disable_002dcipher_002dalgo"> &para;</a></span></dt>
+<dd><p>Never allow the use of <var class="var">name</var> as cipher algorithm.
+The given name will not be checked so that a later loaded algorithm
+will still get disabled.
+</p>
+</dd>
+<dt><a id="index-disable_002dpubkey_002dalgo"></a><span><code class="code">--disable-pubkey-algo <var class="var">name</var></code><a class="copiable-link" href="#index-disable_002dpubkey_002dalgo"> &para;</a></span></dt>
+<dd><p>Never allow the use of <var class="var">name</var> as public key algorithm.
+The given name will not be checked so that a later loaded algorithm
+will still get disabled.
+</p>
+</dd>
+<dt><a id="index-throw_002dkeyids"></a><span><code class="code">--throw-keyids</code><a class="copiable-link" href="#index-throw_002dkeyids"> &para;</a></span></dt>
+<dt><code class="code">--no-throw-keyids</code></dt>
+<dd><p>Do not put the recipient key IDs into encrypted messages. This helps to
+hide the receivers of the message and is a limited countermeasure
+against traffic analysis.<a class="footnote" id="DOCF2" href="#FOOT2"><sup>2</sup></a>  On the receiving side, it may
+slow down the decryption process because all available secret keys must
+be tried.  <samp class="option">--no-throw-keyids</samp> disables this option. This option
+is essentially the same as using <samp class="option">--hidden-recipient</samp> for all
+recipients.
+</p>
+</dd>
+<dt><a id="index-not_002ddash_002descaped"></a><span><code class="code">--not-dash-escaped</code><a class="copiable-link" href="#index-not_002ddash_002descaped"> &para;</a></span></dt>
+<dd><p>This option changes the behavior of cleartext signatures
+so that they can be used for patch files. You should not
+send such an armored file via email because all spaces
+and line endings are hashed too. You can not use this
+option for data which has 5 dashes at the beginning of a
+line, patch files don&rsquo;t have this. A special armor header
+line tells GnuPG about this cleartext signature option.
+</p>
+</dd>
+<dt><a id="index-escape_002dfrom_002dlines"></a><span><code class="code">--escape-from-lines</code><a class="copiable-link" href="#index-escape_002dfrom_002dlines"> &para;</a></span></dt>
+<dt><code class="code">--no-escape-from-lines</code></dt>
+<dd><p>Because some mailers change lines starting with &quot;From &quot; to &quot;&gt;From &quot; it
+is good to handle such lines in a special way when creating cleartext
+signatures to prevent the mail system from breaking the signature. Note
+that all other PGP versions do it this way too.  Enabled by
+default. <samp class="option">--no-escape-from-lines</samp> disables this option.
+</p>
+</dd>
+<dt><a id="index-passphrase_002drepeat"></a><span><code class="code">--passphrase-repeat <var class="var">n</var></code><a class="copiable-link" href="#index-passphrase_002drepeat"> &para;</a></span></dt>
+<dd><p>Specify how many times <code class="command">gpg</code> will request a new
+passphrase be repeated.  This is useful for helping memorize a
+passphrase.  Defaults to 1 repetition; can be set to 0 to disable any
+passphrase repetition.  Note that a <var class="var">n</var> greater than 1 will pop up
+the pinentry window <var class="var">n</var>+1 times even if a modern pinentry with
+two entry fields is used.
+</p>
+</dd>
+<dt><a id="index-passphrase_002dfd"></a><span><code class="code">--passphrase-fd <var class="var">n</var></code><a class="copiable-link" href="#index-passphrase_002dfd"> &para;</a></span></dt>
+<dd><p>Read the passphrase from file descriptor <var class="var">n</var>. Only the first line
+will be read from file descriptor <var class="var">n</var>. If you use 0 for <var class="var">n</var>,
+the passphrase will be read from STDIN. This can only be used if only
+one passphrase is supplied.
+</p>
+<p>Note that since Version 2.0 this passphrase is only used if the
+option <samp class="option">--batch</samp> has also been given. Since Version 2.1
+the <samp class="option">--pinentry-mode</samp> also needs to be set to <code class="code">loopback</code>.
+</p>
+</dd>
+<dt><a id="index-passphrase_002dfile"></a><span><code class="code">--passphrase-file <var class="var">file</var></code><a class="copiable-link" href="#index-passphrase_002dfile"> &para;</a></span></dt>
+<dd><p>Read the passphrase from file <var class="var">file</var>. Only the first line will
+be read from file <var class="var">file</var>. This can only be used if only one
+passphrase is supplied. Obviously, a passphrase stored in a file is
+of questionable security if other users can read this file. Don&rsquo;t use
+this option if you can avoid it.
+</p>
+<p>Note that since Version 2.0 this passphrase is only used if the
+option <samp class="option">--batch</samp> has also been given. Since Version 2.1
+the <samp class="option">--pinentry-mode</samp> also needs to be set to <code class="code">loopback</code>.
+</p>
+</dd>
+<dt><a id="index-passphrase"></a><span><code class="code">--passphrase <var class="var">string</var></code><a class="copiable-link" href="#index-passphrase"> &para;</a></span></dt>
+<dd><p>Use <var class="var">string</var> as the passphrase. This can only be used if only one
+passphrase is supplied. Obviously, this is of very questionable
+security on a multi-user system. Don&rsquo;t use this option if you can
+avoid it.
+</p>
+<p>Note that since Version 2.0 this passphrase is only used if the
+option <samp class="option">--batch</samp> has also been given. Since Version 2.1
+the <samp class="option">--pinentry-mode</samp> also needs to be set to <code class="code">loopback</code>.
+</p>
+</dd>
+<dt><a id="index-pinentry_002dmode"></a><span><code class="code">--pinentry-mode <var class="var">mode</var></code><a class="copiable-link" href="#index-pinentry_002dmode"> &para;</a></span></dt>
+<dd><p>Set the pinentry mode to <var class="var">mode</var>.  Allowed values for <var class="var">mode</var>
+are:
+</p><dl class="table">
+<dt>default</dt>
+<dd><p>Use the default of the agent, which is <code class="code">ask</code>.
+  </p></dd>
+<dt>ask</dt>
+<dd><p>Force the use of the Pinentry.
+  </p></dd>
+<dt>cancel</dt>
+<dd><p>Emulate use of Pinentry&rsquo;s cancel button.
+  </p></dd>
+<dt>error</dt>
+<dd><p>Return a Pinentry error (&ldquo;No Pinentry&rdquo;).
+  </p></dd>
+<dt>loopback</dt>
+<dd><p>Redirect Pinentry queries to the caller.  Note that in contrast to
+  Pinentry the user is not prompted again if he enters a bad password.
+</p></dd>
+</dl>
+
+</dd>
+<dt><a id="index-no_002dsymkey_002dcache"></a><span><code class="code">--no-symkey-cache</code><a class="copiable-link" href="#index-no_002dsymkey_002dcache"> &para;</a></span></dt>
+<dd><p>Disable the passphrase cache used for symmetrical en- and decryption.
+This cache is based on the message specific salt value
+(cf. <samp class="option">--s2k-mode</samp>).
+</p>
+</dd>
+<dt><a id="index-request_002dorigin"></a><span><code class="code">--request-origin <var class="var">origin</var></code><a class="copiable-link" href="#index-request_002dorigin"> &para;</a></span></dt>
+<dd><p>Tell gpg to assume that the operation ultimately originated at
+<var class="var">origin</var>.  Depending on the origin certain restrictions are applied
+and the Pinentry may include an extra note on the origin.  Supported
+values for <var class="var">origin</var> are: <code class="code">local</code> which is the default,
+<code class="code">remote</code> to indicate a remote origin or <code class="code">browser</code> for an
+operation requested by a web browser.
+</p>
+</dd>
+<dt><a id="index-command_002dfd"></a><span><code class="code">--command-fd <var class="var">n</var></code><a class="copiable-link" href="#index-command_002dfd"> &para;</a></span></dt>
+<dd><p>This is a replacement for the deprecated shared-memory IPC mode.
+If this option is enabled, user input on questions is not expected
+from the TTY but from the given file descriptor. It should be used
+together with <samp class="option">--status-fd</samp>. See the file doc/DETAILS in the source
+distribution for details on how to use it.
+</p>
+</dd>
+<dt><a id="index-command_002dfile"></a><span><code class="code">--command-file <var class="var">file</var></code><a class="copiable-link" href="#index-command_002dfile"> &para;</a></span></dt>
+<dd><p>Same as <samp class="option">--command-fd</samp>, except the commands are read out of file
+<var class="var">file</var>
+</p>
+</dd>
+<dt><a id="index-allow_002dnon_002dselfsigned_002duid"></a><span><code class="code">--allow-non-selfsigned-uid</code><a class="copiable-link" href="#index-allow_002dnon_002dselfsigned_002duid"> &para;</a></span></dt>
+<dt><code class="code">--no-allow-non-selfsigned-uid</code></dt>
+<dd><p>Allow the import and use of keys with user IDs which are not
+self-signed. This is not recommended, as a non self-signed user ID is
+trivial to forge. <samp class="option">--no-allow-non-selfsigned-uid</samp> disables.
+</p>
+</dd>
+<dt><a id="index-allow_002dfreeform_002duid"></a><span><code class="code">--allow-freeform-uid</code><a class="copiable-link" href="#index-allow_002dfreeform_002duid"> &para;</a></span></dt>
+<dd><p>Disable all checks on the form of the user ID while generating a new
+one. This option should only be used in very special environments as
+it does not ensure the de-facto standard format of user IDs.
+</p>
+</dd>
+<dt><a id="index-ignore_002dtime_002dconflict"></a><span><code class="code">--ignore-time-conflict</code><a class="copiable-link" href="#index-ignore_002dtime_002dconflict"> &para;</a></span></dt>
+<dd><p>GnuPG normally checks that the timestamps associated with keys and
+signatures have plausible values. However, sometimes a signature
+seems to be older than the key due to clock problems. This option
+makes these checks just a warning. See also <samp class="option">--ignore-valid-from</samp> for
+timestamp issues on subkeys.
+</p>
+</dd>
+<dt><a id="index-ignore_002dvalid_002dfrom"></a><span><code class="code">--ignore-valid-from</code><a class="copiable-link" href="#index-ignore_002dvalid_002dfrom"> &para;</a></span></dt>
+<dd><p>GnuPG normally does not select and use subkeys created in the future.
+This option allows the use of such keys and thus exhibits the
+pre-1.0.7 behaviour. You should not use this option unless there
+is some clock problem. See also <samp class="option">--ignore-time-conflict</samp> for timestamp
+issues with signatures.
+</p>
+</dd>
+<dt><a id="index-ignore_002dcrc_002derror"></a><span><code class="code">--ignore-crc-error</code><a class="copiable-link" href="#index-ignore_002dcrc_002derror"> &para;</a></span></dt>
+<dd><p>The ASCII armor used by OpenPGP is protected by a CRC checksum against
+transmission errors. Occasionally the CRC gets mangled somewhere on
+the transmission channel but the actual content (which is protected by
+the OpenPGP protocol anyway) is still okay. This option allows GnuPG
+to ignore CRC errors.
+</p>
+</dd>
+<dt><a id="index-ignore_002dmdc_002derror"></a><span><code class="code">--ignore-mdc-error</code><a class="copiable-link" href="#index-ignore_002dmdc_002derror"> &para;</a></span></dt>
+<dd><p>This option changes a MDC integrity protection failure into a warning.
+It is required to decrypt old messages which did not use an MDC.  It
+may also be useful if a message is partially garbled, but it is
+necessary to get as much data as possible out of that garbled message.
+Be aware that a missing or failed MDC can be an indication of an
+attack.  Use with great caution; see also option <samp class="option">--rfc2440</samp>.
+</p>
+</dd>
+<dt><a id="index-allow_002dold_002dcipher_002dalgos"></a><span><code class="code">--allow-old-cipher-algos</code><a class="copiable-link" href="#index-allow_002dold_002dcipher_002dalgos"> &para;</a></span></dt>
+<dd><p>Old cipher algorithms like 3DES, IDEA, or CAST5 encrypt data using
+blocks of 64 bits; modern algorithms use blocks of 128 bit instead.
+To avoid certain attack on these old algorithms it is suggested not to
+encrypt more than 150 MiByte using the same key.  For this reason gpg
+does not allow the use of 64 bit block size algorithms for encryption
+unless this option is specified.
+</p>
+</dd>
+<dt><a id="index-allow_002dweak_002ddigest_002dalgos"></a><span><code class="code">--allow-weak-digest-algos</code><a class="copiable-link" href="#index-allow_002dweak_002ddigest_002dalgos"> &para;</a></span></dt>
+<dd><p>Signatures made with known-weak digest algorithms are normally
+rejected with an &ldquo;invalid digest algorithm&rdquo; message.  This option
+allows the verification of signatures made with such weak algorithms.
+MD5 is the only digest algorithm considered weak by default.  See also
+<samp class="option">--weak-digest</samp> to reject other digest algorithms.
+</p>
+</dd>
+<dt><a id="index-weak_002ddigest"></a><span><code class="code">--weak-digest <var class="var">name</var></code><a class="copiable-link" href="#index-weak_002ddigest"> &para;</a></span></dt>
+<dd><p>Treat the specified digest algorithm as weak.  Signatures made over
+weak digests algorithms are normally rejected. This option can be
+supplied multiple times if multiple algorithms should be considered
+weak.  See also <samp class="option">--allow-weak-digest-algos</samp> to disable
+rejection of weak digests.  MD5 is always considered weak, and does
+not need to be listed explicitly.
+</p>
+</dd>
+<dt><a id="index-allow_002dweak_002dkey_002dsignatures"></a><span><code class="code">--allow-weak-key-signatures</code><a class="copiable-link" href="#index-allow_002dweak_002dkey_002dsignatures"> &para;</a></span></dt>
+<dd><p>To avoid a minor risk of collision attacks on third-party key
+signatures made using SHA-1, those key signatures are considered
+invalid.  This options allows one to override this restriction.
+</p>
+</dd>
+<dt><code class="code">--override-compliance-check</code></dt>
+<dd><p>This was a temporary introduced option and has no more effect.
+</p>
+</dd>
+<dt><a id="index-no_002ddefault_002dkeyring"></a><span><code class="code">--no-default-keyring</code><a class="copiable-link" href="#index-no_002ddefault_002dkeyring"> &para;</a></span></dt>
+<dd><p>Do not add the default keyring to the list of keyrings. Note that
+GnuPG needs for almost all operations a keyring. Thus if you use this
+option and do not provide alternate keyrings via <samp class="option">--keyring</samp>,
+then GnuPG will still use the default keyring.
+</p>
+<p>Note that if the option <samp class="option">use-keyboxd</samp> is enabled in
+<samp class="file">common.conf</samp>, no keyrings are used at all and keys are all
+maintained by the keyboxd process in its own database.
+</p>
+</dd>
+<dt><a id="index-no_002dkeyring"></a><span><code class="code">--no-keyring</code><a class="copiable-link" href="#index-no_002dkeyring"> &para;</a></span></dt>
+<dd><p>Do not use any keyring at all.  This overrides the default and all
+options which specify keyrings.
+</p>
+</dd>
+<dt><a id="index-skip_002dverify"></a><span><code class="code">--skip-verify</code><a class="copiable-link" href="#index-skip_002dverify"> &para;</a></span></dt>
+<dd><p>Skip the signature verification step. This may be
+used to make the decryption faster if the signature
+verification is not needed.
+</p>
+</dd>
+<dt><a id="index-with_002dkey_002ddata"></a><span><code class="code">--with-key-data</code><a class="copiable-link" href="#index-with_002dkey_002ddata"> &para;</a></span></dt>
+<dd><p>Print key listings delimited by colons (like <samp class="option">--with-colons</samp>) and
+print the public key data.
+</p>
+</dd>
+<dt><a id="index-list_002dsigs"></a><span><code class="code">--list-signatures</code><a class="copiable-link" href="#index-list_002dsigs"> &para;</a></span></dt>
+<dd><a class="index-entry-id" id="index-list_002dsignatures"></a>
+</dd>
+<dt><code class="code">--list-sigs</code></dt>
+<dd><p>Same as <samp class="option">--list-keys</samp>, but the signatures are listed too.  This
+command has the same effect as using <samp class="option">--list-keys</samp> with
+<samp class="option">--with-sig-list</samp>.  Note that in contrast to
+<samp class="option">--check-signatures</samp> the key signatures are not verified.  This
+command can be used to create a list of signing keys missing in the
+local keyring; for example:
+</p>
+<div class="example">
+<pre class="example-preformatted">      gpg --list-sigs --with-colons USERID | \
+        awk -F: '$1==&quot;sig&quot; &amp;&amp; $2==&quot;?&quot; {if($13){print $13}else{print $5}}'
+</pre></div>
+
+</dd>
+<dt><a id="index-fast_002dlist_002dmode"></a><span><code class="code">--fast-list-mode</code><a class="copiable-link" href="#index-fast_002dlist_002dmode"> &para;</a></span></dt>
+<dd><p>Changes the output of the list commands to work faster; this is achieved
+by leaving some parts empty. Some applications don&rsquo;t need the user ID
+and the trust information given in the listings. By using this options
+they can get a faster listing. The exact behaviour of this option may
+change in future versions.  If you are missing some information, don&rsquo;t
+use this option.
+</p>
+</dd>
+<dt><a id="index-no_002dliteral"></a><span><code class="code">--no-literal</code><a class="copiable-link" href="#index-no_002dliteral"> &para;</a></span></dt>
+<dd><p>This is not for normal use. Use the source to see for what it might be useful.
+</p>
+</dd>
+<dt><a id="index-set_002dfilesize"></a><span><code class="code">--set-filesize</code><a class="copiable-link" href="#index-set_002dfilesize"> &para;</a></span></dt>
+<dd><p>This is not for normal use. Use the source to see for what it might be useful.
+</p>
+</dd>
+<dt><a id="index-show_002dsession_002dkey"></a><span><code class="code">--show-session-key</code><a class="copiable-link" href="#index-show_002dsession_002dkey"> &para;</a></span></dt>
+<dd><p>Display the session key used for one message. See
+<samp class="option">--override-session-key</samp> for the counterpart of this option.
+</p>
+<p>We think that Key Escrow is a Bad Thing; however the user should have
+the freedom to decide whether to go to prison or to reveal the content
+of one specific message without compromising all messages ever
+encrypted for one secret key.
+</p>
+<p>You can also use this option if you receive an encrypted message which
+is abusive or offensive, to prove to the administrators of the
+messaging system that the ciphertext transmitted corresponds to an
+inappropriate plaintext so they can take action against the offending
+user.
+</p>
+</dd>
+<dt><a id="index-override_002dsession_002dkey"></a><span><code class="code">--override-session-key <var class="var">string</var></code><a class="copiable-link" href="#index-override_002dsession_002dkey"> &para;</a></span></dt>
+<dt><code class="code">--override-session-key-fd <var class="var">fd</var></code></dt>
+<dd><p>Don&rsquo;t use the public key but the session key <var class="var">string</var> respective
+the session key taken from the first line read from file descriptor
+<var class="var">fd</var>.  The format of this string is the same as the one printed by
+<samp class="option">--show-session-key</samp>. This option is normally not used but
+comes handy in case someone forces you to reveal the content of an
+encrypted message; using this option you can do this without handing
+out the secret key.  Note that using <samp class="option">--override-session-key</samp>
+may reveal the session key to all local users via the global process
+table.  Often it is useful to combine this option with
+<samp class="option">--no-keyring</samp>.
+</p>
+</dd>
+<dt><a id="index-ask_002dsig_002dexpire"></a><span><code class="code">--ask-sig-expire</code><a class="copiable-link" href="#index-ask_002dsig_002dexpire"> &para;</a></span></dt>
+<dt><code class="code">--no-ask-sig-expire</code></dt>
+<dd><p>When making a data signature, prompt for an expiration time. If this
+option is not specified, the expiration time set via
+<samp class="option">--default-sig-expire</samp> is used. <samp class="option">--no-ask-sig-expire</samp>
+disables this option.
+</p>
+</dd>
+<dt><a id="index-default_002dsig_002dexpire"></a><span><code class="code">--default-sig-expire</code><a class="copiable-link" href="#index-default_002dsig_002dexpire"> &para;</a></span></dt>
+<dd><p>The default expiration time to use for signature expiration. Valid
+values are &quot;0&quot; for no expiration, a number followed by the letter d
+(for days), w (for weeks), m (for months), or y (for years) (for
+example &quot;2m&quot; for two months, or &quot;5y&quot; for five years), or an absolute
+date in the form YYYY-MM-DD. Defaults to &quot;0&quot;.
+</p>
+</dd>
+<dt><a id="index-ask_002dcert_002dexpire"></a><span><code class="code">--ask-cert-expire</code><a class="copiable-link" href="#index-ask_002dcert_002dexpire"> &para;</a></span></dt>
+<dt><code class="code">--no-ask-cert-expire</code></dt>
+<dd><p>When making a key signature, prompt for an expiration time. If this
+option is not specified, the expiration time set via
+<samp class="option">--default-cert-expire</samp> is used. <samp class="option">--no-ask-cert-expire</samp>
+disables this option.
+</p>
+</dd>
+<dt><a id="index-default_002dcert_002dexpire"></a><span><code class="code">--default-cert-expire</code><a class="copiable-link" href="#index-default_002dcert_002dexpire"> &para;</a></span></dt>
+<dd><p>The default expiration time to use for key signature expiration.
+Valid values are &quot;0&quot; for no expiration, a number followed by the
+letter d (for days), w (for weeks), m (for months), or y (for years)
+(for example &quot;2m&quot; for two months, or &quot;5y&quot; for five years), or an
+absolute date in the form YYYY-MM-DD. Defaults to &quot;0&quot;.
+</p>
+</dd>
+<dt><a id="index-default_002dnew_002dkey_002dalgo-string"></a><span><code class="code">--default-new-key-algo <var class="var">string</var></code><a class="copiable-link" href="#index-default_002dnew_002dkey_002dalgo-string"> &para;</a></span></dt>
+<dd><p>This option can be used to change the default algorithms for key
+generation. The <var class="var">string</var> is similar to the arguments required for
+the command <samp class="option">--quick-add-key</samp> but slightly different.  For
+example the current default of <code class="code">&quot;rsa2048/cert,sign+rsa2048/encr&quot;</code>
+(or <code class="code">&quot;rsa3072&quot;</code>) can be changed to the value of what we currently
+call future default, which is <code class="code">&quot;ed25519/cert,sign+cv25519/encr&quot;</code>.
+You need to consult the source code to learn the details.  Note that
+the advanced key generation commands can always be used to specify a
+key algorithm directly.
+</p>
+</dd>
+<dt><a id="index-no_002dauto_002dtrust_002dnew_002dkey"></a><span><code class="code">--no-auto-trust-new-key</code><a class="copiable-link" href="#index-no_002dauto_002dtrust_002dnew_002dkey"> &para;</a></span></dt>
+<dd><p>When creating a new key the ownertrust of the new key is set to
+ultimate.  This option disables this and the user needs to manually
+assign an ownertrust value.
+</p>
+</dd>
+<dt><a id="index-force_002dsign_002dkey"></a><span><code class="code">--force-sign-key</code><a class="copiable-link" href="#index-force_002dsign_002dkey"> &para;</a></span></dt>
+<dd><p>This option modifies the behaviour of the commands
+<samp class="option">--quick-sign-key</samp>, <samp class="option">--quick-lsign-key</samp>, and the &quot;sign&quot;
+sub-commands of <samp class="option">--edit-key</samp> by forcing the creation of a key
+signature, even if one already exists.
+</p>
+</dd>
+<dt><a id="index-forbid_002dgen_002dkey"></a><span><code class="code">--forbid-gen-key</code><a class="copiable-link" href="#index-forbid_002dgen_002dkey"> &para;</a></span></dt>
+<dd><p>This option is intended for use in the global config file to disallow
+the use of generate key commands.  Those commands will then fail with
+the error code for Not Enabled.
+</p>
+</dd>
+<dt><a id="index-allow_002dsecret_002dkey_002dimport"></a><span><code class="code">--allow-secret-key-import</code><a class="copiable-link" href="#index-allow_002dsecret_002dkey_002dimport"> &para;</a></span></dt>
+<dd><p>This is an obsolete option and is not used anywhere.
+</p>
+</dd>
+<dt><code class="code">--allow-multiple-messages</code></dt>
+<dt><code class="code">--no-allow-multiple-messages</code></dt>
+<dd><p>These are obsolete options; they have no more effect since GnuPG 2.2.8.
+</p>
+</dd>
+<dt><a id="index-enable_002dspecial_002dfilenames"></a><span><code class="code">--enable-special-filenames</code><a class="copiable-link" href="#index-enable_002dspecial_002dfilenames"> &para;</a></span></dt>
+<dd><p>This option enables a mode in which filenames of the form
+<samp class="file">-&amp;n</samp>, where n is a non-negative decimal number,
+refer to the file descriptor n and not to a file with that name.
+</p>
+</dd>
+<dt><a id="index-no_002dexpensive_002dtrust_002dchecks"></a><span><code class="code">--no-expensive-trust-checks</code><a class="copiable-link" href="#index-no_002dexpensive_002dtrust_002dchecks"> &para;</a></span></dt>
+<dd><p>Experimental use only.
+</p>
+</dd>
+<dt><a id="index-preserve_002dpermissions"></a><span><code class="code">--preserve-permissions</code><a class="copiable-link" href="#index-preserve_002dpermissions"> &para;</a></span></dt>
+<dd><p>Don&rsquo;t change the permissions of a secret keyring back to user
+read/write only. Use this option only if you really know what you are doing.
+</p>
+</dd>
+<dt><a id="index-default_002dpreference_002dlist"></a><span><code class="code">--default-preference-list <var class="var">string</var></code><a class="copiable-link" href="#index-default_002dpreference_002dlist"> &para;</a></span></dt>
+<dd><p>Set the list of default preferences to <var class="var">string</var>. This preference
+list is used for new keys and becomes the default for &quot;setpref&quot; in the
+<samp class="option">--edit-key</samp> menu.
+</p>
+</dd>
+<dt><a id="index-default_002dkeyserver_002durl"></a><span><code class="code">--default-keyserver-url <var class="var">name</var></code><a class="copiable-link" href="#index-default_002dkeyserver_002durl"> &para;</a></span></dt>
+<dd><p>Set the default keyserver URL to <var class="var">name</var>. This keyserver will be
+used as the keyserver URL when writing a new self-signature on a key,
+which includes key generation and changing preferences.
+</p>
+</dd>
+<dt><a id="index-list_002dconfig"></a><span><code class="code">--list-config</code><a class="copiable-link" href="#index-list_002dconfig"> &para;</a></span></dt>
+<dd><p>Display various internal configuration parameters of GnuPG. This option
+is intended for external programs that call GnuPG to perform tasks, and
+is thus not generally useful. See the file <samp class="file">doc/DETAILS</samp> in the
+source distribution for the details of which configuration items may be
+listed. <samp class="option">--list-config</samp> is only usable with
+<samp class="option">--with-colons</samp> set.
+</p>
+</dd>
+<dt><a id="index-list_002dgcrypt_002dconfig"></a><span><code class="code">--list-gcrypt-config</code><a class="copiable-link" href="#index-list_002dgcrypt_002dconfig"> &para;</a></span></dt>
+<dd><p>Display various internal configuration parameters of Libgcrypt.
+</p>
+</dd>
+<dt><a id="index-gpgconf_002dlist"></a><span><code class="code">--gpgconf-list</code><a class="copiable-link" href="#index-gpgconf_002dlist"> &para;</a></span></dt>
+<dd><p>This command is similar to <samp class="option">--list-config</samp> but in general only
+internally used by the <code class="command">gpgconf</code> tool.
+</p>
+</dd>
+<dt><a id="index-gpgconf_002dtest"></a><span><code class="code">--gpgconf-test</code><a class="copiable-link" href="#index-gpgconf_002dtest"> &para;</a></span></dt>
+<dd><p>This is more or less dummy action.  However it parses the configuration
+file and returns with failure if the configuration file would prevent
+<code class="command">gpg</code> from startup.  Thus it may be used to run a syntax check
+on the configuration file.
+</p>
+
+</dd>
+<dt><a id="index-chuid"></a><span><code class="code">--chuid <var class="var">uid</var></code><a class="copiable-link" href="#index-chuid"> &para;</a></span></dt>
+<dd><p>Change the current user to <var class="var">uid</var> which may either be a number or a
+name.  This can be used from the root account to run gpg for
+another user.  If <var class="var">uid</var> is not the current UID a standard PATH is
+set and the envvar GNUPGHOME is unset.  To override the latter the
+option <samp class="option">--homedir</samp> can be used.  This option has only an effect
+when used on the command line.  This option has currently no effect at
+all on Windows.
+</p>
+</dd>
+</dl>
+
+</div>
+<div class="footnotes-segment">
+<hr>
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<h5 class="footnote-body-heading"><a id="FOOT2" href="#DOCF2">(2)</a></h5>
+<p>Using a little social engineering
+anyone who is able to decrypt the message can check whether one of the
+other recipients is the one he suspects.</p>
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Deprecated-Options.html">Deprecated options</a>, Previous: <a href="Compliance-Options.html">Compliance options</a>, Up: <a href="GPG-Options.html">Option Summary</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

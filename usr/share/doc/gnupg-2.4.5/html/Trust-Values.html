@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Trust Values (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Trust Values (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Trust Values (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="index.html" rel="up" title="Top">
+<link href="Smart-Card-Tool.html" rel="next" title="Smart Card Tool">
+<link href="Specify-a-User-ID.html" rel="prev" title="Specify a User ID">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="chapter-level-extent" id="Trust-Values">
+<div class="nav-panel">
+<p>
+Next: <a href="Smart-Card-Tool.html" accesskey="n" rel="next">Smart Card Tool</a>, Previous: <a href="Specify-a-User-ID.html" accesskey="p" rel="prev">How to Specify a User Id</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h2 class="chapter" id="Trust-Values-1"><span>8 Trust Values<a class="copiable-link" href="#Trust-Values-1"> &para;</a></span></h2>
+<a class="anchor" id="trust_002dvalues"></a><a class="index-entry-id" id="index-trust-values"></a>
+
+<p>Trust values are used to indicate ownertrust and validity of keys and
+user IDs.  They are displayed with letters or strings:
+</p>
+<dl class="table">
+<dt>-</dt>
+<dt>unknown</dt>
+<dd><p>No ownertrust assigned / not yet calculated.
+</p>
+</dd>
+<dt>e</dt>
+<dt>expired</dt>
+<dd>
+<p>Trust calculation has failed; probably due to an expired key.
+</p>
+</dd>
+<dt>q</dt>
+<dt>undefined, undef</dt>
+<dd><p>Not enough information for calculation.
+</p>
+</dd>
+<dt>n</dt>
+<dt>never</dt>
+<dd><p>Never trust this key.
+</p>
+</dd>
+<dt>m</dt>
+<dt>marginal</dt>
+<dd><p>Marginally trusted.
+</p>
+</dd>
+<dt>f</dt>
+<dt>full</dt>
+<dd><p>Fully trusted.
+</p>
+</dd>
+<dt>u</dt>
+<dt>ultimate</dt>
+<dd><p>Ultimately trusted.
+</p>
+</dd>
+<dt>r</dt>
+<dt>revoked</dt>
+<dd><p>For validity only: the key or the user ID has been revoked.
+</p>
+</dd>
+<dt>?</dt>
+<dt>err</dt>
+<dd><p>The program encountered an unknown trust value.
+</p>
+</dd>
+</dl>
+
+
+
+
+
+</div>
+
+
+
+</body>
+</html>

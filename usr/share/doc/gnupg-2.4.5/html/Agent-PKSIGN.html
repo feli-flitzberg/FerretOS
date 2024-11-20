@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Agent PKSIGN (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Agent PKSIGN (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Agent PKSIGN (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Agent-Protocol.html" rel="up" title="Agent Protocol">
+<link href="Agent-GENKEY.html" rel="next" title="Agent GENKEY">
+<link href="Agent-PKDECRYPT.html" rel="prev" title="Agent PKDECRYPT">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Agent-PKSIGN">
+<div class="nav-panel">
+<p>
+Next: <a href="Agent-GENKEY.html" accesskey="n" rel="next">Generating a Key</a>, Previous: <a href="Agent-PKDECRYPT.html" accesskey="p" rel="prev">Decrypting a session key</a>, Up: <a href="Agent-Protocol.html" accesskey="u" rel="up">Agent&rsquo;s Assuan Protocol</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Signing-a-Hash"><span>2.6.2 Signing a Hash<a class="copiable-link" href="#Signing-a-Hash"> &para;</a></span></h4>
+
+<p>The client asks the agent to sign a given hash value.  A default key
+will be chosen if no key has been set.  To set a key a client first
+uses:
+</p>
+<div class="example">
+<pre class="example-preformatted">   SIGKEY &lt;keyGrip&gt;
+</pre></div>
+
+<p>This can be used multiple times to create multiple signature, the list
+of keys is reset with the next PKSIGN command or a RESET.  The server
+tests whether the key is a valid key to sign something and responds with
+okay.
+</p>
+<div class="example">
+<pre class="example-preformatted">   SETHASH --hash=&lt;name&gt;|&lt;algo&gt; &lt;hexstring&gt;
+</pre></div>
+
+<p>The client can use this command to tell the server about the data &lt;hexstring&gt;
+(which usually is a hash) to be signed. &lt;algo&gt; is the decimal encoded hash
+algorithm number as used by Libgcrypt.  Either &lt;algo&gt; or &ndash;hash=&lt;name&gt;
+must be given.  Valid names for &lt;name&gt; are:
+</p>
+<dl class="table">
+<dt><code class="code">sha1</code></dt>
+<dd><p>The SHA-1 hash algorithm
+</p></dd>
+<dt><code class="code">sha256</code></dt>
+<dd><p>The SHA-256 hash algorithm
+</p></dd>
+<dt><code class="code">rmd160</code></dt>
+<dd><p>The RIPE-MD160 hash algorithm
+</p></dd>
+<dt><code class="code">md5</code></dt>
+<dd><p>The old and broken MD5 hash algorithm
+</p></dd>
+<dt><code class="code">tls-md5sha1</code></dt>
+<dd><p>A combined hash algorithm as used by the TLS protocol.
+</p></dd>
+</dl>
+
+<p>The actual signing is done using
+</p>
+<div class="example">
+<pre class="example-preformatted">   PKSIGN &lt;options&gt;
+</pre></div>
+
+<p>Options are not yet defined, but may later be used to choose among
+different algorithms.  The agent does then some checks, asks for the
+passphrase and as a result the server returns the signature as an SPKI
+like S-expression in &quot;D&quot; lines:
+</p>
+<div class="example">
+<pre class="example-preformatted">     (sig-val
+       (&lt;algo&gt;
+         (&lt;param_name1&gt; &lt;mpi&gt;)
+ 	   ...
+         (&lt;param_namen&gt; &lt;mpi&gt;)))
+</pre></div>
+
+
+<p>The operation is affected by the option
+</p>
+<div class="example">
+<pre class="example-preformatted">   OPTION use-cache-for-signing=0|1
+</pre></div>
+
+<p>The default of <code class="code">1</code> uses the cache.  Setting this option to <code class="code">0</code>
+will lead <code class="command">gpg-agent</code> to ignore the passphrase cache.  Note, that there is
+also a global command line option for <code class="command">gpg-agent</code> to globally disable the
+caching.
+</p>
+
+<p>Here is an example session:
+</p><table class="cartouche" border="1"><tr><td>
+<div class="example smallexample">
+<pre class="example-preformatted">   C: SIGKEY &lt;keyGrip&gt;
+   S: OK key available
+   C: SIGKEY &lt;keyGrip&gt;
+   S: OK key available
+   C: PKSIGN
+   S: # I did ask the user whether he really wants to sign
+   S: # I did ask the user for the passphrase
+   S: INQUIRE HASHVAL
+   C: D ABCDEF012345678901234
+   C: END
+   S: # signature follows
+   S: D (sig-val rsa (s 45435453654612121212))
+   S: OK
+</pre></div>
+</td></tr></table>
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Agent-GENKEY.html">Generating a Key</a>, Previous: <a href="Agent-PKDECRYPT.html">Decrypting a session key</a>, Up: <a href="Agent-Protocol.html">Agent&rsquo;s Assuan Protocol</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

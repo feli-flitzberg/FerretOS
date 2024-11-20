@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Listing global options (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Listing global options (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Listing global options (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="gpgconf.html" rel="up" title="gpgconf">
+<link href="Querying-versions.html" rel="next" title="Querying versions">
+<link href="Changing-options.html" rel="prev" title="Changing options">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Listing-global-options">
+<div class="nav-panel">
+<p>
+Next: <a href="Querying-versions.html" accesskey="n" rel="next">Get and compare software versions.</a>, Previous: <a href="Changing-options.html" accesskey="p" rel="prev">Changing options</a>, Up: <a href="gpgconf.html" accesskey="u" rel="up">Modify .gnupg home directories</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Listing-global-options-1"><span>10.4.7 Listing global options<a class="copiable-link" href="#Listing-global-options-1"> &para;</a></span></h4>
+
+<p>Some legacy applications look at the global configuration file for the
+gpgconf tool itself; this is the file <samp class="file">gpgconf.conf</samp>.  Modern
+applications should not use it but use per component global
+configuration files which are more flexible than the
+<samp class="file">gpgconf.conf</samp>.  Using both files is not suggested.
+</p>
+<p>The colon separated listing format is record oriented and uses the first
+field to identify the record type:
+</p>
+<dl class="table">
+<dt><code class="code">k</code></dt>
+<dd><p>This describes a key record to start the definition of a new ruleset for
+a user/group.  The format of a key record is:
+</p>
+<p><code class="code">k:<var class="var">user</var>:<var class="var">group</var>:</code>
+</p>
+<dl class="table">
+<dt><var class="var">user</var></dt>
+<dd><p>This is the user field of the key.  It is percent escaped.  See the
+definition of the gpgconf.conf format for details.
+</p>
+</dd>
+<dt><var class="var">group</var></dt>
+<dd><p>This is the group field of the key.  It is percent escaped.
+</p></dd>
+</dl>
+
+</dd>
+<dt><code class="code">r</code></dt>
+<dd><p>This describes a rule record. All rule records up to the next key record
+make up a rule set for that key.  The format of a rule record is:
+</p>
+<p><code class="code">r:::<var class="var">component</var>:<var class="var">option</var>:<var class="var">flag</var>:<var class="var">value</var>:</code>
+</p>
+<dl class="table">
+<dt><var class="var">component</var></dt>
+<dd><p>This is the component part of a rule.  It is a plain string.
+</p>
+</dd>
+<dt><var class="var">option</var></dt>
+<dd><p>This is the option part of a rule.  It is a plain string.
+</p>
+</dd>
+<dt><var class="var">flag</var></dt>
+<dd><p>This is the flags part of a rule.  There may be only one flag per rule
+but by using the same component and option, several flags may be
+assigned to an option.  It is a plain string.
+</p>
+</dd>
+<dt><var class="var">value</var></dt>
+<dd><p>This is the optional value for the option.  It is a percent escaped
+string with a single quotation mark to indicate a string.  The quotation
+mark is only required to distinguish between no value specified and an
+empty string.
+</p></dd>
+</dl>
+
+</dd>
+</dl>
+
+<p>Unknown record types should be ignored.  Note that there is intentionally
+no feature to change the global option file through <code class="command">gpgconf</code>.
+</p>
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Querying-versions.html">Get and compare software versions.</a>, Previous: <a href="Changing-options.html">Changing options</a>, Up: <a href="gpgconf.html">Modify .gnupg home directories</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

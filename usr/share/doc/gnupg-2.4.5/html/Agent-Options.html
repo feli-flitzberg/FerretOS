@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Agent Options (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Agent Options (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Agent Options (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Invoking-GPG_002dAGENT.html" rel="up" title="Invoking GPG-AGENT">
+<link href="Agent-Configuration.html" rel="next" title="Agent Configuration">
+<link href="Agent-Commands.html" rel="prev" title="Agent Commands">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="Agent-Options">
+<div class="nav-panel">
+<p>
+Next: <a href="Agent-Configuration.html" accesskey="n" rel="next">Configuration</a>, Previous: <a href="Agent-Commands.html" accesskey="p" rel="prev">Commands</a>, Up: <a href="Invoking-GPG_002dAGENT.html" accesskey="u" rel="up">Invoking GPG-AGENT</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="Option-Summary"><span>2.2 Option Summary<a class="copiable-link" href="#Option-Summary"> &para;</a></span></h3>
+
+<p>Options may either be used on the command line or, after stripping off
+the two leading dashes, in the configuration file.
+</p>
+<dl class="table">
+<dd>
+<a class="anchor" id="option-_002d_002doptions"></a></dd>
+<dt><a id="index-options"></a><span><code class="code">--options <var class="var">file</var></code><a class="copiable-link" href="#index-options"> &para;</a></span></dt>
+<dd><p>Reads configuration from <var class="var">file</var> instead of from the default
+per-user configuration file.  The default configuration file is named
+<samp class="file">gpg-agent.conf</samp> and expected in the <samp class="file">.gnupg</samp> directory
+directly below the home directory of the user.  This option is ignored
+if used in an options file.
+</p>
+<a class="anchor" id="option-_002d_002dhomedir"></a></dd>
+<dt><a class="index-entry-id" id="index-GNUPGHOME"></a>
+<a class="index-entry-id" id="index-HKCU_005cSoftware_005cGNU_005cGnuPG_003aHomeDir"></a>
+<a id="index-homedir"></a><span><code class="code">--homedir <var class="var">dir</var></code><a class="copiable-link" href="#index-homedir"> &para;</a></span></dt>
+<dd><p>Set the name of the home directory to <var class="var">dir</var>. If this option is not
+used, the home directory defaults to <samp class="file">~/.gnupg</samp>.  It is only
+recognized when given on the command line.  It also overrides any home
+directory stated through the environment variable <code class="env">GNUPGHOME</code> or
+(on Windows systems) by means of the Registry entry
+<var class="var">HKCU\Software\GNU\GnuPG:HomeDir</var>.
+</p>
+<p>On Windows systems it is possible to install GnuPG as a portable
+application.  In this case only this command line option is
+considered, all other ways to set a home directory are ignored.
+</p>
+
+</dd>
+<dt><a id="index-verbose"></a><span><code class="code">-v</code><a class="copiable-link" href="#index-verbose"> &para;</a></span></dt>
+<dt><code class="code">--verbose</code></dt>
+<dd><p>Outputs additional information while running.
+You can increase the verbosity by giving several
+verbose commands to <code class="command">gpg-agent</code>, such as &lsquo;<samp class="samp">-vv</samp>&rsquo;.
+</p>
+</dd>
+<dt><a id="index-quiet"></a><span><code class="code">-q</code><a class="copiable-link" href="#index-quiet"> &para;</a></span></dt>
+<dt><code class="code">--quiet</code></dt>
+<dd><p>Try to be as quiet as possible.
+</p>
+</dd>
+<dt><a id="index-batch"></a><span><code class="code">--batch</code><a class="copiable-link" href="#index-batch"> &para;</a></span></dt>
+<dd><p>Don&rsquo;t invoke a pinentry or do any other thing requiring human interaction.
+</p>
+</dd>
+<dt><a id="index-faked_002dsystem_002dtime"></a><span><code class="code">--faked-system-time <var class="var">epoch</var></code><a class="copiable-link" href="#index-faked_002dsystem_002dtime"> &para;</a></span></dt>
+<dd><p>This option is only useful for testing; it sets the system time back or
+forth to <var class="var">epoch</var> which is the number of seconds elapsed since the year
+1970.
+</p>
+</dd>
+<dt><a id="index-debug_002dlevel"></a><span><code class="code">--debug-level <var class="var">level</var></code><a class="copiable-link" href="#index-debug_002dlevel"> &para;</a></span></dt>
+<dd><p>Select the debug level for investigating problems. <var class="var">level</var> may be
+a numeric value or a keyword:
+</p>
+<dl class="table">
+<dt><code class="code">none</code></dt>
+<dd><p>No debugging at all.  A value of less than 1 may be used instead of
+the keyword.
+</p></dd>
+<dt><code class="code">basic</code></dt>
+<dd><p>Some basic debug messages.  A value between 1 and 2 may be used
+instead of the keyword.
+</p></dd>
+<dt><code class="code">advanced</code></dt>
+<dd><p>More verbose debug messages.  A value between 3 and 5 may be used
+instead of the keyword.
+</p></dd>
+<dt><code class="code">expert</code></dt>
+<dd><p>Even more detailed messages.  A value between 6 and 8 may be used
+instead of the keyword.
+</p></dd>
+<dt><code class="code">guru</code></dt>
+<dd><p>All of the debug messages you can get. A value greater than 8 may be
+used instead of the keyword.  The creation of hash tracing files is
+only enabled if the keyword is used.
+</p></dd>
+</dl>
+
+<p>How these messages are mapped to the actual debugging flags is not
+specified and may change with newer releases of this program. They are
+however carefully selected to best aid in debugging.
+</p>
+</dd>
+<dt><a id="index-debug"></a><span><code class="code">--debug <var class="var">flags</var></code><a class="copiable-link" href="#index-debug"> &para;</a></span></dt>
+<dd><p>Set debug flags.  All flags are or-ed and <var class="var">flags</var> may be given
+in C syntax (e.g. 0x0042) or as a comma separated list of flag names.
+To get a list of all supported flags the single word &quot;help&quot; can be
+used. This option is only useful for debugging and the behavior may
+change at any time without notice.
+</p>
+</dd>
+<dt><a id="index-debug_002dall"></a><span><code class="code">--debug-all</code><a class="copiable-link" href="#index-debug_002dall"> &para;</a></span></dt>
+<dd><p>Same as <code class="code">--debug=0xffffffff</code>
+</p>
+</dd>
+<dt><a id="index-debug_002dwait"></a><span><code class="code">--debug-wait <var class="var">n</var></code><a class="copiable-link" href="#index-debug_002dwait"> &para;</a></span></dt>
+<dd><p>When running in server mode, wait <var class="var">n</var> seconds before entering the
+actual processing loop and print the pid.  This gives time to attach a
+debugger.
+</p>
+</dd>
+<dt><a id="index-debug_002dquick_002drandom"></a><span><code class="code">--debug-quick-random</code><a class="copiable-link" href="#index-debug_002dquick_002drandom"> &para;</a></span></dt>
+<dd><p>This option inhibits the use of the very secure random quality level
+(Libgcrypt’s <code class="code">GCRY_VERY_STRONG_RANDOM</code>) and degrades all request
+down to standard random quality.  It is only used for testing and
+should not be used for any production quality keys.  This option is
+only effective when given on the command line.
+</p>
+<p>On GNU/Linux, another way to quickly generate insecure keys is to use
+<code class="command">rngd</code> to fill the kernel&rsquo;s entropy pool with lower quality
+random data.  <code class="command">rngd</code> is typically provided by the
+<code class="command">rng-tools</code> package.  It can be run as follows: &lsquo;<samp class="samp">sudo
+rngd -f -r /dev/urandom</samp>&rsquo;.
+</p>
+</dd>
+<dt><a id="index-debug_002dpinentry"></a><span><code class="code">--debug-pinentry</code><a class="copiable-link" href="#index-debug_002dpinentry"> &para;</a></span></dt>
+<dd><p>This option enables extra debug information pertaining to the
+Pinentry.  As of now it is only useful when used along with
+<code class="code">--debug 1024</code>.
+</p>
+</dd>
+<dt><a id="index-no_002ddetach"></a><span><code class="code">--no-detach</code><a class="copiable-link" href="#index-no_002ddetach"> &para;</a></span></dt>
+<dd><p>Don&rsquo;t detach the process from the console.  This is mainly useful for
+debugging.
+</p>
+</dd>
+<dt><a id="index-steal_002dsocket"></a><span><code class="code">--steal-socket</code><a class="copiable-link" href="#index-steal_002dsocket"> &para;</a></span></dt>
+<dd><p>In <samp class="option">--daemon</samp> mode, gpg-agent detects an already running
+gpg-agent and does not allow one to start a new instance. This option can
+be used to override this check: the new gpg-agent process will try to
+take over the communication sockets from the already running process
+and start anyway.  This option should in general not be used.
+</p>
+
+</dd>
+<dt><a class="index-entry-id" id="index-csh"></a>
+<a class="index-entry-id" id="index-SHELL"></a>
+<a id="index-sh"></a><span><code class="code">-s</code><a class="copiable-link" href="#index-sh"> &para;</a></span></dt>
+<dt><code class="code">--sh</code></dt>
+<dt><code class="code">-c</code></dt>
+<dt><code class="code">--csh</code></dt>
+<dd><p>Format the info output in daemon mode for use with the standard Bourne
+shell or the C-shell respectively.  The default is to guess it based on
+the environment variable <code class="code">SHELL</code> which is correct in almost all
+cases.
+</p>
+
+</dd>
+<dt><a class="index-entry-id" id="index-no_002dgrab"></a>
+<a id="index-grab"></a><span><code class="code">--grab</code><a class="copiable-link" href="#index-grab"> &para;</a></span></dt>
+<dt><code class="code">--no-grab</code></dt>
+<dd><p>Tell the pinentry to grab the keyboard and mouse.  This option should
+be used on X-Servers to avoid X-sniffing attacks. Any use of the
+option <samp class="option">--grab</samp> overrides an used option <samp class="option">--no-grab</samp>.
+The default is <samp class="option">--no-grab</samp>.
+</p>
+<a class="anchor" id="option-_002d_002dlog_002dfile"></a></dd>
+<dt><a class="index-entry-id" id="index-HKCU_005cSoftware_005cGNU_005cGnuPG_003aDefaultLogFile"></a>
+<a id="index-log_002dfile"></a><span><code class="code">--log-file <var class="var">file</var></code><a class="copiable-link" href="#index-log_002dfile"> &para;</a></span></dt>
+<dd><p>Append all logging output to <var class="var">file</var>.  This is very helpful in
+seeing what the agent actually does. Use <samp class="file">socket://</samp> to log to
+socket.  If neither a log file nor a log file descriptor has been set
+on a Windows platform, the Registry entry
+<code class="code">HKCU\Software\GNU\GnuPG:DefaultLogFile</code>, if set, is used to
+specify the logging output.
+</p>
+
+<a class="anchor" id="option-_002d_002dno_002dallow_002dmark_002dtrusted"></a></dd>
+<dt><a id="index-no_002dallow_002dmark_002dtrusted"></a><span><code class="code">--no-allow-mark-trusted</code><a class="copiable-link" href="#index-no_002dallow_002dmark_002dtrusted"> &para;</a></span></dt>
+<dd><p>Do not allow clients to mark keys as trusted, i.e. put them into the
+<samp class="file">trustlist.txt</samp> file.  This makes it harder for users to inadvertently
+accept Root-CA keys.
+</p>
+
+<a class="anchor" id="option-_002d_002dno_002duser_002dtrustlist"></a></dd>
+<dt><a id="index-no_002duser_002dtrustlist"></a><span><code class="code">--no-user-trustlist</code><a class="copiable-link" href="#index-no_002duser_002dtrustlist"> &para;</a></span></dt>
+<dd><p>Entirely ignore the user trust list and consider only the global
+trustlist (<samp class="file">/etc/gnupg/trustlist.txt</samp>).  This
+implies the <a class="ref" href="#option-_002d_002dno_002dallow_002dmark_002dtrusted">option --no-allow-mark-trusted</a>.
+</p>
+</dd>
+<dt><a id="index-sys_002dtrustlist_002dname"></a><span><code class="code">--sys-trustlist-name <var class="var">file</var></code><a class="copiable-link" href="#index-sys_002dtrustlist_002dname"> &para;</a></span></dt>
+<dd><p>Changes the default name for the global trustlist from &quot;trustlist.txt&quot;
+to <var class="var">file</var>.  If <var class="var">file</var> does not contain any slashes and does
+not start with &quot;~/&quot; it is searched in the system configuration
+directory (<samp class="file">/etc/gnupg</samp>).
+</p>
+<a class="anchor" id="option-_002d_002dallow_002dpreset_002dpassphrase"></a></dd>
+<dt><a id="index-allow_002dpreset_002dpassphrase"></a><span><code class="code">--allow-preset-passphrase</code><a class="copiable-link" href="#index-allow_002dpreset_002dpassphrase"> &para;</a></span></dt>
+<dd><p>This option allows the use of <code class="command">gpg-preset-passphrase</code> to seed the
+internal cache of <code class="command">gpg-agent</code> with passphrases.
+</p>
+<a class="anchor" id="option-_002d_002dno_002dallow_002dloopback_002dpinentry"></a></dd>
+<dt><code class="code">--no-allow-loopback-pinentry</code></dt>
+<dt><a class="index-entry-id" id="index-allow_002dloopback_002dpinentry"></a>
+<a id="index-no_002dallow_002dloopback_002dpinentry"></a><span><code class="code">--allow-loopback-pinentry</code><a class="copiable-link" href="#index-no_002dallow_002dloopback_002dpinentry"> &para;</a></span></dt>
+<dd><p>Disallow or allow clients to use the loopback pinentry features; see
+the option <samp class="option">pinentry-mode</samp> for details.  Allow is the default.
+</p>
+<p>The <samp class="option">--force</samp> option of the Assuan command <code class="command">DELETE_KEY</code>
+is also controlled by this option: The option is ignored if a loopback
+pinentry is disallowed.
+</p>
+</dd>
+<dt><a id="index-no_002dallow_002dexternal_002dcache"></a><span><code class="code">--no-allow-external-cache</code><a class="copiable-link" href="#index-no_002dallow_002dexternal_002dcache"> &para;</a></span></dt>
+<dd><p>Tell Pinentry not to enable features which use an external cache for
+passphrases.
+</p>
+<p>Some desktop environments prefer to unlock all
+credentials with one master password and may have installed a Pinentry
+which employs an additional external cache to implement such a policy.
+By using this option the Pinentry is advised not to make use of such a
+cache and instead always ask the user for the requested passphrase.
+</p>
+</dd>
+<dt><a id="index-allow_002demacs_002dpinentry"></a><span><code class="code">--allow-emacs-pinentry</code><a class="copiable-link" href="#index-allow_002demacs_002dpinentry"> &para;</a></span></dt>
+<dd><p>Tell Pinentry to allow features to divert the passphrase entry to a
+running Emacs instance.  How this is exactly handled depends on the
+version of the used Pinentry.
+</p>
+</dd>
+<dt><a id="index-ignore_002dcache_002dfor_002dsigning"></a><span><code class="code">--ignore-cache-for-signing</code><a class="copiable-link" href="#index-ignore_002dcache_002dfor_002dsigning"> &para;</a></span></dt>
+<dd><p>This option will let <code class="command">gpg-agent</code> bypass the passphrase cache for all
+signing operation.  Note that there is also a per-session option to
+control this behavior but this command line option takes precedence.
+</p>
+</dd>
+<dt><a id="index-default_002dcache_002dttl"></a><span><code class="code">--default-cache-ttl <var class="var">n</var></code><a class="copiable-link" href="#index-default_002dcache_002dttl"> &para;</a></span></dt>
+<dd><p>Set the time a cache entry is valid to <var class="var">n</var> seconds.  The default
+is 600 seconds.  Each time a cache entry is accessed, the entry&rsquo;s
+timer is reset.  To set an entry&rsquo;s maximum lifetime, use
+<code class="command">max-cache-ttl</code>.  Note that a cached passphrase may not be
+evicted immediately from memory if no client requests a cache
+operation.  This is due to an internal housekeeping function which is
+only run every few seconds.
+</p>
+</dd>
+<dt><a id="index-default_002dcache_002dttl-1"></a><span><code class="code">--default-cache-ttl-ssh <var class="var">n</var></code><a class="copiable-link" href="#index-default_002dcache_002dttl-1"> &para;</a></span></dt>
+<dd><p>Set the time a cache entry used for SSH keys is valid to <var class="var">n</var>
+seconds.  The default is 1800 seconds.  Each time a cache entry is
+accessed, the entry&rsquo;s timer is reset.  To set an entry&rsquo;s maximum
+lifetime, use <code class="command">max-cache-ttl-ssh</code>.
+</p>
+</dd>
+<dt><a id="index-max_002dcache_002dttl"></a><span><code class="code">--max-cache-ttl <var class="var">n</var></code><a class="copiable-link" href="#index-max_002dcache_002dttl"> &para;</a></span></dt>
+<dd><p>Set the maximum time a cache entry is valid to <var class="var">n</var> seconds.  After
+this time a cache entry will be expired even if it has been accessed
+recently or has been set using <code class="command">gpg-preset-passphrase</code>.  The
+default is 2 hours (7200 seconds).
+</p>
+</dd>
+<dt><a id="index-max_002dcache_002dttl_002dssh"></a><span><code class="code">--max-cache-ttl-ssh <var class="var">n</var></code><a class="copiable-link" href="#index-max_002dcache_002dttl_002dssh"> &para;</a></span></dt>
+<dd><p>Set the maximum time a cache entry used for SSH keys is valid to
+<var class="var">n</var> seconds.  After this time a cache entry will be expired even
+if it has been accessed recently or has been set using
+<code class="command">gpg-preset-passphrase</code>.  The default is 2 hours (7200
+seconds).
+</p>
+</dd>
+<dt><a id="index-enforce_002dpassphrase_002dconstraints"></a><span><code class="code">--enforce-passphrase-constraints</code><a class="copiable-link" href="#index-enforce_002dpassphrase_002dconstraints"> &para;</a></span></dt>
+<dd><p>Enforce the passphrase constraints by not allowing the user to bypass
+them using the &ldquo;Take it anyway&rdquo; button.
+</p>
+</dd>
+<dt><a id="index-min_002dpassphrase_002dlen"></a><span><code class="code">--min-passphrase-len <var class="var">n</var></code><a class="copiable-link" href="#index-min_002dpassphrase_002dlen"> &para;</a></span></dt>
+<dd><p>Set the minimal length of a passphrase.  When entering a new passphrase
+shorter than this value a warning will be displayed.  Defaults to 8.
+</p>
+</dd>
+<dt><a id="index-min_002dpassphrase_002dnonalpha"></a><span><code class="code">--min-passphrase-nonalpha <var class="var">n</var></code><a class="copiable-link" href="#index-min_002dpassphrase_002dnonalpha"> &para;</a></span></dt>
+<dd><p>Set the minimal number of digits or special characters required in a
+passphrase.  When entering a new passphrase with less than this number
+of digits or special characters a warning will be displayed.  Defaults
+to 1.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-check_002dsym_002dpassphrase_002dpattern"></a>
+<a id="index-check_002dpassphrase_002dpattern"></a><span><code class="code">--check-passphrase-pattern <var class="var">file</var></code><a class="copiable-link" href="#index-check_002dpassphrase_002dpattern"> &para;</a></span></dt>
+<dt><code class="code">--check-sym-passphrase-pattern <var class="var">file</var></code></dt>
+<dd><p>Check the passphrase against the pattern given in <var class="var">file</var>.  When
+entering a new passphrase matching one of these pattern a warning will
+be displayed.  If <var class="var">file</var> does not contain any slashes and does not
+start with &quot;~/&quot; it is searched in the system configuration directory
+(<samp class="file">/etc/gnupg</samp>).  The default is not to use any
+pattern file.  The second version of this option is only used when
+creating a new symmetric key to allow the use of different patterns
+for such passphrases.
+</p>
+<p>Security note: It is known that checking a passphrase against a list of
+pattern or even against a complete dictionary is not very effective to
+enforce good passphrases.  Users will soon figure up ways to bypass such
+a policy.  A better policy is to educate users on good security
+behavior and optionally to run a passphrase cracker regularly on all
+users passphrases to catch the very simple ones.
+</p>
+</dd>
+<dt><a id="index-max_002dpassphrase_002ddays"></a><span><code class="code">--max-passphrase-days <var class="var">n</var></code><a class="copiable-link" href="#index-max_002dpassphrase_002ddays"> &para;</a></span></dt>
+<dd><p>Ask the user to change the passphrase if <var class="var">n</var> days have passed since
+the last change.  With <samp class="option">--enforce-passphrase-constraints</samp> set the
+user may not bypass this check.
+</p>
+</dd>
+<dt><a id="index-enable_002dpassphrase_002dhistory"></a><span><code class="code">--enable-passphrase-history</code><a class="copiable-link" href="#index-enable_002dpassphrase_002dhistory"> &para;</a></span></dt>
+<dd><p>This option does nothing yet.
+</p>
+</dd>
+<dt><a id="index-pinentry_002dinvisible_002dchar"></a><span><code class="code">--pinentry-invisible-char <var class="var">char</var></code><a class="copiable-link" href="#index-pinentry_002dinvisible_002dchar"> &para;</a></span></dt>
+<dd><p>This option asks the Pinentry to use <var class="var">char</var> for displaying hidden
+characters.  <var class="var">char</var> must be one character UTF-8 string.  A
+Pinentry may or may not honor this request.
+</p>
+</dd>
+<dt><a id="index-pinentry_002dtimeout"></a><span><code class="code">--pinentry-timeout <var class="var">n</var></code><a class="copiable-link" href="#index-pinentry_002dtimeout"> &para;</a></span></dt>
+<dd><p>This option asks the Pinentry to timeout after <var class="var">n</var> seconds with no
+user input.  The default value of 0 does not ask the pinentry to
+timeout, however a Pinentry may use its own default timeout value in
+this case.  A Pinentry may or may not honor this request.
+</p>
+</dd>
+<dt><a id="index-pinentry_002dformatted_002dpassphrase"></a><span><code class="code">--pinentry-formatted-passphrase</code><a class="copiable-link" href="#index-pinentry_002dformatted_002dpassphrase"> &para;</a></span></dt>
+<dd><p>This option asks the Pinentry to enable passphrase formatting when asking the
+user for a new passphrase and masking of the passphrase is turned off.
+</p>
+<p>If passphrase formatting is enabled, then all non-breaking space characters
+are stripped from the entered passphrase.  Passphrase formatting is mostly
+useful in combination with passphrases generated with the GENPIN
+feature of some Pinentries.  Note that such a generated
+passphrase, if not modified by the user, skips all passphrase
+constraints checking because such constraints would actually weaken
+the generated passphrase.
+</p>
+</dd>
+<dt><a id="index-pinentry_002dprogram"></a><span><code class="code">--pinentry-program <var class="var">filename</var></code><a class="copiable-link" href="#index-pinentry_002dprogram"> &para;</a></span></dt>
+<dd><p>Use program <var class="var">filename</var> as the PIN entry.  The default is
+installation dependent.  With the default configuration the name of
+the default pinentry is <samp class="file">pinentry</samp>; if that file does not exist
+but a <samp class="file">pinentry-basic</samp> exist the latter is used.
+</p>
+<p>On a Windows platform the default is to use the first existing program
+from this list:
+<samp class="file">bin\pinentry.exe</samp>,
+<samp class="file">..\Gpg4win\bin\pinentry.exe</samp>,
+<samp class="file">..\Gpg4win\pinentry.exe</samp>,
+<samp class="file">..\GNU\GnuPG\pinentry.exe</samp>,
+<samp class="file">..\GNU\bin\pinentry.exe</samp>,
+<samp class="file">bin\pinentry-basic.exe</samp>
+where the file names are relative to the GnuPG installation directory.
+</p>
+
+</dd>
+<dt><a id="index-pinentry_002dtouch_002dfile"></a><span><code class="code">--pinentry-touch-file <var class="var">filename</var></code><a class="copiable-link" href="#index-pinentry_002dtouch_002dfile"> &para;</a></span></dt>
+<dd><p>By default the filename of the socket gpg-agent is listening for
+requests is passed to Pinentry, so that it can touch that file before
+exiting (it does this only in curses mode).  This option changes the
+file passed to Pinentry to <var class="var">filename</var>.  The special name
+<code class="code">/dev/null</code> may be used to completely disable this feature.  Note
+that Pinentry will not create that file, it will only change the
+modification and access time.
+</p>
+
+</dd>
+<dt><a id="index-scdaemon_002dprogram"></a><span><code class="code">--scdaemon-program <var class="var">filename</var></code><a class="copiable-link" href="#index-scdaemon_002dprogram"> &para;</a></span></dt>
+<dd><p>Use program <var class="var">filename</var> as the Smartcard daemon.  The default is
+installation dependent and can be shown with the <code class="command">gpgconf</code>
+command.
+</p>
+</dd>
+<dt><a id="index-disable_002dscdaemon"></a><span><code class="code">--disable-scdaemon</code><a class="copiable-link" href="#index-disable_002dscdaemon"> &para;</a></span></dt>
+<dd><p>Do not make use of the scdaemon tool.  This option has the effect of
+disabling the ability to do smartcard operations.  Note, that enabling
+this option at runtime does not kill an already forked scdaemon.
+</p>
+</dd>
+<dt><a id="index-disable_002dcheck_002down_002dsocket"></a><span><code class="code">--disable-check-own-socket</code><a class="copiable-link" href="#index-disable_002dcheck_002down_002dsocket"> &para;</a></span></dt>
+<dd><p><code class="command">gpg-agent</code> employs a periodic self-test to detect a stolen
+socket.  This usually means a second instance of <code class="command">gpg-agent</code>
+has taken over the socket and <code class="command">gpg-agent</code> will then terminate
+itself.  This option may be used to disable this self-test for
+debugging purposes.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-no_002duse_002dstandard_002dsocket"></a>
+<a class="index-entry-id" id="index-use_002dstandard_002dsocket_002dp"></a>
+<a id="index-use_002dstandard_002dsocket"></a><span><code class="code">--use-standard-socket</code><a class="copiable-link" href="#index-use_002dstandard_002dsocket"> &para;</a></span></dt>
+<dt><code class="code">--no-use-standard-socket</code></dt>
+<dt><code class="code">--use-standard-socket-p</code></dt>
+<dd><p>Since GnuPG 2.1 the standard socket is always used.  These options
+have no more effect.  The command <code class="code">gpg-agent
+--use-standard-socket-p</code> will thus always return success.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-ttyname"></a>
+<a class="index-entry-id" id="index-ttytype"></a>
+<a class="index-entry-id" id="index-lc_002dctype"></a>
+<a class="index-entry-id" id="index-lc_002dmessages"></a>
+<a class="index-entry-id" id="index-xauthority"></a>
+<a id="index-display"></a><span><code class="code">--display <var class="var">string</var></code><a class="copiable-link" href="#index-display"> &para;</a></span></dt>
+<dt><code class="code">--ttyname <var class="var">string</var></code></dt>
+<dt><code class="code">--ttytype <var class="var">string</var></code></dt>
+<dt><code class="code">--lc-ctype <var class="var">string</var></code></dt>
+<dt><code class="code">--lc-messages <var class="var">string</var></code></dt>
+<dt><code class="code">--xauthority <var class="var">string</var></code></dt>
+<dd><p>These options are used with the server mode to pass localization
+information.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-keep_002ddisplay"></a>
+<a id="index-keep_002dtty"></a><span><code class="code">--keep-tty</code><a class="copiable-link" href="#index-keep_002dtty"> &para;</a></span></dt>
+<dt><code class="code">--keep-display</code></dt>
+<dd><p>Ignore requests to change the current <code class="code">tty</code> or X window system&rsquo;s
+<code class="code">DISPLAY</code> variable respectively.  This is useful to lock the
+pinentry to pop up at the <code class="code">tty</code> or display you started the agent.
+</p>
+</dd>
+<dt><a id="index-listen_002dbacklog"></a><span><code class="code">--listen-backlog <var class="var">n</var></code><a class="copiable-link" href="#index-listen_002dbacklog"> &para;</a></span></dt>
+<dd><p>Set the size of the queue for pending connections.  The default is 64.
+</p>
+<a class="anchor" id="option-_002d_002dextra_002dsocket"></a></dd>
+<dt><a id="index-extra_002dsocket"></a><span><code class="code">--extra-socket <var class="var">name</var></code><a class="copiable-link" href="#index-extra_002dsocket"> &para;</a></span></dt>
+<dd><p>The extra socket is created by default, you may use this option to
+change the name of the socket.  To disable the creation of the socket
+use &ldquo;none&rdquo; or &ldquo;/dev/null&rdquo; for <var class="var">name</var>.
+</p>
+<p>Also listen on native gpg-agent connections on the given socket.  The
+intended use for this extra socket is to setup a Unix domain socket
+forwarding from a remote machine to this socket on the local machine.
+A <code class="command">gpg</code> running on the remote machine may then connect to the
+local gpg-agent and use its private keys.  This enables decrypting or
+signing data on a remote machine without exposing the private keys to the
+remote machine.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-disable_002dextended_002dkey_002dformat"></a>
+<a id="index-enable_002dextended_002dkey_002dformat"></a><span><code class="code">--enable-extended-key-format</code><a class="copiable-link" href="#index-enable_002dextended_002dkey_002dformat"> &para;</a></span></dt>
+<dt><code class="code">--disable-extended-key-format</code></dt>
+<dd><p>These options are obsolete and have no effect.  The extended key format
+is used for years now and has been supported since 2.1.12.  Existing
+keys in the old format are migrated to the new format as soon as they
+are touched.
+</p>
+
+<a class="anchor" id="option-_002d_002denable_002dssh_002dsupport"></a></dd>
+<dt><a class="index-entry-id" id="index-enable_002dwin32_002dopenssh_002dsupport"></a>
+<a class="index-entry-id" id="index-enable_002dputty_002dsupport"></a>
+<a id="index-enable_002dssh_002dsupport"></a><span><code class="code">--enable-ssh-support</code><a class="copiable-link" href="#index-enable_002dssh_002dsupport"> &para;</a></span></dt>
+<dt><code class="code">--enable-win32-openssh-support</code></dt>
+<dt><code class="code">--enable-putty-support</code></dt>
+<dd>
+<p>On Unix platforms the OpenSSH Agent protocol is always enabled, but
+<code class="command">gpg-agent</code> will only set the <code class="code">SSH_AUTH_SOCK</code> variable if
+the option <samp class="option">enable-ssh-support</samp> is given.  Some Linux
+distributions use the presence of this option to decide whether the
+old ssh-agent shall be started.
+</p>
+<p>On Windows support for the native ssh implementation must be enabled
+using the the option <samp class="option">enable-win32-openssh-support</samp>.  For using
+gpg-agent as a replacement for PuTTY&rsquo;s Pageant, the option
+<samp class="option">enable-putty-support</samp> must be enabled.
+</p>
+<p>In this mode of operation, the agent does not only implement the
+gpg-agent protocol, but also the agent protocol used by OpenSSH
+(through a separate socket or via Named Pipes) or the protocol used by
+PuTTY.  Consequently, this allows one to use the gpg-agent as a drop-in
+replacement for the ssh-agent.
+</p>
+<p>SSH keys, which are to be used through the agent, need to be added to
+the gpg-agent initially through the ssh-add utility.  When a key is
+added, ssh-add will ask for the password of the provided key file and
+send the unprotected key material to the agent; this causes the
+gpg-agent to ask for a passphrase, which is to be used for encrypting
+the newly received key and storing it in a gpg-agent specific
+directory.
+</p>
+<p>Once a key has been added to the gpg-agent this way, the gpg-agent
+will be ready to use the key.
+</p>
+<p>Note: in case the gpg-agent receives a signature request, the user might
+need to be prompted for a passphrase, which is necessary for decrypting
+the stored key.  Since the ssh-agent protocol does not contain a
+mechanism for telling the agent on which display/terminal it is running,
+gpg-agent&rsquo;s ssh-support will use the TTY or X display where gpg-agent
+has been started.  To switch this display to the current one, the
+following command may be used:
+</p>
+<div class="example smallexample">
+<pre class="example-preformatted">gpg-connect-agent updatestartuptty /bye
+</pre></div>
+
+<p>Although all GnuPG components try to start the gpg-agent as needed, this
+is not possible for the ssh support because ssh does not know about it.
+Thus if no GnuPG tool which accesses the agent has been run, there is no
+guarantee that ssh is able to use gpg-agent for authentication.  To fix
+this you may start gpg-agent if needed using this simple command:
+</p>
+<div class="example smallexample">
+<pre class="example-preformatted">gpg-connect-agent /bye
+</pre></div>
+
+<p>Adding the <samp class="option">--verbose</samp> shows the progress of starting the agent.
+</p>
+<p>The <samp class="option">--enable-putty-support</samp> is only available under Windows
+and allows the use of gpg-agent with the ssh implementation
+<code class="command">putty</code>.  This is similar to the regular ssh-agent support but
+makes use of Windows message queue as required by <code class="command">putty</code>.
+</p>
+
+<p>The order in which keys are presented to ssh are:
+</p><dl class="table">
+<dt><code class="code">Negative Use-for-ssh values</code></dt>
+<dd><p>If a key file has the attribute &quot;Use-for-ssh&quot; and its value is
+      negative, these keys are presented first to ssh.  The negative
+      values are capped at -999 with -999 being lower ranked than -1.
+      These values can be used to prefer on-disk keys over keys taken
+      from active cards.
+</p>
+</dd>
+<dt><code class="code">Active cards</code></dt>
+<dd><p>Active cards (inserted into a card reader or plugged in tokens)
+      are always tried; they are ordered by their serial numbers.
+</p>
+</dd>
+<dt><code class="code">Keys listed in the sshcontrol file</code></dt>
+<dd><p>Non-disabled keys from the sshcontrol file are presented in the
+      order they appear in this file.  Note that the sshcontrol file
+      is deprecated.
+</p>
+</dd>
+<dt><code class="code">Positive Use-for-ssh values</code></dt>
+<dd><p>If a key file has the attribute &quot;Use-for-ssh&quot; and its value is
+      &quot;yes&quot;, &quot;true&quot;, or any positive number the key is presented in
+      the order of their values.  &quot;yes&quot; and &quot;true&quot; have a value of 1;
+      other values are capped at 99999.
+</p>
+</dd>
+</dl>
+
+<p>Editing the &quot;Use-for-ssh&quot; values can be done with an editor or using
+<code class="command">gpg-connect-agent</code> and &quot;KEYATTR&quot; (Remember to append a colon
+to the key; i.e. use &quot;Use-for-ssh:&quot;).
+</p>
+
+<a class="anchor" id="option-_002d_002dssh_002dfingerprint_002ddigest"></a></dd>
+<dt><a id="index-ssh_002dfingerprint_002ddigest"></a><span><code class="code">--ssh-fingerprint-digest</code><a class="copiable-link" href="#index-ssh_002dfingerprint_002ddigest"> &para;</a></span></dt>
+<dd>
+<p>Select the digest algorithm used to compute ssh fingerprints that are
+communicated to the user, e.g. in pinentry dialogs.  OpenSSH has
+transitioned from using MD5 to the more secure SHA256.
+</p>
+
+</dd>
+<dt><a id="index-auto_002dexpand_002dsecmem"></a><span><code class="code">--auto-expand-secmem <var class="var">n</var></code><a class="copiable-link" href="#index-auto_002dexpand_002dsecmem"> &para;</a></span></dt>
+<dd><p>Allow Libgcrypt to expand its secure memory area as required.  The
+optional value <var class="var">n</var> is a non-negative integer with a suggested size
+in bytes of each additionally allocated secure memory area.  The value
+is rounded up to the next 32 KiB; usual C style prefixes are allowed.
+For an heavy loaded gpg-agent with many concurrent connection this
+option avoids sign or decrypt errors due to out of secure memory error
+returns.
+</p>
+</dd>
+<dt><a id="index-s2k_002dcalibration"></a><span><code class="code">--s2k-calibration <var class="var">milliseconds</var></code><a class="copiable-link" href="#index-s2k_002dcalibration"> &para;</a></span></dt>
+<dd><p>Change the default calibration time to <var class="var">milliseconds</var>.  The given
+value is capped at 60 seconds; a value of 0 resets to the compiled-in
+default.  This option is re-read on a SIGHUP (or <code class="code">gpgconf
+--reload gpg-agent</code>) and the S2K count is then re-calibrated.
+</p>
+</dd>
+<dt><a id="index-s2k_002dcount"></a><span><code class="code">--s2k-count <var class="var">n</var></code><a class="copiable-link" href="#index-s2k_002dcount"> &para;</a></span></dt>
+<dd><p>Specify the iteration count used to protect the passphrase.  This
+option can be used to override the auto-calibration done by default.
+The auto-calibration computes a count which requires by default 100ms
+to mangle a given passphrase.  See also <samp class="option">--s2k-calibration</samp>.
+</p>
+<p>To view the actually used iteration count and the milliseconds
+required for an S2K operation use:
+</p>
+<div class="example">
+<pre class="example-preformatted">gpg-connect-agent 'GETINFO s2k_count' /bye
+gpg-connect-agent 'GETINFO s2k_time' /bye
+</pre></div>
+
+<p>To view the auto-calibrated count use:
+</p>
+<div class="example">
+<pre class="example-preformatted">gpg-connect-agent 'GETINFO s2k_count_cal' /bye
+</pre></div>
+
+
+</dd>
+</dl>
+
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Agent-Configuration.html">Configuration</a>, Previous: <a href="Agent-Commands.html">Commands</a>, Up: <a href="Invoking-GPG_002dAGENT.html">Invoking GPG-AGENT</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

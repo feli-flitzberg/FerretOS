@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Files used by gpgconf (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Files used by gpgconf (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Files used by gpgconf (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="gpgconf.html" rel="up" title="gpgconf">
+<link href="Querying-versions.html" rel="prev" title="Querying versions">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Files-used-by-gpgconf">
+<div class="nav-panel">
+<p>
+Previous: <a href="Querying-versions.html" accesskey="p" rel="prev">Get and compare software versions.</a>, Up: <a href="gpgconf.html" accesskey="u" rel="up">Modify .gnupg home directories</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Files-used-by-gpgconf-1"><span>10.4.9 Files used by gpgconf<a class="copiable-link" href="#Files-used-by-gpgconf-1"> &para;</a></span></h4>
+
+<dl class="table">
+<dt><a id="index-gpgconf_002ectl"></a><span><samp class="file">gpgconf.ctl</samp><a class="copiable-link" href="#index-gpgconf_002ectl"> &para;</a></span></dt>
+<dd><p>Under Unix <samp class="file">gpgconf.ctl</samp> may be used to change some of the
+  compiled in directories where the GnuPG components are expected.  This
+  file is expected in the same directory as <samp class="file">gpgconf</samp>.  The
+  physical installation directories are evaluated and no symlinks.
+  Blank lines and lines starting with pound sign are ignored in the
+  file.  The keywords must be followed by optional white space, an equal
+  sign, optional white space, and the value.  Environment variables are
+  substituted in standard shell manner, the final value must start with
+  a slash, trailing slashes are stripped.  Valid keywords are
+  <code class="code">rootdir</code>, <code class="code">sysconfdir</code>, <code class="code">socketdir</code>, and
+  <code class="code">.enable</code>.  No errors are printed for unknown keywords.  The
+  <code class="code">.enable</code> keyword is special: if the keyword is used and its
+  value evaluates to true the entire file is ignored.
+</p>
+<p>Under Windows this file is used to install GnuPG as a portable
+  application.  An empty file named <samp class="file">gpgconf.ctl</samp> is expected in
+  the same directory as the tool <samp class="file">gpgconf.exe</samp>.  The root of the
+  installation is then that directory; or, if <samp class="file">gpgconf.exe</samp> has
+  been installed directly below a directory named <samp class="file">bin</samp>, its parent
+  directory.  You also need to make sure that the following directories
+  exist and are writable: <samp class="file">ROOT/home</samp> for the GnuPG home and
+  <samp class="file">ROOT/var/cache/gnupg</samp> for internal cache files.
+</p>
+
+</dd>
+<dt><a id="index-gpgconf_002econf"></a><span><samp class="file">/etc/gnupg/gpgconf.conf</samp><a class="copiable-link" href="#index-gpgconf_002econf"> &para;</a></span></dt>
+<dd><p>If this file exists, it is processed as a global configuration file.
+  This is a legacy mechanism which should not be used together with
+  the modern global per component configuration files.  A commented
+  example can be found in the <samp class="file">examples</samp> directory of the
+  distribution.
+</p>
+</dd>
+<dt><a id="index-swdb_002elst"></a><span><samp class="file"><var class="var">GNUPGHOME</var>/swdb.lst</samp><a class="copiable-link" href="#index-swdb_002elst"> &para;</a></span></dt>
+<dd><p>A file with current software versions.  <code class="command">dirmngr</code> creates
+  this file on demand from an online resource.
+</p>
+</dd>
+</dl>
+
+
+
+
+
+
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Previous: <a href="Querying-versions.html">Get and compare software versions.</a>, Up: <a href="gpgconf.html">Modify .gnupg home directories</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

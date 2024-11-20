@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>GPG Input and Output (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="GPG Input and Output (Using the GNU Privacy Guard)">
+<meta name="keywords" content="GPG Input and Output (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="GPG-Options.html" rel="up" title="GPG Options">
+<link href="OpenPGP-Options.html" rel="next" title="OpenPGP Options">
+<link href="GPG-Key-related-Options.html" rel="prev" title="GPG Key related Options">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="GPG-Input-and-Output">
+<div class="nav-panel">
+<p>
+Next: <a href="OpenPGP-Options.html" accesskey="n" rel="next">OpenPGP protocol specific options</a>, Previous: <a href="GPG-Key-related-Options.html" accesskey="p" rel="prev">Key related options</a>, Up: <a href="GPG-Options.html" accesskey="u" rel="up">Option Summary</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Input-and-Output-1"><span>4.2.3 Input and Output<a class="copiable-link" href="#Input-and-Output-1"> &para;</a></span></h4>
+
+<dl class="table">
+<dt><a id="index-armor"></a><span><code class="code">--armor</code><a class="copiable-link" href="#index-armor"> &para;</a></span></dt>
+<dt><code class="code">-a</code></dt>
+<dd><p>Create ASCII armored output.  The default is to create the binary
+OpenPGP format.
+</p>
+</dd>
+<dt><a id="index-no_002darmor"></a><span><code class="code">--no-armor</code><a class="copiable-link" href="#index-no_002darmor"> &para;</a></span></dt>
+<dd><p>Assume the input data is not in ASCII armored format.
+</p>
+</dd>
+<dt><a id="index-output"></a><span><code class="code">--output <var class="var">file</var></code><a class="copiable-link" href="#index-output"> &para;</a></span></dt>
+<dt><code class="code">-o <var class="var">file</var></code></dt>
+<dd><p>Write output to <var class="var">file</var>.  To write to stdout use <code class="code">-</code> as the
+filename.
+</p>
+</dd>
+<dt><a id="index-max_002doutput"></a><span><code class="code">--max-output <var class="var">n</var></code><a class="copiable-link" href="#index-max_002doutput"> &para;</a></span></dt>
+<dd><p>This option sets a limit on the number of bytes that will be generated
+when processing a file. Since OpenPGP supports various levels of
+compression, it is possible that the plaintext of a given message may be
+significantly larger than the original OpenPGP message. While GnuPG
+works properly with such messages, there is often a desire to set a
+maximum file size that will be generated before processing is forced to
+stop by the OS limits. Defaults to 0, which means &quot;no limit&quot;.
+</p>
+</dd>
+<dt><a id="index-chunk_002dsize"></a><span><code class="code">--chunk-size <var class="var">n</var></code><a class="copiable-link" href="#index-chunk_002dsize"> &para;</a></span></dt>
+<dd><p>The AEAD encryption mode encrypts the data in chunks so that a
+receiving side can check for transmission errors or tampering at the
+end of each chunk and does not need to delay this until all data has
+been received.  The used chunk size is 2^<var class="var">n</var> byte.  The lowest
+allowed value for <var class="var">n</var> is 6 (64 byte) and the largest is the
+default of 22 which creates chunks not larger than 4 MiB.
+</p>
+</dd>
+<dt><a id="index-input_002dsize_002dhint"></a><span><code class="code">--input-size-hint <var class="var">n</var></code><a class="copiable-link" href="#index-input_002dsize_002dhint"> &para;</a></span></dt>
+<dd><p>This option can be used to tell GPG the size of the input data in
+bytes.  <var class="var">n</var> must be a positive base-10 number.  This option is
+only useful if the input is not taken from a file.  GPG may use this
+hint to optimize its buffer allocation strategy.  It is also used by
+the <samp class="option">--status-fd</samp> line &ldquo;PROGRESS&rdquo; to provide a value for
+&ldquo;total&rdquo; if that is not available by other means.
+</p>
+</dd>
+<dt><a id="index-key_002dorigin"></a><span><code class="code">--key-origin <var class="var">string</var>[,<var class="var">url</var>]</code><a class="copiable-link" href="#index-key_002dorigin"> &para;</a></span></dt>
+<dd><p>gpg can track the origin of a key. Certain origins are implicitly
+known (e.g. keyserver, web key directory) and set.  For a standard
+import the origin of the keys imported can be set with this option.
+To list the possible values use &quot;help&quot; for <var class="var">string</var>.  Some origins
+can store an optional <var class="var">url</var> argument.  That URL can appended to
+<var class="var">string</var> after a comma.
+</p>
+</dd>
+<dt><a id="index-import_002doptions"></a><span><code class="code">--import-options <var class="var">parameters</var></code><a class="copiable-link" href="#index-import_002doptions"> &para;</a></span></dt>
+<dd><p>This is a space or comma delimited string that gives options for
+importing keys. Options can be prepended with a &lsquo;no-&rsquo; to give the
+opposite meaning. The options are:
+</p>
+<dl class="table">
+<dt>import-local-sigs</dt>
+<dd><p>Allow importing key signatures marked as &quot;local&quot;. This is not
+  generally useful unless a shared keyring scheme is being used.
+  Defaults to no.
+</p>
+</dd>
+<dt>keep-ownertrust</dt>
+<dd><p>Normally possible still existing ownertrust values of a key are
+  cleared if a key is imported.  This is in general desirable so that
+  a formerly deleted key does not automatically gain an ownertrust
+  values merely due to import.  On the other hand it is sometimes
+  necessary to re-import a trusted set of keys again but keeping
+  already assigned ownertrust values.  This can be achieved by using
+  this option.
+</p>
+</dd>
+<dt>repair-pks-subkey-bug</dt>
+<dd><p>During import, attempt to repair the damage caused by the PKS keyserver
+  bug (pre version 0.9.6) that mangles keys with multiple subkeys. Note
+  that this cannot completely repair the damaged key as some crucial data
+  is removed by the keyserver, but it does at least give you back one
+  subkey. Defaults to no for regular <samp class="option">--import</samp> and to yes for
+  keyserver <samp class="option">--receive-keys</samp>.
+</p>
+</dd>
+<dt>import-show</dt>
+<dt>show-only</dt>
+<dd><p>Show a listing of the key as imported right before it is stored.
+  This can be combined with the option <samp class="option">--dry-run</samp> to only look
+  at keys; the option <samp class="option">show-only</samp> is a shortcut for this
+  combination.  The command <samp class="option">--show-keys</samp> is another shortcut
+  for this.  Note that suffixes like &rsquo;#&rsquo; for &quot;sec&quot; and &quot;sbb&quot; lines
+  may or may not be printed.
+</p>
+</dd>
+<dt>import-export</dt>
+<dd><p>Run the entire import code but instead of storing the key to the
+  local keyring write it to the output.  The export option
+  <samp class="option">export-dane</samp> affect the output.  This option can for example
+  be used to remove all invalid parts from a key without the
+  need to store it.
+</p>
+</dd>
+<dt>merge-only</dt>
+<dd><p>During import, allow key updates to existing keys, but do not allow
+  any new keys to be imported. Defaults to no.
+</p>
+</dd>
+<dt>import-clean</dt>
+<dd><p>After import, compact (remove all signatures except the
+  self-signature) any user IDs from the new key that are not usable.
+  Then, remove any signatures from the new key that are not usable.
+  This includes signatures that were issued by keys that are not present
+  on the keyring. This option is the same as running the <samp class="option">--edit-key</samp>
+  command &quot;clean&quot; after import. Defaults to no.
+</p>
+</dd>
+<dt>self-sigs-only</dt>
+<dd><p>Accept only self-signatures while importing a key.  All other key
+  signatures are skipped at an early import stage.  This option can be
+  used with <code class="code">keyserver-options</code> to mitigate attempts to flood a
+  key with bogus signatures from a keyserver.  The drawback is that
+  all other valid key signatures, as required by the Web of Trust are
+  also not imported.  Note that when using this option along with
+  import-clean it suppresses the final clean step after merging the
+  imported key into the existing key.
+</p>
+</dd>
+<dt>ignore-attributes</dt>
+<dd><p>Ignore all attribute user IDs (photo IDs) and their signatures while
+  importing a key.
+</p>
+</dd>
+<dt>repair-keys</dt>
+<dd><p>After import, fix various problems with the
+  keys.  For example, this reorders signatures, and strips duplicate
+  signatures.  Defaults to yes.
+</p>
+</dd>
+<dt>bulk-import</dt>
+<dd><p>When used the keyboxd (option <samp class="option">use-keyboxd</samp> in <samp class="file">common.conf</samp>)
+  does the import within a single
+  transaction.
+</p>
+</dd>
+<dt>import-minimal</dt>
+<dd><p>Import the smallest key possible. This removes all signatures except
+  the most recent self-signature on each user ID. This option is the
+  same as running the <samp class="option">--edit-key</samp> command &quot;minimize&quot; after import.
+  Defaults to no.
+</p>
+</dd>
+<dt>restore</dt>
+<dt>import-restore</dt>
+<dd><p>Import in key restore mode.  This imports all data which is usually
+  skipped during import; including all GnuPG specific data.  All other
+  contradicting options are overridden.
+</p></dd>
+</dl>
+
+</dd>
+<dt><a class="index-entry-id" id="index-export_002dfilter"></a>
+<a id="index-import_002dfilter"></a><span><code class="code">--import-filter {<var class="var">name</var>=<var class="var">expr</var>}</code><a class="copiable-link" href="#index-import_002dfilter"> &para;</a></span></dt>
+<dt><code class="code">--export-filter {<var class="var">name</var>=<var class="var">expr</var>}</code></dt>
+<dd><p>These options define an import/export filter which are applied to the
+imported/exported keyblock right before it will be stored/written.
+<var class="var">name</var> defines the type of filter to use, <var class="var">expr</var> the
+expression to evaluate.  The option can be used several times which
+then appends more expression to the same <var class="var">name</var>.
+</p>
+<p>The available filter types are:
+</p>
+<dl class="table">
+<dt>keep-uid</dt>
+<dd><p>This filter will keep a user id packet and its dependent packets in
+  the keyblock if the expression evaluates to true.
+</p>
+</dd>
+<dt>drop-subkey</dt>
+<dd><p>This filter drops the selected subkeys.
+  Currently only implemented for &ndash;export-filter.
+</p>
+</dd>
+<dt>drop-sig</dt>
+<dd><p>This filter drops the selected key signatures on user ids.
+  Self-signatures are not considered.
+  Currently only implemented for &ndash;import-filter.
+</p>
+</dd>
+<dt>select</dt>
+<dd><p>This filter is only implemented by <samp class="option">--list-filter</samp>.  All
+  property names may be used.
+</p>
+</dd>
+</dl>
+
+<p>For the syntax of the expression see the chapter &quot;FILTER EXPRESSIONS&quot;.
+The property names for the expressions depend on the actual filter
+type and are indicated in the following table.  Note that all property
+names may also be used by <samp class="option">--list-filter</samp>.
+</p>
+<p>Property names may be prefix with a scope delimited by a slash.  Valid
+scopes are &quot;pub&quot; for public and secret primary keys, &quot;sub&quot; for public
+and secret subkeys, &quot;uid&quot; for for user-ID packets, and &quot;sig&quot; for
+signature packets.  Invalid scopes are currently ignored.
+</p>
+<p>The available properties are:
+</p>
+<dl class="table">
+<dt>uid</dt>
+<dd><p>A string with the user id.  (keep-uid)
+</p>
+</dd>
+<dt>mbox</dt>
+<dd><p>The addr-spec part of a user id with mailbox or the empty string.
+  (keep-uid)
+</p>
+</dd>
+<dt>algostr</dt>
+<dd><p>A string with the key algorithm description.  For example &quot;rsa3072&quot;
+  or &quot;ed25519&quot;.
+</p>
+</dd>
+<dt>key_algo</dt>
+<dd><p>A number with the public key algorithm of a key or subkey packet.
+  (drop-subkey)
+</p>
+</dd>
+<dt>key_size</dt>
+<dd><p>A number with the effective key size of a key or subkey packet.
+  (drop-subkey)
+</p>
+</dd>
+<dt>key_created</dt>
+<dt>key_created_d</dt>
+<dd><p>The first is the timestamp a public key or subkey packet was
+  created.  The second is the same but given as an ISO string,
+  e.g. &quot;2016-08-17&quot;. (drop-subkey)
+</p>
+</dd>
+<dt>key_expires</dt>
+<dt>key_expires_d</dt>
+<dd><p>The expiration time of a public key or subkey or 0 if it does not
+  expire.  The second is the same but given as an ISO date string or
+  an empty string e.g. &quot;2038-01-19&quot;.
+</p>
+</dd>
+<dt>fpr</dt>
+<dd><p>The hexified fingerprint of the current subkey or primary key.
+  (drop-subkey)
+</p>
+</dd>
+<dt>primary</dt>
+<dd><p>Boolean indicating whether the user id is the primary one.  (keep-uid)
+</p>
+</dd>
+<dt>expired</dt>
+<dd><p>Boolean indicating whether a user id (keep-uid), a key (drop-subkey), or a
+  signature (drop-sig) expired.
+</p>
+</dd>
+<dt>revoked</dt>
+<dd><p>Boolean indicating whether a user id (keep-uid) or a key (drop-subkey) has
+  been revoked.
+</p>
+</dd>
+<dt>disabled</dt>
+<dd><p>Boolean indicating whether a primary key is disabled.
+</p>
+</dd>
+<dt>secret</dt>
+<dd><p>Boolean indicating whether a key or subkey is a secret one.
+  (drop-subkey)
+</p>
+</dd>
+<dt>usage</dt>
+<dd><p>A string indicating the usage flags for the subkey, from the
+  sequence &ldquo;ecsa?&rdquo;.  For example, a subkey capable of just signing
+  and authentication would be an exact match for &ldquo;sa&rdquo;. (drop-subkey)
+</p>
+</dd>
+<dt>sig_created</dt>
+<dt>sig_created_d</dt>
+<dd><p>The first is the timestamp a signature packet was created.  The
+  second is the same but given as an ISO date string,
+  e.g. &quot;2016-08-17&quot;. (drop-sig)
+</p>
+</dd>
+<dt>sig_expires</dt>
+<dt>sig_expires_d</dt>
+<dd><p>The expiration time of a signature packet or 0 if it does not
+  expire.  The second is the same but given as an ISO date string or
+  an empty string e.g. &quot;2038-01-19&quot;.
+</p>
+</dd>
+<dt>sig_algo</dt>
+<dd><p>A number with the public key algorithm of a signature packet. (drop-sig)
+</p>
+</dd>
+<dt>sig_digest_algo</dt>
+<dd><p>A number with the digest algorithm of a signature packet. (drop-sig)
+</p>
+</dd>
+<dt>origin</dt>
+<dd><p>A string with the key origin or a question mark.  For example the
+  string &ldquo;wkd&rdquo; is used if a key originated from a Web Key Directory
+  lookup.
+</p>
+</dd>
+<dt>lastupd</dt>
+<dd><p>The timestamp the key was last updated from a keyserver or the Web
+  Key Directory.
+</p>
+</dd>
+<dt>url</dt>
+<dd><p>A string with the the URL associated wit the last key lookup.
+</p>
+</dd>
+</dl>
+
+</dd>
+<dt><a id="index-export_002doptions"></a><span><code class="code">--export-options <var class="var">parameters</var></code><a class="copiable-link" href="#index-export_002doptions"> &para;</a></span></dt>
+<dd><p>This is a space or comma delimited string that gives options for
+exporting keys.  Options can be prepended with a &lsquo;no-&rsquo; to give the
+opposite meaning.  The options are:
+</p>
+<dl class="table">
+<dt>export-local-sigs</dt>
+<dd><p>Allow exporting key signatures marked as &quot;local&quot;. This is not
+  generally useful unless a shared keyring scheme is being used.
+  Defaults to no.
+</p>
+</dd>
+<dt>export-attributes</dt>
+<dd><p>Include attribute user IDs (photo IDs) while exporting. Not
+  including attribute user IDs is useful to export keys that are going
+  to be used by an OpenPGP program that does not accept attribute user
+  IDs.  Defaults to yes.
+</p>
+</dd>
+<dt>export-sensitive-revkeys</dt>
+<dd><p>Include designated revoker information that was marked as
+  &quot;sensitive&quot;. Defaults to no.
+</p>
+
+</dd>
+<dt>backup</dt>
+<dt>export-backup</dt>
+<dd><p>Export for use as a backup.  The exported data includes all data
+  which is needed to restore the key or keys later with GnuPG.  The
+  format is basically the OpenPGP format but enhanced with GnuPG
+  specific data.  All other contradicting options are overridden.
+</p>
+</dd>
+<dt>export-clean</dt>
+<dd><p>Compact (remove all signatures from) user IDs on the key being
+  exported if the user IDs are not usable. Also, do not export any
+  signatures that are not usable. This includes signatures that were
+  issued by keys that are not present on the keyring. This option is
+  the same as running the <samp class="option">--edit-key</samp> command &quot;clean&quot; before export
+  except that the local copy of the key is not modified. Defaults to
+  no.
+</p>
+</dd>
+<dt>export-minimal</dt>
+<dd><p>Export the smallest key possible. This removes all signatures except the
+  most recent self-signature on each user ID. This option is the same as
+  running the <samp class="option">--edit-key</samp> command &quot;minimize&quot; before export except
+  that the local copy of the key is not modified. Defaults to no.
+</p>
+</dd>
+<dt>export-revocs</dt>
+<dd><p>Export only standalone revocation certificates of the key.  This
+  option does not export revocations of 3rd party certificate
+  revocations.
+</p>
+</dd>
+<dt>export-dane</dt>
+<dd><p>Instead of outputting the key material output OpenPGP DANE records
+  suitable to put into DNS zone files.  An ORIGIN line is printed before
+  each record to allow diverting the records to the corresponding zone
+  file.
+</p>
+</dd>
+<dt>mode1003</dt>
+<dd><p>Enable the use of a new secret key export format.  This format
+  avoids the re-encryption as required with the current OpenPGP format
+  and also improves the security of the secret key if it has been
+  protected with a passphrase.  Note that an unprotected key is
+  exported as-is and thus not secure; the general rule to convey
+  secret keys in an OpenPGP encrypted file still applies with this
+  mode.  Versions of GnuPG before 2.4.0 are not able to import such a
+  secret file.
+</p>
+</dd>
+</dl>
+
+</dd>
+<dt><a id="index-with_002dcolons"></a><span><code class="code">--with-colons</code><a class="copiable-link" href="#index-with_002dcolons"> &para;</a></span></dt>
+<dd><p>Print key listings delimited by colons. Note that the output will be
+encoded in UTF-8 regardless of any <samp class="option">--display-charset</samp> setting. This
+format is useful when GnuPG is called from scripts and other programs
+as it is easily machine parsed. The details of this format are
+documented in the file <samp class="file">doc/DETAILS</samp>, which is included in the GnuPG
+source distribution.
+</p>
+</dd>
+<dt><a id="index-fixed_002dlist_002dmode"></a><span><code class="code">--fixed-list-mode</code><a class="copiable-link" href="#index-fixed_002dlist_002dmode"> &para;</a></span></dt>
+<dd><p>Do not merge primary user ID and primary key in <samp class="option">--with-colon</samp>
+listing mode and print all timestamps as seconds since 1970-01-01.
+Since GnuPG 2.0.10, this mode is always used and thus this option is
+obsolete; it does not harm to use it though.
+</p>
+</dd>
+<dt><a id="index-legacy_002dlist_002dmode"></a><span><code class="code">--legacy-list-mode</code><a class="copiable-link" href="#index-legacy_002dlist_002dmode"> &para;</a></span></dt>
+<dd><p>Revert to the pre-2.1 public key list mode.  This only affects the
+human readable output and not the machine interface
+(i.e. <code class="code">--with-colons</code>).  Note that the legacy format does not
+convey suitable information for elliptic curves.
+</p>
+</dd>
+<dt><a id="index-with_002dfingerprint"></a><span><code class="code">--with-fingerprint</code><a class="copiable-link" href="#index-with_002dfingerprint"> &para;</a></span></dt>
+<dd><p>Same as the command <samp class="option">--fingerprint</samp> but changes only the format
+of the output and may be used together with another command.
+</p>
+</dd>
+<dt><a id="index-with_002dsubkey_002dfingerprint"></a><span><code class="code">--with-subkey-fingerprint</code><a class="copiable-link" href="#index-with_002dsubkey_002dfingerprint"> &para;</a></span></dt>
+<dd><p>If a fingerprint is printed for the primary key, this option forces
+printing of the fingerprint for all subkeys.  This could also be
+achieved by using the <samp class="option">--with-fingerprint</samp> twice but by using
+this option along with keyid-format &quot;none&quot; a compact fingerprint is
+printed.
+</p>
+</dd>
+<dt><a id="index-with_002dv5_002dfingerprint"></a><span><code class="code">--with-v5-fingerprint</code><a class="copiable-link" href="#index-with_002dv5_002dfingerprint"> &para;</a></span></dt>
+<dd><p>In a colon mode listing emit &quot;fp2&quot; lines for version 4 OpenPGP keys
+having a v5 style fingerprint of the key.
+</p>
+</dd>
+<dt><a id="index-with_002dicao_002dspelling"></a><span><code class="code">--with-icao-spelling</code><a class="copiable-link" href="#index-with_002dicao_002dspelling"> &para;</a></span></dt>
+<dd><p>Print the ICAO spelling of the fingerprint in addition to the hex digits.
+</p>
+</dd>
+<dt><a id="index-with_002dkeygrip"></a><span><code class="code">--with-keygrip</code><a class="copiable-link" href="#index-with_002dkeygrip"> &para;</a></span></dt>
+<dd><p>Include the keygrip in the key listings.  In <code class="code">--with-colons</code> mode
+this is implicitly enable for secret keys.
+</p>
+</dd>
+<dt><a id="index-with_002dkey_002dorigin"></a><span><code class="code">--with-key-origin</code><a class="copiable-link" href="#index-with_002dkey_002dorigin"> &para;</a></span></dt>
+<dd><p>Include the locally held information on the origin and last update of
+a key in a key listing.  In <code class="code">--with-colons</code> mode this is always
+printed.  This data is currently experimental and shall not be
+considered part of the stable API.
+</p>
+</dd>
+<dt><a id="index-with_002dwkd_002dhash"></a><span><code class="code">--with-wkd-hash</code><a class="copiable-link" href="#index-with_002dwkd_002dhash"> &para;</a></span></dt>
+<dd><p>Print a Web Key Directory identifier along with each user ID in key
+listings.  This is an experimental feature and semantics may change.
+</p>
+</dd>
+<dt><a id="index-with_002dsecret"></a><span><code class="code">--with-secret</code><a class="copiable-link" href="#index-with_002dsecret"> &para;</a></span></dt>
+<dd><p>Include info about the presence of a secret key in public key listings
+done with <code class="code">--with-colons</code>.
+</p>
+</dd>
+</dl>
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="OpenPGP-Options.html">OpenPGP protocol specific options</a>, Previous: <a href="GPG-Key-related-Options.html">Key related options</a>, Up: <a href="GPG-Options.html">Option Summary</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>GPG Configuration Options (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="GPG Configuration Options (Using the GNU Privacy Guard)">
+<meta name="keywords" content="GPG Configuration Options (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="GPG-Options.html" rel="up" title="GPG Options">
+<link href="GPG-Key-related-Options.html" rel="next" title="GPG Key related Options">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="GPG-Configuration-Options">
+<div class="nav-panel">
+<p>
+Next: <a href="GPG-Key-related-Options.html" accesskey="n" rel="next">Key related options</a>, Up: <a href="GPG-Options.html" accesskey="u" rel="up">Option Summary</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="How-to-change-the-configuration"><span>4.2.1 How to change the configuration<a class="copiable-link" href="#How-to-change-the-configuration"> &para;</a></span></h4>
+
+<p>These options are used to change the configuration and most of them
+are usually found in the option file.
+</p>
+<dl class="table">
+<dt><a id="index-default_002dkey"></a><span><code class="code">--default-key <var class="var">name</var></code><a class="copiable-link" href="#index-default_002dkey"> &para;</a></span></dt>
+<dd><p>Use <var class="var">name</var> as the default key to sign with.  It is suggested to
+use a fingerprint or at least a long keyID for <var class="var">name</var>.  If this
+option is not used, the default key is the first key found in the
+secret keyring.  Note that <samp class="option">-u</samp> or <samp class="option">--local-user</samp>
+overrides this option.  This option may be given multiple times.  In
+this case, the last key for which a secret key is available is used.
+If there is no secret key available for any of the specified values,
+GnuPG will not emit an error message but continue as if this option
+wasn&rsquo;t given.
+</p>
+
+</dd>
+<dt><a id="index-default_002drecipient"></a><span><code class="code">--default-recipient <var class="var">name</var></code><a class="copiable-link" href="#index-default_002drecipient"> &para;</a></span></dt>
+<dd><p>Use <var class="var">name</var> as default recipient if option <samp class="option">--recipient</samp> is
+not used and don&rsquo;t ask if this is a valid one. <var class="var">name</var> must be
+non-empty and it is suggested to use a fingerprint for <var class="var">name</var>.
+</p>
+</dd>
+<dt><a id="index-default_002drecipient_002dself"></a><span><code class="code">--default-recipient-self</code><a class="copiable-link" href="#index-default_002drecipient_002dself"> &para;</a></span></dt>
+<dd><p>Use the default key as default recipient if option <samp class="option">--recipient</samp> is not
+used and don&rsquo;t ask if this is a valid one. The default key is the first
+one from the secret keyring or the one set with <samp class="option">--default-key</samp>.
+</p>
+</dd>
+<dt><a id="index-no_002ddefault_002drecipient"></a><span><code class="code">--no-default-recipient</code><a class="copiable-link" href="#index-no_002ddefault_002drecipient"> &para;</a></span></dt>
+<dd><p>Reset <samp class="option">--default-recipient</samp> and <samp class="option">--default-recipient-self</samp>.
+Should not be used in an option file.
+</p>
+</dd>
+<dt><a id="index-verbose-2"></a><span><code class="code">-v, --verbose</code><a class="copiable-link" href="#index-verbose-2"> &para;</a></span></dt>
+<dd><p>Give more information during processing. If used
+twice, the input data is listed in detail.
+</p>
+</dd>
+<dt><a id="index-no_002dverbose"></a><span><code class="code">--no-verbose</code><a class="copiable-link" href="#index-no_002dverbose"> &para;</a></span></dt>
+<dd><p>Reset verbose level to 0.  Should not be used in an option file.
+</p>
+</dd>
+<dt><a id="index-quiet-1"></a><span><code class="code">-q, --quiet</code><a class="copiable-link" href="#index-quiet-1"> &para;</a></span></dt>
+<dd><p>Try to be as quiet as possible.  Should not be used in an option file.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-no_002dbatch"></a>
+<a id="index-batch-1"></a><span><code class="code">--batch</code><a class="copiable-link" href="#index-batch-1"> &para;</a></span></dt>
+<dt><code class="code">--no-batch</code></dt>
+<dd><p>Use batch mode.  Never ask, do not allow interactive commands.
+<samp class="option">--no-batch</samp> disables this option.  Note that even with a
+filename given on the command line, gpg might still need to read from
+STDIN (in particular if gpg figures that the input is a
+detached signature and no data file has been specified).  Thus if you
+do not want to feed data via STDIN, you should connect STDIN to
+<samp class="file">/dev/null</samp>.
+</p>
+<p>It is highly recommended to use this option along with the options
+<samp class="option">--status-fd</samp> and <samp class="option">--with-colons</samp> for any unattended use of
+<code class="command">gpg</code>.  Should not be used in an option file.
+</p>
+</dd>
+<dt><a id="index-no_002dtty"></a><span><code class="code">--no-tty</code><a class="copiable-link" href="#index-no_002dtty"> &para;</a></span></dt>
+<dd><p>Make sure that the TTY (terminal) is never used for any output.
+This option is needed in some cases because GnuPG sometimes prints
+warnings to the TTY even if <samp class="option">--batch</samp> is used.
+</p>
+</dd>
+<dt><a id="index-yes"></a><span><code class="code">--yes</code><a class="copiable-link" href="#index-yes"> &para;</a></span></dt>
+<dd><p>Assume &quot;yes&quot; on most questions.  Should not be used in an option file.
+</p>
+</dd>
+<dt><a id="index-no"></a><span><code class="code">--no</code><a class="copiable-link" href="#index-no"> &para;</a></span></dt>
+<dd><p>Assume &quot;no&quot; on most questions.  Should not be used in an option file.
+</p>
+
+</dd>
+<dt><a id="index-list_002dfilter"></a><span><code class="code">--list-filter {select=<var class="var">expr</var>}</code><a class="copiable-link" href="#index-list_002dfilter"> &para;</a></span></dt>
+<dd><p>A list filter can be used to output only certain keys during key
+listing commands. For the available property names, see the description
+of <samp class="option">--import-filter</samp>.
+</p>
+
+</dd>
+<dt><a id="index-list_002doptions"></a><span><code class="code">--list-options <var class="var">parameters</var></code><a class="copiable-link" href="#index-list_002doptions"> &para;</a></span></dt>
+<dd><p>This is a space or comma delimited string that gives options used when
+listing keys and signatures (that is, <samp class="option">--list-keys</samp>,
+<samp class="option">--check-signatures</samp>, <samp class="option">--list-public-keys</samp>,
+<samp class="option">--list-secret-keys</samp>, and the <samp class="option">--edit-key</samp> functions).
+Options can be prepended with a <samp class="option">no-</samp> (after the two dashes) to
+give the opposite meaning.  The options are:
+</p>
+<dl class="table">
+<dt>show-photos</dt>
+<dd><a class="index-entry-id" id="index-list_002doptions_003ashow_002dphotos"></a>
+<p>Causes <samp class="option">--list-keys</samp>, <samp class="option">--check-signatures</samp>,
+  <samp class="option">--list-public-keys</samp>, and <samp class="option">--list-secret-keys</samp> to
+  display any photo IDs attached to the key.  Defaults to no. See also
+  <samp class="option">--photo-viewer</samp>.  Does not work with <samp class="option">--with-colons</samp>:
+  see <samp class="option">--attribute-fd</samp> for the appropriate way to get photo data
+  for scripts and other frontends.
+</p>
+</dd>
+<dt>show-usage</dt>
+<dd><a class="index-entry-id" id="index-list_002doptions_003ashow_002dusage"></a>
+<p>Show usage information for keys and subkeys in the standard key
+  listing.  This is a list of letters indicating the allowed usage for a
+  key (<code class="code">E</code>=encryption, <code class="code">S</code>=signing, <code class="code">C</code>=certification,
+  <code class="code">A</code>=authentication).  Defaults to yes.
+</p>
+</dd>
+<dt>show-policy-urls</dt>
+<dd><a class="index-entry-id" id="index-list_002doptions_003ashow_002dpolicy_002durls"></a>
+<p>Show policy URLs in the  <samp class="option">--check-signatures</samp>
+  listings.  Defaults to no.
+</p>
+</dd>
+<dt>show-notations</dt>
+<dt>show-std-notations</dt>
+<dt>show-user-notations</dt>
+<dd><a class="index-entry-id" id="index-list_002doptions_003ashow_002dnotations"></a>
+<a class="index-entry-id" id="index-list_002doptions_003ashow_002dstd_002dnotations"></a>
+<a class="index-entry-id" id="index-list_002doptions_003ashow_002duser_002dnotations"></a>
+<p>Show all, IETF standard, or user-defined signature notations in the
+  <samp class="option">--check-signatures</samp> listings. Defaults to no.
+</p>
+</dd>
+<dt>show-keyserver-urls</dt>
+<dd><a class="index-entry-id" id="index-list_002doptions_003ashow_002dkeyserver_002durls"></a>
+<p>Show any preferred keyserver URL in the
+  <samp class="option">--check-signatures</samp> listings. Defaults to no.
+</p>
+</dd>
+<dt>show-uid-validity</dt>
+<dd><a class="index-entry-id" id="index-list_002doptions_003ashow_002duid_002dvalidity"></a>
+<p>Display the calculated validity of user IDs during key listings.
+  Defaults to yes.
+</p>
+</dd>
+<dt>show-unusable-uids</dt>
+<dd><a class="index-entry-id" id="index-list_002doptions_003ashow_002dunusable_002duids"></a>
+<p>Show revoked and expired user IDs in key listings. Defaults to no.
+</p>
+</dd>
+<dt>show-unusable-subkeys</dt>
+<dd><a class="index-entry-id" id="index-list_002doptions_003ashow_002dunusable_002dsubkeys"></a>
+<p>Show revoked and expired subkeys in key listings. Defaults to no.
+</p>
+</dd>
+<dt>show-unusable-sigs</dt>
+<dd><a class="index-entry-id" id="index-list_002doptions_003ashow_002dunusable_002dsigs"></a>
+<p>Show key signature made using weak or unsupported algorithms.
+</p>
+</dd>
+<dt>show-keyring</dt>
+<dd><a class="index-entry-id" id="index-list_002doptions_003ashow_002dkeyring"></a>
+<p>Display the keyring name at the head of key listings to show which
+  keyring a given key resides on. Defaults to no.
+</p>
+</dd>
+<dt>show-sig-expire</dt>
+<dd><a class="index-entry-id" id="index-list_002doptions_003ashow_002dsig_002dexpire"></a>
+<p>Show signature expiration dates (if any) during
+  <samp class="option">--check-signatures</samp> listings. Defaults to no.
+</p>
+</dd>
+<dt>show-sig-subpackets</dt>
+<dd><a class="index-entry-id" id="index-list_002doptions_003ashow_002dsig_002dsubpackets"></a>
+<p>Include signature subpackets in the key listing. This option can take an
+  optional argument list of the subpackets to list. If no argument is
+  passed, list all subpackets. Defaults to no. This option is only
+  meaningful when using <samp class="option">--with-colons</samp> along with
+  <samp class="option">--check-signatures</samp>.
+</p>
+</dd>
+<dt>show-only-fpr-mbox</dt>
+<dd><a class="index-entry-id" id="index-list_002doptions_003ashow_002donly_002dfpr_002dmbox"></a>
+<p>For each user-id which has a valid mail address print
+  only the fingerprint followed by the mail address.
+</p>
+</dd>
+<dt>sort-sigs</dt>
+<dd><a class="index-entry-id" id="index-list_002doptions_003asort_002dsigs"></a>
+<p>With &ndash;list-sigs and &ndash;check-sigs sort the signatures by keyID and
+  creation time to make it easier to view the history of these
+  signatures.  The self-signature is also listed before other
+  signatures. Defaults to yes.
+</p>
+</dd>
+</dl>
+
+</dd>
+<dt><a id="index-verify_002doptions"></a><span><code class="code">--verify-options <var class="var">parameters</var></code><a class="copiable-link" href="#index-verify_002doptions"> &para;</a></span></dt>
+<dd><p>This is a space or comma delimited string that gives options used when
+verifying signatures. Options can be prepended with a &lsquo;no-&rsquo; to give
+the opposite meaning. The options are:
+</p>
+<dl class="table">
+<dt>show-photos</dt>
+<dd><a class="index-entry-id" id="index-verify_002doptions_003ashow_002dphotos"></a>
+<p>Display any photo IDs present on the key that issued the signature.
+  Defaults to no. See also <samp class="option">--photo-viewer</samp>.
+</p>
+</dd>
+<dt>show-policy-urls</dt>
+<dd><a class="index-entry-id" id="index-verify_002doptions_003ashow_002dpolicy_002durls"></a>
+<p>Show policy URLs in the signature being verified. Defaults to yes.
+</p>
+</dd>
+<dt>show-notations</dt>
+<dt>show-std-notations</dt>
+<dt>show-user-notations</dt>
+<dd><a class="index-entry-id" id="index-verify_002doptions_003ashow_002dnotations"></a>
+<a class="index-entry-id" id="index-verify_002doptions_003ashow_002dstd_002dnotations"></a>
+<a class="index-entry-id" id="index-verify_002doptions_003ashow_002duser_002dnotations"></a>
+<p>Show all, IETF standard, or user-defined signature notations in the
+  signature being verified. Defaults to IETF standard.
+</p>
+</dd>
+<dt>show-keyserver-urls</dt>
+<dd><a class="index-entry-id" id="index-verify_002doptions_003ashow_002dkeyserver_002durls"></a>
+<p>Show any preferred keyserver URL in the signature being verified.
+  Defaults to yes.
+</p>
+</dd>
+<dt>show-uid-validity</dt>
+<dd><a class="index-entry-id" id="index-verify_002doptions_003ashow_002duid_002dvalidity"></a>
+<p>Display the calculated validity of the user IDs on the key that issued
+  the signature. Defaults to yes.
+</p>
+</dd>
+<dt>show-unusable-uids</dt>
+<dd><a class="index-entry-id" id="index-verify_002doptions_003ashow_002dunusable_002duids"></a>
+<p>Show revoked and expired user IDs during signature verification.
+  Defaults to no.
+</p>
+</dd>
+<dt>show-primary-uid-only</dt>
+<dd><a class="index-entry-id" id="index-verify_002doptions_003ashow_002dprimary_002duid_002donly"></a>
+<p>Show only the primary user ID during signature verification.  That is
+  all the AKA lines as well as photo Ids are not shown with the signature
+  verification status.
+</p>
+</dd>
+</dl>
+
+</dd>
+<dt><a class="index-entry-id" id="index-disable_002dlarge_002drsa"></a>
+<a id="index-enable_002dlarge_002drsa"></a><span><code class="code">--enable-large-rsa</code><a class="copiable-link" href="#index-enable_002dlarge_002drsa"> &para;</a></span></dt>
+<dt><code class="code">--disable-large-rsa</code></dt>
+<dd><p>With &ndash;generate-key and &ndash;batch, enable the creation of RSA secret keys as
+large as 8192 bit.  Note: 8192 bit is more than is generally
+recommended.  These large keys don&rsquo;t significantly improve security,
+but they are more expensive to use, and their signatures and
+certifications are larger.  This option is only available if the
+binary was build with large-secmem support.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-disable_002ddsa2"></a>
+<a id="index-enable_002ddsa2"></a><span><code class="code">--enable-dsa2</code><a class="copiable-link" href="#index-enable_002ddsa2"> &para;</a></span></dt>
+<dt><code class="code">--disable-dsa2</code></dt>
+<dd><p>Enable hash truncation for all DSA keys even for old DSA Keys up to
+1024 bit.  This is also the default with <samp class="option">--openpgp</samp>.  Note
+that older versions of GnuPG also required this flag to allow the
+generation of DSA larger than 1024 bit.
+</p>
+</dd>
+<dt><a id="index-photo_002dviewer"></a><span><code class="code">--photo-viewer <var class="var">string</var></code><a class="copiable-link" href="#index-photo_002dviewer"> &para;</a></span></dt>
+<dd><p>This is the command line that should be run to view a photo ID. &quot;%i&quot;
+will be expanded to a filename containing the photo. &quot;%I&quot; does the
+same, except the file will not be deleted once the viewer exits.
+Other flags are &quot;%k&quot; for the key ID, &quot;%K&quot; for the long key ID, &quot;%f&quot;
+for the key fingerprint, &quot;%t&quot; for the extension of the image type
+(e.g. &quot;jpg&quot;), &quot;%T&quot; for the MIME type of the image (e.g. &quot;image/jpeg&quot;),
+&quot;%v&quot; for the single-character calculated validity of the image being
+viewed (e.g. &quot;f&quot;), &quot;%V&quot; for the calculated validity as a string (e.g.
+&quot;full&quot;), &quot;%U&quot; for a base32 encoded hash of the user ID,
+and &quot;%%&quot; for an actual percent sign. If neither %i or %I are present,
+then the photo will be supplied to the viewer on standard input.
+</p>
+<p>On Unix the default viewer is
+<code class="code">xloadimage -fork -quiet -title 'KeyID 0x%k' STDIN</code>
+with a fallback to
+<code class="code">display -title 'KeyID 0x%k' %i</code>
+and finally to
+<code class="code">xdg-open %i</code>.
+On Windows
+<code class="code">!ShellExecute 400 %i</code> is used; here the command is a meta
+command to use that API call followed by a wait time in milliseconds
+which is used to give the viewer time to read the temporary image file
+before gpg deletes it again.  Note that if your image viewer program
+is not secure, then executing it from gpg does not make it secure.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-PATH"></a>
+<a id="index-exec_002dpath"></a><span><code class="code">--exec-path <var class="var">string</var></code><a class="copiable-link" href="#index-exec_002dpath"> &para;</a></span></dt>
+<dd><p>Sets a list of directories to search for photo viewers If not provided
+photo viewers use the <code class="code">PATH</code> environment variable.
+</p>
+</dd>
+<dt><a id="index-keyring"></a><span><code class="code">--keyring <var class="var">file</var></code><a class="copiable-link" href="#index-keyring"> &para;</a></span></dt>
+<dd><p>Add <var class="var">file</var> to the current list of keyrings. If <var class="var">file</var> begins
+with a tilde and a slash, these are replaced by the $HOME directory. If
+the filename does not contain a slash, it is assumed to be in the GnuPG
+home directory (&quot;~/.gnupg&quot; unless <samp class="option">--homedir</samp> or $GNUPGHOME is
+used).
+</p>
+<p>Note that this adds a keyring to the current list. If the intent is to
+use the specified keyring alone, use <samp class="option">--keyring</samp> along with
+<samp class="option">--no-default-keyring</samp>.
+</p>
+<p>If the option <samp class="option">--no-keyring</samp> has been used no keyrings will
+be used at all.
+</p>
+<p>Note that if the option <samp class="option">use-keyboxd</samp> is enabled in
+<samp class="file">common.conf</samp>, no keyrings are used at all and keys are all
+maintained by the keyboxd process in its own database.
+</p>
+</dd>
+<dt><a id="index-primary_002dkeyring"></a><span><code class="code">--primary-keyring <var class="var">file</var></code><a class="copiable-link" href="#index-primary_002dkeyring"> &para;</a></span></dt>
+<dd><p>This is a varian of <samp class="option">--keyring</samp> and designates <var class="var">file</var> as
+the primary public keyring. This means that newly imported keys (via
+<samp class="option">--import</samp> or keyserver <samp class="option">--recv-from</samp>) will go to this
+keyring.
+</p>
+
+</dd>
+<dt><a id="index-secret_002dkeyring"></a><span><code class="code">--secret-keyring <var class="var">file</var></code><a class="copiable-link" href="#index-secret_002dkeyring"> &para;</a></span></dt>
+<dd><p>This is an obsolete option and ignored.  All secret keys are stored in
+the <samp class="file">private-keys-v1.d</samp> directory below the GnuPG home directory.
+</p>
+</dd>
+<dt><a id="index-trustdb_002dname"></a><span><code class="code">--trustdb-name <var class="var">file</var></code><a class="copiable-link" href="#index-trustdb_002dname"> &para;</a></span></dt>
+<dd><p>Use <var class="var">file</var> instead of the default trustdb. If <var class="var">file</var> begins
+with a tilde and a slash, these are replaced by the $HOME directory. If
+the filename does not contain a slash, it is assumed to be in the GnuPG
+home directory (<samp class="file">~/.gnupg</samp> if <samp class="option">--homedir</samp> or $GNUPGHOME is
+not used).
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-GNUPGHOME-1"></a>
+<a class="index-entry-id" id="index-HKCU_005cSoftware_005cGNU_005cGnuPG_003aHomeDir-1"></a>
+<a id="index-homedir-1"></a><span><code class="code">--homedir <var class="var">dir</var></code><a class="copiable-link" href="#index-homedir-1"> &para;</a></span></dt>
+<dd><p>Set the name of the home directory to <var class="var">dir</var>. If this option is not
+used, the home directory defaults to <samp class="file">~/.gnupg</samp>.  It is only
+recognized when given on the command line.  It also overrides any home
+directory stated through the environment variable <code class="env">GNUPGHOME</code> or
+(on Windows systems) by means of the Registry entry
+<var class="var">HKCU\Software\GNU\GnuPG:HomeDir</var>.
+</p>
+<p>On Windows systems it is possible to install GnuPG as a portable
+application.  In this case only this command line option is
+considered, all other ways to set a home directory are ignored.
+</p>
+
+</dd>
+<dt><a id="index-display_002dcharset"></a><span><code class="code">--display-charset <var class="var">name</var></code><a class="copiable-link" href="#index-display_002dcharset"> &para;</a></span></dt>
+<dd><p>Set the name of the native character set. This is used to convert some
+informational strings like user IDs to the proper UTF-8 encoding.
+Note that this has nothing to do with the character set of data to be
+encrypted or signed; GnuPG does not recode user-supplied data. If this
+option is not used, the default character set is determined from the
+current locale. A verbosity level of 3 shows the chosen set.  This
+option should not be used on Windows.  Valid values for <var class="var">name</var>
+are:
+</p>
+<dl class="table">
+<dt>iso-8859-1</dt>
+<dd><a class="index-entry-id" id="index-display_002dcharset_003aiso_002d8859_002d1"></a>
+<p>This is the Latin 1 set.
+</p>
+</dd>
+<dt>iso-8859-2</dt>
+<dd><a class="index-entry-id" id="index-display_002dcharset_003aiso_002d8859_002d2"></a>
+<p>The Latin 2 set.
+</p>
+</dd>
+<dt>iso-8859-15</dt>
+<dd><a class="index-entry-id" id="index-display_002dcharset_003aiso_002d8859_002d15"></a>
+<p>This is currently an alias for
+  the Latin 1 set.
+</p>
+</dd>
+<dt>koi8-r</dt>
+<dd><a class="index-entry-id" id="index-display_002dcharset_003akoi8_002dr"></a>
+<p>The usual Russian set (RFC-1489).
+</p>
+</dd>
+<dt>utf-8</dt>
+<dd><a class="index-entry-id" id="index-display_002dcharset_003autf_002d8"></a>
+<p>Bypass all translations and assume
+  that the OS uses native UTF-8 encoding.
+</p></dd>
+</dl>
+
+</dd>
+<dt><a id="index-utf8_002dstrings"></a><span><code class="code">--utf8-strings</code><a class="copiable-link" href="#index-utf8_002dstrings"> &para;</a></span></dt>
+<dt><code class="code">--no-utf8-strings</code></dt>
+<dd><p>Assume that command line arguments are given as UTF-8 strings. The
+default (<samp class="option">--no-utf8-strings</samp>) is to assume that arguments are
+encoded in the character set as specified by
+<samp class="option">--display-charset</samp>. These options affect all following
+arguments. Both options may be used multiple times.
+This option should not be used in an option file.
+</p>
+<p>This option has no effect on Windows.  There the internal used UTF-8
+encoding is translated for console input and output.  The command line
+arguments are expected as Unicode and translated to UTF-8.  Thus when
+calling this program from another, make sure to use the Unicode
+version of CreateProcess.
+</p>
+<a class="anchor" id="gpg_002doption-_002d_002doptions"></a></dd>
+<dt><a id="index-options-3"></a><span><code class="code">--options <var class="var">file</var></code><a class="copiable-link" href="#index-options-3"> &para;</a></span></dt>
+<dd><p>Read options from <var class="var">file</var> and do not try to read them from the
+default options file in the homedir (see <samp class="option">--homedir</samp>). This
+option is ignored if used in an options file.
+</p>
+</dd>
+<dt><a id="index-no_002doptions"></a><span><code class="code">--no-options</code><a class="copiable-link" href="#index-no_002doptions"> &para;</a></span></dt>
+<dd><p>Shortcut for <samp class="option">--options /dev/null</samp>. This option is detected
+before an attempt to open an option file.  Using this option will also
+prevent the creation of a <samp class="file">~/.gnupg</samp> homedir.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-bzip2_002dcompress_002dlevel"></a>
+<a class="index-entry-id" id="index-no_002dcompress"></a>
+<a id="index-compress_002dlevel"></a><span><code class="code">-z <var class="var">n</var></code><a class="copiable-link" href="#index-compress_002dlevel"> &para;</a></span></dt>
+<dt><code class="code">--compress-level <var class="var">n</var></code></dt>
+<dt><code class="code">--bzip2-compress-level <var class="var">n</var></code></dt>
+<dt><code class="code">--no-compress</code></dt>
+<dd><p>Set compression level to <var class="var">n</var> for the ZIP and ZLIB compression
+algorithms. The default is to use the default compression level of zlib
+(normally 6). <samp class="option">--bzip2-compress-level</samp> sets the compression level
+for the BZIP2 compression algorithm (defaulting to 6 as well). This is a
+different option from <samp class="option">--compress-level</samp> since BZIP2 uses a
+significant amount of memory for each additional compression level.
+</p>
+<p>Option <samp class="option">-z</samp> sets both. A value of 0 for <var class="var">n</var> disables
+compression.  A value of -1 forces compression using the default
+level.  Option <samp class="option">--no-compress</samp> is identical to <samp class="option">-z0</samp>.
+</p>
+<p>Except for the <samp class="option">--store</samp> command compression is always used
+unless <code class="command">gpg</code> detects that the input is already compressed.  To
+inhibit the use of compression use <samp class="option">-z0</samp> or
+<samp class="option">--no-compress</samp>; to force compression use <samp class="option">-z-1</samp> or
+option <samp class="option">z</samp> with another compression level than the default as
+indicated by -1.  Note that this overriding of the default deection
+works only with <samp class="option">z</samp> and not with the long variant of this
+option.
+</p>
+
+</dd>
+<dt><a id="index-bzip2_002ddecompress_002dlowmem"></a><span><code class="code">--bzip2-decompress-lowmem</code><a class="copiable-link" href="#index-bzip2_002ddecompress_002dlowmem"> &para;</a></span></dt>
+<dd><p>Use a different decompression method for BZIP2 compressed files. This
+alternate method uses a bit more than half the memory, but also runs
+at half the speed. This is useful under extreme low memory
+circumstances when the file was originally compressed at a high
+<samp class="option">--bzip2-compress-level</samp>.
+</p>
+
+</dd>
+<dt><a class="index-entry-id" id="index-no_002dmangle_002ddos_002dfilenames"></a>
+<a id="index-mangle_002ddos_002dfilenames"></a><span><code class="code">--mangle-dos-filenames</code><a class="copiable-link" href="#index-mangle_002ddos_002dfilenames"> &para;</a></span></dt>
+<dt><code class="code">--no-mangle-dos-filenames</code></dt>
+<dd><p>Older version of Windows cannot handle filenames with more than one
+dot. <samp class="option">--mangle-dos-filenames</samp> causes GnuPG to replace (rather
+than add to) the extension of an output filename to avoid this
+problem. This option is off by default and has no effect on non-Windows
+platforms.
+</p>
+</dd>
+<dt><a id="index-ask_002dcert_002dlevel"></a><span><code class="code">--ask-cert-level</code><a class="copiable-link" href="#index-ask_002dcert_002dlevel"> &para;</a></span></dt>
+<dt><code class="code">--no-ask-cert-level</code></dt>
+<dd><p>When making a key signature, prompt for a certification level. If this
+option is not specified, the certification level used is set via
+<samp class="option">--default-cert-level</samp>. See <samp class="option">--default-cert-level</samp> for
+information on the specific levels and how they are
+used. <samp class="option">--no-ask-cert-level</samp> disables this option. This option
+defaults to no.
+</p>
+</dd>
+<dt><a id="index-default_002dcert_002dlevel"></a><span><code class="code">--default-cert-level <var class="var">n</var></code><a class="copiable-link" href="#index-default_002dcert_002dlevel"> &para;</a></span></dt>
+<dd><p>The default to use for the check level when signing a key.
+</p>
+<p>0 means you make no particular claim as to how carefully you verified
+the key.
+</p>
+<p>1 means you believe the key is owned by the person who claims to own
+it but you could not, or did not verify the key at all. This is
+useful for a &quot;persona&quot; verification, where you sign the key of a
+pseudonymous user.
+</p>
+<p>2 means you did casual verification of the key. For example, this
+could mean that you verified the key fingerprint and checked the
+user ID on the key against a photo ID.
+</p>
+<p>3 means you did extensive verification of the key. For example, this
+could mean that you verified the key fingerprint with the owner of the
+key in person, and that you checked, by means of a hard to forge
+document with a photo ID (such as a passport) that the name of the key
+owner matches the name in the user ID on the key, and finally that you
+verified (by exchange of email) that the email address on the key
+belongs to the key owner.
+</p>
+<p>Note that the examples given above for levels 2 and 3 are just that:
+examples. In the end, it is up to you to decide just what &quot;casual&quot;
+and &quot;extensive&quot; mean to you.
+</p>
+<p>This option defaults to 0 (no particular claim).
+</p>
+</dd>
+<dt><a id="index-min_002dcert_002dlevel"></a><span><code class="code">--min-cert-level</code><a class="copiable-link" href="#index-min_002dcert_002dlevel"> &para;</a></span></dt>
+<dd><p>When building the trust database, treat any signatures with a
+certification level below this as invalid. Defaults to 2, which
+disregards level 1 signatures. Note that level 0 &quot;no particular
+claim&quot; signatures are always accepted.
+</p>
+</dd>
+<dt><a id="index-trusted_002dkey"></a><span><code class="code">--trusted-key <var class="var">long key ID or fingerprint</var></code><a class="copiable-link" href="#index-trusted_002dkey"> &para;</a></span></dt>
+<dd><p>Assume that the specified key (which should be given as fingerprint)
+is as trustworthy as one of your own secret keys. This option is
+useful if you don&rsquo;t want to keep your secret keys (or one of them)
+online but still want to be able to check the validity of a given
+recipient&rsquo;s or signator&rsquo;s key.  If the given key is not locally
+available but an LDAP keyserver is configured the missing key is
+imported from that server.  The value &quot;none&quot; is explicitly allowed to
+distinguish between the use of any trusted-key option and no use of
+this option at all (e.g. due to the <samp class="option">--no-options</samp> option).
+</p>
+</dd>
+<dt><a id="index-add_002ddesig_002drevoker"></a><span><code class="code">--add-desig-revoker [sensitive:]<var class="var">fingerprint</var></code><a class="copiable-link" href="#index-add_002ddesig_002drevoker"> &para;</a></span></dt>
+<dd><p>Add the key specified by <var class="var">fingerprint</var> as a designated revoker to
+newly created keys.  If the fingerprint is prefixed with the keyword
+&ldquo;sensitive:&rdquo; that info is normally not exported wit the key.  This
+option may be given several time to add more than one designated
+revoker.  If the keyword &ldquo;clear&rdquo; is used instead of a fingerprint,
+all designated options previously encountered are discarded.
+Designated revokers are marked on the key as non-revocable.  Note that
+a designated revoker specified using a parameter file will also be
+added to the key.
+</p>
+
+</dd>
+<dt><a id="index-trust_002dmodel"></a><span><code class="code">--trust-model {pgp|classic|tofu|tofu+pgp|direct|always|auto}</code><a class="copiable-link" href="#index-trust_002dmodel"> &para;</a></span></dt>
+<dd><p>Set what trust model GnuPG should follow. The models are:
+</p>
+<dl class="table">
+<dt>pgp</dt>
+<dd><a class="index-entry-id" id="index-trust_002dmodel_003apgp"></a>
+<p>This is the Web of Trust combined with trust signatures as used in PGP
+  5.x and later. This is the default trust model when creating a new
+  trust database.
+</p>
+</dd>
+<dt>classic</dt>
+<dd><a class="index-entry-id" id="index-trust_002dmodel_003aclassic"></a>
+<p>This is the standard Web of Trust as introduced by PGP 2.
+</p>
+</dd>
+<dt>tofu</dt>
+<dd><a class="index-entry-id" id="index-trust_002dmodel_003atofu"></a>
+<a class="anchor" id="trust_002dmodel_002dtofu"></a><p>TOFU stands for Trust On First Use.  In this experimental trust
+  model, the first
+  time a key is seen, it is memorized.  If later another key with a
+  user id with the same email address is seen, both keys are marked as
+  suspect.  In that case, the next time either is used, a warning is
+  displayed describing the conflict, why it might have occurred
+  (either the user generated a new key and failed to cross sign the
+  old and new keys, the key is forgery, or a man-in-the-middle attack
+  is being attempted), and the user is prompted to manually confirm
+  the validity of the key in question.
+</p>
+<p>Because a potential attacker is able to control the email address
+  and thereby circumvent the conflict detection algorithm by using an
+  email address that is similar in appearance to a trusted email
+  address, whenever a message is verified, statistics about the number
+  of messages signed with the key are shown.  In this way, a user can
+  easily identify attacks using fake keys for regular correspondents.
+</p>
+<p>When compared with the Web of Trust, TOFU offers significantly
+  weaker security guarantees.  In particular, TOFU only helps ensure
+  consistency (that is, that the binding between a key and email
+  address doesn&rsquo;t change).  A major advantage of TOFU is that it
+  requires little maintenance to use correctly.  To use the web of
+  trust properly, you need to actively sign keys and mark users as
+  trusted introducers.  This is a time-consuming process and anecdotal
+  evidence suggests that even security-conscious users rarely take the
+  time to do this thoroughly and instead rely on an ad-hoc TOFU
+  process.
+</p>
+<p>In the TOFU model, policies are associated with bindings between
+  keys and email addresses (which are extracted from user ids and
+  normalized).  There are five policies, which can be set manually
+  using the <samp class="option">--tofu-policy</samp> option.  The default policy can be
+  set using the <samp class="option">--tofu-default-policy</samp> option.
+</p>
+<p>The TOFU policies are: <code class="code">auto</code>, <code class="code">good</code>, <code class="code">unknown</code>,
+  <code class="code">bad</code> and <code class="code">ask</code>.  The <code class="code">auto</code> policy is used by
+  default (unless overridden by <samp class="option">--tofu-default-policy</samp>) and
+  marks a binding as marginally trusted.  The <code class="code">good</code>,
+  <code class="code">unknown</code> and <code class="code">bad</code> policies mark a binding as fully
+  trusted, as having unknown trust or as having trust never,
+  respectively.  The <code class="code">unknown</code> policy is useful for just using
+  TOFU to detect conflicts, but to never assign positive trust to a
+  binding.  The final policy, <code class="code">ask</code> prompts the user to indicate
+  the binding&rsquo;s trust.  If batch mode is enabled (or input is
+  inappropriate in the context), then the user is not prompted and the
+  <code class="code">undefined</code> trust level is returned.
+</p>
+</dd>
+<dt>tofu+pgp</dt>
+<dd><a class="index-entry-id" id="index-trust_002dmodel_003atofu_002bpgp"></a>
+<p>This experimental trust model combines TOFU with the Web of Trust.
+  This is done
+  by computing the trust level for each model and then taking the
+  maximum trust level where the trust levels are ordered as follows:
+  <code class="code">unknown &lt; undefined &lt; marginal &lt; fully &lt; ultimate &lt; expired &lt;
+  never</code>.
+</p>
+<p>By setting <samp class="option">--tofu-default-policy=unknown</samp>, this model can be
+  used to implement the web of trust with TOFU&rsquo;s conflict detection
+  algorithm, but without its assignment of positive trust values,
+  which some security-conscious users don&rsquo;t like.
+</p>
+</dd>
+<dt>direct</dt>
+<dd><a class="index-entry-id" id="index-trust_002dmodel_003adirect"></a>
+<p>Key validity is set directly by the user and not calculated via the
+  Web of Trust.  This model is solely based on the key and does
+  not distinguish user IDs.  Note that when changing to another trust
+  model the trust values assigned to a key are transformed into
+  ownertrust values, which also indicate how you trust the owner of
+  the key to sign other keys.
+</p>
+</dd>
+<dt>always</dt>
+<dd><a class="index-entry-id" id="index-trust_002dmodel_003aalways"></a>
+<p>Skip key validation and assume that used keys are always fully
+  valid. You generally won&rsquo;t use this unless you are using some
+  external validation scheme. This option also suppresses the
+  &quot;[uncertain]&quot; tag printed with signature checks when there is no
+  evidence that the user ID is bound to the key.  Note that this
+  trust model still does not allow the use of expired, revoked, or
+  disabled keys.
+</p>
+</dd>
+<dt>auto</dt>
+<dd><a class="index-entry-id" id="index-trust_002dmodel_003aauto"></a>
+<p>Select the trust model depending on whatever the internal trust
+  database says. This is the default model if such a database already
+  exists.  Note that a tofu trust model is not considered here and
+  must be enabled explicitly.
+</p></dd>
+</dl>
+
+</dd>
+<dt><a id="index-always_002dtrust"></a><span><code class="code">--always-trust</code><a class="copiable-link" href="#index-always_002dtrust"> &para;</a></span></dt>
+<dd><p>Identical to <samp class="option">--trust-model always</samp>.
+</p>
+</dd>
+<dt><a id="index-assert_002dsigner"></a><span><code class="code">--assert-signer <var class="var">fpr_or_file</var></code><a class="copiable-link" href="#index-assert_002dsigner"> &para;</a></span></dt>
+<dd><p>This option checks whether at least one valid signature on a file has
+been made with the specified key.  The key is either specified as a
+fingerprint or a file listing fingerprints.  The fingerprint must be
+given or listed in compact format (no colons or spaces in between).
+This option can be given multiple times and each fingerprint is
+checked against the signing key as well as the corresponding primary
+key.  If <var class="var">fpr_or_file</var> specifies a file, empty lines are ignored
+as well as all lines starting with a hash sign.  With this option gpg
+is guaranteed to return with an exit code of 0 if and only if a
+signature has been encountered, is valid, and the key matches one of
+the fingerprints given by this option.
+</p>
+</dd>
+<dt><a id="index-assert_002dpubkey_002dalgo"></a><span><code class="code">--assert-pubkey-algo <var class="var">algolist</var></code><a class="copiable-link" href="#index-assert_002dpubkey_002dalgo"> &para;</a></span></dt>
+<dd><p>During data signature verification this options checks whether the
+used public key algorithm matches the algorithms given by
+<var class="var">algolist</var>.  This option can be given multiple times to
+concatenate more algorithms to the list; the delimiter of the list are
+either commas or spaces.
+</p>
+<p>The algorithm names given in the list may either be verbatim names
+like &quot;ed25519&quot; with an optional leading single equal sign, or being
+prefixed with &quot;&gt;&quot;, &quot;&gt;=&quot;, &quot;&lt;=&quot;, or &quot;&lt;&quot;.  That prefix operator is
+applied to the number part of the algorithm name; for example 2048 in
+&quot;rsa2048&quot; or 384 in &quot;brainpoolP384r1&quot;.  If the the leading non-digits
+in the name matches, the prefix operator is used to compare the number
+part, a trailing suffix is ignored in this case.  For example an
+algorithm list &quot;&gt;rsa3000, &gt;=brainpool384r1, =ed25519&quot; allows RSA
+signatures with more that 3000 bits, Brainpool curves 384 and 512,
+and the ed25519 algorithm.
+</p>
+<p>With this option gpg (and also gpgv) is guaranteed to return with an
+exit code of 0 if and only if all valid signatures on data are made
+using a matching algorithm from the given list.
+</p>
+
+</dd>
+<dt><a id="index-auto_002dkey_002dlocate"></a><span><code class="code">--auto-key-locate <var class="var">mechanisms</var></code><a class="copiable-link" href="#index-auto_002dkey_002dlocate"> &para;</a></span></dt>
+<dt><code class="code">--no-auto-key-locate</code></dt>
+<dd><p>GnuPG can automatically locate and retrieve keys as needed using this
+option.  This happens when encrypting to an email address (in the
+&quot;user@example.com&quot; form), and there are no &quot;user@example.com&quot; keys
+on the local keyring.  This option takes any number of the mechanisms
+listed below, in the order they are to be tried.  Instead of listing
+the mechanisms as comma delimited arguments, the option may also be
+given several times to add more mechanism.  The option
+<samp class="option">--no-auto-key-locate</samp> or the mechanism &quot;clear&quot; resets the
+list.  The default is &quot;local,wkd&quot;.
+</p>
+<dl class="table">
+<dt>cert</dt>
+<dd><p>Locate a key using DNS CERT, as specified in RFC-4398.
+</p>
+</dd>
+<dt>dane</dt>
+<dd><p>Locate a key using DANE, as specified
+  in draft-ietf-dane-openpgpkey-05.txt.
+</p>
+</dd>
+<dt>wkd</dt>
+<dd><p>Locate a key using the Web Key Directory protocol.
+</p>
+</dd>
+<dt>ldap</dt>
+<dd><p>Using DNS Service Discovery, check the domain in question for any LDAP
+  keyservers to use.  If this fails, attempt to locate the key using the
+  PGP Universal method of checking &lsquo;<samp class="samp">ldap://keys.(thedomain)</samp>&rsquo;.
+</p>
+</dd>
+<dt>ntds</dt>
+<dd><p>Locate the key using the Active Directory (Windows only).  This
+  method also allows one to search by fingerprint using the command
+  <samp class="option">--locate-external-key</samp>.  Note that this mechanism is
+  actually a shortcut for the mechanism &lsquo;<samp class="samp">keyserver</samp>&rsquo; but using
+  &quot;ldap:///&quot; as the keyserver.
+</p>
+</dd>
+<dt>keyserver</dt>
+<dd><p>Locate a key using a keyserver.  This method also allows one to search
+  by fingerprint using the command <samp class="option">--locate-external-key</samp> if
+  any of the configured keyservers is an LDAP server.
+</p>
+</dd>
+<dt>keyserver-URL</dt>
+<dd><p>In addition, a keyserver URL as used in the <code class="command">dirmngr</code>
+  configuration may be used here to query that particular keyserver.
+  This method also allows one to search by fingerprint using the command
+  <samp class="option">--locate-external-key</samp> if the URL specifies an LDAP server.
+</p>
+</dd>
+<dt>local</dt>
+<dd><p>Locate the key using the local keyrings.  This mechanism allows the user to
+  select the order a local key lookup is done.  Thus using
+  &lsquo;<samp class="samp">--auto-key-locate local</samp>&rsquo; is identical to
+  <samp class="option">--no-auto-key-locate</samp>.
+</p>
+</dd>
+<dt>nodefault</dt>
+<dd><p>This flag disables the standard local key lookup, done before any of the
+  mechanisms defined by the <samp class="option">--auto-key-locate</samp> are tried.  The
+  position of this mechanism in the list does not matter.  It is not
+  required if <code class="code">local</code> is also used.
+</p>
+</dd>
+<dt>clear</dt>
+<dd><p>Clear all defined mechanisms.  This is useful to override
+  mechanisms given in a config file.  Note that a <code class="code">nodefault</code> in
+  <var class="var">mechanisms</var> will also be cleared unless it is given after the
+  <code class="code">clear</code>.
+</p>
+</dd>
+</dl>
+
+
+</dd>
+<dt><a class="index-entry-id" id="index-no_002dauto_002dkey_002dimport"></a>
+<a id="index-auto_002dkey_002dimport"></a><span><code class="code">--auto-key-import</code><a class="copiable-link" href="#index-auto_002dkey_002dimport"> &para;</a></span></dt>
+<dt><code class="code">--no-auto-key-import</code></dt>
+<dd><p>This is an offline mechanism to get a missing key for signature
+verification and for later encryption to this key.  If this option is
+enabled and a signature includes an embedded key, that key is
+used to verify the signature and on verification success the key is
+imported. The default is <samp class="option">--no-auto-key-import</samp>.
+</p>
+<p>On the sender (signing) site the option <samp class="option">--include-key-block</samp>
+needs to be used to put the public part of the signing key as “Key
+Block subpacket” into the signature.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-no_002dauto_002dkey_002dretrieve"></a>
+<a id="index-auto_002dkey_002dretrieve"></a><span><code class="code">--auto-key-retrieve</code><a class="copiable-link" href="#index-auto_002dkey_002dretrieve"> &para;</a></span></dt>
+<dt><code class="code">--no-auto-key-retrieve</code></dt>
+<dd><p>These options enable or disable the automatic retrieving of keys from
+a keyserver when verifying signatures made by keys that are not on the
+local keyring.  The default is <samp class="option">--no-auto-key-retrieve</samp>.
+</p>
+<p>The order of methods tried to lookup the key is:
+</p>
+<p>1. If the option <samp class="option">--auto-key-import</samp> is set and the signatures
+includes an embedded key, that key is used to verify the signature and
+on verification success that key is imported.
+</p>
+<p>2. If a preferred keyserver is specified in the signature and the
+option <samp class="option">honor-keyserver-url</samp> is active (which is not the
+default), that keyserver is tried.  Note that the creator of the
+signature uses the option <samp class="option">--sig-keyserver-url</samp> to specify the
+preferred keyserver for data signatures.
+</p>
+<p>3. If the signature has the Signer&rsquo;s UID set (e.g. using
+<samp class="option">--sender</samp> while creating the signature) a Web Key Directory
+(WKD) lookup is done.  This is the default configuration but can be
+disabled by removing WKD from the auto-key-locate list or by using the
+option <samp class="option">--disable-signer-uid</samp>.
+</p>
+<p>4. If any keyserver is configured and the Issuer Fingerprint is part
+of the signature (since GnuPG 2.1.16), the configured keyservers are
+tried.
+</p>
+<p>Note that this option makes a &quot;web bug&quot; like behavior possible.
+Keyserver or Web Key Directory operators can see which keys you
+request, so by sending you a message signed by a brand new key (which
+you naturally will not have on your local keyring), the operator can
+tell both your IP address and the time when you verified the
+signature.
+</p>
+</dd>
+<dt><a id="index-keyid_002dformat"></a><span><code class="code">--keyid-format {none|short|0xshort|long|0xlong}</code><a class="copiable-link" href="#index-keyid_002dformat"> &para;</a></span></dt>
+<dd><p>Select how to display key IDs.  &quot;none&quot; does not show the key ID at all
+but shows the fingerprint in a separate line.  &quot;short&quot; is the
+traditional 8-character key ID.  &quot;long&quot; is the more accurate (but less
+convenient) 16-character key ID.  Add an &quot;0x&quot; to either to include an
+&quot;0x&quot; at the beginning of the key ID, as in 0x99242560.  Note that this
+option is ignored if the option <samp class="option">--with-colons</samp> is used.
+</p>
+</dd>
+<dt><a id="index-keyserver-1"></a><span><code class="code">--keyserver <var class="var">name</var></code><a class="copiable-link" href="#index-keyserver-1"> &para;</a></span></dt>
+<dd><p>This option is deprecated - please use the <samp class="option">--keyserver</samp> in
+<samp class="file">dirmngr.conf</samp> instead.
+</p>
+<p>Use <var class="var">name</var> as your keyserver. This is the server that
+<samp class="option">--receive-keys</samp>, <samp class="option">--send-keys</samp>, and <samp class="option">--search-keys</samp>
+will communicate with to receive keys from, send keys to, and search for
+keys on. The format of the <var class="var">name</var> is a URI:
+&lsquo;scheme:[//]keyservername[:port]&rsquo; The scheme is the type of keyserver:
+&quot;hkp&quot;/&quot;hkps&quot; for the HTTP (or compatible) keyservers or &quot;ldap&quot;/&quot;ldaps&quot;
+for the LDAP keyservers.  Note that your particular installation of
+GnuPG may have other keyserver types available as well. Keyserver
+schemes are case-insensitive.
+</p>
+<p>Most keyservers synchronize with each other, so there is generally no
+need to send keys to more than one server. The keyserver
+<code class="code">hkp://keys.gnupg.net</code> uses round robin DNS to give a different
+keyserver each time you use it.
+</p>
+</dd>
+<dt><a id="index-keyserver_002doptions"></a><span><code class="code">--keyserver-options {<var class="var">name</var>=<var class="var">value</var>}</code><a class="copiable-link" href="#index-keyserver_002doptions"> &para;</a></span></dt>
+<dd><p>This is a space or comma delimited string that gives options for the
+keyserver. Options can be prefixed with a &lsquo;no-&rsquo; to give the opposite
+meaning. Valid import-options or export-options may be used here as
+well to apply to importing (<samp class="option">--recv-key</samp>) or exporting
+(<samp class="option">--send-key</samp>) a key from a keyserver. While not all options
+are available for all keyserver types, some common options are:
+</p>
+<dl class="table">
+<dt>include-revoked</dt>
+<dd><p>When searching for a key with <samp class="option">--search-keys</samp>, include keys that
+  are marked on the keyserver as revoked. Note that not all keyservers
+  differentiate between revoked and unrevoked keys, and for such
+  keyservers this option is meaningless. Note also that most keyservers do
+  not have cryptographic verification of key revocations, and so turning
+  this option off may result in skipping keys that are incorrectly marked
+  as revoked.
+</p>
+</dd>
+<dt>include-disabled</dt>
+<dd><p>When searching for a key with <samp class="option">--search-keys</samp>, include keys that
+  are marked on the keyserver as disabled. Note that this option is not
+  used with HKP keyservers.
+</p>
+</dd>
+<dt>auto-key-retrieve</dt>
+<dd><p>This is an obsolete alias for the option <samp class="option">auto-key-retrieve</samp>.
+  Please do not use it; it will be removed in future versions..
+</p>
+</dd>
+<dt>honor-keyserver-url</dt>
+<dd><p>When using <samp class="option">--refresh-keys</samp>, if the key in question has a preferred
+  keyserver URL, then use that preferred keyserver to refresh the key
+  from. In addition, if auto-key-retrieve is set, and the signature
+  being verified has a preferred keyserver URL, then use that preferred
+  keyserver to fetch the key from. Note that this option introduces a
+  &quot;web bug&quot;: The creator of the key can see when the keys is
+  refreshed.  Thus this option is not enabled by default.
+</p>
+</dd>
+<dt>include-subkeys</dt>
+<dd><p>When receiving a key, include subkeys as potential targets. Note that
+  this option is not used with HKP keyservers, as they do not support
+  retrieving keys by subkey id.
+</p>
+</dd>
+<dt>timeout</dt>
+<dt>http-proxy=<var class="var">value</var></dt>
+<dt>verbose</dt>
+<dt>debug</dt>
+<dt>check-cert</dt>
+<dt>ca-cert-file</dt>
+<dd><p>These options have no more function since GnuPG 2.1.  Use the
+  <code class="code">dirmngr</code> configuration options instead.
+</p>
+</dd>
+</dl>
+
+<p>The default list of options is: &quot;self-sigs-only, import-clean,
+repair-keys, repair-pks-subkey-bug, export-attributes&quot;. However, if
+the actual used source is an LDAP server &quot;no-self-sigs-only&quot; is
+assumed unless &quot;self-sigs-only&quot; has been explicitly configured.
+</p>
+
+</dd>
+<dt><a id="index-compliant_002dneeded"></a><span><code class="code">--completes-needed <var class="var">n</var></code><a class="copiable-link" href="#index-compliant_002dneeded"> &para;</a></span></dt>
+<dd><p>Number of completely trusted users to introduce a new
+key signer (defaults to 1).
+</p>
+</dd>
+<dt><a id="index-marginals_002dneeded"></a><span><code class="code">--marginals-needed <var class="var">n</var></code><a class="copiable-link" href="#index-marginals_002dneeded"> &para;</a></span></dt>
+<dd><p>Number of marginally trusted users to introduce a new
+key signer (defaults to 3)
+</p>
+</dd>
+<dt><a id="index-tofu_002ddefault_002dpolicy"></a><span><code class="code">--tofu-default-policy {auto|good|unknown|bad|ask}</code><a class="copiable-link" href="#index-tofu_002ddefault_002dpolicy"> &para;</a></span></dt>
+<dd><p>The default TOFU policy (defaults to <code class="code">auto</code>).  For more
+information about the meaning of this option, see <a class="pxref" href="#trust_002dmodel_002dtofu">trust-model-tofu</a>.
+</p>
+</dd>
+<dt><a id="index-max_002dcert_002ddepth"></a><span><code class="code">--max-cert-depth <var class="var">n</var></code><a class="copiable-link" href="#index-max_002dcert_002ddepth"> &para;</a></span></dt>
+<dd><p>Maximum depth of a certification chain (default is 5).
+</p>
+</dd>
+<dt><a id="index-no_002dsig_002dcache"></a><span><code class="code">--no-sig-cache</code><a class="copiable-link" href="#index-no_002dsig_002dcache"> &para;</a></span></dt>
+<dd><p>Do not cache the verification status of key signatures.
+Caching gives a much better performance in key listings. However, if
+you suspect that your public keyring is not safe against write
+modifications, you can use this option to disable the caching. It
+probably does not make sense to disable it because all kind of damage
+can be done if someone else has write access to your public keyring.
+</p>
+</dd>
+<dt><a id="index-auto_002dcheck_002dtrustdb"></a><span><code class="code">--auto-check-trustdb</code><a class="copiable-link" href="#index-auto_002dcheck_002dtrustdb"> &para;</a></span></dt>
+<dt><code class="code">--no-auto-check-trustdb</code></dt>
+<dd><p>If GnuPG feels that its information about the Web of Trust has to be
+updated, it automatically runs the <samp class="option">--check-trustdb</samp> command
+internally.  This may be a time consuming
+process. <samp class="option">--no-auto-check-trustdb</samp> disables this option.
+</p>
+</dd>
+<dt><a id="index-use_002dagent"></a><span><code class="code">--use-agent</code><a class="copiable-link" href="#index-use_002dagent"> &para;</a></span></dt>
+<dt><code class="code">--no-use-agent</code></dt>
+<dd><p>This is dummy option. <code class="command">gpg</code> always requires the agent.
+</p>
+</dd>
+<dt><a id="index-gpg_002dagent_002dinfo"></a><span><code class="code">--gpg-agent-info</code><a class="copiable-link" href="#index-gpg_002dagent_002dinfo"> &para;</a></span></dt>
+<dd><p>This is dummy option. It has no effect when used with <code class="command">gpg</code>.
+</p>
+
+</dd>
+<dt><a id="index-agent_002dprogram"></a><span><code class="code">--agent-program <var class="var">file</var></code><a class="copiable-link" href="#index-agent_002dprogram"> &para;</a></span></dt>
+<dd><p>Specify an agent program to be used for secret key operations.  The
+default value is determined by running <code class="command">gpgconf</code> with the
+option <samp class="option">--list-dirs</samp>.  Note that the pipe symbol (<code class="code">|</code>) is
+used for a regression test suite hack and may thus not be used in the
+file name.
+</p>
+</dd>
+<dt><a id="index-dirmngr_002dprogram"></a><span><code class="code">--dirmngr-program <var class="var">file</var></code><a class="copiable-link" href="#index-dirmngr_002dprogram"> &para;</a></span></dt>
+<dd><p>Specify a dirmngr program to be used for keyserver access.  The
+default value is <samp class="file">/usr/bin/dirmngr</samp>.
+</p>
+</dd>
+<dt><code class="code">--disable-dirmngr</code></dt>
+<dd><p>Entirely disable the use of the Dirmngr.
+</p>
+</dd>
+<dt><a id="index-no_002dautostart"></a><span><code class="code">--no-autostart</code><a class="copiable-link" href="#index-no_002dautostart"> &para;</a></span></dt>
+<dd><p>Do not start the gpg-agent or the dirmngr if it has not yet been
+started and its service is required.  This option is mostly useful on
+machines where the connection to gpg-agent has been redirected to
+another machines.  If dirmngr is required on the remote machine, it
+may be started manually using <code class="command">gpgconf --launch dirmngr</code>.
+</p>
+</dd>
+<dt><a id="index-lock_002donce"></a><span><code class="code">--lock-once</code><a class="copiable-link" href="#index-lock_002donce"> &para;</a></span></dt>
+<dd><p>Lock the databases the first time a lock is requested
+and do not release the lock until the process
+terminates.
+</p>
+</dd>
+<dt><a id="index-lock_002dmultiple"></a><span><code class="code">--lock-multiple</code><a class="copiable-link" href="#index-lock_002dmultiple"> &para;</a></span></dt>
+<dd><p>Release the locks every time a lock is no longer
+needed. Use this to override a previous <samp class="option">--lock-once</samp>
+from a config file.
+</p>
+</dd>
+<dt><a id="index-lock_002dnever"></a><span><code class="code">--lock-never</code><a class="copiable-link" href="#index-lock_002dnever"> &para;</a></span></dt>
+<dd><p>Disable locking entirely. This option should be used only in very
+special environments, where it can be assured that only one process
+is accessing those files. A bootable floppy with a stand-alone
+encryption system will probably use this. Improper usage of this
+option may lead to data and key corruption.
+</p>
+</dd>
+<dt><a id="index-exit_002don_002dstatus_002dwrite_002derror"></a><span><code class="code">--exit-on-status-write-error</code><a class="copiable-link" href="#index-exit_002don_002dstatus_002dwrite_002derror"> &para;</a></span></dt>
+<dd><p>This option will cause write errors on the status FD to immediately
+terminate the process. That should in fact be the default but it never
+worked this way and thus we need an option to enable this, so that the
+change won&rsquo;t break applications which close their end of a status fd
+connected pipe too early. Using this option along with
+<samp class="option">--enable-progress-filter</samp> may be used to cleanly cancel long
+running gpg operations.
+</p>
+</dd>
+<dt><a id="index-limit_002dcard_002dinsert_002dtries"></a><span><code class="code">--limit-card-insert-tries <var class="var">n</var></code><a class="copiable-link" href="#index-limit_002dcard_002dinsert_002dtries"> &para;</a></span></dt>
+<dd><p>With <var class="var">n</var> greater than 0 the number of prompts asking to insert a
+smartcard gets limited to N-1. Thus with a value of 1 gpg won&rsquo;t at
+all ask to insert a card if none has been inserted at startup. This
+option is useful in the configuration file in case an application does
+not know about the smartcard support and waits ad infinitum for an
+inserted card.
+</p>
+</dd>
+<dt><a id="index-no_002drandom_002dseed_002dfile"></a><span><code class="code">--no-random-seed-file</code><a class="copiable-link" href="#index-no_002drandom_002dseed_002dfile"> &para;</a></span></dt>
+<dd><p>GnuPG uses a file to store its internal random pool over invocations.
+This makes random generation faster; however sometimes write operations
+are not desired. This option can be used to achieve that with the cost of
+slower random generation.
+</p>
+</dd>
+<dt><a id="index-no_002dgreeting"></a><span><code class="code">--no-greeting</code><a class="copiable-link" href="#index-no_002dgreeting"> &para;</a></span></dt>
+<dd><p>Suppress the initial copyright message.
+</p>
+</dd>
+<dt><a id="index-no_002dsecmem_002dwarning"></a><span><code class="code">--no-secmem-warning</code><a class="copiable-link" href="#index-no_002dsecmem_002dwarning"> &para;</a></span></dt>
+<dd><p>Suppress the warning about &quot;using insecure memory&quot;.
+</p>
+</dd>
+<dt><a id="index-permission_002dwarning"></a><span><code class="code">--no-permission-warning</code><a class="copiable-link" href="#index-permission_002dwarning"> &para;</a></span></dt>
+<dd><p>Suppress the warning about unsafe file and home directory (<samp class="option">--homedir</samp>)
+permissions. Note that the permission checks that GnuPG performs are
+not intended to be authoritative, but rather they simply warn about
+certain common permission problems. Do not assume that the lack of a
+warning means that your system is secure.
+</p>
+<p>Note that the warning for unsafe <samp class="option">--homedir</samp> permissions cannot be
+suppressed in the gpg.conf file, as this would allow an attacker to
+place an unsafe gpg.conf file in place, and use this file to suppress
+warnings about itself. The <samp class="option">--homedir</samp> permissions warning may only be
+suppressed on the command line.
+</p>
+</dd>
+<dt><a id="index-require_002dsecmem"></a><span><code class="code">--require-secmem</code><a class="copiable-link" href="#index-require_002dsecmem"> &para;</a></span></dt>
+<dt><code class="code">--no-require-secmem</code></dt>
+<dd><p>Refuse to run if GnuPG cannot get secure memory. Defaults to no
+(i.e. run, but give a warning).
+</p>
+
+</dd>
+<dt><a id="index-require_002dcross_002dcertification"></a><span><code class="code">--require-cross-certification</code><a class="copiable-link" href="#index-require_002dcross_002dcertification"> &para;</a></span></dt>
+<dt><code class="code">--no-require-cross-certification</code></dt>
+<dd><p>When verifying a signature made from a subkey, ensure that the cross
+certification &quot;back signature&quot; on the subkey is present and valid.  This
+protects against a subtle attack against subkeys that can sign.
+Defaults to <samp class="option">--require-cross-certification</samp> for
+<code class="command">gpg</code>.
+</p>
+</dd>
+<dt><a id="index-expert"></a><span><code class="code">--expert</code><a class="copiable-link" href="#index-expert"> &para;</a></span></dt>
+<dt><code class="code">--no-expert</code></dt>
+<dd><p>Allow the user to do certain nonsensical or &quot;silly&quot; things like
+signing an expired or revoked key, or certain potentially incompatible
+things like generating unusual key types. This also disables certain
+warning messages about potentially incompatible actions. As the name
+implies, this option is for experts only. If you don&rsquo;t fully
+understand the implications of what it allows you to do, leave this
+off. <samp class="option">--no-expert</samp> disables this option.
+</p>
+</dd>
+</dl>
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="GPG-Key-related-Options.html">Key related options</a>, Up: <a href="GPG-Options.html">Option Summary</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

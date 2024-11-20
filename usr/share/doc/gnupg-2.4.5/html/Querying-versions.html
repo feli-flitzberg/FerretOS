@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Querying versions (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Querying versions (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Querying versions (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="gpgconf.html" rel="up" title="gpgconf">
+<link href="Files-used-by-gpgconf.html" rel="next" title="Files used by gpgconf">
+<link href="Listing-global-options.html" rel="prev" title="Listing global options">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Querying-versions">
+<div class="nav-panel">
+<p>
+Next: <a href="Files-used-by-gpgconf.html" accesskey="n" rel="next">Files used by gpgconf</a>, Previous: <a href="Listing-global-options.html" accesskey="p" rel="prev">Listing global options</a>, Up: <a href="gpgconf.html" accesskey="u" rel="up">Modify .gnupg home directories</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Get-and-compare-software-versions_002e"><span>10.4.8 Get and compare software versions.<a class="copiable-link" href="#Get-and-compare-software-versions_002e"> &para;</a></span></h4>
+
+<p>The GnuPG Project operates a server to query the current versions of
+software packages related to GnuPG.  <code class="command">gpgconf</code> can be used to
+access this online database.  To allow for offline operations, this
+feature works by having <code class="command">dirmngr</code> download a file from
+<code class="code">https://versions.gnupg.org</code>, checking the signature of that file
+and storing the file in the GnuPG home directory.  If
+<code class="command">gpgconf</code> is used and <code class="command">dirmngr</code> is running, it may ask
+<code class="command">dirmngr</code> to refresh that file before itself uses the file.
+</p>
+<p>The command <samp class="option">--query-swdb</samp> returns information for the given
+package in a colon delimited format:
+</p>
+<dl class="table">
+<dt><var class="var">name</var></dt>
+<dd><p>This is the name of the package as requested.  Note that &quot;gnupg&quot; is a
+special name which is replaced by the actual package implementing this
+version of GnuPG.  For this name it is also not required to specify a
+version because <code class="command">gpgconf</code> takes its own version in this case.
+</p>
+</dd>
+<dt><var class="var">iversion</var></dt>
+<dd><p>The currently installed version or an empty string.  The value is
+taken from the command line argument but may be provided by gpg
+if not given.
+</p>
+</dd>
+<dt><var class="var">status</var></dt>
+<dd><p>The status of the software package according to this table:
+</p><dl class="table">
+<dt><code class="code">-</code></dt>
+<dd><p>No information available.  This is either because no current version
+has been specified or due to an error.
+</p></dd>
+<dt><code class="code">?</code></dt>
+<dd><p>The given name is not known in the online database.
+</p></dd>
+<dt><code class="code">u</code></dt>
+<dd><p>An update of the software is available.
+</p></dd>
+<dt><code class="code">c</code></dt>
+<dd><p>The installed version of the software is current.
+</p></dd>
+<dt><code class="code">n</code></dt>
+<dd><p>The installed version is already newer than the released version.
+</p></dd>
+</dl>
+
+</dd>
+<dt><var class="var">urgency</var></dt>
+<dd><p>If the value (the empty string should be considered as zero) is
+greater than zero an important update is available.
+</p>
+</dd>
+<dt><var class="var">error</var></dt>
+<dd><p>This returns an <code class="command">gpg-error</code> error code to distinguish between
+various failure modes.
+</p>
+</dd>
+<dt><var class="var">filedate</var></dt>
+<dd><p>This gives the date of the file with the version numbers in standard
+ISO format (<code class="code">yyyymmddThhmmss</code>).  The date has been extracted by
+<code class="command">dirmngr</code> from the signature of the file.
+</p>
+</dd>
+<dt><var class="var">verified</var></dt>
+<dd><p>This gives the date in ISO format the file was downloaded.  This value
+can be used to evaluate the freshness of the information.
+</p>
+</dd>
+<dt><var class="var">version</var></dt>
+<dd><p>This returns the version string for the requested software from the
+file.
+</p>
+</dd>
+<dt><var class="var">reldate</var></dt>
+<dd><p>This returns the release date in ISO format.
+</p>
+</dd>
+<dt><var class="var">size</var></dt>
+<dd><p>This returns the size of the package as decimal number of bytes.
+</p>
+</dd>
+<dt><var class="var">hash</var></dt>
+<dd><p>This returns a hexified SHA-2 hash of the package.
+</p>
+</dd>
+</dl>
+
+<p>More fields may be added in future to the output.
+</p>
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Files-used-by-gpgconf.html">Files used by gpgconf</a>, Previous: <a href="Listing-global-options.html">Listing global options</a>, Up: <a href="gpgconf.html">Modify .gnupg home directories</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

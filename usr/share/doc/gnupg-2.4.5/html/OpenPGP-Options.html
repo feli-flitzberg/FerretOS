@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>OpenPGP Options (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="OpenPGP Options (Using the GNU Privacy Guard)">
+<meta name="keywords" content="OpenPGP Options (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="GPG-Options.html" rel="up" title="GPG Options">
+<link href="Compliance-Options.html" rel="next" title="Compliance Options">
+<link href="GPG-Input-and-Output.html" rel="prev" title="GPG Input and Output">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="OpenPGP-Options">
+<div class="nav-panel">
+<p>
+Next: <a href="Compliance-Options.html" accesskey="n" rel="next">Compliance options</a>, Previous: <a href="GPG-Input-and-Output.html" accesskey="p" rel="prev">Input and Output</a>, Up: <a href="GPG-Options.html" accesskey="u" rel="up">Option Summary</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="OpenPGP-protocol-specific-options"><span>4.2.4 OpenPGP protocol specific options<a class="copiable-link" href="#OpenPGP-protocol-specific-options"> &para;</a></span></h4>
+
+<dl class="table">
+<dt><a class="index-entry-id" id="index-force_002daead"></a>
+<a id="index-force_002docb"></a><span><code class="code">--force-ocb</code><a class="copiable-link" href="#index-force_002docb"> &para;</a></span></dt>
+<dt><code class="code">--force-aead</code></dt>
+<dd><p>Force the use of AEAD encryption over MDC encryption.  AEAD is a
+modern and faster way to do authenticated encryption than the old MDC
+method.  <samp class="option">--force-aead</samp> is an alias and deprecated.  See also
+option <samp class="option">--chunk-size</samp>.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-disable_002dmdc"></a>
+<a id="index-force_002dmdc"></a><span><code class="code">--force-mdc</code><a class="copiable-link" href="#index-force_002dmdc"> &para;</a></span></dt>
+<dt><code class="code">--disable-mdc</code></dt>
+<dd><p>These options are obsolete and have no effect since GnuPG 2.2.8.  The
+MDC is always used unless the keys indicate that an AEAD algorithm can
+be used in which case AEAD is used.  But note: If the creation of a
+legacy non-MDC message is exceptionally required, the option
+<samp class="option">--rfc2440</samp> allows for this.
+</p>
+</dd>
+<dt><a id="index-disable_002dsigner_002duid"></a><span><code class="code">--disable-signer-uid</code><a class="copiable-link" href="#index-disable_002dsigner_002duid"> &para;</a></span></dt>
+<dd><p>By default the user ID of the signing key is embedded in the data signature.
+As of now this is only done if the signing key has been specified with
+<samp class="option">local-user</samp> using a mail address, or with <samp class="option">sender</samp>.  This
+information can be helpful for verifier to locate the key; see option
+<samp class="option">--auto-key-retrieve</samp>.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-no_002dinclude_002dkey_002dblock"></a>
+<a id="index-include_002dkey_002dblock"></a><span><code class="code">--include-key-block</code><a class="copiable-link" href="#index-include_002dkey_002dblock"> &para;</a></span></dt>
+<dt><code class="code">--no-include-key-block</code></dt>
+<dd><p>This option is used to embed the actual signing key into a data
+signature.  The embedded key is stripped down to a single user id and
+includes only the signing subkey used to create the signature as well
+as as valid encryption subkeys.  All other info is removed from the
+key to keep it and thus the signature small.  This option is the
+OpenPGP counterpart to the <code class="command">gpgsm</code> option
+<samp class="option">--include-certs</samp> and allows the recipient of a signed message
+to reply encrypted to the sender without using any online directories
+to lookup the key.  The default is <samp class="option">--no-include-key-block</samp>.
+See also the option <samp class="option">--auto-key-import</samp>.
+</p>
+</dd>
+<dt><a id="index-personal_002dcipher_002dpreferences"></a><span><code class="code">--personal-cipher-preferences <var class="var">string</var></code><a class="copiable-link" href="#index-personal_002dcipher_002dpreferences"> &para;</a></span></dt>
+<dd><p>Set the list of personal cipher preferences to <var class="var">string</var>.  Use
+<code class="command">gpg --version</code> to get a list of available algorithms,
+and use <code class="code">none</code> to set no preference at all.  This allows the user
+to safely override the algorithm chosen by the recipient key
+preferences, as GPG will only select an algorithm that is usable by
+all recipients.  The most highly ranked cipher in this list is also
+used for the <samp class="option">--symmetric</samp> encryption command.
+</p>
+</dd>
+<dt><a id="index-personal_002ddigest_002dpreferences"></a><span><code class="code">--personal-digest-preferences <var class="var">string</var></code><a class="copiable-link" href="#index-personal_002ddigest_002dpreferences"> &para;</a></span></dt>
+<dd><p>Set the list of personal digest preferences to <var class="var">string</var>.  Use
+<code class="command">gpg --version</code> to get a list of available algorithms,
+and use <code class="code">none</code> to set no preference at all.  This allows the user
+to safely override the algorithm chosen by the recipient key
+preferences, as GPG will only select an algorithm that is usable by
+all recipients.  The most highly ranked digest algorithm in this list
+is also used when signing without encryption
+(e.g. <samp class="option">--clear-sign</samp> or <samp class="option">--sign</samp>).
+</p>
+</dd>
+<dt><a id="index-personal_002dcompress_002dpreferences"></a><span><code class="code">--personal-compress-preferences <var class="var">string</var></code><a class="copiable-link" href="#index-personal_002dcompress_002dpreferences"> &para;</a></span></dt>
+<dd><p>Set the list of personal compression preferences to <var class="var">string</var>.
+Use <code class="command">gpg --version</code> to get a list of available
+algorithms, and use <code class="code">none</code> to set no preference at all.  This
+allows the user to safely override the algorithm chosen by the
+recipient key preferences, as GPG will only select an algorithm that
+is usable by all recipients.  The most highly ranked compression
+algorithm in this list is also used when there are no recipient keys
+to consider (e.g. <samp class="option">--symmetric</samp>).
+</p>
+</dd>
+<dt><a id="index-s2k_002dcipher_002dalgo"></a><span><code class="code">--s2k-cipher-algo <var class="var">name</var></code><a class="copiable-link" href="#index-s2k_002dcipher_002dalgo"> &para;</a></span></dt>
+<dd><p>Use <var class="var">name</var> as the cipher algorithm for symmetric encryption with
+a passphrase if <samp class="option">--personal-cipher-preferences</samp> and
+<samp class="option">--cipher-algo</samp> are not given.  The default is AES-128.
+</p>
+</dd>
+<dt><a id="index-s2k_002ddigest_002dalgo"></a><span><code class="code">--s2k-digest-algo <var class="var">name</var></code><a class="copiable-link" href="#index-s2k_002ddigest_002dalgo"> &para;</a></span></dt>
+<dd><p>Use <var class="var">name</var> as the digest algorithm used to mangle the passphrases
+for symmetric encryption.  The default is SHA-1.
+</p>
+</dd>
+<dt><a id="index-s2k_002dmode"></a><span><code class="code">--s2k-mode <var class="var">n</var></code><a class="copiable-link" href="#index-s2k_002dmode"> &para;</a></span></dt>
+<dd><p>Selects how passphrases for symmetric encryption are mangled. If
+<var class="var">n</var> is 0 a plain passphrase (which is in general not recommended)
+will be used, a 1 adds a salt (which should not be used) to the
+passphrase and a 3 (the default) iterates the whole process a number
+of times (see <samp class="option">--s2k-count</samp>).
+</p>
+</dd>
+<dt><a id="index-s2k_002dcount-1"></a><span><code class="code">--s2k-count <var class="var">n</var></code><a class="copiable-link" href="#index-s2k_002dcount-1"> &para;</a></span></dt>
+<dd><p>Specify how many times the passphrases mangling for symmetric
+encryption is repeated.  This value may range between 1024 and
+65011712 inclusive.  The default is inquired from gpg-agent.  Note
+that not all values in the 1024-65011712 range are legal and if an
+illegal value is selected, GnuPG will round up to the nearest legal
+value.  This option is only meaningful if <samp class="option">--s2k-mode</samp> is set
+to the default of 3.
+</p>
+
+</dd>
+</dl>
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Compliance-Options.html">Compliance options</a>, Previous: <a href="GPG-Input-and-Output.html">Input and Output</a>, Up: <a href="GPG-Options.html">Option Summary</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Invoking gpgconf (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Invoking gpgconf (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Invoking gpgconf (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="gpgconf.html" rel="up" title="gpgconf">
+<link href="Format-conventions.html" rel="next" title="Format conventions">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Invoking-gpgconf">
+<div class="nav-panel">
+<p>
+Next: <a href="Format-conventions.html" accesskey="n" rel="next">Format conventions</a>, Up: <a href="gpgconf.html" accesskey="u" rel="up">Modify .gnupg home directories</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Invoking-gpgconf-1"><span>10.4.1 Invoking gpgconf<a class="copiable-link" href="#Invoking-gpgconf-1"> &para;</a></span></h4>
+
+
+<p>One of the following commands must be given:
+</p>
+<dl class="table">
+<dt><code class="code">--list-components</code></dt>
+<dd><p>List all components.  This is the default command used if none is
+specified.
+</p>
+</dd>
+<dt><code class="code">--check-programs</code></dt>
+<dd><p>List all available backend programs and test whether they are runnable.
+</p>
+</dd>
+<dt><code class="code">--list-options <var class="var">component</var></code></dt>
+<dd><p>List all options of the component <var class="var">component</var>.
+</p>
+</dd>
+<dt><code class="code">--change-options <var class="var">component</var></code></dt>
+<dd><p>Change the options of the component <var class="var">component</var>.
+</p>
+</dd>
+<dt><code class="code">--check-options <var class="var">component</var></code></dt>
+<dd><p>Check the options for the component <var class="var">component</var>.
+</p>
+</dd>
+<dt><code class="code">--apply-profile <var class="var">file</var></code></dt>
+<dd><p>Apply the configuration settings listed in <var class="var">file</var> to the
+configuration files.  If <var class="var">file</var> has no suffix and no slashes the
+command first tries to read a file with the suffix <code class="code">.prf</code> from
+the data directory (<code class="code">gpgconf --list-dirs datadir</code>) before it
+reads the file verbatim.  A profile is divided into sections using the
+bracketed  component name.  Each section then lists the option which
+shall go into the respective configuration file.
+</p>
+</dd>
+<dt><code class="code">--apply-defaults</code></dt>
+<dd><p>Update all configuration files with values taken from the global
+configuration file (usually <samp class="file">/etc/gnupg/gpgconf.conf</samp>).
+Note: This is a legacy mechanism.  Please use global configuration
+files instead.
+</p>
+</dd>
+<dt><code class="code">--list-dirs [<var class="var">names</var>]</code></dt>
+<dt><code class="code">-L</code></dt>
+<dd><p>Lists the directories used by <code class="command">gpgconf</code>.  One directory is
+listed per line, and each line consists of a colon-separated list where
+the first field names the directory type (for example <code class="code">sysconfdir</code>)
+and the second field contains the percent-escaped directory.  Although
+they are not directories, the socket file names used by
+<code class="command">gpg-agent</code> and <code class="command">dirmngr</code> are printed as well.  Note
+that the socket file names and the <code class="code">homedir</code> lines are the default
+names and they may be overridden by command line switches.  If
+<var class="var">names</var> are given only the directories or file names specified by
+the list names are printed without any escaping.
+</p>
+</dd>
+<dt><code class="code">--list-config [<var class="var">filename</var>]</code></dt>
+<dd><p>List the global configuration file in a colon separated format.  If
+<var class="var">filename</var> is given, check that file instead.
+</p>
+</dd>
+<dt><code class="code">--check-config [<var class="var">filename</var>]</code></dt>
+<dd><p>Run a syntax check on the global configuration file.  If <var class="var">filename</var>
+is given, check that file instead.
+</p>
+
+</dd>
+<dt><code class="code">--query-swdb <var class="var">package_name</var> [<var class="var">version_string</var>]</code></dt>
+<dd><p>Returns the current version for <var class="var">package_name</var> and if
+<var class="var">version_string</var> is given also an indicator on whether an update
+is available.  The actual file with the software version is
+automatically downloaded and checked by <code class="command">dirmngr</code>.
+<code class="command">dirmngr</code> uses a thresholds to avoid download the file too
+often and it does this by default only if it can be done via Tor.  To
+force an update of that file this command can be used:
+</p>
+<div class="example">
+<pre class="example-preformatted">       gpg-connect-agent --dirmngr 'loadswdb --force' /bye
+</pre></div>
+
+</dd>
+<dt><a id="index-reload"></a><span><code class="code">--reload [<var class="var">component</var>]</code><a class="copiable-link" href="#index-reload"> &para;</a></span></dt>
+<dt><code class="code">-R</code></dt>
+<dd><p>Reload all or the given component. This is basically the same as
+sending a SIGHUP to the component.  Components which don&rsquo;t support
+reloading are ignored.  Without <var class="var">component</var> or by using &quot;all&quot; for
+<var class="var">component</var> all components which are daemons are reloaded.
+</p>
+</dd>
+<dt><a id="index-launch"></a><span><code class="code">--launch [<var class="var">component</var>]</code><a class="copiable-link" href="#index-launch"> &para;</a></span></dt>
+<dd><p>If the <var class="var">component</var> is not already running, start it.
+<code class="command">component</code> must be a daemon.  This is in general not required
+because the system starts these daemons as needed.  However, external
+software making direct use of <code class="command">gpg-agent</code> or <code class="command">dirmngr</code>
+may use this command to ensure that they are started.  Using &quot;all&quot; for
+<var class="var">component</var> launches all components which are daemons.
+</p>
+</dd>
+<dt><a id="index-kill"></a><span><code class="code">--kill [<var class="var">component</var>]</code><a class="copiable-link" href="#index-kill"> &para;</a></span></dt>
+<dt><code class="code">-K</code></dt>
+<dd><p>Kill the given component that runs as a daemon, including
+<code class="command">gpg-agent</code>, <code class="command">dirmngr</code>, and <code class="command">scdaemon</code>.  A
+<code class="command">component</code> which does not run as a daemon will be ignored.
+Using &quot;all&quot; for <var class="var">component</var> kills all components running as
+daemons.  Note that as of now reload and kill have the same effect for
+<code class="command">scdaemon</code>.
+</p>
+</dd>
+<dt><a id="index-create_002dsocketdir"></a><span><code class="code">--create-socketdir</code><a class="copiable-link" href="#index-create_002dsocketdir"> &para;</a></span></dt>
+<dd><p>Create a directory for sockets below /run/user or /var/run/user.  This
+is command is only required if a non default home directory is used
+and the /run based sockets shall be used.  For the default home
+directory GnuPG creates a directory on the fly.
+</p>
+</dd>
+<dt><a id="index-remove_002dsocketdir"></a><span><code class="code">--remove-socketdir</code><a class="copiable-link" href="#index-remove_002dsocketdir"> &para;</a></span></dt>
+<dd><p>Remove a directory created with command <samp class="option">--create-socketdir</samp>.
+</p>
+</dd>
+<dt><code class="code">--unlock <var class="var">name</var></code></dt>
+<dt><code class="code">--lock <var class="var">name</var></code></dt>
+<dd><p>Remove a stale lock file hold for <samp class="file">file</samp>.  The file is
+expected in the current GnuPG home directory.  This command is usually
+not required because GnuPG is able to detect and remove stale lock
+files.  Before using the command make sure that the file protected by
+the lock file is actually not in use.  The lock command may be used to
+lock an accidentally removed lock file.  Note that the commands have no
+effect on Windows because the mere existence of a lock file does not
+mean that the lock is active.
+</p>
+</dd>
+</dl>
+
+
+
+
+<p>The following options may be used:
+</p>
+<dl class="table">
+<dt><code class="code">-o <var class="var">file</var></code></dt>
+<dt><code class="code">--output <var class="var">file</var></code></dt>
+<dd><p>Write output to <var class="var">file</var>.  Default is to write to stdout.
+</p>
+</dd>
+<dt><code class="code">-v</code></dt>
+<dt><code class="code">--verbose</code></dt>
+<dd><p>Outputs additional information while running.  Specifically, this
+extends numerical field values by human-readable descriptions.
+</p>
+</dd>
+<dt><a id="index-quiet-4"></a><span><code class="code">-q</code><a class="copiable-link" href="#index-quiet-4"> &para;</a></span></dt>
+<dt><code class="code">--quiet</code></dt>
+<dd><p>Try to be as quiet as possible.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-GNUPGHOME-6"></a>
+<a class="index-entry-id" id="index-HKCU_005cSoftware_005cGNU_005cGnuPG_003aHomeDir-5"></a>
+<a id="index-homedir-5"></a><span><code class="code">--homedir <var class="var">dir</var></code><a class="copiable-link" href="#index-homedir-5"> &para;</a></span></dt>
+<dd><p>Set the name of the home directory to <var class="var">dir</var>. If this option is not
+used, the home directory defaults to <samp class="file">~/.gnupg</samp>.  It is only
+recognized when given on the command line.  It also overrides any home
+directory stated through the environment variable <code class="env">GNUPGHOME</code> or
+(on Windows systems) by means of the Registry entry
+<var class="var">HKCU\Software\GNU\GnuPG:HomeDir</var>.
+</p>
+<p>On Windows systems it is possible to install GnuPG as a portable
+application.  In this case only this command line option is
+considered, all other ways to set a home directory are ignored.
+</p>
+</dd>
+<dt><a id="index-chuid-3"></a><span><code class="code">--chuid <var class="var">uid</var></code><a class="copiable-link" href="#index-chuid-3"> &para;</a></span></dt>
+<dd><p>Change the current user to <var class="var">uid</var> which may either be a number or a
+name.  This can be used from the root account to get information on
+the GnuPG environment of the specified user or to start or kill
+daemons.  If <var class="var">uid</var> is not the current UID a standard PATH is set
+and the envvar GNUPGHOME is unset.  To override the latter the option
+<samp class="option">--homedir</samp> can be used.  This option has currently no effect
+on Windows.
+</p>
+</dd>
+<dt><code class="code">-n</code></dt>
+<dt><code class="code">--dry-run</code></dt>
+<dd><p>Do not actually change anything.  This is currently only implemented
+for <code class="code">--change-options</code> and can be used for testing purposes.
+</p>
+</dd>
+<dt><code class="code">-r</code></dt>
+<dt><code class="code">--runtime</code></dt>
+<dd><p>Only used together with <code class="code">--change-options</code>.  If one of the
+modified options can be changed in a running daemon process, signal
+the running daemon to ask it to reparse its configuration file after
+changing.
+</p>
+<p>This means that the changes will take effect at run-time, as far as
+this is possible.  Otherwise, they will take effect at the next start
+of the respective backend programs.
+</p>
+</dd>
+<dt><a id="index-status_002dfd-3"></a><span><code class="code">--status-fd <var class="var">n</var></code><a class="copiable-link" href="#index-status_002dfd-3"> &para;</a></span></dt>
+<dd><p>Write special status strings to the file descriptor <var class="var">n</var>.  This
+program returns the status messages SUCCESS or FAILURE which are
+helpful when the caller uses a double fork approach and can&rsquo;t easily
+get the return code of the process.
+</p>
+
+</dd>
+</dl>
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Format-conventions.html">Format conventions</a>, Up: <a href="gpgconf.html">Modify .gnupg home directories</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

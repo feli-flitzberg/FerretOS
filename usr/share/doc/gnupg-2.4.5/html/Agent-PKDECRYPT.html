@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Agent PKDECRYPT (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Agent PKDECRYPT (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Agent PKDECRYPT (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Agent-Protocol.html" rel="up" title="Agent Protocol">
+<link href="Agent-PKSIGN.html" rel="next" title="Agent PKSIGN">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Agent-PKDECRYPT">
+<div class="nav-panel">
+<p>
+Next: <a href="Agent-PKSIGN.html" accesskey="n" rel="next">Signing a Hash</a>, Up: <a href="Agent-Protocol.html" accesskey="u" rel="up">Agent&rsquo;s Assuan Protocol</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Decrypting-a-session-key"><span>2.6.1 Decrypting a session key<a class="copiable-link" href="#Decrypting-a-session-key"> &para;</a></span></h4>
+
+<p>The client asks the server to decrypt a session key.  The encrypted
+session key should have all information needed to select the
+appropriate secret key or to delegate it to a smartcard.
+</p>
+<div class="example">
+<pre class="example-preformatted">  SETKEY &lt;keyGrip&gt;
+</pre></div>
+
+<p>Tell the server about the key to be used for decryption.  If this is
+not used, <code class="command">gpg-agent</code> may try to figure out the key by trying to
+decrypt the message with each key available.
+</p>
+<div class="example">
+<pre class="example-preformatted">  PKDECRYPT
+</pre></div>
+
+<p>The agent checks whether this command is allowed and then does an
+INQUIRY to get the ciphertext the client should then send the cipher
+text.
+</p>
+<div class="example">
+<pre class="example-preformatted">    S: INQUIRE CIPHERTEXT
+    C: D (xxxxxx
+    C: D xxxx)
+    C: END
+</pre></div>
+
+<p>Please note that the server may send status info lines while reading the
+data lines from the client.  The data send is a SPKI like S-Exp with
+this structure:
+</p>
+<div class="example">
+<pre class="example-preformatted">     (enc-val
+       (&lt;algo&gt;
+         (&lt;param_name1&gt; &lt;mpi&gt;)
+ 	   ...
+         (&lt;param_namen&gt; &lt;mpi&gt;)))
+</pre></div>
+
+<p>Where algo is a string with the name of the algorithm; see the libgcrypt
+documentation for a list of valid algorithms.  The number and names of
+the parameters depend on the algorithm.  The agent does return an error
+if there is an inconsistency.
+</p>
+<p>If the decryption was successful the decrypted data is returned by
+means of &quot;D&quot; lines.
+</p>
+<p>Here is an example session:
+</p><table class="cartouche" border="1"><tr><td>
+<div class="example smallexample">
+<pre class="example-preformatted">   C: PKDECRYPT
+   S: INQUIRE CIPHERTEXT
+   C: D (enc-val elg (a 349324324)
+   C: D    (b 3F444677CA)))
+   C: END
+   S: # session key follows
+   S: S PADDING 0
+   S: D (value 1234567890ABCDEF0)
+   S: OK decryption successful
+</pre></div>
+</td></tr></table>
+
+<p>The “PADDING” status line is only send if gpg-agent can tell what kind
+of padding is used.  As of now only the value 0 is used to indicate
+that the padding has been removed.
+</p>
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Agent-PKSIGN.html">Signing a Hash</a>, Up: <a href="Agent-Protocol.html">Agent&rsquo;s Assuan Protocol</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

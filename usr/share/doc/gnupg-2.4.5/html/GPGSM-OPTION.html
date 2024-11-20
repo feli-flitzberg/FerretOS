@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>GPGSM OPTION (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="GPGSM OPTION (Using the GNU Privacy Guard)">
+<meta name="keywords" content="GPGSM OPTION (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="GPGSM-Protocol.html" rel="up" title="GPGSM Protocol">
+<link href="GPGSM-GETINFO.html" rel="prev" title="GPGSM GETINFO">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="GPGSM-OPTION">
+<div class="nav-panel">
+<p>
+Previous: <a href="GPGSM-GETINFO.html" accesskey="p" rel="prev">Return information about the process</a>, Up: <a href="GPGSM-Protocol.html" accesskey="u" rel="up">The Protocol the Server Mode Uses</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Session-options"><span>5.6.12 Session options<a class="copiable-link" href="#Session-options"> &para;</a></span></h4>
+
+<p>The standard Assuan option handler supports these options.
+</p>
+<div class="example">
+<pre class="example-preformatted">OPTION <var class="var">name</var>[=<var class="var">value</var>]
+</pre></div>
+
+<p>These <var class="var">name</var>s are recognized:
+</p>
+<dl class="table">
+<dt><code class="code">putenv</code></dt>
+<dd><p>Change the session&rsquo;s environment to be passed via gpg-agent to
+Pinentry.  <var class="var">value</var> is a string of the form
+<code class="code">&lt;KEY&gt;[=[&lt;STRING&gt;]]</code>.  If only <code class="code">&lt;KEY&gt;</code> is given the
+environment variable <code class="code">&lt;KEY&gt;</code> is removed from the session
+environment, if <code class="code">&lt;KEY&gt;=</code> is given that environment variable is
+set to the empty string, and if <code class="code">&lt;STRING&gt;</code> is given it is set to
+that string.
+</p>
+</dd>
+<dt><a id="index-DISPLAY"></a><span><code class="code">display</code><a class="copiable-link" href="#index-DISPLAY"> &para;</a></span></dt>
+<dd><p>Set the session environment variable <code class="code">DISPLAY</code> is set to <var class="var">value</var>.
+</p></dd>
+<dt><a id="index-GPG_005fTTY-1"></a><span><code class="code">ttyname</code><a class="copiable-link" href="#index-GPG_005fTTY-1"> &para;</a></span></dt>
+<dd><p>Set the session environment variable <code class="code">GPG_TTY</code> is set to <var class="var">value</var>.
+</p></dd>
+<dt><a id="index-TERM"></a><span><code class="code">ttytype</code><a class="copiable-link" href="#index-TERM"> &para;</a></span></dt>
+<dd><p>Set the session environment variable <code class="code">TERM</code> is set to <var class="var">value</var>.
+</p></dd>
+<dt><a id="index-LC_005fCTYPE"></a><span><code class="code">lc-ctype</code><a class="copiable-link" href="#index-LC_005fCTYPE"> &para;</a></span></dt>
+<dd><p>Set the session environment variable <code class="code">LC_CTYPE</code> is set to <var class="var">value</var>.
+</p></dd>
+<dt><a id="index-LC_005fMESSAGES"></a><span><code class="code">lc-messages</code><a class="copiable-link" href="#index-LC_005fMESSAGES"> &para;</a></span></dt>
+<dd><p>Set the session environment variable <code class="code">LC_MESSAGES</code> is set to <var class="var">value</var>.
+</p></dd>
+<dt><a id="index-XAUTHORITY"></a><span><code class="code">xauthority</code><a class="copiable-link" href="#index-XAUTHORITY"> &para;</a></span></dt>
+<dd><p>Set the session environment variable <code class="code">XAUTHORITY</code> is set to <var class="var">value</var>.
+</p></dd>
+<dt><a id="index-PINENTRY_005fUSER_005fDATA-1"></a><span><code class="code">pinentry-user-data</code><a class="copiable-link" href="#index-PINENTRY_005fUSER_005fDATA-1"> &para;</a></span></dt>
+<dd><p>Set the session environment variable <code class="code">PINENTRY_USER_DATA</code> is set
+to <var class="var">value</var>.
+</p>
+</dd>
+<dt><code class="code">include-certs</code></dt>
+<dd><p>This option overrides the command line option
+<samp class="option">--include-certs</samp>.  A <var class="var">value</var> of -2 includes all
+certificates except for the root certificate, -1 includes all
+certificates, 0 does not include any certificates, 1 includes only the
+signers certificate and all other positive values include up to
+<var class="var">value</var> certificates starting with the signer cert.
+</p>
+</dd>
+<dt><code class="code">list-mode</code></dt>
+<dd><p>See <a class="xref" href="GPGSM-LISTKEYS.html#gpgsm_002dcmd-listkeys">gpgsm-cmd listkeys</a>.
+</p>
+</dd>
+<dt><code class="code">list-to-output</code></dt>
+<dd><p>If <var class="var">value</var> is true the output of the list commands
+(see <a class="pxref" href="GPGSM-LISTKEYS.html#gpgsm_002dcmd-listkeys">gpgsm-cmd listkeys</a>) is written to the file descriptor set
+with the last <code class="code">OUTPUT</code> command.  If <var class="var">value</var> is false the output is
+written via data lines; this is the default.
+</p>
+</dd>
+<dt><code class="code">with-validation</code></dt>
+<dd><p>If <var class="var">value</var> is true for each listed certificate the validation
+status is printed.  This may result in the download of a CRL or the
+user being asked about the trustworthiness of a root certificate.  The
+default is given by a command line option (see <a class="pxref" href="Input-and-Output.html#gpgsm_002doption-_002d_002dwith_002dvalidation">gpgsm-option --with-validation</a>).
+</p>
+
+</dd>
+<dt><code class="code">with-secret</code></dt>
+<dd><p>If <var class="var">value</var> is true certificates with a corresponding private key
+are marked by the list commands.
+</p>
+</dd>
+<dt><code class="code">validation-model</code></dt>
+<dd><p>This option overrides the command line option
+<samp class="option">validation-model</samp> for the session.
+(See <a class="xref" href="Certificate-Options.html#gpgsm_002doption-_002d_002dvalidation_002dmodel">gpgsm-option --validation-model</a>.)
+</p>
+</dd>
+<dt><code class="code">with-key-data</code></dt>
+<dd><p>This option globally enables the command line option
+<samp class="option">--with-key-data</samp>.  (See <a class="xref" href="Input-and-Output.html#gpgsm_002doption-_002d_002dwith_002dkey_002ddata">gpgsm-option --with-key-data</a>.)
+</p>
+</dd>
+<dt><code class="code">enable-audit-log</code></dt>
+<dd><p>If <var class="var">value</var> is true data to write an audit log is gathered.
+(See <a class="xref" href="GPGSM-GETAUDITLOG.html#gpgsm_002dcmd-getauditlog">gpgsm-cmd getauditlog</a>.)
+</p>
+</dd>
+<dt><code class="code">allow-pinentry-notify</code></dt>
+<dd><p>If this option is used notifications about the launch of a Pinentry
+are passed back to the client.
+</p>
+</dd>
+<dt><code class="code">with-ephemeral-keys</code></dt>
+<dd><p>If <var class="var">value</var> is true ephemeral certificates are included in the
+output of the list commands.
+</p>
+</dd>
+<dt><code class="code">no-encrypt-to</code></dt>
+<dd><p>If this option is used all keys set by the command line option
+<samp class="option">--encrypt-to</samp> are ignored.
+</p>
+</dd>
+<dt><code class="code">offline</code></dt>
+<dd><p>If <var class="var">value</var> is true or <var class="var">value</var> is not given all network access
+is disabled for this session.  This is the same as the command line
+option <samp class="option">--disable-dirmngr</samp>.
+</p>
+</dd>
+<dt><code class="code">always-trust</code></dt>
+<dd><p>If <var class="var">value</var> is true or <var class="var">value</var> is not given encryption to the
+specified certificates is forced without any validation of the
+certificate chain.  The only requirement is that the certificates are
+capable of encryption.  If set to false the standard behaviour is
+re-established.  This option is cleared by a RESET and after each
+encrypt operation.  Note that this option is ignored if
+<samp class="option">--always-trust</samp> or <samp class="option">--require-compliance</samp> are used.
+</p>
+</dd>
+<dt><code class="code">input-size-hint</code></dt>
+<dd><p>This is the same as the <samp class="option">--input-size-hint</samp> command line option.
+</p>
+</dd>
+</dl>
+
+
+
+
+
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Previous: <a href="GPGSM-GETINFO.html">Return information about the process</a>, Up: <a href="GPGSM-Protocol.html">The Protocol the Server Mode Uses</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

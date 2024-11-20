@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Scdaemon Commands (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Scdaemon Commands (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Scdaemon Commands (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Invoking-SCDAEMON.html" rel="up" title="Invoking SCDAEMON">
+<link href="Scdaemon-Options.html" rel="next" title="Scdaemon Options">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="Scdaemon-Commands">
+<div class="nav-panel">
+<p>
+Next: <a href="Scdaemon-Options.html" accesskey="n" rel="next">Option Summary</a>, Up: <a href="Invoking-SCDAEMON.html" accesskey="u" rel="up">Invoking the SCDAEMON</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="Commands-4"><span>6.1 Commands<a class="copiable-link" href="#Commands-4"> &para;</a></span></h3>
+
+<p>Commands are not distinguished from options except for the fact that
+only one command is allowed.
+</p>
+<dl class="table">
+<dt><a id="index-version-4"></a><span><code class="code">--version</code><a class="copiable-link" href="#index-version-4"> &para;</a></span></dt>
+<dd><p>Print the program version and licensing information.  Note that you cannot
+abbreviate this command.
+</p>
+</dd>
+<dt><a id="index-help-4"></a><span><code class="code">--help, -h</code><a class="copiable-link" href="#index-help-4"> &para;</a></span></dt>
+<dd><p>Print a usage message summarizing the most useful command-line options.
+Note that you cannot abbreviate this command.
+</p>
+</dd>
+<dt><a id="index-dump_002doptions-4"></a><span><code class="code">--dump-options</code><a class="copiable-link" href="#index-dump_002doptions-4"> &para;</a></span></dt>
+<dd><p>Print a list of all available options and commands.  Note that you cannot
+abbreviate this command.
+</p>
+</dd>
+<dt><a id="index-server-3"></a><span><code class="code">--server</code><a class="copiable-link" href="#index-server-3"> &para;</a></span></dt>
+<dd><p>Run in server mode and wait for commands on the <code class="code">stdin</code>.  The
+default mode is to create a socket and listen for commands there.
+</p>
+</dd>
+<dt><a id="index-multi_002dserver"></a><span><code class="code">--multi-server</code><a class="copiable-link" href="#index-multi_002dserver"> &para;</a></span></dt>
+<dd><p>Run in server mode and wait for commands on the <code class="code">stdin</code> as well as
+on an additional Unix Domain socket.  The server command <code class="code">GETINFO</code>
+may be used to get the name of that extra socket.
+</p>
+</dd>
+<dt><a id="index-daemon-2"></a><span><code class="code">--daemon</code><a class="copiable-link" href="#index-daemon-2"> &para;</a></span></dt>
+<dd><p>Run the program in the background.  This option is required to prevent
+it from being accidentally running in the background.
+</p>
+</dd>
+</dl>
+
+
+
+
+</div>
+
+
+
+</body>
+</html>

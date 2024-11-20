@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Dirmngr Signals (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Dirmngr Signals (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Dirmngr Signals (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Invoking-DIRMNGR.html" rel="up" title="Invoking DIRMNGR">
+<link href="Dirmngr-Examples.html" rel="next" title="Dirmngr Examples">
+<link href="Dirmngr-Configuration.html" rel="prev" title="Dirmngr Configuration">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="Dirmngr-Signals">
+<div class="nav-panel">
+<p>
+Next: <a href="Dirmngr-Examples.html" accesskey="n" rel="next">Examples</a>, Previous: <a href="Dirmngr-Configuration.html" accesskey="p" rel="prev">Configuration</a>, Up: <a href="Invoking-DIRMNGR.html" accesskey="u" rel="up">Invoking DIRMNGR</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="Use-of-signals"><span>3.4 Use of signals<a class="copiable-link" href="#Use-of-signals"> &para;</a></span></h3>
+
+<p>A running <code class="command">dirmngr</code> may be controlled by signals, i.e. using
+the <code class="command">kill</code> command to send a signal to the process.
+</p>
+<p>Here is a list of supported signals:
+</p>
+<dl class="table">
+<dt><a id="index-SIGHUP-1"></a><span><code class="code">SIGHUP</code><a class="copiable-link" href="#index-SIGHUP-1"> &para;</a></span></dt>
+<dd><p>This signal flushes all internally cached CRLs as well as any cached
+certificates.  Then the certificate cache is reinitialized as on
+startup.  Options are re-read from the configuration file.  Instead of
+sending this signal it is better to use
+</p><div class="example">
+<pre class="example-preformatted">gpgconf --reload dirmngr
+</pre></div>
+
+</dd>
+<dt><a id="index-SIGTERM-1"></a><span><code class="code">SIGTERM</code><a class="copiable-link" href="#index-SIGTERM-1"> &para;</a></span></dt>
+<dd><p>Shuts down the process but waits until all current requests are
+fulfilled.  If the process has received 3 of these signals and requests
+are still pending, a shutdown is forced.  You may also use
+</p><div class="example">
+<pre class="example-preformatted">gpgconf --kill dirmngr
+</pre></div>
+<p>instead of this signal
+</p>
+</dd>
+<dt><a id="index-SIGINT-1"></a><span><code class="code">SIGINT</code><a class="copiable-link" href="#index-SIGINT-1"> &para;</a></span></dt>
+<dd><p>Shuts down the process immediately.
+</p>
+
+</dd>
+<dt><a id="index-SIGUSR1-1"></a><span><code class="code">SIGUSR1</code><a class="copiable-link" href="#index-SIGUSR1-1"> &para;</a></span></dt>
+<dd><p>This prints some caching statistics to the log file.
+</p>
+</dd>
+</dl>
+
+
+
+
+</div>
+
+
+
+</body>
+</html>

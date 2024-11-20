@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Agent Examples (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Agent Examples (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Agent Examples (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Invoking-GPG_002dAGENT.html" rel="up" title="Invoking GPG-AGENT">
+<link href="Agent-Protocol.html" rel="next" title="Agent Protocol">
+<link href="Agent-Signals.html" rel="prev" title="Agent Signals">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="Agent-Examples">
+<div class="nav-panel">
+<p>
+Next: <a href="Agent-Protocol.html" accesskey="n" rel="next">Agent&rsquo;s Assuan Protocol</a>, Previous: <a href="Agent-Signals.html" accesskey="p" rel="prev">Use of some signals</a>, Up: <a href="Invoking-GPG_002dAGENT.html" accesskey="u" rel="up">Invoking GPG-AGENT</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="Examples"><span>2.5 Examples<a class="copiable-link" href="#Examples"> &para;</a></span></h3>
+
+<p>It is important to set the environment variable <code class="code">GPG_TTY</code> in
+your login shell, for example in the <samp class="file">~/.bashrc</samp> init script:
+</p>
+<table class="cartouche" border="1"><tr><td>
+<div class="example">
+<pre class="example-preformatted">  export GPG_TTY=$(tty)
+</pre></div>
+</td></tr></table>
+
+<p>If you enabled the Ssh Agent Support, you also need to tell ssh about
+it by adding this to your init script:
+</p>
+<table class="cartouche" border="1"><tr><td>
+<div class="example">
+<pre class="example-preformatted">unset SSH_AGENT_PID
+if [ &quot;${gnupg_SSH_AUTH_SOCK_by:-0}&quot; -ne $$ ]; then
+  export SSH_AUTH_SOCK=&quot;$(gpgconf --list-dirs agent-ssh-socket)&quot;
+fi
+</pre></div>
+</td></tr></table>
+
+
+
+</div>
+
+
+
+</body>
+</html>

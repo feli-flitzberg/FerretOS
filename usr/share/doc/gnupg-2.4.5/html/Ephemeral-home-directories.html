@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Ephemeral home directories (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Ephemeral home directories (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Ephemeral home directories (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Unattended-Usage-of-GPG.html" rel="up" title="Unattended Usage of GPG">
+<link href="The-quick-key-manipulation-interface.html" rel="next" title="The quick key manipulation interface">
+<link href="Programmatic-use-of-GnuPG.html" rel="prev" title="Programmatic use of GnuPG">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Ephemeral-home-directories">
+<div class="nav-panel">
+<p>
+Next: <a href="The-quick-key-manipulation-interface.html" accesskey="n" rel="next">The quick key manipulation interface</a>, Previous: <a href="Programmatic-use-of-GnuPG.html" accesskey="p" rel="prev">Programmatic use of GnuPG</a>, Up: <a href="Unattended-Usage-of-GPG.html" accesskey="u" rel="up">Unattended Usage</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Ephemeral-home-directories-1"><span>4.5.2 Ephemeral home directories<a class="copiable-link" href="#Ephemeral-home-directories-1"> &para;</a></span></h4>
+
+<p>Sometimes you want to contain effects of some operation, for example
+you want to import a key to inspect it, but you do not want this key
+to be added to your keyring.  In earlier versions of GnuPG, it was
+possible to specify alternate keyring files for both public and secret
+keys.  In modern GnuPG versions, however, we changed how secret keys
+are stored in order to better protect secret key material, and it was
+not possible to preserve this interface.
+</p>
+<p>The preferred way to do this is to use ephemeral home directories.
+This technique works across all versions of GnuPG.
+</p>
+<p>Create a temporary directory, create (or copy) a configuration that
+meets your needs, make <code class="command">gpg</code> use this directory either
+using the environment variable <var class="var">GNUPGHOME</var>, or the option
+<samp class="option">--homedir</samp>.  GPGME supports this too on a per-context basis,
+by modifying the engine info of contexts.  Now execute whatever
+operation you like, import and export key material as necessary.  Once
+finished, you can delete the directory.  All GnuPG backend services
+that were started will detect this and shut down.
+</p>
+</div>
+
+
+
+</body>
+</html>

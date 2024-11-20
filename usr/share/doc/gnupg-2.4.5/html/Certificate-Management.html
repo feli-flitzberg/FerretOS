@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Certificate Management (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Certificate Management (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Certificate Management (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="GPGSM-Commands.html" rel="up" title="GPGSM Commands">
+<link href="Operational-GPGSM-Commands.html" rel="prev" title="Operational GPGSM Commands">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Certificate-Management">
+<div class="nav-panel">
+<p>
+Previous: <a href="Operational-GPGSM-Commands.html" accesskey="p" rel="prev">Commands to select the type of operation</a>, Up: <a href="GPGSM-Commands.html" accesskey="u" rel="up">Commands</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="How-to-manage-the-certificates-and-keys"><span>5.1.3 How to manage the certificates and keys<a class="copiable-link" href="#How-to-manage-the-certificates-and-keys"> &para;</a></span></h4>
+
+<dl class="table">
+<dt><a id="index-gen_002dkey-1"></a><span><code class="code">--generate-key</code><a class="copiable-link" href="#index-gen_002dkey-1"> &para;</a></span></dt>
+<dd><a class="index-entry-id" id="index-generate_002dkey-1"></a>
+</dd>
+<dt><code class="code">--gen-key</code></dt>
+<dd><p>This command allows the creation of a certificate signing request or a
+self-signed certificate.  It is commonly used along with the
+<samp class="option">--output</samp> option to save the created CSR or certificate into a
+file.  If used with the <samp class="option">--batch</samp> a parameter file is used to
+create the CSR or certificate and it is further possible to create
+non-self-signed certificates.
+</p>
+</dd>
+<dt><a id="index-list_002dkeys-1"></a><span><code class="code">--list-keys</code><a class="copiable-link" href="#index-list_002dkeys-1"> &para;</a></span></dt>
+<dt><code class="code">-k</code></dt>
+<dd><p>List all available certificates stored in the local key database.
+Note that the displayed data might be reformatted for better human
+readability and illegal characters are replaced by safe substitutes.
+</p>
+</dd>
+<dt><a id="index-list_002dsecret_002dkeys-1"></a><span><code class="code">--list-secret-keys</code><a class="copiable-link" href="#index-list_002dsecret_002dkeys-1"> &para;</a></span></dt>
+<dt><code class="code">-K</code></dt>
+<dd><p>List all available certificates for which a corresponding a secret key
+is available.
+</p>
+</dd>
+<dt><a id="index-list_002dkeys-2"></a><span><code class="code">--list-external-keys <var class="var">pattern</var></code><a class="copiable-link" href="#index-list_002dkeys-2"> &para;</a></span></dt>
+<dd><p>List certificates matching <var class="var">pattern</var> using an external server.  This
+utilizes the <code class="code">dirmngr</code> service.
+</p>
+</dd>
+<dt><a id="index-list_002dchain"></a><span><code class="code">--list-chain</code><a class="copiable-link" href="#index-list_002dchain"> &para;</a></span></dt>
+<dd><p>Same as <samp class="option">--list-keys</samp> but also prints all keys making up the chain.
+</p>
+
+</dd>
+<dt><a class="index-entry-id" id="index-dump_002dkeys"></a>
+<a id="index-dump_002dcert"></a><span><code class="code">--dump-cert</code><a class="copiable-link" href="#index-dump_002dcert"> &para;</a></span></dt>
+<dt><code class="code">--dump-keys</code></dt>
+<dd><p>List all available certificates stored in the local key database using a
+format useful mainly for debugging.
+</p>
+</dd>
+<dt><a id="index-dump_002dchain"></a><span><code class="code">--dump-chain</code><a class="copiable-link" href="#index-dump_002dchain"> &para;</a></span></dt>
+<dd><p>Same as <samp class="option">--dump-keys</samp> but also prints all keys making up the chain.
+</p>
+</dd>
+<dt><a id="index-dump_002dsecret_002dkeys"></a><span><code class="code">--dump-secret-keys</code><a class="copiable-link" href="#index-dump_002dsecret_002dkeys"> &para;</a></span></dt>
+<dd><p>List all available certificates for which a corresponding a secret key
+is available using a format useful mainly for debugging.
+</p>
+</dd>
+<dt><a id="index-dump_002dexternal_002dkeys"></a><span><code class="code">--dump-external-keys <var class="var">pattern</var></code><a class="copiable-link" href="#index-dump_002dexternal_002dkeys"> &para;</a></span></dt>
+<dd><p>List certificates matching <var class="var">pattern</var> using an external server.
+This utilizes the <code class="code">dirmngr</code> service.  It uses a format useful
+mainly for debugging.
+</p>
+</dd>
+<dt><a id="index-show_002dcerts"></a><span><code class="code">--show-certs [<var class="var">files</var>]</code><a class="copiable-link" href="#index-show_002dcerts"> &para;</a></span></dt>
+<dd><p>This command takes certificate files as input and prints information
+about them in the same format as <samp class="option">--dump-cert</samp> does.  Each file
+may either contain a single binary certificate or several PEM encoded
+certificates.  If no files are given, the input is taken from stdin.
+</p>
+<p>Please note that the listing format may be changed in future releases
+and that the option <samp class="option">--with-colons</samp> has currently no effect.
+</p>
+
+</dd>
+<dt><a id="index-keydb_002dclear_002dsome_002dcert_002dflags"></a><span><code class="code">--keydb-clear-some-cert-flags</code><a class="copiable-link" href="#index-keydb_002dclear_002dsome_002dcert_002dflags"> &para;</a></span></dt>
+<dd><p>This is a debugging aid to reset certain flags in the key database
+which are used to cache certain certificate statuses.  It is especially
+useful if a bad CRL or a weird running OCSP responder did accidentally
+revoke certificate.  There is no security issue with this command
+because <code class="command">gpgsm</code> always make sure that the validity of a certificate is
+checked right before it is used.
+</p>
+</dd>
+<dt><a id="index-delete_002dkeys-1"></a><span><code class="code">--delete-keys <var class="var">pattern</var></code><a class="copiable-link" href="#index-delete_002dkeys-1"> &para;</a></span></dt>
+<dd><p>Delete the keys matching <var class="var">pattern</var>.  Note that there is no command
+to delete the secret part of the key directly.  In case you need to do
+this, you should run the command <code class="code">gpgsm --dump-secret-keys KEYID</code>
+before you delete the key, copy the string of hex-digits in the
+&ldquo;keygrip&rdquo; line and delete the file consisting of these hex-digits
+and the suffix <code class="code">.key</code> from the <samp class="file">private-keys-v1.d</samp> directory
+below our GnuPG home directory (usually <samp class="file">~/.gnupg</samp>).
+</p>
+</dd>
+<dt><a id="index-export-1"></a><span><code class="code">--export [<var class="var">pattern</var>]</code><a class="copiable-link" href="#index-export-1"> &para;</a></span></dt>
+<dd><p>Export all certificates stored in the Keybox or those specified by the
+optional <var class="var">pattern</var>. Those pattern consist of a list of user ids
+(see <a class="pxref" href="Specify-a-User-ID.html#how_002dto_002dspecify_002da_002duser_002did">how-to-specify-a-user-id</a>).  When used along with the
+<samp class="option">--armor</samp> option a few informational lines are prepended before
+each block.  There is one limitation: As there is no commonly agreed
+upon way to pack more than one certificate into an ASN.1 structure,
+the binary export (i.e. without using <samp class="option">armor</samp>) works only for
+the export of one certificate.  Thus it is required to specify a
+<var class="var">pattern</var> which yields exactly one certificate.  Ephemeral
+certificate are only exported if all <var class="var">pattern</var> are given as
+fingerprints or keygrips.
+</p>
+</dd>
+<dt><a id="index-export_002dsecret_002dkey_002dp12"></a><span><code class="code">--export-secret-key-p12 <var class="var">key-id</var></code><a class="copiable-link" href="#index-export_002dsecret_002dkey_002dp12"> &para;</a></span></dt>
+<dd><p>Export the private key and the certificate identified by <var class="var">key-id</var>
+using the PKCS#12 format.  When used with the <code class="code">--armor</code> option a few
+informational lines are prepended to the output.  Note, that the PKCS#12
+format is not very secure and proper transport security should be used
+to convey the exported key.  (See <a class="xref" href="Input-and-Output.html#option-_002d_002dp12_002dcharset">option --p12-charset</a>.)
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-export_002dsecret_002dkey_002draw"></a>
+<a id="index-export_002dsecret_002dkey_002dp8"></a><span><code class="code">--export-secret-key-p8 <var class="var">key-id</var></code><a class="copiable-link" href="#index-export_002dsecret_002dkey_002dp8"> &para;</a></span></dt>
+<dt><code class="code">--export-secret-key-raw <var class="var">key-id</var></code></dt>
+<dd><p>Export the private key of the certificate identified by <var class="var">key-id</var>
+with any encryption stripped.  The <code class="code">...-raw</code> command exports in
+PKCS#1 format; the <code class="code">...-p8</code> command exports in PKCS#8 format.
+When used with the <code class="code">--armor</code> option a few informational lines are
+prepended to the output.  These commands are useful to prepare a key
+for use on a TLS server.
+</p>
+</dd>
+<dt><a id="index-import-1"></a><span><code class="code">--import [<var class="var">files</var>]</code><a class="copiable-link" href="#index-import-1"> &para;</a></span></dt>
+<dd><p>Import the certificates from the PEM or binary encoded files as well as
+from signed-only messages.  This command may also be used to import a
+secret key from a PKCS#12 file.
+</p>
+</dd>
+<dt><a id="index-learn_002dcard"></a><span><code class="code">--learn-card</code><a class="copiable-link" href="#index-learn_002dcard"> &para;</a></span></dt>
+<dd><p>Read information about the private keys from the smartcard and import
+the certificates from there.  This command utilizes the <code class="command">gpg-agent</code>
+and in turn the <code class="command">scdaemon</code>.
+</p>
+</dd>
+<dt><a id="index-passwd-1"></a><span><code class="code">--change-passphrase <var class="var">user_id</var></code><a class="copiable-link" href="#index-passwd-1"> &para;</a></span></dt>
+<dd><a class="index-entry-id" id="index-change_002dpassphrase-1"></a>
+</dd>
+<dt><code class="code">--passwd <var class="var">user_id</var></code></dt>
+<dd><p>Change the passphrase of the private key belonging to the certificate
+specified as <var class="var">user_id</var>.  Note, that changing the passphrase/PIN of a
+smartcard is not yet supported.
+</p>
+</dd>
+</dl>
+
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Previous: <a href="Operational-GPGSM-Commands.html">Commands to select the type of operation</a>, Up: <a href="GPGSM-Commands.html">Commands</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

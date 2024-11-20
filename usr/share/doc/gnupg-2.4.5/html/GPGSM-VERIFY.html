@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>GPGSM VERIFY (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="GPGSM VERIFY (Using the GNU Privacy Guard)">
+<meta name="keywords" content="GPGSM VERIFY (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="GPGSM-Protocol.html" rel="up" title="GPGSM Protocol">
+<link href="GPGSM-GENKEY.html" rel="next" title="GPGSM GENKEY">
+<link href="GPGSM-SIGN.html" rel="prev" title="GPGSM SIGN">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="GPGSM-VERIFY">
+<div class="nav-panel">
+<p>
+Next: <a href="GPGSM-GENKEY.html" accesskey="n" rel="next">Generating a Key</a>, Previous: <a href="GPGSM-SIGN.html" accesskey="p" rel="prev">Signing a Message</a>, Up: <a href="GPGSM-Protocol.html" accesskey="u" rel="up">The Protocol the Server Mode Uses</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Verifying-a-Message"><span>5.6.4 Verifying a Message<a class="copiable-link" href="#Verifying-a-Message"> &para;</a></span></h4>
+
+<p>To verify a message the command:
+</p>
+<div class="example">
+<pre class="example-preformatted">  VERIFY
+</pre></div>
+
+<p>is used. It does a verify operation on the message send to the input FD.
+The result is written out using status lines.  If an output FD was
+given, the signed text will be written to that.  If the signature is a
+detached one, the server will inquire about the signed material and the
+client must provide it.
+</p>
+</div>
+
+
+
+</body>
+</html>

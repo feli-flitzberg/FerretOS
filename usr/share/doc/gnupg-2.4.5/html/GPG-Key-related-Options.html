@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>GPG Key related Options (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="GPG Key related Options (Using the GNU Privacy Guard)">
+<meta name="keywords" content="GPG Key related Options (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="GPG-Options.html" rel="up" title="GPG Options">
+<link href="GPG-Input-and-Output.html" rel="next" title="GPG Input and Output">
+<link href="GPG-Configuration-Options.html" rel="prev" title="GPG Configuration Options">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="GPG-Key-related-Options">
+<div class="nav-panel">
+<p>
+Next: <a href="GPG-Input-and-Output.html" accesskey="n" rel="next">Input and Output</a>, Previous: <a href="GPG-Configuration-Options.html" accesskey="p" rel="prev">How to change the configuration</a>, Up: <a href="GPG-Options.html" accesskey="u" rel="up">Option Summary</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Key-related-options"><span>4.2.2 Key related options<a class="copiable-link" href="#Key-related-options"> &para;</a></span></h4>
+
+<dl class="table">
+<dt><a id="index-recipient"></a><span><code class="code">--recipient <var class="var">name</var></code><a class="copiable-link" href="#index-recipient"> &para;</a></span></dt>
+<dt><code class="code">-r</code></dt>
+<dd><p>Encrypt for user id <var class="var">name</var>. If this option or
+<samp class="option">--hidden-recipient</samp> is not specified, GnuPG asks for the user-id
+unless <samp class="option">--default-recipient</samp> is given.
+</p>
+</dd>
+<dt><a id="index-hidden_002drecipient"></a><span><code class="code">--hidden-recipient <var class="var">name</var></code><a class="copiable-link" href="#index-hidden_002drecipient"> &para;</a></span></dt>
+<dt><code class="code">-R</code></dt>
+<dd><p>Encrypt for user ID <var class="var">name</var>, but hide the key ID of this user&rsquo;s
+key. This option helps to hide the receiver of the message and is a
+limited countermeasure against traffic analysis. If this option or
+<samp class="option">--recipient</samp> is not specified, GnuPG asks for the user ID unless
+<samp class="option">--default-recipient</samp> is given.
+</p>
+</dd>
+<dt><a id="index-recipient_002dfile"></a><span><code class="code">--recipient-file <var class="var">file</var></code><a class="copiable-link" href="#index-recipient_002dfile"> &para;</a></span></dt>
+<dt><code class="code">-f</code></dt>
+<dd><p>This option is similar to <samp class="option">--recipient</samp> except that it
+encrypts to a key stored in the given file.  <var class="var">file</var> must be the
+name of a file containing exactly one key.  <code class="command">gpg</code> assumes that
+the key in this file is fully valid.
+</p>
+</dd>
+<dt><a id="index-hidden_002drecipient_002dfile"></a><span><code class="code">--hidden-recipient-file <var class="var">file</var></code><a class="copiable-link" href="#index-hidden_002drecipient_002dfile"> &para;</a></span></dt>
+<dt><code class="code">-F</code></dt>
+<dd><p>This option is similar to <samp class="option">--hidden-recipient</samp> except that it
+encrypts to a key stored in the given file.  <var class="var">file</var> must be the
+name of a file containing exactly one key.  <code class="command">gpg</code> assumes that
+the key in this file is fully valid.
+</p>
+</dd>
+<dt><a id="index-encrypt_002dto"></a><span><code class="code">--encrypt-to <var class="var">name</var></code><a class="copiable-link" href="#index-encrypt_002dto"> &para;</a></span></dt>
+<dd><p>Same as <samp class="option">--recipient</samp> but this one is intended for use in the
+options file and may be used with your own user-id as an
+&quot;encrypt-to-self&quot;.  It is suggested to use a fingerprint or at least a
+long keyID for <var class="var">name</var>.  These keys are only used when there are
+other recipients given either by use of <samp class="option">--recipient</samp> or by the
+asked user id.  No trust checking is performed for these user ids and
+even disabled keys can be used.
+</p>
+</dd>
+<dt><a id="index-hidden_002dencrypt_002dto"></a><span><code class="code">--hidden-encrypt-to <var class="var">name</var></code><a class="copiable-link" href="#index-hidden_002dencrypt_002dto"> &para;</a></span></dt>
+<dd><p>Same as <samp class="option">--hidden-recipient</samp> but this one is intended for use
+in the options file and may be used with your own user-id as a hidden
+&quot;encrypt-to-self&quot;.  It is suggested to use a fingerprint or at least a
+long keyID for <var class="var">name</var>.  These keys are only used when there are
+other recipients given either by use of <samp class="option">--recipient</samp> or by the
+asked user id.  No trust checking is performed for these user ids and
+even disabled keys can be used.
+</p>
+</dd>
+<dt><a id="index-no_002dencrypt_002dto"></a><span><code class="code">--no-encrypt-to</code><a class="copiable-link" href="#index-no_002dencrypt_002dto"> &para;</a></span></dt>
+<dd><p>Disable the use of all <samp class="option">--encrypt-to</samp> and
+<samp class="option">--hidden-encrypt-to</samp> keys.
+</p>
+</dd>
+<dt><a id="index-group"></a><span><code class="code">--group {<var class="var">name</var>=<var class="var">value</var>}</code><a class="copiable-link" href="#index-group"> &para;</a></span></dt>
+<dd><p>Sets up a named group, which is similar to aliases in email programs.
+Any time the group name is a recipient (<samp class="option">-r</samp> or
+<samp class="option">--recipient</samp>), it will be expanded to the values
+specified. Multiple groups with the same name are automatically merged
+into a single group.
+</p>
+<p>The values are <code class="code">key IDs</code> or fingerprints, but any key description
+is accepted. Note that a value with spaces in it will be treated as
+two different values. Note also there is only one level of expansion
+&mdash; you cannot make an group that points to another group. When used
+from the command line, it may be necessary to quote the argument to
+this option to prevent the shell from treating it as multiple
+arguments.
+</p>
+</dd>
+<dt><a id="index-ungroup"></a><span><code class="code">--ungroup <var class="var">name</var></code><a class="copiable-link" href="#index-ungroup"> &para;</a></span></dt>
+<dd><p>Remove a given entry from the <samp class="option">--group</samp> list.
+</p>
+</dd>
+<dt><a id="index-no_002dgroups"></a><span><code class="code">--no-groups</code><a class="copiable-link" href="#index-no_002dgroups"> &para;</a></span></dt>
+<dd><p>Remove all entries from the <samp class="option">--group</samp> list.
+</p>
+</dd>
+<dt><a id="index-local_002duser"></a><span><code class="code">--local-user <var class="var">name</var></code><a class="copiable-link" href="#index-local_002duser"> &para;</a></span></dt>
+<dt><code class="code">-u</code></dt>
+<dd><p>Use <var class="var">name</var> as the key to sign with. Note that this option overrides
+<samp class="option">--default-key</samp>.
+</p>
+</dd>
+<dt><a id="index-sender"></a><span><code class="code">--sender <var class="var">mbox</var></code><a class="copiable-link" href="#index-sender"> &para;</a></span></dt>
+<dd><p>This option has two purposes.  <var class="var">mbox</var> must either be a complete
+user ID containing a proper mail address or just a plain mail address.
+The option can be given multiple times.
+</p>
+<p>When creating a signature this option tells gpg the signing key&rsquo;s user
+id used to make the signature and embeds that user ID into the created
+signature (using OpenPGP&rsquo;s &ldquo;Signer&rsquo;s User ID&rdquo; subpacket).  If the
+option is given multiple times a suitable user ID is picked.  However,
+if the signing key was specified directly by using a mail address
+(i.e. not by using a fingerprint or key ID) this option is used and
+the mail address is embedded in the created signature.
+</p>
+<p>When verifying a signature <var class="var">mbox</var> is used to restrict the
+information printed by the TOFU code to matching user IDs.  If the
+option is used and the signature contains a &ldquo;Signer&rsquo;s User ID&rdquo;
+subpacket that information is is also used to restrict the printed
+information.  Note that GnuPG considers only the mail address part of
+a User ID.
+</p>
+<p>If this option or the said subpacket is available the TRUST lines as
+printed by option <samp class="option">status-fd</samp> correspond to the corresponding
+User ID; if no User ID is known the TRUST lines are computed directly
+on the key and do not give any information about the User ID.  In the
+latter case it his highly recommended to scripts and other frontends
+to evaluate the VALIDSIG line, retrieve the key and print all User IDs
+along with their validity (trust) information.
+</p>
+
+</dd>
+<dt><a id="index-try_002dsecret_002dkey"></a><span><code class="code">--try-secret-key <var class="var">name</var></code><a class="copiable-link" href="#index-try_002dsecret_002dkey"> &para;</a></span></dt>
+<dd><p>For hidden recipients GPG needs to know the keys to use for trial
+decryption.  The key set with <samp class="option">--default-key</samp> is always tried
+first, but this is often not sufficient.  This option allows setting more
+keys to be used for trial decryption.  Although any valid user-id
+specification may be used for <var class="var">name</var> it makes sense to use at least
+the long keyid to avoid ambiguities.  Note that gpg-agent might pop up a
+pinentry for a lot keys to do the trial decryption.  If you want to stop
+all further trial decryption you may use close-window button instead of
+the cancel button.
+</p>
+</dd>
+<dt><a id="index-try_002dall_002dsecrets"></a><span><code class="code">--try-all-secrets</code><a class="copiable-link" href="#index-try_002dall_002dsecrets"> &para;</a></span></dt>
+<dd><p>Don&rsquo;t look at the key ID as stored in the message but try all secret
+keys in turn to find the right decryption key. This option forces the
+behaviour as used by anonymous recipients (created by using
+<samp class="option">--throw-keyids</samp> or <samp class="option">--hidden-recipient</samp>) and might come
+handy in case where an encrypted message contains a bogus key ID.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-no_002dskip_002dhidden_002drecipients"></a>
+<a id="index-skip_002dhidden_002drecipients"></a><span><code class="code">--skip-hidden-recipients</code><a class="copiable-link" href="#index-skip_002dhidden_002drecipients"> &para;</a></span></dt>
+<dt><code class="code">--no-skip-hidden-recipients</code></dt>
+<dd><p>During decryption skip all anonymous recipients.  This option helps in
+the case that people use the hidden recipients feature to hide their
+own encrypt-to key from others.  If one has many secret keys this
+may lead to a major annoyance because all keys are tried in turn to
+decrypt something which was not really intended for it.  The drawback
+of this option is that it is currently not possible to decrypt a
+message which includes real anonymous recipients.
+</p>
+
+</dd>
+</dl>
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="GPG-Input-and-Output.html">Input and Output</a>, Previous: <a href="GPG-Configuration-Options.html">How to change the configuration</a>, Up: <a href="GPG-Options.html">Option Summary</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

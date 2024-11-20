@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Invoking gpg-preset-passphrase (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Invoking gpg-preset-passphrase (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Invoking gpg-preset-passphrase (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="gpg_002dpreset_002dpassphrase.html" rel="up" title="gpg-preset-passphrase">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Invoking-gpg_002dpreset_002dpassphrase">
+<div class="nav-panel">
+<p>
+Up: <a href="gpg_002dpreset_002dpassphrase.html" accesskey="u" rel="up">Put a passphrase into the cache</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="List-of-all-commands-and-options"><span>10.6.1 List of all commands and options<a class="copiable-link" href="#List-of-all-commands-and-options"> &para;</a></span></h4>
+
+
+<p><code class="command">gpg-preset-passphrase</code> is invoked this way:
+</p>
+<div class="example">
+<pre class="example-preformatted">gpg-preset-passphrase [options] [command] <var class="var">cacheid</var>
+</pre></div>
+
+<p><var class="var">cacheid</var> is either a 40 character keygrip of hexadecimal
+characters identifying the key for which the passphrase should be set
+or cleared.  The keygrip is listed along with the key when running the
+command: <code class="code">gpgsm --with-keygrip --list-secret-keys</code>.
+Alternatively an arbitrary string may be used to identify a
+passphrase; it is suggested that such a string is prefixed with the
+name of the application (e.g <code class="code">foo:12346</code>).  Scripts should always
+use the option <samp class="option">--with-colons</samp>, which provides the keygrip in a
+&quot;grp&quot; line (cf. <samp class="file">doc/DETAILS</samp>)/
+</p>
+<p>One of the following command options must be given:
+</p>
+<dl class="table">
+<dt><a id="index-preset"></a><span><code class="code">--preset</code><a class="copiable-link" href="#index-preset"> &para;</a></span></dt>
+<dd><p>Preset a passphrase. This is what you usually will
+use. <code class="command">gpg-preset-passphrase</code> will then read the passphrase from
+<code class="code">stdin</code>.
+</p>
+</dd>
+<dt><a id="index-forget"></a><span><code class="code">--forget</code><a class="copiable-link" href="#index-forget"> &para;</a></span></dt>
+<dd><p>Flush the passphrase for the given cache ID from the cache.
+</p>
+</dd>
+</dl>
+
+<p>The following additional options may be used:
+</p>
+<dl class="table">
+<dt><a id="index-verbose-8"></a><span><code class="code">-v</code><a class="copiable-link" href="#index-verbose-8"> &para;</a></span></dt>
+<dt><code class="code">--verbose</code></dt>
+<dd><p>Output additional information while running.
+</p>
+</dd>
+<dt><a id="index-passphrase-1"></a><span><code class="code">-P <var class="var">string</var></code><a class="copiable-link" href="#index-passphrase-1"> &para;</a></span></dt>
+<dt><code class="code">--passphrase <var class="var">string</var></code></dt>
+<dd><p>Instead of reading the passphrase from <code class="code">stdin</code>, use the supplied
+<var class="var">string</var> as passphrase.  Note that this makes the passphrase visible
+for other users.
+</p></dd>
+</dl>
+
+
+
+
+
+
+
+</div>
+
+
+
+</body>
+</html>

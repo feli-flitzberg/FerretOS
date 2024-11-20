@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Agent GETINFO (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Agent GETINFO (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Agent GETINFO (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Agent-Protocol.html" rel="up" title="Agent Protocol">
+<link href="Agent-OPTION.html" rel="next" title="Agent OPTION">
+<link href="Agent-GETEVENTCOUNTER.html" rel="prev" title="Agent GETEVENTCOUNTER">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Agent-GETINFO">
+<div class="nav-panel">
+<p>
+Next: <a href="Agent-OPTION.html" accesskey="n" rel="next">Set options for the session</a>, Previous: <a href="Agent-GETEVENTCOUNTER.html" accesskey="p" rel="prev">Get the Event Counters</a>, Up: <a href="Agent-Protocol.html" accesskey="u" rel="up">Agent&rsquo;s Assuan Protocol</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Return-information-about-the-process"><span>2.6.16 Return information about the process<a class="copiable-link" href="#Return-information-about-the-process"> &para;</a></span></h4>
+
+<p>This is a multipurpose function to return a variety of information.
+</p>
+<div class="example">
+<pre class="example-preformatted">GETINFO <var class="var">what</var>
+</pre></div>
+
+<p>The value of <var class="var">what</var> specifies the kind of information returned:
+</p><dl class="table">
+<dt><code class="code">version</code></dt>
+<dd><p>Return the version of the program.
+</p></dd>
+<dt><code class="code">pid</code></dt>
+<dd><p>Return the process id of the process.
+</p></dd>
+<dt><code class="code">socket_name</code></dt>
+<dd><p>Return the name of the socket used to connect the agent.
+</p></dd>
+<dt><code class="code">ssh_socket_name</code></dt>
+<dd><p>Return the name of the socket used for SSH connections.  If SSH support
+has not been enabled the error <code class="code">GPG_ERR_NO_DATA</code> will be returned.
+</p></dd>
+</dl>
+
+</div>
+
+
+
+</body>
+</html>

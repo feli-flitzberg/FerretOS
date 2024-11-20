@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Scdaemon APDU (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Scdaemon APDU (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Scdaemon APDU (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Scdaemon-Protocol.html" rel="up" title="Scdaemon Protocol">
+<link href="Scdaemon-RESTART.html" rel="prev" title="Scdaemon RESTART">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Scdaemon-APDU">
+<div class="nav-panel">
+<p>
+Previous: <a href="Scdaemon-RESTART.html" accesskey="p" rel="prev">Perform a RESTART operation</a>, Up: <a href="Scdaemon-Protocol.html" accesskey="u" rel="up">Scdaemon&rsquo;s Assuan Protocol</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Send-a-verbatim-APDU-to-the-card"><span>6.6.15 Send a verbatim APDU to the card<a class="copiable-link" href="#Send-a-verbatim-APDU-to-the-card"> &para;</a></span></h4>
+
+<div class="example">
+<pre class="example-preformatted">  APDU [--atr] [--more] [--exlen[=<var class="var">n</var>]] [<var class="var">hexstring</var>]
+</pre></div>
+
+
+<p>Send an APDU to the current reader.  This command bypasses the high
+level functions and sends the data directly to the card.
+<var class="var">hexstring</var> is expected to be a proper APDU.  If <var class="var">hexstring</var> is
+not given no commands are send to the card; However the command will
+implicitly check whether the card is ready for use.
+</p>
+<p>Using the option <code class="code">--atr</code> returns the ATR of the card as a status
+message before any data like this:
+</p><div class="example">
+<pre class="example-preformatted">     S CARD-ATR 3BFA1300FF813180450031C173C00100009000B1
+</pre></div>
+
+<p>Using the option <code class="code">--more</code> handles the card status word MORE_DATA
+(61xx) and concatenate all responses to one block.
+</p>
+<p>Using the option <code class="code">--exlen</code> the returned APDU may use extended
+length up to N bytes.  If N is not given a default value is used
+(currently 4096).
+</p>
+
+
+
+
+
+</div>
+
+
+
+</body>
+</html>

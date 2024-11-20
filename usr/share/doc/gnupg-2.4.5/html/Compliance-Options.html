@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Compliance Options (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Compliance Options (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Compliance Options (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="GPG-Options.html" rel="up" title="GPG Options">
+<link href="GPG-Esoteric-Options.html" rel="next" title="GPG Esoteric Options">
+<link href="OpenPGP-Options.html" rel="prev" title="OpenPGP Options">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Compliance-Options">
+<div class="nav-panel">
+<p>
+Next: <a href="GPG-Esoteric-Options.html" accesskey="n" rel="next">Doing things one usually doesn&rsquo;t want to do</a>, Previous: <a href="OpenPGP-Options.html" accesskey="p" rel="prev">OpenPGP protocol specific options</a>, Up: <a href="GPG-Options.html" accesskey="u" rel="up">Option Summary</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Compliance-options"><span>4.2.5 Compliance options<a class="copiable-link" href="#Compliance-options"> &para;</a></span></h4>
+
+<p>These options control what GnuPG is compliant to. Only one of these
+options may be active at a time. Note that the default setting of
+this is nearly always the correct one. See the INTEROPERABILITY WITH
+OTHER OPENPGP PROGRAMS section below before using one of these
+options.
+</p>
+<dl class="table">
+<dt><a id="index-gnupg"></a><span><code class="code">--gnupg</code><a class="copiable-link" href="#index-gnupg"> &para;</a></span></dt>
+<dd><p>Use standard GnuPG behavior. This is essentially OpenPGP behavior (see
+<samp class="option">--openpgp</samp>), but with extension from the proposed update to
+OpenPGP and with some additional workarounds for common compatibility
+problems in different versions of PGP.  This is the default option, so
+it is not generally needed, but it may be useful to override a
+different compliance option in the gpg.conf file.
+</p>
+</dd>
+<dt><a id="index-openpgp"></a><span><code class="code">--openpgp</code><a class="copiable-link" href="#index-openpgp"> &para;</a></span></dt>
+<dd><p>Reset all packet, cipher and digest options to strict OpenPGP
+behavior.  This option implies <samp class="option">--allow-old-cipher-algos</samp>.  Use
+this option to reset all previous options like <samp class="option">--s2k-*</samp>,
+<samp class="option">--cipher-algo</samp>, <samp class="option">--digest-algo</samp> and
+<samp class="option">--compress-algo</samp> to OpenPGP compliant values. All PGP
+workarounds are disabled.
+</p>
+</dd>
+<dt><a id="index-rfc4880"></a><span><code class="code">--rfc4880</code><a class="copiable-link" href="#index-rfc4880"> &para;</a></span></dt>
+<dd><p>Reset all packet, cipher and digest options to strict RFC-4880
+behavior.  This option implies <samp class="option">--allow-old-cipher-algos</samp>.
+Note that this is currently the same thing as <samp class="option">--openpgp</samp>.
+</p>
+</dd>
+<dt><a id="index-rfc4880bis"></a><span><code class="code">--rfc4880bis</code><a class="copiable-link" href="#index-rfc4880bis"> &para;</a></span></dt>
+<dd><p>Reset all packet, cipher and digest options to strict according to the
+proposed updates of RFC-4880.
+</p>
+</dd>
+<dt><a id="index-rfc2440"></a><span><code class="code">--rfc2440</code><a class="copiable-link" href="#index-rfc2440"> &para;</a></span></dt>
+<dd><p>Reset all packet, cipher and digest options to strict RFC-2440
+behavior.  Note that by using this option encryption packets are
+created in a legacy mode without MDC protection.  This is dangerous
+and should thus only be used for experiments.  This option implies
+<samp class="option">--allow-old-cipher-algos</samp>.  See also option
+<samp class="option">--ignore-mdc-error</samp>.
+</p>
+</dd>
+<dt><a id="index-pgp6"></a><span><code class="code">--pgp6</code><a class="copiable-link" href="#index-pgp6"> &para;</a></span></dt>
+<dd><p>This option is obsolete; it is handled as an alias for <samp class="option">--pgp7</samp>
+</p>
+</dd>
+<dt><a id="index-pgp7"></a><span><code class="code">--pgp7</code><a class="copiable-link" href="#index-pgp7"> &para;</a></span></dt>
+<dd><p>Set up all options to be as PGP 7 compliant as possible. This allowed
+the ciphers IDEA, 3DES, CAST5,AES128, AES192, AES256, and TWOFISH.,
+the hashes MD5, SHA1 and RIPEMD160, and the compression algorithms
+none and ZIP.  This option implies <samp class="option">--escape-from-lines</samp> and
+disables <samp class="option">--throw-keyids</samp>,
+</p>
+</dd>
+<dt><a id="index-pgp8"></a><span><code class="code">--pgp8</code><a class="copiable-link" href="#index-pgp8"> &para;</a></span></dt>
+<dd><p>Set up all options to be as PGP 8 compliant as possible. PGP 8 is a lot
+closer to the OpenPGP standard than previous versions of PGP, so all
+this does is disable <samp class="option">--throw-keyids</samp> and set
+<samp class="option">--escape-from-lines</samp>.  All algorithms are allowed except for the
+SHA224, SHA384, and SHA512 digests.
+</p>
+</dd>
+<dt><a id="index-compliance"></a><span><code class="code">--compliance <var class="var">string</var></code><a class="copiable-link" href="#index-compliance"> &para;</a></span></dt>
+<dd><p>This option can be used instead of one of the options above.  Valid
+values for <var class="var">string</var> are the above option names (without the double
+dash) and possibly others as shown when using &quot;help&quot; for <var class="var">string</var>.
+</p>
+</dd>
+<dt><a id="index-min_002drsa_002dlength"></a><span><code class="code">--min-rsa-length <var class="var">n</var></code><a class="copiable-link" href="#index-min_002drsa_002dlength"> &para;</a></span></dt>
+<dd><p>This option adjusts the compliance mode &quot;de-vs&quot; for stricter key size
+requirements.  For example, a value of 3000 turns rsa2048 and dsa2048
+keys into non-VS-NfD compliant keys.
+</p>
+</dd>
+<dt><a id="index-require_002dcompliance"></a><span><code class="code">--require-compliance</code><a class="copiable-link" href="#index-require_002dcompliance"> &para;</a></span></dt>
+<dd><p>To check that data has been encrypted according to the rules of the
+current compliance mode, a gpg user needs to evaluate the status
+lines.  This is allows frontends to handle compliance check in a more
+flexible way.  However, for scripted use the required evaluation of
+the status-line requires quite some effort; this option can be used
+instead to make sure that the gpg process exits with a failure if the
+compliance rules are not fulfilled.  Note that this option has
+currently an effect only in &quot;de-vs&quot; mode.
+</p>
+</dd>
+</dl>
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="GPG-Esoteric-Options.html">Doing things one usually doesn&rsquo;t want to do</a>, Previous: <a href="OpenPGP-Options.html">OpenPGP protocol specific options</a>, Up: <a href="GPG-Options.html">Option Summary</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Automated signature checking (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Automated signature checking (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Automated signature checking (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Unattended-Usage.html" rel="up" title="Unattended Usage">
+<link href="CSR-and-certificate-creation.html" rel="next" title="CSR and certificate creation">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Automated-signature-checking">
+<div class="nav-panel">
+<p>
+Next: <a href="CSR-and-certificate-creation.html" accesskey="n" rel="next">CSR and certificate creation</a>, Up: <a href="Unattended-Usage.html" accesskey="u" rel="up">Unattended Usage</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Automated-signature-checking-1"><span>5.5.1 Automated signature checking<a class="copiable-link" href="#Automated-signature-checking-1"> &para;</a></span></h4>
+
+<p>It is very important to understand the semantics used with signature
+verification.  Checking a signature is not as simple as it may sound and
+so the operation is a bit complicated.  In most cases it is required
+to look at several status lines.  Here is a table of all cases a signed
+message may have:
+</p>
+<dl class="table">
+<dt>The signature is valid</dt>
+<dd><p>This does mean that the signature has been successfully verified, the
+certificates are all sane.  However there are two subcases with
+important information:  One of the certificates may have expired or a
+signature of a message itself as expired.  It is a sound practise to
+consider such a signature still as valid but additional information
+should be displayed.  Depending on the subcase <code class="command">gpgsm</code> will issue
+these status codes:
+  </p><dl class="table">
+<dt>signature valid and nothing did expire</dt>
+<dd><p><code class="code">GOODSIG</code>, <code class="code">VALIDSIG</code>, <code class="code">TRUST_FULLY</code>
+  </p></dd>
+<dt>signature valid but at least one certificate has expired</dt>
+<dd><p><code class="code">EXPKEYSIG</code>, <code class="code">VALIDSIG</code>, <code class="code">TRUST_FULLY</code>
+  </p></dd>
+<dt>signature valid but expired</dt>
+<dd><p><code class="code">EXPSIG</code>, <code class="code">VALIDSIG</code>, <code class="code">TRUST_FULLY</code>
+  Note, that this case is currently not implemented.
+  </p></dd>
+</dl>
+
+</dd>
+<dt>The signature is invalid</dt>
+<dd><p>This means that the signature verification failed (this is an indication
+of a transfer error, a program error or tampering with the message).
+<code class="command">gpgsm</code> issues one of these status codes sequences:
+  </p><dl class="table">
+<dt><code class="code"><code class="code">BADSIG</code></code></dt>
+<dt><code class="code"><code class="code">GOODSIG</code>, <code class="code">VALIDSIG</code> <code class="code">TRUST_NEVER</code></code></dt>
+</dl>
+
+</dd>
+<dt>Error verifying a signature</dt>
+<dd><p>For some reason the signature could not be verified, i.e. it cannot be
+decided whether the signature is valid or invalid.  A common reason for
+this is a missing certificate.
+</p>
+</dd>
+</dl>
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="CSR-and-certificate-creation.html">CSR and certificate creation</a>, Up: <a href="Unattended-Usage.html">Unattended Usage</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

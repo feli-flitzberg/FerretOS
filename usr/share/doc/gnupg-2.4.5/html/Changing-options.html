@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Changing options (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Changing options (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Changing options (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="gpgconf.html" rel="up" title="gpgconf">
+<link href="Listing-global-options.html" rel="next" title="Listing global options">
+<link href="Listing-options.html" rel="prev" title="Listing options">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Changing-options">
+<div class="nav-panel">
+<p>
+Next: <a href="Listing-global-options.html" accesskey="n" rel="next">Listing global options</a>, Previous: <a href="Listing-options.html" accesskey="p" rel="prev">Listing options</a>, Up: <a href="gpgconf.html" accesskey="u" rel="up">Modify .gnupg home directories</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Changing-options-1"><span>10.4.6 Changing options<a class="copiable-link" href="#Changing-options-1"> &para;</a></span></h4>
+
+<p>The command <code class="code">--change-options&nbsp;<var class="var">component</var></code><!-- /@w --> will attempt
+to change the options of the component <var class="var">component</var> to the
+specified values.  <var class="var">component</var> must be the string in the field
+<var class="var">name</var> in the output of the <code class="code">--list-components</code> command.  You
+have to provide the options that shall be changed in the following
+format on standard input:
+</p>
+<p><code class="code"><var class="var">name</var>:<var class="var">flags</var>:<var class="var">new-value</var></code>
+</p>
+<dl class="table">
+<dt><var class="var">name</var></dt>
+<dd><p>This is the name of the option to change.  <var class="var">name</var> must be the
+string in the field <var class="var">name</var> in the output of the
+<code class="code">--list-options</code> command.
+</p>
+</dd>
+<dt><var class="var">flags</var></dt>
+<dd><p>The flags field contains an <em class="emph">unsigned number</em>.  Its value is the
+OR-wise combination of the following flag values:
+</p>
+<dl class="table">
+<dt><code class="code">default (16)</code></dt>
+<dd><p>If this flag is set, the option is deleted and the default value is
+used instead (if applicable).
+</p></dd>
+</dl>
+
+</dd>
+<dt><var class="var">new-value</var></dt>
+<dd><p>The new value for the option.  This field is only defined if the
+<code class="code">default</code> flag is not set.  The format is that of an <em class="emph">option
+argument</em>.  If it is empty (or the field is omitted), the default
+argument is used (only allowed if the argument is optional for this
+option).  Otherwise, the option will be set to the specified value.
+</p></dd>
+</dl>
+
+<p>The output of the command is the same as that of
+<code class="code">--check-options</code> for the modified configuration file.
+</p>
+<p>Examples:
+</p>
+<p>To set the force option, which is of basic type <code class="code">none (0)</code>:
+</p>
+<div class="example">
+<pre class="example-preformatted">$ echo 'force:0:1' | gpgconf --change-options dirmngr
+</pre></div>
+
+<p>To delete the force option:
+</p>
+<div class="example">
+<pre class="example-preformatted">$ echo 'force:16:' | gpgconf --change-options dirmngr
+</pre></div>
+
+<p>The <code class="code">--runtime</code> option can influence when the changes take
+effect.
+</p>
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Listing-global-options.html">Listing global options</a>, Previous: <a href="Listing-options.html">Listing options</a>, Up: <a href="gpgconf.html">Modify .gnupg home directories</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

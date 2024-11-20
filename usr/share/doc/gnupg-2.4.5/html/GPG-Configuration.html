@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>GPG Configuration (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="GPG Configuration (Using the GNU Privacy Guard)">
+<meta name="keywords" content="GPG Configuration (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Invoking-GPG.html" rel="up" title="Invoking GPG">
+<link href="GPG-Examples.html" rel="next" title="GPG Examples">
+<link href="GPG-Options.html" rel="prev" title="GPG Options">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="GPG-Configuration">
+<div class="nav-panel">
+<p>
+Next: <a href="GPG-Examples.html" accesskey="n" rel="next">Examples</a>, Previous: <a href="GPG-Options.html" accesskey="p" rel="prev">Option Summary</a>, Up: <a href="Invoking-GPG.html" accesskey="u" rel="up">Invoking GPG</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="Configuration-files"><span>4.3 Configuration files<a class="copiable-link" href="#Configuration-files"> &para;</a></span></h3>
+
+<p>There are a few configuration files to control certain aspects of
+<code class="command">gpg</code>&rsquo;s operation. Unless noted, they are expected in the
+current home directory (see <a class="pxref" href="Agent-Options.html#option-_002d_002dhomedir">option --homedir</a>).
+</p>
+<dl class="table">
+<dt><samp class="file">gpg.conf</samp></dt>
+<dd><a class="index-entry-id" id="index-gpg_002econf"></a>
+<p>This is the standard configuration file read by <code class="command">gpg</code> on
+  startup.  It may contain any valid long option; the leading two dashes
+  may not be entered and the option may not be abbreviated.  This default
+  name may be changed on the command line (see <a class="pxref" href="GPG-Configuration-Options.html#gpg_002doption-_002d_002doptions">gpg-option --options</a>).
+  You should backup this file.
+</p>
+</dd>
+<dt><samp class="file">common.conf</samp></dt>
+<dd><a class="index-entry-id" id="index-common_002econf"></a>
+<p>This is an optional configuration file read by <code class="command">gpg</code> on
+  startup.  It may contain options pertaining to all components of
+  GnuPG.  Its current main use is for the &quot;use-keyboxd&quot; option.  If
+  the default home directory <samp class="file">~/.gnupg</samp> does not exist, GnuPG creates
+  this directory and a <samp class="file">common.conf</samp> file with &quot;use_keyboxd&quot;.
+</p>
+</dd>
+</dl>
+
+<p>Note that on larger installations, it is useful to put predefined files
+into the directory <samp class="file">/etc/skel/.gnupg</samp> so that
+newly created users start up with a working configuration.
+For existing users a small
+helper script is provided to create these files (see <a class="pxref" href="addgnupghome.html">Create .gnupg home directories</a>).
+</p>
+<p>For internal purposes <code class="command">gpg</code> creates and maintains a few other
+files; They all live in the current home directory (see <a class="pxref" href="Agent-Options.html#option-_002d_002dhomedir">option --homedir</a>).  Only the <code class="command">gpg</code> program may modify these files.
+</p>
+
+<dl class="table">
+<dt><samp class="file">~/.gnupg</samp></dt>
+<dd><a class="index-entry-id" id="index-_007e_002f_002egnupg"></a>
+<p>This is the default home directory which is used if neither the
+  environment variable <code class="code">GNUPGHOME</code> nor the option
+  <samp class="option">--homedir</samp> is given.
+</p>
+</dd>
+<dt><samp class="file">~/.gnupg/pubring.gpg</samp></dt>
+<dd><a class="index-entry-id" id="index-pubring_002egpg"></a>
+<p>The public keyring using a legacy format.  You should backup this file.
+</p>
+<p>If this file is not available, <code class="command">gpg</code> defaults to the new
+  keybox format and creates a file <samp class="file">pubring.kbx</samp> unless that file
+  already exists in which case that file will also be used for OpenPGP
+  keys.
+</p>
+<p>Note that in the case that both files, <samp class="file">pubring.gpg</samp> and
+  <samp class="file">pubring.kbx</samp> exists but the latter has no OpenPGP keys, the
+  legacy file <samp class="file">pubring.gpg</samp> will be used.  Take care: GnuPG
+  versions before 2.1 will always use the file <samp class="file">pubring.gpg</samp>
+  because they do not know about the new keybox format. In the case
+  that you have to use GnuPG 1.4 to decrypt archived data you should
+  keep this file.
+</p>
+</dd>
+<dt><samp class="file">~/.gnupg/pubring.gpg.lock</samp></dt>
+<dd><p>The lock file for the public keyring.
+</p>
+</dd>
+<dt><samp class="file">~/.gnupg/pubring.kbx</samp></dt>
+<dd><a class="index-entry-id" id="index-pubring_002ekbx"></a>
+<p>The public keyring using the new keybox format.  This file is shared
+  with <code class="command">gpgsm</code>.  You should backup this file.  See above for
+  the relation between this file and it predecessor.
+</p>
+<p>To convert an existing <samp class="file">pubring.gpg</samp> file to the keybox format, you
+  first backup the ownertrust values, then rename <samp class="file">pubring.gpg</samp> to
+  <samp class="file">publickeys.backup</samp>, so it won’t be recognized by any GnuPG version,
+  run import, and finally restore the ownertrust values:
+</p>
+<div class="example">
+<pre class="example-preformatted">  $ cd ~/.gnupg
+  $ gpg --export-ownertrust &gt;otrust.lst
+  $ mv pubring.gpg publickeys.backup
+  $ gpg --import-options restore --import publickeys.backup
+  $ gpg --import-ownertrust otrust.lst
+  </pre></div>
+
+</dd>
+<dt><samp class="file">~/.gnupg/pubring.kbx.lock</samp></dt>
+<dd><p>The lock file for <samp class="file">pubring.kbx</samp>.
+</p>
+</dd>
+<dt><samp class="file">~/.gnupg/secring.gpg</samp></dt>
+<dd><a class="index-entry-id" id="index-secring_002egpg"></a>
+<p>The legacy secret keyring as used by GnuPG versions before 2.1.  It is not
+  used by GnuPG 2.1 and later.  You may want to keep it in case you
+  have to use GnuPG 1.4 to decrypt archived data.
+</p>
+</dd>
+<dt><samp class="file">~/.gnupg/secring.gpg.lock</samp></dt>
+<dd><p>The lock file for the legacy secret keyring.
+</p>
+</dd>
+<dt><samp class="file">~/.gnupg/.gpg-v21-migrated</samp></dt>
+<dd><a class="index-entry-id" id="index-_002egpg_002dv21_002dmigrated"></a>
+<p>File indicating that a migration to GnuPG 2.1 has been done.
+</p>
+</dd>
+<dt><samp class="file">~/.gnupg/trustdb.gpg</samp></dt>
+<dd><a class="index-entry-id" id="index-trustdb_002egpg"></a>
+<p>The trust database.  There is no need to backup this file; it is better
+  to backup the ownertrust values (see <a class="pxref" href="Operational-GPG-Commands.html#option-_002d_002dexport_002downertrust">option --export-ownertrust</a>).
+</p>
+</dd>
+<dt><samp class="file">~/.gnupg/trustdb.gpg.lock</samp></dt>
+<dd><p>The lock file for the trust database.
+</p>
+</dd>
+<dt><samp class="file">~/.gnupg/random_seed</samp></dt>
+<dd><a class="index-entry-id" id="index-random_005fseed"></a>
+<p>A file used to preserve the state of the internal random pool.
+</p>
+</dd>
+<dt><samp class="file">~/.gnupg/openpgp-revocs.d/</samp></dt>
+<dd><a class="index-entry-id" id="index-openpgp_002drevocs_002ed"></a>
+<p>This is the directory where gpg stores pre-generated revocation
+  certificates.  The file name corresponds to the OpenPGP fingerprint of
+  the respective key.  It is suggested to backup those certificates and
+  if the primary private key is not stored on the disk to move them to
+  an external storage device.  Anyone who can access these files is
+  able to revoke the corresponding key.  You may want to print them out.
+  You should backup all files in this directory and take care to keep
+  this backup closed away.
+</p>
+</dd>
+</dl>
+
+<p>Operation is further controlled by a few environment variables:
+</p>
+<dl class="table">
+<dt>HOME</dt>
+<dd><a class="index-entry-id" id="index-HOME"></a>
+<p>Used to locate the default home directory.
+</p>
+</dd>
+<dt>GNUPGHOME</dt>
+<dd><a class="index-entry-id" id="index-GNUPGHOME-2"></a>
+<p>If set directory used instead of &quot;~/.gnupg&quot;.
+</p>
+</dd>
+<dt>GPG_AGENT_INFO</dt>
+<dd><p>This variable is obsolete; it was used by GnuPG versions before 2.1.
+</p>
+</dd>
+<dt>PINENTRY_USER_DATA</dt>
+<dd><a class="index-entry-id" id="index-PINENTRY_005fUSER_005fDATA"></a>
+<p>This value is passed via gpg-agent to pinentry.  It is useful to convey
+  extra information to a custom pinentry.
+</p>
+</dd>
+<dt>COLUMNS</dt>
+<dt>LINES</dt>
+<dd><a class="index-entry-id" id="index-COLUMNS"></a>
+<a class="index-entry-id" id="index-LINES"></a>
+<p>Used to size some displays to the full size of the screen.
+</p>
+</dd>
+<dt>LANGUAGE</dt>
+<dd><a class="index-entry-id" id="index-LANGUAGE"></a>
+<p>Apart from its use by GNU, it is used in the W32 version to override the
+  language selection done through the Registry.  If used and set to a
+  valid and available language name (<var class="var">langid</var>), the file with the
+  translation is loaded from
+  <code class="code"><var class="var">gpgdir</var>/gnupg.nls/<var class="var">langid</var>.mo</code>.  Here <var class="var">gpgdir</var> is the
+  directory out of which the gpg binary has been loaded.  If it can&rsquo;t be
+  loaded the Registry is tried and as last resort the native Windows
+  locale system is used.
+</p>
+</dd>
+<dt>GNUPG_BUILD_ROOT</dt>
+<dd><a class="index-entry-id" id="index-GNUPG_005fBUILD_005fROOT"></a>
+<p>This variable is only used by the regression test suite as a helper
+  under operating systems without proper support to figure out the
+  name of a process&rsquo; text file.
+</p>
+</dd>
+<dt>GNUPG_EXEC_DEBUG_FLAGS</dt>
+<dd><a class="index-entry-id" id="index-GNUPG_005fEXEC_005fDEBUG_005fFLAGS"></a>
+<p>This variable allows one to enable diagnostics for process management.
+  A numeric decimal value is expected.  Bit 0 enables general
+  diagnostics, bit 1 enables certain warnings on Windows.
+</p>
+</dd>
+</dl>
+
+<p>When calling the gpg-agent component <code class="command">gpg</code> sends a set of
+environment variables to gpg-agent.  The names of these variables can
+be listed using the command:
+</p>
+<div class="example">
+<pre class="example-preformatted">  gpg-connect-agent 'getinfo std_env_names' /bye | awk '$1==&quot;D&quot; {print $2}'
+</pre></div>
+
+
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="GPG-Examples.html">Examples</a>, Previous: <a href="GPG-Options.html">Option Summary</a>, Up: <a href="Invoking-GPG.html">Invoking GPG</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

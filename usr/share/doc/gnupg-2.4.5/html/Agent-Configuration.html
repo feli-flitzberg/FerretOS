@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Agent Configuration (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Agent Configuration (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Agent Configuration (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Invoking-GPG_002dAGENT.html" rel="up" title="Invoking GPG-AGENT">
+<link href="Agent-Signals.html" rel="next" title="Agent Signals">
+<link href="Agent-Options.html" rel="prev" title="Agent Options">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="Agent-Configuration">
+<div class="nav-panel">
+<p>
+Next: <a href="Agent-Signals.html" accesskey="n" rel="next">Use of some signals</a>, Previous: <a href="Agent-Options.html" accesskey="p" rel="prev">Option Summary</a>, Up: <a href="Invoking-GPG_002dAGENT.html" accesskey="u" rel="up">Invoking GPG-AGENT</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="Configuration"><span>2.3 Configuration<a class="copiable-link" href="#Configuration"> &para;</a></span></h3>
+
+<p>There are a few configuration files needed for the operation of the
+agent. By default they may all be found in the current home directory
+(see <a class="pxref" href="Agent-Options.html#option-_002d_002dhomedir">option --homedir</a>).
+</p>
+<dl class="table">
+<dt><a id="index-gpg_002dagent_002econf"></a><span><samp class="file">gpg-agent.conf</samp><a class="copiable-link" href="#index-gpg_002dagent_002econf"> &para;</a></span></dt>
+<dd><p>This is the standard configuration file read by <code class="command">gpg-agent</code> on
+  startup.  It may contain any valid long option; the leading
+  two dashes may not be entered and the option may not be abbreviated.
+  This file is also read after a <code class="code">SIGHUP</code> however only a few
+  options will actually have an effect.  This default name may be
+  changed on the command line (see <a class="pxref" href="Agent-Options.html#option-_002d_002doptions">option --options</a>).
+  You should backup this file.
+</p>
+</dd>
+<dt><a id="index-trustlist_002etxt"></a><span><samp class="file">trustlist.txt</samp><a class="copiable-link" href="#index-trustlist_002etxt"> &para;</a></span></dt>
+<dd><p>This is the list of trusted keys.  You should backup this file.
+</p>
+<p>Comment lines, indicated by a leading hash mark, as well as empty
+  lines are ignored.  To mark a key as trusted you need to enter its
+  fingerprint followed by a space and a capital letter <code class="code">S</code>.  Colons
+  may optionally be used to separate the bytes of a fingerprint; this
+  enables cutting and pasting the fingerprint from a key listing output.  If
+  the line is prefixed with a <code class="code">!</code> the key is explicitly marked as
+  not trusted.
+</p>
+<p>Here is an example where two keys are marked as ultimately trusted
+  and one as not trusted:
+</p>
+<table class="cartouche" border="1"><tr><td>
+<div class="example smallexample">
+<pre class="example-preformatted">  # CN=Wurzel ZS 3,O=Intevation GmbH,C=DE
+  A6935DD34EF3087973C706FC311AA2CCF733765B S
+
+  # CN=PCA-1-Verwaltung-02/O=PKI-1-Verwaltung/C=DE
+  DC:BD:69:25:48:BD:BB:7E:31:6E:BB:80:D3:00:80:35:D4:F8:A6:CD S
+
+  # CN=Root-CA/O=Schlapphuete/L=Pullach/C=DE
+  !14:56:98:D3:FE:9C:CA:5A:31:6E:BC:81:D3:11:4E:00:90:A3:44:C2 S
+  </pre></div>
+</td></tr></table>
+
+<p>Before entering a key into this file, you need to ensure its
+authenticity.  How to do this depends on your organisation; your
+administrator might have already entered those keys which are deemed
+trustworthy enough into this file.  Places where to look for the
+fingerprint of a root certificate are letters received from the CA or
+the website of the CA (after making 100% sure that this is indeed the
+website of that CA).  You may want to consider disallowing interactive
+updates of this file by using the <a class="ref" href="Agent-Options.html#option-_002d_002dno_002dallow_002dmark_002dtrusted">option --no-allow-mark-trusted</a>.
+It might even be advisable to change the permissions to read-only so
+that this file can&rsquo;t be changed inadvertently.
+</p>
+<p>As a special feature a line <code class="code">include-default</code> will include a global
+list of trusted certificates (e.g. <samp class="file">/etc/gnupg/trustlist.txt</samp>).
+This global list is also used if the local list is not available;
+the <a class="ref" href="Agent-Options.html#option-_002d_002dno_002duser_002dtrustlist">option --no-user-trustlist</a> enforces the use of only
+this global list.
+</p>
+<p>It is possible to add further flags after the <code class="code">S</code> for use by the
+caller:
+</p>
+<dl class="table">
+<dt><a id="index-relax"></a><span><code class="code">relax</code><a class="copiable-link" href="#index-relax"> &para;</a></span></dt>
+<dd><p>Relax checking of some root certificate requirements.  As of now this
+flag allows the use of root certificates with a missing basicConstraints
+attribute (despite that it is a MUST for CA certificates) and disables
+CRL checking for the root certificate.
+</p>
+</dd>
+<dt><code class="code">cm</code></dt>
+<dd><p>If validation of a certificate finally issued by a CA with this flag set
+fails, try again using the chain validation model.
+</p>
+</dd>
+<dt><code class="code">qual</code></dt>
+<dd><p>The CA is allowed to issue certificates for qualified signatures.
+This flag has an effect only if used in the global list.  This is now
+the preferred way to mark such CA; the old way of having a separate
+file <samp class="file">qualified.txt</samp> is still supported.
+</p>
+</dd>
+<dt><code class="code">de-vs</code></dt>
+<dd><p>The CA is part of an approved PKI for the German classification level
+VS-NfD.  It is only valid in the global trustlist.  As of now this is
+used only for documentation purpose.
+</p>
+</dd>
+</dl>
+
+
+</dd>
+<dt><a id="index-sshcontrol"></a><span><samp class="file">sshcontrol</samp><a class="copiable-link" href="#index-sshcontrol"> &para;</a></span></dt>
+<dd><p>This file is used when support for the secure shell agent protocol has
+been enabled (see <a class="pxref" href="Agent-Options.html#option-_002d_002denable_002dssh_002dsupport">option --enable-ssh-support</a>). Only keys present in
+this file are used in the SSH protocol.  You should backup this file.
+</p>
+<p>This file is deprecated in favor of the &quot;Use-for-ssh&quot; attribute in the
+key files.
+</p>
+<p>The <code class="command">ssh-add</code> tool may be used to add new entries to this file;
+you may also add them manually.  Comment lines, indicated by a leading
+hash mark, as well as empty lines are ignored.  An entry starts with
+optional whitespace, followed by the keygrip of the key given as 40 hex
+digits, optionally followed by the caching TTL in seconds and another
+optional field for arbitrary flags.  A non-zero TTL overrides the global
+default as set by <samp class="option">--default-cache-ttl-ssh</samp>.
+</p>
+<p>The only flag support is <code class="code">confirm</code>.  If this flag is found for a
+key, each use of the key will pop up a pinentry to confirm the use of
+that key.  The flag is automatically set if a new key was loaded into
+<code class="code">gpg-agent</code> using the option <samp class="option">-c</samp> of the <code class="code">ssh-add</code>
+command.
+</p>
+<p>The keygrip may be prefixed with a <code class="code">!</code> to disable an entry.
+</p>
+<p>The following example lists exactly one key.  Note that keys available
+through a OpenPGP smartcard in the active smartcard reader are
+implicitly added to this list; i.e. there is no need to list them.
+</p>
+<table class="cartouche" border="1"><tr><td>
+<div class="example smallexample">
+<pre class="example-preformatted">       # Key added on: 2011-07-20 20:38:46
+       # Fingerprint:  5e:8d:c4:ad:e7:af:6e:27:8a:d6:13:e4:79:ad:0b:81
+       34B62F25E277CF13D3C6BCEBFD3F85D08F0A864B 0 confirm
+</pre></div>
+</td></tr></table>
+
+</dd>
+<dt><a id="index-private_002dkeys_002dv1_002ed"></a><span><samp class="file">private-keys-v1.d/</samp><a class="copiable-link" href="#index-private_002dkeys_002dv1_002ed"> &para;</a></span></dt>
+<dd>
+<p>This is the directory where gpg-agent stores the private keys.  Each
+  key is stored in a file with the name made up of the keygrip and the
+  suffix <samp class="file">key</samp>.  You should backup all files in this directory
+  and take great care to keep this backup closed away.
+</p>
+
+</dd>
+</dl>
+
+<p>Note that on larger installations, it is useful to put predefined
+files into the directory <samp class="file">/etc/skel/.gnupg</samp> so that newly created
+users start up with a working configuration.  For existing users the
+a small helper script is provided to create these files (see <a class="pxref" href="addgnupghome.html">Create .gnupg home directories</a>).
+</p>
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Agent-Signals.html">Use of some signals</a>, Previous: <a href="Agent-Options.html">Option Summary</a>, Up: <a href="Invoking-GPG_002dAGENT.html">Invoking GPG-AGENT</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

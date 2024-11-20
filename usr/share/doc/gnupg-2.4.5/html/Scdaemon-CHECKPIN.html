@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Scdaemon CHECKPIN (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Scdaemon CHECKPIN (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Scdaemon CHECKPIN (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Scdaemon-Protocol.html" rel="up" title="Scdaemon Protocol">
+<link href="Scdaemon-RESTART.html" rel="next" title="Scdaemon RESTART">
+<link href="Scdaemon-PASSWD.html" rel="prev" title="Scdaemon PASSWD">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Scdaemon-CHECKPIN">
+<div class="nav-panel">
+<p>
+Next: <a href="Scdaemon-RESTART.html" accesskey="n" rel="next">Perform a RESTART operation</a>, Previous: <a href="Scdaemon-PASSWD.html" accesskey="p" rel="prev">Change PINs</a>, Up: <a href="Scdaemon-Protocol.html" accesskey="u" rel="up">Scdaemon&rsquo;s Assuan Protocol</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Perform-a-VERIFY-operation"><span>6.6.13 Perform a VERIFY operation<a class="copiable-link" href="#Perform-a-VERIFY-operation"> &para;</a></span></h4>
+
+<div class="example">
+<pre class="example-preformatted">  CHECKPIN <var class="var">idstr</var>
+</pre></div>
+
+<p>Perform a VERIFY operation without doing anything else.  This may be
+used to initialize a the PIN cache earlier to long lasting
+operations.  Its use is highly application dependent:
+</p>
+<dl class="table">
+<dt><strong class="strong">OpenPGP</strong></dt>
+<dd>
+<p>Perform a simple verify operation for CHV1 and CHV2, so that further
+operations won&rsquo;t ask for CHV2 and it is possible to do a cheap check on
+the PIN: If there is something wrong with the PIN entry system, only the
+regular CHV will get blocked and not the dangerous CHV3.  <var class="var">idstr</var> is
+the usual card&rsquo;s serial number in hex notation; an optional fingerprint
+part will get ignored.
+</p>
+<p>There is however a special mode if <var class="var">idstr</var> is suffixed with the
+literal string <code class="code">[CHV3]</code>: In this case the Admin PIN is checked if
+and only if the retry counter is still at 3.
+</p>
+</dd>
+</dl>
+
+
+
+</div>
+
+
+
+</body>
+</html>

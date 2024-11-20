@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>GPGSM GETINFO (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="GPGSM GETINFO (Using the GNU Privacy Guard)">
+<meta name="keywords" content="GPGSM GETINFO (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="GPGSM-Protocol.html" rel="up" title="GPGSM Protocol">
+<link href="GPGSM-OPTION.html" rel="next" title="GPGSM OPTION">
+<link href="GPGSM-GETAUDITLOG.html" rel="prev" title="GPGSM GETAUDITLOG">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="GPGSM-GETINFO">
+<div class="nav-panel">
+<p>
+Next: <a href="GPGSM-OPTION.html" accesskey="n" rel="next">Session options</a>, Previous: <a href="GPGSM-GETAUDITLOG.html" accesskey="p" rel="prev">Retrieve an audit log</a>, Up: <a href="GPGSM-Protocol.html" accesskey="u" rel="up">The Protocol the Server Mode Uses</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Return-information-about-the-process-1"><span>5.6.11 Return information about the process<a class="copiable-link" href="#Return-information-about-the-process-1"> &para;</a></span></h4>
+
+<p>This is a multipurpose function to return a variety of information.
+</p>
+<div class="example">
+<pre class="example-preformatted">GETINFO <var class="var">what</var>
+</pre></div>
+
+<p>The value of <var class="var">what</var> specifies the kind of information returned:
+</p><dl class="table">
+<dt><code class="code">version</code></dt>
+<dd><p>Return the version of the program.
+</p></dd>
+<dt><code class="code">pid</code></dt>
+<dd><p>Return the process id of the process.
+</p></dd>
+<dt><code class="code">agent-check</code></dt>
+<dd><p>Return OK if the agent is running.
+</p></dd>
+<dt><code class="code">cmd_has_option <var class="var">cmd</var> <var class="var">opt</var></code></dt>
+<dd><p>Return OK if the command <var class="var">cmd</var> implements the option <var class="var">opt</var>.
+The leading two dashes usually used with <var class="var">opt</var> shall not be given.
+</p></dd>
+<dt><code class="code">offline</code></dt>
+<dd><p>Return OK if the connection is in offline mode.  This may be either
+due to a <code class="code">OPTION offline=1</code> or due to <code class="command">gpgsm</code> being
+started with option <samp class="option">--disable-dirmngr</samp>.
+</p></dd>
+<dt><code class="code">always-trust</code></dt>
+<dd><p>Returns OK of the connection is in always-trust mode.  That is either
+<samp class="option">--always-trust</samp> or <samp class="option">GPGSM OPTION always-trust</samp> are
+active.
+</p></dd>
+</dl>
+
+</div>
+
+
+
+</body>
+</html>

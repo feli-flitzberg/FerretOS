@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Esoteric Options (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Esoteric Options (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Esoteric Options (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="GPGSM-Options.html" rel="up" title="GPGSM Options">
+<link href="CMS-Options.html" rel="prev" title="CMS Options">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Esoteric-Options">
+<div class="nav-panel">
+<p>
+Previous: <a href="CMS-Options.html" accesskey="p" rel="prev">How to change how the CMS is created</a>, Up: <a href="GPGSM-Options.html" accesskey="u" rel="up">Option Summary</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Doing-things-one-usually-do-not-want-to-do"><span>5.2.5 Doing things one usually do not want to do<a class="copiable-link" href="#Doing-things-one-usually-do-not-want-to-do"> &para;</a></span></h4>
+
+
+<dl class="table">
+<dt><a id="index-chuid-1"></a><span><code class="code">--chuid <var class="var">uid</var></code><a class="copiable-link" href="#index-chuid-1"> &para;</a></span></dt>
+<dd><p>Change the current user to <var class="var">uid</var> which may either be a number or a
+name.  This can be used from the root account to run gpgsm for
+another user.  If <var class="var">uid</var> is not the current UID a standard PATH is
+set and the envvar GNUPGHOME is unset.  To override the latter the
+option <samp class="option">--homedir</samp> can be used.  This option has only an effect
+when used on the command line.  This option has currently no effect at
+all on Windows.
+</p>
+
+</dd>
+<dt><a id="index-extra_002ddigest_002dalgo"></a><span><code class="code">--extra-digest-algo <var class="var">name</var></code><a class="copiable-link" href="#index-extra_002ddigest_002dalgo"> &para;</a></span></dt>
+<dd><p>Sometimes signatures are broken in that they announce a different digest
+algorithm than actually used.  <code class="command">gpgsm</code> uses a one-pass data
+processing model and thus needs to rely on the announced digest
+algorithms to properly hash the data.  As a workaround this option may
+be used to tell <code class="command">gpgsm</code> to also hash the data using the algorithm
+<var class="var">name</var>; this slows processing down a little bit but allows verification of
+such broken signatures.  If <code class="command">gpgsm</code> prints an error like
+&ldquo;digest algo 8 has not been enabled&rdquo; you may want to try this option,
+with &lsquo;<samp class="samp">SHA256</samp>&rsquo; for <var class="var">name</var>.
+</p>
+</dd>
+<dt><a id="index-compliance-1"></a><span><code class="code">--compliance <var class="var">string</var></code><a class="copiable-link" href="#index-compliance-1"> &para;</a></span></dt>
+<dd><p>Set the compliance mode.  Valid values are shown when using &quot;help&quot; for
+<var class="var">string</var>.
+</p>
+</dd>
+<dt><a id="index-min_002drsa_002dlength-1"></a><span><code class="code">--min-rsa-length <var class="var">n</var></code><a class="copiable-link" href="#index-min_002drsa_002dlength-1"> &para;</a></span></dt>
+<dd><p>This option adjusts the compliance mode &quot;de-vs&quot; for stricter key size
+requirements.  For example, a value of 3000 turns rsa2048 and dsa2048
+keys into non-VS-NfD compliant keys.
+</p>
+</dd>
+<dt><a id="index-require_002dcompliance-1"></a><span><code class="code">--require-compliance</code><a class="copiable-link" href="#index-require_002dcompliance-1"> &para;</a></span></dt>
+<dd><p>To check that data has been encrypted according to the rules of the
+current compliance mode, a gpgsm user needs to evaluate the status
+lines.  This is allows frontends to handle compliance check in a more
+flexible way.  However, for scripted use the required evaluation of
+the status-line requires quite some effort; this option can be used
+instead to make sure that the gpgsm process exits with a failure if
+the compliance rules are not fulfilled.  Note that this option has
+currently an effect only in &quot;de-vs&quot; mode.
+</p>
+</dd>
+<dt><a id="index-always_002dtrust-1"></a><span><code class="code">--always-trust</code><a class="copiable-link" href="#index-always_002dtrust-1"> &para;</a></span></dt>
+<dd><p>Force encryption to the specified certificates without any validation
+of the certificate chain.  The only requirement is that the
+certificate is capable of encryption.  Note that this option is
+ineffective if <samp class="option">--require-compliance</samp> is used.
+</p>
+</dd>
+<dt><a id="index-ignore_002dcert_002dwith_002doid"></a><span><code class="code">--ignore-cert-with-oid <var class="var">oid</var></code><a class="copiable-link" href="#index-ignore_002dcert_002dwith_002doid"> &para;</a></span></dt>
+<dd><p>Add <var class="var">oid</var> to the list of OIDs to be checked while reading
+certificates from smartcards. The <var class="var">oid</var> is expected to be in
+dotted decimal form, like <code class="code">2.5.29.3</code>.  This option may be used
+more than once.  As of now certificates with an extended key usage
+matching one of those OIDs are ignored during a <samp class="option">--learn-card</samp>
+operation and not imported.  This option can help to keep the local
+key database clear of unneeded certificates stored on smartcards.
+</p>
+</dd>
+<dt><a id="index-faked_002dsystem_002dtime-3"></a><span><code class="code">--faked-system-time <var class="var">epoch</var></code><a class="copiable-link" href="#index-faked_002dsystem_002dtime-3"> &para;</a></span></dt>
+<dd><p>This option is only useful for testing; it sets the system time back or
+forth to <var class="var">epoch</var> which is the number of seconds elapsed since the year
+1970.  Alternatively <var class="var">epoch</var> may be given as a full ISO time string
+(e.g. &quot;20070924T154812&quot;).
+</p>
+</dd>
+<dt><a id="index-with_002dephemeral_002dkeys"></a><span><code class="code">--with-ephemeral-keys</code><a class="copiable-link" href="#index-with_002dephemeral_002dkeys"> &para;</a></span></dt>
+<dd><p>Include ephemeral flagged keys in the output of key listings.  Note
+that they are included anyway if the key specification for a listing
+is given as fingerprint or keygrip.
+</p>
+</dd>
+<dt><a id="index-compatibility_002dflags-2"></a><span><code class="code">--compatibility-flags <var class="var">flags</var></code><a class="copiable-link" href="#index-compatibility_002dflags-2"> &para;</a></span></dt>
+<dd><p>Set compatibility flags to work around problems due to non-compliant
+certificates or data.  The <var class="var">flags</var> are given as a comma separated
+list of flag names and are OR-ed together.  The special flag &quot;none&quot;
+clears the list and allows one to start over with an empty list.  To get a
+list of available flags the sole word &quot;help&quot; can be used.
+</p>
+</dd>
+<dt><a id="index-debug_002dlevel-3"></a><span><code class="code">--debug-level <var class="var">level</var></code><a class="copiable-link" href="#index-debug_002dlevel-3"> &para;</a></span></dt>
+<dd><p>Select the debug level for investigating problems. <var class="var">level</var> may be
+a numeric value or by a keyword:
+</p>
+<dl class="table">
+<dt><code class="code">none</code></dt>
+<dd><p>No debugging at all.  A value of less than 1 may be used instead of
+the keyword.
+</p></dd>
+<dt><code class="code">basic</code></dt>
+<dd><p>Some basic debug messages.  A value between 1 and 2 may be used
+instead of the keyword.
+</p></dd>
+<dt><code class="code">advanced</code></dt>
+<dd><p>More verbose debug messages.  A value between 3 and 5 may be used
+instead of the keyword.
+</p></dd>
+<dt><code class="code">expert</code></dt>
+<dd><p>Even more detailed messages.  A value between 6 and 8 may be used
+instead of the keyword.
+</p></dd>
+<dt><code class="code">guru</code></dt>
+<dd><p>All of the debug messages you can get. A value greater than 8 may be
+used instead of the keyword.  The creation of hash tracing files is
+only enabled if the keyword is used.
+</p></dd>
+</dl>
+
+<p>How these messages are mapped to the actual debugging flags is not
+specified and may change with newer releases of this program. They are
+however carefully selected to best aid in debugging.
+</p>
+</dd>
+<dt><a id="index-debug-3"></a><span><code class="code">--debug <var class="var">flags</var></code><a class="copiable-link" href="#index-debug-3"> &para;</a></span></dt>
+<dd><p>Set debug flags.  All flags are or-ed and <var class="var">flags</var> may be given
+in C syntax (e.g. 0x0042) or as a comma separated list of flag names.
+To get a list of all supported flags the single word &quot;help&quot; can be
+used. This option is only useful for debugging and the behavior may
+change at any time without notice.
+</p>
+<p>Note, that all flags set using this option may get overridden by
+<code class="code">--debug-level</code>.
+</p>
+</dd>
+<dt><a id="index-debug_002dall-3"></a><span><code class="code">--debug-all</code><a class="copiable-link" href="#index-debug_002dall-3"> &para;</a></span></dt>
+<dd><p>Same as <code class="code">--debug=0xffffffff</code>
+</p>
+</dd>
+<dt><a id="index-debug_002dallow_002dcore_002ddump"></a><span><code class="code">--debug-allow-core-dump</code><a class="copiable-link" href="#index-debug_002dallow_002dcore_002ddump"> &para;</a></span></dt>
+<dd><p>Usually <code class="command">gpgsm</code> tries to avoid dumping core by well written code and by
+disabling core dumps for security reasons.  However, bugs are pretty
+durable beasts and to squash them it is sometimes useful to have a core
+dump.  This option enables core dumps unless the Bad Thing happened
+before the option parsing.
+</p>
+</dd>
+<dt><a id="index-debug_002dno_002dchain_002dvalidation"></a><span><code class="code">--debug-no-chain-validation</code><a class="copiable-link" href="#index-debug_002dno_002dchain_002dvalidation"> &para;</a></span></dt>
+<dd><p>This is actually not a debugging option but only useful as such.  It
+lets <code class="command">gpgsm</code> bypass all certificate chain validation checks.
+</p>
+</dd>
+<dt><a id="index-debug_002dignore_002dexpiration-1"></a><span><code class="code">--debug-ignore-expiration</code><a class="copiable-link" href="#index-debug_002dignore_002dexpiration-1"> &para;</a></span></dt>
+<dd><p>This is actually not a debugging option but only useful as such.  It
+lets <code class="command">gpgsm</code> ignore all notAfter dates, this is used by the regression
+tests.
+</p>
+</dd>
+<dt><a id="index-passphrase_002dfd-1"></a><span><code class="code">--passphrase-fd <code class="code">n</code></code><a class="copiable-link" href="#index-passphrase_002dfd-1"> &para;</a></span></dt>
+<dd><p>Read the passphrase from file descriptor <code class="code">n</code>. Only the first line
+will be read from file descriptor <code class="code">n</code>. If you use 0 for <code class="code">n</code>,
+the passphrase will be read from STDIN. This can only be used if only
+one passphrase is supplied.
+</p>
+<p>Note that this passphrase is only used if the option <samp class="option">--batch</samp>
+has also been given.
+</p>
+</dd>
+<dt><a id="index-pinentry_002dmode-1"></a><span><code class="code">--pinentry-mode <code class="code">mode</code></code><a class="copiable-link" href="#index-pinentry_002dmode-1"> &para;</a></span></dt>
+<dd><p>Set the pinentry mode to <code class="code">mode</code>.  Allowed values for <code class="code">mode</code>
+are:
+</p><dl class="table">
+<dt>default</dt>
+<dd><p>Use the default of the agent, which is <code class="code">ask</code>.
+  </p></dd>
+<dt>ask</dt>
+<dd><p>Force the use of the Pinentry.
+  </p></dd>
+<dt>cancel</dt>
+<dd><p>Emulate use of Pinentry&rsquo;s cancel button.
+  </p></dd>
+<dt>error</dt>
+<dd><p>Return a Pinentry error (&ldquo;No Pinentry&rdquo;).
+  </p></dd>
+<dt>loopback</dt>
+<dd><p>Redirect Pinentry queries to the caller.  Note that in contrast to
+  Pinentry the user is not prompted again if he enters a bad password.
+</p></dd>
+</dl>
+
+</dd>
+<dt><a id="index-request_002dorigin-1"></a><span><code class="code">--request-origin <var class="var">origin</var></code><a class="copiable-link" href="#index-request_002dorigin-1"> &para;</a></span></dt>
+<dd><p>Tell gpgsm to assume that the operation ultimately originated at
+<var class="var">origin</var>.  Depending on the origin certain restrictions are applied
+and the Pinentry may include an extra note on the origin.  Supported
+values for <var class="var">origin</var> are: <code class="code">local</code> which is the default,
+<code class="code">remote</code> to indicate a remote origin or <code class="code">browser</code> for an
+operation requested by a web browser.
+</p>
+</dd>
+<dt><a id="index-no_002dcommon_002dcerts_002dimport"></a><span><code class="code">--no-common-certs-import</code><a class="copiable-link" href="#index-no_002dcommon_002dcerts_002dimport"> &para;</a></span></dt>
+<dd><p>Suppress the import of common certificates on keybox creation.
+</p>
+</dd>
+</dl>
+
+<p>All the long options may also be given in the configuration file after
+stripping off the two leading dashes.
+</p>
+
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Previous: <a href="CMS-Options.html">How to change how the CMS is created</a>, Up: <a href="GPGSM-Options.html">Option Summary</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

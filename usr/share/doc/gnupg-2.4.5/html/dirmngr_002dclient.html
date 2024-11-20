@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>dirmngr-client (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="dirmngr-client (Using the GNU Privacy Guard)">
+<meta name="keywords" content="dirmngr-client (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Helper-Tools.html" rel="up" title="Helper Tools">
+<link href="gpgparsemail.html" rel="next" title="gpgparsemail">
+<link href="gpg_002dconnect_002dagent.html" rel="prev" title="gpg-connect-agent">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="dirmngr_002dclient">
+<div class="nav-panel">
+<p>
+Next: <a href="gpgparsemail.html" accesskey="n" rel="next">Parse a mail message into an annotated format</a>, Previous: <a href="gpg_002dconnect_002dagent.html" accesskey="p" rel="prev">Communicate with a running agent</a>, Up: <a href="Helper-Tools.html" accesskey="u" rel="up">Helper Tools</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="The-Dirmngr-Client-Tool"><span>10.8 The Dirmngr Client Tool<a class="copiable-link" href="#The-Dirmngr-Client-Tool"> &para;</a></span></h3>
+
+
+
+
+
+
+<p>The <code class="command">dirmngr-client</code> is a simple tool to contact a running
+dirmngr and test whether a certificate has been revoked &mdash; either by
+being listed in the corresponding CRL or by running the OCSP protocol.
+If no dirmngr is running, a new instances will be started but this is
+in general not a good idea due to the huge performance overhead.
+</p>
+<p>The usual way to run this tool is either:
+</p>
+<div class="example">
+<pre class="example-preformatted">dirmngr-client <var class="var">acert</var>
+</pre></div>
+
+<p>or
+</p>
+<div class="example">
+<pre class="example-preformatted">dirmngr-client &lt;<var class="var">acert</var>
+</pre></div>
+
+<p>Where <var class="var">acert</var> is one DER encoded (binary) X.509 certificates to be
+tested.
+The return value of this command is
+</p>
+
+<dl class="table">
+<dt><code class="code">0</code></dt>
+<dd><p>The certificate under question is valid; i.e. there is a valid CRL
+available and it is not listed there or the OCSP request returned that
+that certificate is valid.
+</p>
+</dd>
+<dt><code class="code">1</code></dt>
+<dd><p>The certificate has been revoked
+</p>
+</dd>
+<dt><code class="code">2 (and other values)</code></dt>
+<dd><p>There was a problem checking the revocation state of the certificate.
+A message to stderr has given more detailed information.  Most likely
+this is due to a missing or expired CRL or due to a network problem.
+</p>
+</dd>
+</dl>
+
+
+<p><code class="command">dirmngr-client</code> may be called with the following options:
+</p>
+
+<dl class="table">
+<dt><a id="index-version-7"></a><span><code class="code">--version</code><a class="copiable-link" href="#index-version-7"> &para;</a></span></dt>
+<dd><p>Print the program version and licensing information.  Note that you cannot
+abbreviate this command.
+</p>
+</dd>
+<dt><a id="index-help-7"></a><span><code class="code">--help, -h</code><a class="copiable-link" href="#index-help-7"> &para;</a></span></dt>
+<dd><p>Print a usage message summarizing the most useful command-line options.
+Note that you cannot abbreviate this command.
+</p>
+</dd>
+<dt><a id="index-quiet-6"></a><span><code class="code">--quiet, -q</code><a class="copiable-link" href="#index-quiet-6"> &para;</a></span></dt>
+<dd><p>Make the output extra brief by suppressing any informational messages.
+</p>
+</dd>
+<dt><code class="code">-v</code></dt>
+<dt><a class="index-entry-id" id="index-verbose-10"></a>
+<a id="index-v-3"></a><span><code class="code">--verbose</code><a class="copiable-link" href="#index-v-3"> &para;</a></span></dt>
+<dd><p>Outputs additional information while running.
+You can increase the verbosity by giving several
+verbose commands to <small class="sc">DIRMNGR</small>, such as &lsquo;<samp class="samp">-vv</samp>&rsquo;.
+</p>
+</dd>
+<dt><a id="index-pem"></a><span><code class="code">--pem</code><a class="copiable-link" href="#index-pem"> &para;</a></span></dt>
+<dd><p>Assume that the given certificate is in PEM (armored) format.
+</p>
+</dd>
+<dt><a id="index-ocsp"></a><span><code class="code">--ocsp</code><a class="copiable-link" href="#index-ocsp"> &para;</a></span></dt>
+<dd><p>Do the check using the OCSP protocol and ignore any CRLs.
+</p>
+</dd>
+<dt><a id="index-force_002ddefault_002dresponder"></a><span><code class="code">--force-default-responder</code><a class="copiable-link" href="#index-force_002ddefault_002dresponder"> &para;</a></span></dt>
+<dd><p>When checking using the OCSP protocol, force the use of the default OCSP
+responder.  That is not to use the Reponder as given by the certificate.
+</p>
+</dd>
+<dt><a id="index-ping"></a><span><code class="code">--ping</code><a class="copiable-link" href="#index-ping"> &para;</a></span></dt>
+<dd><p>Check whether the dirmngr daemon is up and running.
+</p>
+</dd>
+<dt><a id="index-cache_002dcert"></a><span><code class="code">--cache-cert</code><a class="copiable-link" href="#index-cache_002dcert"> &para;</a></span></dt>
+<dd><p>Put the given certificate into the cache of a running dirmngr.  This is
+mainly useful for debugging.
+</p>
+</dd>
+<dt><a id="index-validate"></a><span><code class="code">--validate</code><a class="copiable-link" href="#index-validate"> &para;</a></span></dt>
+<dd><p>Validate the given certificate using dirmngr&rsquo;s internal validation code.
+This is mainly useful for debugging.
+</p>
+</dd>
+<dt><a id="index-load_002dcrl-1"></a><span><code class="code">--load-crl</code><a class="copiable-link" href="#index-load_002dcrl-1"> &para;</a></span></dt>
+<dd><p>This command expects a list of filenames with DER encoded CRL files.
+With the option <samp class="option">--url</samp> URLs are expected in place of filenames
+and they are loaded directly from the given location.  All CRLs will be
+validated and then loaded into dirmngr&rsquo;s cache.
+</p>
+</dd>
+<dt><a id="index-lookup"></a><span><code class="code">--lookup</code><a class="copiable-link" href="#index-lookup"> &para;</a></span></dt>
+<dd><p>Take the remaining arguments and run a lookup command on each of them.
+The results are Base-64 encoded outputs (without header lines).  This
+may be used to retrieve certificates from a server. However the output
+format is not very well suited if more than one certificate is returned.
+</p>
+</dd>
+<dt><a id="index-url-1"></a><span><code class="code">--url</code><a class="copiable-link" href="#index-url-1"> &para;</a></span></dt>
+<dt><code class="code">-u</code></dt>
+<dd><p>Modify the <code class="command">lookup</code> and <code class="command">load-crl</code> commands to take an URL.
+</p>
+</dd>
+<dt><a id="index-url-2"></a><span><code class="code">--local</code><a class="copiable-link" href="#index-url-2"> &para;</a></span></dt>
+<dt><code class="code">-l</code></dt>
+<dd><p>Let the <code class="command">lookup</code> command only search the local cache.
+</p>
+</dd>
+<dt><a id="index-squid_002dmode"></a><span><code class="code">--squid-mode</code><a class="copiable-link" href="#index-squid_002dmode"> &para;</a></span></dt>
+<dd><p>Run <small class="sc">DIRMNGR-CLIENT</small> in a mode suitable as a helper program for
+Squid&rsquo;s <samp class="option">external_acl_type</samp> option.
+</p>
+
+</dd>
+</dl>
+
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="gpgparsemail.html">Parse a mail message into an annotated format</a>, Previous: <a href="gpg_002dconnect_002dagent.html">Communicate with a running agent</a>, Up: <a href="Helper-Tools.html">Helper Tools</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

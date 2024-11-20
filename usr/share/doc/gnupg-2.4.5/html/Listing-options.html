@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Listing options (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Listing options (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Listing options (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="gpgconf.html" rel="up" title="gpgconf">
+<link href="Changing-options.html" rel="next" title="Changing options">
+<link href="Checking-programs.html" rel="prev" title="Checking programs">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Listing-options">
+<div class="nav-panel">
+<p>
+Next: <a href="Changing-options.html" accesskey="n" rel="next">Changing options</a>, Previous: <a href="Checking-programs.html" accesskey="p" rel="prev">Checking programs</a>, Up: <a href="gpgconf.html" accesskey="u" rel="up">Modify .gnupg home directories</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Listing-options-1"><span>10.4.5 Listing options<a class="copiable-link" href="#Listing-options-1"> &para;</a></span></h4>
+
+<p>Every component contains one or more options.  Options may be gathered
+into option groups to allow the GUI to give visual hints to the user
+about which options are related.
+</p>
+<p>The command <code class="code">--list-options&nbsp;<var class="var">component</var><!-- /@w --></code> lists
+all options (and the groups they belong to) in the component
+<var class="var">component</var>, one per line.  <var class="var">component</var> must be the string in
+the field <var class="var">name</var> in the output of the <code class="code">--list-components</code>
+command.
+</p>
+<p>There is one line for each option and each group.  First come all
+options that are not in any group.  Then comes a line describing a
+group.  Then come all options that belong into each group.  Then comes
+the next group and so on.  There does not need to be any group (and in
+this case the output will stop after the last non-grouped option).
+</p>
+<p>The format of each line is:
+</p>
+<p><code class="code"><var class="var">name</var>:<var class="var">flags</var>:<var class="var">level</var>:<var class="var">description</var>:<var class="var">type</var>:<var class="var">alt-type</var>:<var class="var">argname</var>:<var class="var">default</var>:<var class="var">argdef</var>:<var class="var">value</var></code>
+</p>
+<dl class="table">
+<dt><var class="var">name</var></dt>
+<dd><p>This field contains a name tag for the group or option.  The name tag
+is used to specify the group or option in all communication with
+<code class="command">gpgconf</code>.  The name tag is to be used <em class="emph">verbatim</em>.  It is
+thus not in any escaped format.
+</p>
+</dd>
+<dt><var class="var">flags</var></dt>
+<dd><p>The flags field contains an <em class="emph">unsigned number</em>.  Its value is the
+OR-wise combination of the following flag values:
+</p>
+<dl class="table">
+<dt><code class="code">group (1)</code></dt>
+<dd><p>If this flag is set, this is a line describing a group and not an
+option.
+</p></dd>
+</dl>
+
+<p>The following flag values are only defined for options (that is, if
+the <code class="code">group</code> flag is not used).
+</p>
+<dl class="table">
+<dt><code class="code">optional arg (2)</code></dt>
+<dd><p>If this flag is set, the argument is optional.  This is never set for
+<var class="var">type</var> <code class="code">0</code> (none) options.
+</p>
+</dd>
+<dt><code class="code">list (4)</code></dt>
+<dd><p>If this flag is set, the option can be given multiple times.
+</p>
+</dd>
+<dt><code class="code">runtime (8)</code></dt>
+<dd><p>If this flag is set, the option can be changed at runtime.
+</p>
+</dd>
+<dt><code class="code">default (16)</code></dt>
+<dd><p>If this flag is set, a default value is available.
+</p>
+</dd>
+<dt><code class="code">default desc (32)</code></dt>
+<dd><p>If this flag is set, a (runtime) default is available.  This and the
+<code class="code">default</code> flag are mutually exclusive.
+</p>
+</dd>
+<dt><code class="code">no arg desc (64)</code></dt>
+<dd><p>If this flag is set, and the <code class="code">optional arg</code> flag is set, then the
+option has a special meaning if no argument is given.
+</p>
+</dd>
+<dt><code class="code">no change (128)</code></dt>
+<dd><p>If this flag is set, <code class="command">gpgconf</code> ignores requests to change the
+value.  GUI frontends should grey out this option.  Note, that manual
+changes of the configuration files are still possible.
+</p></dd>
+</dl>
+
+</dd>
+<dt><var class="var">level</var></dt>
+<dd><p>This field is defined for options and for groups.  It contains an
+<em class="emph">unsigned number</em> that specifies the expert level under which
+this group or option should be displayed.  The following expert levels
+are defined for options (they have analogous meaning for groups):
+</p>
+<dl class="table">
+<dt><code class="code">basic (0)</code></dt>
+<dd><p>This option should always be offered to the user.
+</p>
+</dd>
+<dt><code class="code">advanced (1)</code></dt>
+<dd><p>This option may be offered to advanced users.
+</p>
+</dd>
+<dt><code class="code">expert (2)</code></dt>
+<dd><p>This option should only be offered to expert users.
+</p>
+</dd>
+<dt><code class="code">invisible (3)</code></dt>
+<dd><p>This option should normally never be displayed, not even to expert
+users.
+</p>
+</dd>
+<dt><code class="code">internal (4)</code></dt>
+<dd><p>This option is for internal use only.  Ignore it.
+</p></dd>
+</dl>
+
+<p>The level of a group will always be the lowest level of all options it
+contains.
+</p>
+</dd>
+<dt><var class="var">description</var></dt>
+<dd><p>This field is defined for options and groups.  The <em class="emph">string</em> in
+this field contains a human-readable description of the option or
+group.  It can be displayed to the user of the GUI for informational
+purposes.  It is <em class="emph">percent-escaped</em> and <em class="emph">localized</em>.
+</p>
+</dd>
+<dt><var class="var">type</var></dt>
+<dd><p>This field is only defined for options.  It contains an <em class="emph">unsigned
+number</em> that specifies the type of the option&rsquo;s argument, if any.  The
+following types are defined:
+</p>
+<p>Basic types:
+</p>
+<dl class="table">
+<dt><code class="code">none (0)</code></dt>
+<dd><p>No argument allowed.
+</p>
+</dd>
+<dt><code class="code">string (1)</code></dt>
+<dd><p>An <em class="emph">unformatted string</em>.
+</p>
+</dd>
+<dt><code class="code">int32 (2)</code></dt>
+<dd><p>A <em class="emph">signed number</em>.
+</p>
+</dd>
+<dt><code class="code">uint32 (3)</code></dt>
+<dd><p>An <em class="emph">unsigned number</em>.
+</p></dd>
+</dl>
+
+<p>Complex types:
+</p>
+<dl class="table">
+<dt><code class="code">pathname (32)</code></dt>
+<dd><p>A <em class="emph">string</em> that describes the pathname of a file.  The file does
+not necessarily need to exist.
+</p>
+</dd>
+<dt><code class="code">ldap server (33)</code></dt>
+<dd><p>A <em class="emph">string</em> that describes an LDAP server in the format:
+</p>
+<p><code class="code"><var class="var">hostname</var>:<var class="var">port</var>:<var class="var">username</var>:<var class="var">password</var>:<var class="var">base_dn</var></code>
+</p>
+</dd>
+<dt><code class="code">key fingerprint (34)</code></dt>
+<dd><p>A <em class="emph">string</em> with a 40 digit fingerprint specifying a certificate.
+</p>
+</dd>
+<dt><code class="code">pub key (35)</code></dt>
+<dd><p>A <em class="emph">string</em> that describes a certificate by user ID, key ID or
+fingerprint.
+</p>
+</dd>
+<dt><code class="code">sec key (36)</code></dt>
+<dd><p>A <em class="emph">string</em> that describes a certificate with a key by user ID,
+key ID or fingerprint.
+</p>
+</dd>
+<dt><code class="code">alias list (37)</code></dt>
+<dd><p>A <em class="emph">string</em> that describes an alias list, like the one used with
+gpg&rsquo;s group option.  The list consists of a key, an equal sign and space
+separated values.
+</p></dd>
+</dl>
+
+<p>More types will be added in the future.  Please see the <var class="var">alt-type</var>
+field for information on how to cope with unknown types.
+</p>
+</dd>
+<dt><var class="var">alt-type</var></dt>
+<dd><p>This field is identical to <var class="var">type</var>, except that only the types
+<code class="code">0</code> to <code class="code">31</code> are allowed.  The GUI is expected to present the
+user the option in the format specified by <var class="var">type</var>.  But if the
+argument type <var class="var">type</var> is not supported by the GUI, it can still
+display the option in the more generic basic type <var class="var">alt-type</var>.  The
+GUI must support all the defined basic types to be able to display all
+options.  More basic types may be added in future versions.  If the
+GUI encounters a basic type it doesn&rsquo;t support, it should report an
+error and abort the operation.
+</p>
+</dd>
+<dt><var class="var">argname</var></dt>
+<dd><p>This field is only defined for options with an argument type
+<var class="var">type</var> that is not <code class="code">0</code>.  In this case it may contain a
+<em class="emph">percent-escaped</em> and <em class="emph">localized string</em> that gives a short
+name for the argument.  The field may also be empty, though, in which
+case a short name is not known.
+</p>
+</dd>
+<dt><var class="var">default</var></dt>
+<dd><p>This field is defined only for options for which the <code class="code">default</code> or
+<code class="code">default desc</code> flag is set.  If the <code class="code">default</code> flag is set,
+its format is that of an <em class="emph">option argument</em> (see <a class="pxref" href="Format-conventions.html">Format conventions</a>, for details).  If the default value is empty, then no
+default is known.  Otherwise, the value specifies the default value
+for this option.  If the <code class="code">default desc</code> flag is set, the field is
+either empty or contains a description of the effect if the option is
+not given.
+</p>
+</dd>
+<dt><var class="var">argdef</var></dt>
+<dd><p>This field is defined only for options for which the <code class="code">optional
+arg</code> flag is set.  If the <code class="code">no arg desc</code> flag is not set, its
+format is that of an <em class="emph">option argument</em> (see <a class="pxref" href="Format-conventions.html">Format conventions</a>, for details).  If the default value is empty, then no
+default is known.  Otherwise, the value specifies the default argument
+for this option.  If the <code class="code">no arg desc</code> flag is set, the field is
+either empty or contains a description of the effect of this option if
+no argument is given.
+</p>
+</dd>
+<dt><var class="var">value</var></dt>
+<dd><p>This field is defined only for options.  Its format is that of an
+<em class="emph">option argument</em>.  If it is empty, then the option is not
+explicitly set in the current configuration, and the default applies
+(if any).  Otherwise, it contains the current value of the option.
+Note that this field is also meaningful if the option itself does not
+take a real argument (in this case, it contains the number of times
+the option appears).
+</p></dd>
+</dl>
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Changing-options.html">Changing options</a>, Previous: <a href="Checking-programs.html">Checking programs</a>, Up: <a href="gpgconf.html">Modify .gnupg home directories</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

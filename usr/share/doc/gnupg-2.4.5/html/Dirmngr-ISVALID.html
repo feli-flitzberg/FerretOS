@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Dirmngr ISVALID (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Dirmngr ISVALID (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Dirmngr ISVALID (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Dirmngr-Protocol.html" rel="up" title="Dirmngr Protocol">
+<link href="Dirmngr-CHECKCRL.html" rel="next" title="Dirmngr CHECKCRL">
+<link href="Dirmngr-LOOKUP.html" rel="prev" title="Dirmngr LOOKUP">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Dirmngr-ISVALID">
+<div class="nav-panel">
+<p>
+Next: <a href="Dirmngr-CHECKCRL.html" accesskey="n" rel="next">Validate a certificate using a CRL</a>, Previous: <a href="Dirmngr-LOOKUP.html" accesskey="p" rel="prev">Return the certificate(s) found</a>, Up: <a href="Dirmngr-Protocol.html" accesskey="u" rel="up">Dirmngr&rsquo;s Assuan Protocol</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Validate-a-certificate-using-a-CRL-or-OCSP"><span>3.6.2 Validate a certificate using a CRL or OCSP<a class="copiable-link" href="#Validate-a-certificate-using-a-CRL-or-OCSP"> &para;</a></span></h4>
+
+<div class="example">
+<pre class="example-preformatted">  ISVALID [--only-ocsp] [--force-default-responder] <var class="var">certid</var>|<var class="var">certfpr</var>
+</pre></div>
+
+<p>Check whether the certificate described by the <var class="var">certid</var> has been
+revoked.  Due to caching, the Dirmngr is able to answer immediately in
+most cases.
+</p>
+<p>The <var class="var">certid</var> is a hex encoded string consisting of two parts,
+delimited by a single dot.  The first part is the SHA-1 hash of the
+issuer name and the second part the serial number.
+</p>
+<p>Alternatively the certificate&rsquo;s SHA-1 fingerprint <var class="var">certfpr</var> may be
+given in which case an OCSP request is done before consulting the CRL.
+If the option <samp class="option">--only-ocsp</samp> is given, no fallback to a CRL check
+will be used.  If the option <samp class="option">--force-default-responder</samp> is
+given, only the default OCSP responder will be used and any other
+methods of obtaining an OCSP responder URL won&rsquo;t be used.
+</p>
+<p>Common return values are:
+</p>
+<dl class="table">
+<dt><code class="code">GPG_ERR_NO_ERROR (0)</code></dt>
+<dd><p>This is the positive answer: The certificate is not revoked and we have
+an up-to-date revocation list for that certificate.  If OCSP was used
+the responder confirmed that the certificate has not been revoked.
+</p>
+</dd>
+<dt><code class="code">GPG_ERR_CERT_REVOKED</code></dt>
+<dd><p>This is the negative answer: The certificate has been revoked.  Either
+it is in a CRL and that list is up to date or an OCSP responder informed
+us that it has been revoked.
+</p>
+</dd>
+<dt><code class="code">GPG_ERR_NO_CRL_KNOWN</code></dt>
+<dd><p>No CRL is known for this certificate or the CRL is not valid or out of
+date.
+</p>
+</dd>
+<dt><code class="code">GPG_ERR_NO_DATA</code></dt>
+<dd><p>The OCSP responder returned an &ldquo;unknown&rdquo; status.  This means that it
+is not aware of the certificate&rsquo;s status.
+</p>
+</dd>
+<dt><code class="code">GPG_ERR_NOT_SUPPORTED</code></dt>
+<dd><p>This is commonly seen if OCSP support has not been enabled in the
+configuration.
+</p></dd>
+</dl>
+
+<p>If DirMngr has not enough information about the given certificate (which
+is the case for not yet cached certificates), it will inquire the
+missing data:
+</p>
+<div class="example">
+<pre class="example-preformatted">  S: INQUIRE SENDCERT &lt;CertID&gt;
+  C: D &lt;DER encoded certificate&gt;
+  C: END
+</pre></div>
+
+<p>A client should be aware that DirMngr may ask for more than one
+certificate.
+</p>
+<p>If Dirmngr has a certificate but the signature of the certificate
+could not been validated because the root certificate is not known to
+dirmngr as trusted, it may ask back to see whether the client trusts
+this the root certificate:
+</p>
+<div class="example">
+<pre class="example-preformatted">  S: INQUIRE ISTRUSTED &lt;CertHexfpr&gt;
+  C: D 1
+  C: END
+</pre></div>
+
+<p>Only this answer will let Dirmngr consider the certificate as valid.
+</p>
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Dirmngr-CHECKCRL.html">Validate a certificate using a CRL</a>, Previous: <a href="Dirmngr-LOOKUP.html">Return the certificate(s) found</a>, Up: <a href="Dirmngr-Protocol.html">Dirmngr&rsquo;s Assuan Protocol</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>System Notes (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="System Notes (Using the GNU Privacy Guard)">
+<meta name="keywords" content="System Notes (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="index.html" rel="up" title="Top">
+<link href="Debugging.html" rel="next" title="Debugging">
+<link href="Howtos.html" rel="prev" title="Howtos">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+ul.mark-bullet {list-style-type: disc}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="chapter-level-extent" id="System-Notes">
+<div class="nav-panel">
+<p>
+Next: <a href="Debugging.html" accesskey="n" rel="next">How to solve problems</a>, Previous: <a href="Howtos.html" accesskey="p" rel="prev">How to do certain things</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h2 class="chapter" id="Notes-pertaining-to-certain-OSes"><span>13 Notes pertaining to certain OSes<a class="copiable-link" href="#Notes-pertaining-to-certain-OSes"> &para;</a></span></h2>
+
+<p>GnuPG has been developed on GNU/Linux systems and is know to work on
+almost all Free OSes.  All modern POSIX systems should be supported
+right now, however there are probably a lot of smaller glitches we need
+to fix first.  The major problem areas are:
+</p>
+<ul class="itemize mark-bullet">
+<li>We are planning to use file descriptor passing for interprocess
+communication.  This will allow us save a lot of resources and improve
+performance of certain operations a lot.  Systems not supporting this
+won&rsquo;t gain these benefits but we try to keep them working the standard
+way as it is done today.
+
+</li><li>We require more or less full POSIX compatibility.  This has been
+around for 15 years now and thus we don&rsquo;t believe it makes sense to
+support non POSIX systems anymore.  Well, we of course the usual
+workarounds for near POSIX systems well be applied.
+
+<p>There is one exception of this rule: Systems based the Microsoft Windows
+API (called here <em class="emph">W32</em>) will be supported to some extend.
+</p>
+</li></ul>
+
+
+
+
+<ul class="mini-toc">
+<li><a href="W32-Notes.html" accesskey="1">Microsoft Windows Notes</a></li>
+</ul>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Dirmngr Options (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Dirmngr Options (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Dirmngr Options (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Invoking-DIRMNGR.html" rel="up" title="Invoking DIRMNGR">
+<link href="Dirmngr-Configuration.html" rel="next" title="Dirmngr Configuration">
+<link href="Dirmngr-Commands.html" rel="prev" title="Dirmngr Commands">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="Dirmngr-Options">
+<div class="nav-panel">
+<p>
+Next: <a href="Dirmngr-Configuration.html" accesskey="n" rel="next">Configuration</a>, Previous: <a href="Dirmngr-Commands.html" accesskey="p" rel="prev">Commands</a>, Up: <a href="Invoking-DIRMNGR.html" accesskey="u" rel="up">Invoking DIRMNGR</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="Option-Summary-1"><span>3.2 Option Summary<a class="copiable-link" href="#Option-Summary-1"> &para;</a></span></h3>
+
+<p>Note that all long options with the exception of <samp class="option">--options</samp>
+and <samp class="option">--homedir</samp> may also be given in the configuration file
+after stripping off the two leading dashes.
+</p>
+<dl class="table">
+<dt><a id="index-options-1"></a><span><code class="code">--options <var class="var">file</var></code><a class="copiable-link" href="#index-options-1"> &para;</a></span></dt>
+<dd><p>Reads configuration from <var class="var">file</var> instead of from the default
+per-user configuration file.  The default configuration file is named
+<samp class="file">dirmngr.conf</samp> and expected in the home directory.
+</p>
+</dd>
+<dt><a id="index-options-2"></a><span><code class="code">--homedir <var class="var">dir</var></code><a class="copiable-link" href="#index-options-2"> &para;</a></span></dt>
+<dd><p>Set the name of the home directory to <var class="var">dir</var>.  This option is only
+effective when used on the command line.  The default is
+the directory named <samp class="file">.gnupg</samp> directly below the home directory
+of the user unless the environment variable <code class="code">GNUPGHOME</code> has been set
+in which case its value will be used.  Many kinds of data are stored within
+this directory.
+</p>
+
+</dd>
+<dt><code class="code">-v</code></dt>
+<dt><a class="index-entry-id" id="index-verbose-1"></a>
+<a id="index-v"></a><span><code class="code">--verbose</code><a class="copiable-link" href="#index-v"> &para;</a></span></dt>
+<dd><p>Outputs additional information while running.
+You can increase the verbosity by giving several
+verbose commands to <small class="sc">DIRMNGR</small>, such as <samp class="option">-vv</samp>.
+</p>
+
+</dd>
+<dt><a id="index-log_002dfile-1"></a><span><code class="code">--log-file <var class="var">file</var></code><a class="copiable-link" href="#index-log_002dfile-1"> &para;</a></span></dt>
+<dd><p>Append all logging output to <var class="var">file</var>.  This is very helpful in
+seeing what the agent actually does.  Use <samp class="file">socket://</samp> to log to
+socket.
+</p>
+</dd>
+<dt><a id="index-compatibility_002dflags"></a><span><code class="code">--compatibility-flags <var class="var">flags</var></code><a class="copiable-link" href="#index-compatibility_002dflags"> &para;</a></span></dt>
+<dd><p>Set compatibility flags to work around certain problems or to emulate
+bugs.  The <var class="var">flags</var> are given as a comma separated list of flag
+names and are OR-ed together.  The special flag &quot;none&quot; clears the list
+and allows one to start over with an empty list.  To get a list of
+available flags the sole word &quot;help&quot; can be used.
+</p>
+</dd>
+<dt><a id="index-faked_002dsystem_002dtime-1"></a><span><code class="code">--faked-system-time <var class="var">epoch</var></code><a class="copiable-link" href="#index-faked_002dsystem_002dtime-1"> &para;</a></span></dt>
+<dd><p>This option is only useful for testing; it sets the system time back or
+forth to <var class="var">epoch</var> which is the number of seconds elapsed since the year
+1970.  Alternatively <var class="var">epoch</var> may be given as a full ISO time string
+(e.g. &quot;20070924T154812&quot;).
+</p>
+</dd>
+<dt><a id="index-debug_002dlevel-1"></a><span><code class="code">--debug-level <var class="var">level</var></code><a class="copiable-link" href="#index-debug_002dlevel-1"> &para;</a></span></dt>
+<dd><p>Select the debug level for investigating problems.  <var class="var">level</var> may be a
+numeric value or by a keyword:
+</p>
+<dl class="table">
+<dt><code class="code">none</code></dt>
+<dd><p>No debugging at all.  A value of less than 1 may be used instead of
+the keyword.
+</p></dd>
+<dt><code class="code">basic</code></dt>
+<dd><p>Some basic debug messages.  A value between 1 and 2 may be used
+instead of the keyword.
+</p></dd>
+<dt><code class="code">advanced</code></dt>
+<dd><p>More verbose debug messages.  A value between 3 and 5 may be used
+instead of the keyword.
+</p></dd>
+<dt><code class="code">expert</code></dt>
+<dd><p>Even more detailed messages.  A value between 6 and 8 may be used
+instead of the keyword.
+</p></dd>
+<dt><code class="code">guru</code></dt>
+<dd><p>All of the debug messages you can get. A value greater than 8 may be
+used instead of the keyword.  The creation of hash tracing files is
+only enabled if the keyword is used.
+</p></dd>
+</dl>
+
+<p>How these messages are mapped to the actual debugging flags is not
+specified and may change with newer releases of this program. They are
+however carefully selected to best aid in debugging.
+</p>
+</dd>
+<dt><a id="index-debug-1"></a><span><code class="code">--debug <var class="var">flags</var></code><a class="copiable-link" href="#index-debug-1"> &para;</a></span></dt>
+<dd><p>Set debug flags.  All flags are or-ed and <var class="var">flags</var> may be given in
+C syntax (e.g. 0x0042) or as a comma separated list of flag names.  To
+get a list of all supported flags the single word &quot;help&quot; can be used.
+This option is only useful for debugging and the behavior may change
+at any time without notice.
+</p>
+</dd>
+<dt><a id="index-debug_002dall-1"></a><span><code class="code">--debug-all</code><a class="copiable-link" href="#index-debug_002dall-1"> &para;</a></span></dt>
+<dd><p>Same as <code class="code">--debug=0xffffffff</code>
+</p>
+</dd>
+<dt><a id="index-tls_002ddebug"></a><span><code class="code">--tls-debug <var class="var">level</var></code><a class="copiable-link" href="#index-tls_002ddebug"> &para;</a></span></dt>
+<dd><p>Enable debugging of the TLS layer at <var class="var">level</var>.  The details of the
+debug level depend on the used TLS library and are not set in stone.
+</p>
+</dd>
+<dt><a id="index-debug_002dwait-1"></a><span><code class="code">--debug-wait <var class="var">n</var></code><a class="copiable-link" href="#index-debug_002dwait-1"> &para;</a></span></dt>
+<dd><p>When running in server mode, wait <var class="var">n</var> seconds before entering the
+actual processing loop and print the pid.  This gives time to attach a
+debugger.
+</p>
+</dd>
+<dt><a id="index-disable_002dcheck_002down_002dsocket-1"></a><span><code class="code">--disable-check-own-socket</code><a class="copiable-link" href="#index-disable_002dcheck_002down_002dsocket-1"> &para;</a></span></dt>
+<dd><p>On some platforms <code class="command">dirmngr</code> is able to detect the removal of
+its socket file and shutdown itself.  This option disable this
+self-test for debugging purposes.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-sh-1"></a>
+<a class="index-entry-id" id="index-c"></a>
+<a class="index-entry-id" id="index-csh-1"></a>
+<a id="index-s"></a><span><code class="code">-s</code><a class="copiable-link" href="#index-s"> &para;</a></span></dt>
+<dt><code class="code">--sh</code></dt>
+<dt><code class="code">-c</code></dt>
+<dt><code class="code">--csh</code></dt>
+<dd><p>Format the info output in daemon mode for use with the standard Bourne
+shell respective the C-shell. The default is to guess it based on the
+environment variable <code class="code">SHELL</code> which is in almost all cases
+sufficient.
+</p>
+</dd>
+<dt><a id="index-force"></a><span><code class="code">--force</code><a class="copiable-link" href="#index-force"> &para;</a></span></dt>
+<dd><p>Enabling this option forces loading of expired CRLs; this is only
+useful for debugging.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-no_002duse_002dtor"></a>
+<a id="index-use_002dtor"></a><span><code class="code">--use-tor</code><a class="copiable-link" href="#index-use_002dtor"> &para;</a></span></dt>
+<dt><code class="code">--no-use-tor</code></dt>
+<dd><p>The option <samp class="option">--use-tor</samp> switches Dirmngr and thus GnuPG into
+&ldquo;Tor mode&rdquo; to route all network access via Tor (an anonymity
+network).  Certain other features are disabled in this mode.  The
+effect of <samp class="option">--use-tor</samp> cannot be overridden by any other command
+or even by reloading dirmngr.  The use of <samp class="option">--no-use-tor</samp>
+disables the use of Tor.  The default is to use Tor if it is available
+on startup or after reloading dirmngr.  The test on the availability of
+Tor is done by trying to connect to a SOCKS proxy at either port 9050
+or 9150; if another type of proxy is listening on one of these ports,
+you should use <samp class="option">--no-use-tor</samp>.
+</p>
+</dd>
+<dt><a id="index-standard_002dresolver"></a><span><code class="code">--standard-resolver</code><a class="copiable-link" href="#index-standard_002dresolver"> &para;</a></span></dt>
+<dd><p>This option forces the use of the system&rsquo;s standard DNS resolver code.
+This is mainly used for debugging.  Note that on Windows a standard
+resolver is not used and all DNS access will return the error &ldquo;Not
+Implemented&rdquo; if this option is used.  Using this together with enabled
+Tor mode returns the error &ldquo;Not Enabled&rdquo;.
+</p>
+</dd>
+<dt><a id="index-recursive_002dresolver"></a><span><code class="code">--recursive-resolver</code><a class="copiable-link" href="#index-recursive_002dresolver"> &para;</a></span></dt>
+<dd><p>When possible use a recursive resolver instead of a stub resolver.
+</p>
+</dd>
+<dt><a id="index-resolver_002dtimeout"></a><span><code class="code">--resolver-timeout <var class="var">n</var></code><a class="copiable-link" href="#index-resolver_002dtimeout"> &para;</a></span></dt>
+<dd><p>Set the timeout for the DNS resolver to N seconds.  The default are 30
+seconds.
+</p>
+</dd>
+<dt><code class="code">--connect-timeout <var class="var">n</var></code></dt>
+<dt><a class="index-entry-id" id="index-connect_002dquick_002dtimeout"></a>
+<a id="index-connect_002dtimeout"></a><span><code class="code">--connect-quick-timeout <var class="var">n</var></code><a class="copiable-link" href="#index-connect_002dtimeout"> &para;</a></span></dt>
+<dd><p>Set the timeout for HTTP and generic TCP connection attempts to N
+seconds.  The value set with the quick variant is used when the
+&ndash;quick option has been given to certain Assuan commands.  The quick
+value is capped at the value of the regular connect timeout.  The
+default values are 15 and 2 seconds.  Note that the timeout values are
+for each connection attempt; the connection code will attempt to
+connect all addresses listed for a server.
+</p>
+</dd>
+<dt><a id="index-listen_002dbacklog-1"></a><span><code class="code">--listen-backlog <var class="var">n</var></code><a class="copiable-link" href="#index-listen_002dbacklog-1"> &para;</a></span></dt>
+<dd><p>Set the size of the queue for pending connections.  The default is 64.
+</p>
+</dd>
+<dt><a id="index-allow_002dversion_002dcheck"></a><span><code class="code">--allow-version-check</code><a class="copiable-link" href="#index-allow_002dversion_002dcheck"> &para;</a></span></dt>
+<dd><p>Allow Dirmngr to connect to <code class="code">https://versions.gnupg.org</code> to get
+the list of current software versions.  If this option is enabled
+the list is retrieved in case the local
+copy does not exist or is older than 5 to 7 days.  See the option
+<samp class="option">--query-swdb</samp> of the command <code class="command">gpgconf</code> for more
+details.  Note, that regardless of this option a version check can
+always be triggered using this command:
+</p>
+<div class="example">
+<pre class="example-preformatted">       gpg-connect-agent --dirmngr 'loadswdb --force' /bye
+</pre></div>
+
+
+</dd>
+<dt><a id="index-keyserver"></a><span><code class="code">--keyserver <var class="var">name</var></code><a class="copiable-link" href="#index-keyserver"> &para;</a></span></dt>
+<dd><p>Use <var class="var">name</var> as your keyserver.  This is the server that <code class="command">gpg</code>
+communicates with to receive keys, send keys, and search for
+keys.  The format of the <var class="var">name</var> is a URI:
+&lsquo;scheme:[//]keyservername[:port]&rsquo; The scheme is the type of keyserver:
+&quot;hkp&quot; for the HTTP (or compatible) keyservers or &quot;ldap&quot; for the LDAP
+keyservers. Note that your particular installation of GnuPG may have
+other keyserver types available as well. Keyserver schemes are
+case-insensitive. After the keyserver name, optional keyserver
+configuration options may be provided.  These are the same as the
+<samp class="option">--keyserver-options</samp> of <code class="command">gpg</code>, but apply only to this
+particular keyserver.
+</p>
+<p>Some keyservers synchronize with each other, so there is not always a
+need to send keys to more than one server. Some keyservers use round
+robin DNS to give a different keyserver each time you use it.
+</p>
+<p>If exactly two keyservers are configured and only one is a Tor hidden
+service (.onion), Dirmngr selects the keyserver to use depending on
+whether Tor is locally running or not.  The check for a running Tor is
+done for each new connection.
+</p>
+<p>If no keyserver is explicitly configured, dirmngr will use the
+built-in default of <code class="code">https://keyserver.ubuntu.com</code>.  To avoid the
+use of a default keyserver the value <code class="code">none</code> can be used.
+</p>
+<p>Windows users with a keyserver running on their Active Directory
+may use the short form <code class="code">ldap:///</code> for <var class="var">name</var> to access this directory.
+</p>
+<p>For accessing anonymous LDAP keyservers <var class="var">name</var> is in general just
+a <code class="code">ldaps://ldap.example.com</code>.  A BaseDN parameter should never be
+specified.  If authentication is required things are more complicated
+and two methods are available:
+</p>
+<p>The modern method (since version 2.2.28) is to use the very same syntax
+as used with the option <samp class="option">--ldapserver</samp>.  Please see over
+there for details; here is an example:
+</p>
+<div class="example">
+<pre class="example-preformatted">       keyserver ldap:ldap.example.com::uid=USERNAME,ou=GnuPG Users,
+       dc=example,dc=com:PASSWORD::starttls
+</pre></div>
+
+<p>The other method is to use a full URL for <var class="var">name</var>; for example:
+</p>
+<div class="example">
+<pre class="example-preformatted">       keyserver ldaps://ldap.example.com/????bindname=uid=USERNAME
+       %2Cou=GnuPG%20Users%2Cdc=example%2Cdc=com,password=PASSWORD
+</pre></div>
+
+<p>Put this all on one line without any spaces and keep the &rsquo;%2C&rsquo;
+       as given.  Replace USERNAME, PASSWORD, and the &rsquo;dc&rsquo; parts
+       according to the instructions received from your LDAP
+       administrator.  Note that only simple authentication
+       (i.e. cleartext passwords) is supported and thus using ldaps is
+       strongly suggested (since 2.2.28 &quot;ldaps&quot; defaults to port 389
+       and uses STARTTLS).  On Windows authentication via AD can be
+       requested by adding <code class="code">gpgNtds=1</code> after the fourth question
+       mark instead of the bindname and password parameter.
+</p>
+
+
+</dd>
+<dt><a id="index-nameserver"></a><span><code class="code">--nameserver <var class="var">ipaddr</var></code><a class="copiable-link" href="#index-nameserver"> &para;</a></span></dt>
+<dd><p>In &ldquo;Tor mode&rdquo; Dirmngr uses a public resolver via Tor to resolve DNS
+names.  If the default public resolver, which is <code class="code">8.8.8.8</code>, shall
+not be used a different one can be given using this option.  Note that
+a numerical IP address must be given (IPv6 or IPv4) and that no error
+checking is done for <var class="var">ipaddr</var>.
+</p>
+</dd>
+<dt><code class="code">--disable-ipv4</code></dt>
+<dt><a class="index-entry-id" id="index-disable_002dipv6"></a>
+<a id="index-disable_002dipv4"></a><span><code class="code">--disable-ipv6</code><a class="copiable-link" href="#index-disable_002dipv4"> &para;</a></span></dt>
+<dd><p>Disable the use of all IPv4 or IPv6 addresses.
+</p>
+</dd>
+<dt><a id="index-disable_002dldap"></a><span><code class="code">--disable-ldap</code><a class="copiable-link" href="#index-disable_002dldap"> &para;</a></span></dt>
+<dd><p>Entirely disables the use of LDAP.
+</p>
+</dd>
+<dt><a id="index-disable_002dhttp"></a><span><code class="code">--disable-http</code><a class="copiable-link" href="#index-disable_002dhttp"> &para;</a></span></dt>
+<dd><p>Entirely disables the use of HTTP.
+</p>
+</dd>
+<dt><a id="index-ignore_002dhttp_002ddp"></a><span><code class="code">--ignore-http-dp</code><a class="copiable-link" href="#index-ignore_002dhttp_002ddp"> &para;</a></span></dt>
+<dd><p>When looking for the location of a CRL, the to be tested certificate
+usually contains so called <em class="dfn">CRL Distribution Point</em> (DP) entries
+which are URLs describing the way to access the CRL.  The first found DP
+entry is used.  With this option all entries using the <abbr class="acronym">HTTP</abbr>
+scheme are ignored when looking for a suitable DP.
+</p>
+</dd>
+<dt><a id="index-ignore_002dldap_002ddp"></a><span><code class="code">--ignore-ldap-dp</code><a class="copiable-link" href="#index-ignore_002dldap_002ddp"> &para;</a></span></dt>
+<dd><p>This is similar to <samp class="option">--ignore-http-dp</samp> but ignores entries using
+the <abbr class="acronym">LDAP</abbr> scheme.  Both options may be combined resulting in
+ignoring DPs entirely.
+</p>
+</dd>
+<dt><a id="index-ignore_002docsp_002dservice_002durl"></a><span><code class="code">--ignore-ocsp-service-url</code><a class="copiable-link" href="#index-ignore_002docsp_002dservice_002durl"> &para;</a></span></dt>
+<dd><p>Ignore all OCSP URLs contained in the certificate.  The effect is to
+force the use of the default responder.
+</p>
+</dd>
+<dt><a id="index-honor_002dhttp_002dproxy"></a><span><code class="code">--honor-http-proxy</code><a class="copiable-link" href="#index-honor_002dhttp_002dproxy"> &para;</a></span></dt>
+<dd><p>If the environment variable <code class="env">http_proxy</code> has been set, use its
+value to access HTTP servers.  If on Windows the option is used but
+the environment variable is not set, the proxy settings are taken
+from the system.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-http_005fproxy"></a>
+<a id="index-http_002dproxy"></a><span><code class="code">--http-proxy <var class="var">host</var>[:<var class="var">port</var>]</code><a class="copiable-link" href="#index-http_002dproxy"> &para;</a></span></dt>
+<dd><p>Use <var class="var">host</var> and <var class="var">port</var> to access HTTP servers.  The use of this
+option overrides the environment variable <code class="env">http_proxy</code> regardless
+whether <samp class="option">--honor-http-proxy</samp> has been set.
+</p>
+
+</dd>
+<dt><a id="index-ldap_002dproxy"></a><span><code class="code">--ldap-proxy <var class="var">host</var>[:<var class="var">port</var>]</code><a class="copiable-link" href="#index-ldap_002dproxy"> &para;</a></span></dt>
+<dd><p>Use <var class="var">host</var> and <var class="var">port</var> to connect to LDAP servers.  If <var class="var">port</var>
+is omitted, port 389 (standard LDAP port) is used.  This overrides any
+specified host and port part in a LDAP URL and will also be used if host
+and port have been omitted from the URL.
+</p>
+</dd>
+<dt><a id="index-only_002dldap_002dproxy"></a><span><code class="code">--only-ldap-proxy</code><a class="copiable-link" href="#index-only_002dldap_002dproxy"> &para;</a></span></dt>
+<dd><p>Never use anything else but the LDAP &quot;proxy&quot; as configured with
+<samp class="option">--ldap-proxy</samp>.  Usually <code class="command">dirmngr</code> tries to use other
+configured LDAP server if the connection using the &quot;proxy&quot; failed.
+</p>
+
+</dd>
+<dt><a id="index-ldapserverlist_002dfile"></a><span><code class="code">--ldapserverlist-file <var class="var">file</var></code><a class="copiable-link" href="#index-ldapserverlist_002dfile"> &para;</a></span></dt>
+<dd><p>Read the list of LDAP servers to consult for CRLs and X.509 certificates from
+file instead of the default per-user ldap server list file. The default
+value for <var class="var">file</var> is <samp class="file">dirmngr_ldapservers.conf</samp>.
+</p>
+<p>This server list file contains one LDAP server per line in the format
+</p>
+<p><small class="sc">HOSTNAME:PORT:USERNAME:PASSWORD:BASE_DN:FLAGS</small>
+</p>
+<p>Lines starting with a  &lsquo;<samp class="samp">#</samp>&rsquo; are comments.
+</p>
+<p>Note that as usual all strings entered are expected to be UTF-8 encoded.
+Obviously this will lead to problems if the password has originally been
+encoded as Latin-1.  There is no other solution here than to put such a
+password in the binary encoding into the file (i.e. non-ascii characters
+won&rsquo;t show up readable).<a class="footnote" id="DOCF1" href="#FOOT1"><sup>1</sup></a>
+</p>
+
+</dd>
+<dt><a id="index-ldapserver"></a><span><code class="code">--ldapserver <var class="var">spec</var></code><a class="copiable-link" href="#index-ldapserver"> &para;</a></span></dt>
+<dd><p>This is an alternative way to specify LDAP servers for CRL and X.509
+certificate retrieval.  If this option is used the servers configured
+in <samp class="file">dirmngr_ldapservers.conf</samp> (or the file given by
+<samp class="option">--ldapserverlist-file</samp>) are cleared.  Note that
+<samp class="file">dirmngr_ldapservers.conf</samp> is not read again by a reload
+signal. However, <samp class="option">--ldapserver</samp> options are read again.
+</p>
+<p><var class="var">spec</var> is either a proper LDAP URL or a colon delimited list of
+the form
+</p>
+<p><small class="sc">HOSTNAME:PORT:USERNAME:PASSWORD:BASE_DN:FLAGS:</small>
+</p>
+<p>with an optional prefix of <code class="code">ldap:</code> (but without the two slashes
+which would turn this into a proper LDAP URL).  <small class="sc">FLAGS</small> is a list
+of one or more comma delimited keywords:
+</p><dl class="table">
+<dt><code class="code">plain</code></dt>
+<dd><p>The default: Do not use a TLS secured connection at all; the default
+port is 389.
+</p></dd>
+<dt><code class="code">starttls</code></dt>
+<dd><p>Use STARTTLS to secure the connection; the default port is 389.
+</p></dd>
+<dt><code class="code">ldaptls</code></dt>
+<dd><p>Tunnel LDAP through a TLS connection; the default port is 636.
+</p></dd>
+<dt><code class="code">ntds</code></dt>
+<dd><p>On Windows authenticate the LDAP connection using the Active Directory
+with the current user.
+</p></dd>
+<dt><code class="code">areconly</code></dt>
+<dd><p>On Windows use only the A or AAAA record when resolving the LDAP
+server name.
+</p></dd>
+</dl>
+
+<p>Note that in an URL style specification the scheme <code class="code">ldaps://</code>
+refers to STARTTLS and _not_ to LDAP-over-TLS.
+</p>
+
+</dd>
+<dt><a id="index-ldaptimeout"></a><span><code class="code">--ldaptimeout <var class="var">secs</var></code><a class="copiable-link" href="#index-ldaptimeout"> &para;</a></span></dt>
+<dd><p>Specify the number of seconds to wait for an LDAP query before timing
+out.  The default are 15 seconds.  0 will never timeout.
+</p>
+
+</dd>
+<dt><a id="index-add_002dservers"></a><span><code class="code">--add-servers</code><a class="copiable-link" href="#index-add_002dservers"> &para;</a></span></dt>
+<dd><p>This option makes dirmngr add any servers it discovers when validating
+certificates against CRLs to the internal list of servers to consult for
+certificates and CRLs.  This option should in general not be used.
+</p>
+<p>This option might be useful when trying to validate a certificate that
+has a CRL distribution point that points to a server that is not
+already listed in the ldapserverlist.  Dirmngr will always go to this
+server and try to download the CRL, but chances are high that the
+certificate used to sign the CRL is located on the same server. So if
+dirmngr doesn&rsquo;t add that new server to list, it will often not be able
+to verify the signature of the CRL unless the <code class="code">--add-servers</code>
+option is used.
+</p>
+<p>Caveat emptor: Using this option may enable denial-of-service attacks
+and leak search requests to unknown third parties.  This is because
+arbitrary servers are added to the internal list of LDAP servers which
+in turn is used for all unspecific LDAP queries as well as a fallback
+for queries which did not return a result.
+</p>
+
+</dd>
+<dt><a id="index-allow_002docsp"></a><span><code class="code">--allow-ocsp</code><a class="copiable-link" href="#index-allow_002docsp"> &para;</a></span></dt>
+<dd><p>This option enables OCSP support if requested by the client.
+</p>
+<p>OCSP requests are rejected by default because they may violate the
+privacy of the user; for example it is possible to track the time when
+a user is reading a mail.
+</p>
+
+</dd>
+<dt><a id="index-ocsp_002dresponder"></a><span><code class="code">--ocsp-responder <var class="var">url</var></code><a class="copiable-link" href="#index-ocsp_002dresponder"> &para;</a></span></dt>
+<dd><p>Use <var class="var">url</var> as the default OCSP Responder if the certificate does
+not contain information about an assigned responder.  Note, that
+<code class="code">--ocsp-signer</code> must also be set to a valid certificate.
+</p>
+</dd>
+<dt><a id="index-ocsp_002dsigner"></a><span><code class="code">--ocsp-signer <var class="var">fpr</var>|<var class="var">file</var></code><a class="copiable-link" href="#index-ocsp_002dsigner"> &para;</a></span></dt>
+<dd><p>Use the certificate with the fingerprint <var class="var">fpr</var> to check the
+responses of the default OCSP Responder.  Alternatively a filename can be
+given in which case the response is expected to be signed by one of the
+certificates described in that file.  Any argument which contains a
+slash, dot or tilde is considered a filename.  Usual filename expansion
+takes place: A tilde at the start followed by a slash is replaced by the
+content of <code class="env">HOME</code>, no slash at start describes a relative filename
+which will be searched at the home directory.  To make sure that the
+<var class="var">file</var> is searched in the home directory, either prepend the name
+with &quot;./&quot; or use a name which contains a dot.
+</p>
+<p>If a response has been signed by a certificate described by these
+fingerprints no further check upon the validity of this certificate is
+done.
+</p>
+<p>The format of the <var class="var">FILE</var> is a list of SHA-1 fingerprint, one per
+line with optional colons between the bytes.  Empty lines and lines
+prefix with a hash mark are ignored.
+</p>
+
+</dd>
+<dt><a id="index-ocsp_002dmax_002dclock_002dskew"></a><span><code class="code">--ocsp-max-clock-skew <var class="var">n</var></code><a class="copiable-link" href="#index-ocsp_002dmax_002dclock_002dskew"> &para;</a></span></dt>
+<dd><p>The number of seconds a skew between the OCSP responder and them local
+clock is accepted.  Default is 600 (10 minutes).
+</p>
+</dd>
+<dt><a id="index-ocsp_002dmax_002dperiod"></a><span><code class="code">--ocsp-max-period <var class="var">n</var></code><a class="copiable-link" href="#index-ocsp_002dmax_002dperiod"> &para;</a></span></dt>
+<dd><p>Seconds a response is at maximum considered valid after the time given
+in the thisUpdate field.  Default is 7776000 (90 days).
+</p>
+</dd>
+<dt><a id="index-ocsp_002dcurrent_002dperiod"></a><span><code class="code">--ocsp-current-period <var class="var">n</var></code><a class="copiable-link" href="#index-ocsp_002dcurrent_002dperiod"> &para;</a></span></dt>
+<dd><p>The number of seconds an OCSP response is considered valid after the
+time given in the NEXT_UPDATE datum.  Default is 10800 (3 hours).
+</p>
+
+</dd>
+<dt><a id="index-max_002dreplies"></a><span><code class="code">--max-replies <var class="var">n</var></code><a class="copiable-link" href="#index-max_002dreplies"> &para;</a></span></dt>
+<dd><p>Do not return more that <var class="var">n</var> items in one query.  The default is
+10.
+</p>
+</dd>
+<dt><a id="index-ignore_002dcert_002dextension"></a><span><code class="code">--ignore-cert-extension <var class="var">oid</var></code><a class="copiable-link" href="#index-ignore_002dcert_002dextension"> &para;</a></span></dt>
+<dd><p>Add <var class="var">oid</var> to the list of ignored certificate extensions.  The
+<var class="var">oid</var> is expected to be in dotted decimal form, like
+<code class="code">2.5.29.3</code>.  This option may be used more than once.  Critical
+flagged certificate extensions matching one of the OIDs in the list
+are treated as if they are actually handled and thus the certificate
+won&rsquo;t be rejected due to an unknown critical extension.  Use this
+option with care because extensions are usually flagged as critical
+for a reason.
+</p>
+</dd>
+<dt><a id="index-ignore_002dcrl_002dextension"></a><span><code class="code">--ignore-crl-extension <var class="var">oid</var></code><a class="copiable-link" href="#index-ignore_002dcrl_002dextension"> &para;</a></span></dt>
+<dd><p>Add <var class="var">oid</var> to the list of ignored CRL extensions.  The <var class="var">oid</var> is
+expected to be in dotted decimal form.  Critical flagged CRL
+extensions matching one of the OIDs in the list are treated as if they
+are actually handled and thus the certificate won&rsquo;t be rejected due to
+an unknown critical extension.  Use this option with care because
+extensions are usually flagged as critical for a reason.
+</p>
+</dd>
+<dt><a id="index-ignore_002dcert"></a><span><code class="code">--ignore-cert <var class="var">fpr</var>|<var class="var">file</var></code><a class="copiable-link" href="#index-ignore_002dcert"> &para;</a></span></dt>
+<dd><p>Entirely ignore certificates with the fingerprint <var class="var">fpr</var>.  As an
+alternative to the fingerprint a filename can be given in which case
+all certificates described in that file are ignored.  Any argument
+which contains a slash, dot or tilde is considered a filename.  Usual
+filename expansion takes place: A tilde at the start followed by a
+slash is replaced by the content of <code class="env">HOME</code>, no slash at start
+describes a relative filename which will be searched at the home
+directory.  To make sure that the <var class="var">file</var> is searched in the home
+directory, either prepend the name with &quot;./&quot; or use a name which
+contains a dot.  The format of such a file is a list of SHA-1
+fingerprint, one per line with optional colons between the bytes.
+Empty lines and lines prefixed with a hash mark are ignored.
+</p>
+<p>This option is useful as a quick workaround to exclude certain
+certificates from the system store.
+</p>
+
+</dd>
+<dt><code class="code">--hkp-cacert <var class="var">file</var></code></dt>
+<dd><p>Use the root certificates in <var class="var">file</var> for verification of the TLS
+certificates used with <code class="code">hkps</code> (keyserver access over TLS).  If
+the file is in PEM format a suffix of <code class="code">.pem</code> is expected for
+<var class="var">file</var>.  This option may be given multiple times to add more
+root certificates.  Tilde expansion is supported.
+</p>
+<p>If no <code class="code">hkp-cacert</code> directive is present, dirmngr will use the
+system CAs.
+</p>
+</dd>
+</dl>
+
+
+
+</div>
+<div class="footnotes-segment">
+<hr>
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<h5 class="footnote-body-heading"><a id="FOOT1" href="#DOCF1">(1)</a></h5>
+<p>The <code class="command">gpgconf</code> tool might be
+helpful for frontends as it enables editing this configuration file using
+percent-escaped strings.</p>
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Dirmngr-Configuration.html">Configuration</a>, Previous: <a href="Dirmngr-Commands.html">Commands</a>, Up: <a href="Invoking-DIRMNGR.html">Invoking DIRMNGR</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

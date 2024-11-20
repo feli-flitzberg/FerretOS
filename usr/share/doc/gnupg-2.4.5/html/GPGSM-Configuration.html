@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>GPGSM Configuration (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="GPGSM Configuration (Using the GNU Privacy Guard)">
+<meta name="keywords" content="GPGSM Configuration (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Invoking-GPGSM.html" rel="up" title="Invoking GPGSM">
+<link href="GPGSM-Examples.html" rel="next" title="GPGSM Examples">
+<link href="GPGSM-Options.html" rel="prev" title="GPGSM Options">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="GPGSM-Configuration">
+<div class="nav-panel">
+<p>
+Next: <a href="GPGSM-Examples.html" accesskey="n" rel="next">Examples</a>, Previous: <a href="GPGSM-Options.html" accesskey="p" rel="prev">Option Summary</a>, Up: <a href="Invoking-GPGSM.html" accesskey="u" rel="up">Invoking GPGSM</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="Configuration-files-1"><span>5.3 Configuration files<a class="copiable-link" href="#Configuration-files-1"> &para;</a></span></h3>
+
+<p>There are a few configuration files to control certain aspects of
+<code class="command">gpgsm</code>&rsquo;s operation. Unless noted, they are expected in the
+current home directory (see <a class="pxref" href="Agent-Options.html#option-_002d_002dhomedir">option --homedir</a>).
+</p>
+<dl class="table">
+<dt><a id="index-gpgsm_002econf"></a><span><samp class="file">gpgsm.conf</samp><a class="copiable-link" href="#index-gpgsm_002econf"> &para;</a></span></dt>
+<dd><p>This is the standard configuration file read by <code class="command">gpgsm</code> on
+startup.  It may contain any valid long option; the leading two dashes
+may not be entered and the option may not be abbreviated.  This default
+name may be changed on the command line (see <a class="pxref" href="Configuration-Options.html#gpgsm_002doption-_002d_002doptions">gpgsm-option --options</a>).
+You should backup this file.
+</p>
+</dd>
+<dt><a id="index-common_002econf-1"></a><span><samp class="file">common.conf</samp><a class="copiable-link" href="#index-common_002econf-1"> &para;</a></span></dt>
+<dd><p>This is an optional configuration file read by <code class="command">gpgsm</code> on
+startup.  It may contain options pertaining to all components of
+GnuPG.  Its current main use is for the &quot;use-keyboxd&quot; option.
+</p>
+</dd>
+<dt><a id="index-policies_002etxt"></a><span><samp class="file">policies.txt</samp><a class="copiable-link" href="#index-policies_002etxt"> &para;</a></span></dt>
+<dd><p>This is a list of allowed CA policies.  This file should list the
+object identifiers of the policies line by line.  Empty lines and
+lines starting with a hash mark are ignored.  Policies missing in this
+file and not marked as critical in the certificate will print only a
+warning; certificates with policies marked as critical and not listed
+in this file will fail the signature verification.  You should backup
+this file.
+</p>
+<p>For example, to allow only the policy 2.289.9.9, the file should look
+like this:
+</p>
+<div class="example">
+<pre class="example-preformatted"># Allowed policies
+2.289.9.9
+</pre></div>
+
+</dd>
+<dt><a id="index-qualified_002etxt"></a><span><samp class="file">qualified.txt</samp><a class="copiable-link" href="#index-qualified_002etxt"> &para;</a></span></dt>
+<dd><p>This is the list of root certificates used for qualified certificates.
+They are defined as certificates capable of creating legally binding
+signatures in the same way as handwritten signatures are.  Comments
+start with a hash mark and empty lines are ignored.  Lines do have a
+length limit but this is not a serious limitation as the format of the
+entries is fixed and checked by <code class="command">gpgsm</code>: A non-comment line starts with
+optional whitespace, followed by exactly 40 hex characters, white space
+and a lowercased 2 letter country code.  Additional data delimited with
+by a white space is current ignored but might late be used for other
+purposes.
+</p>
+<p>Note that even if a certificate is listed in this file, this does not
+mean that the certificate is trusted; in general the certificates listed
+in this file need to be listed also in <samp class="file">trustlist.txt</samp>. This is a global
+file an installed in the sysconf directory (e.g.
+<samp class="file">/etc/gnupg/qualified.txt</samp>).
+</p>
+<p>Every time <code class="command">gpgsm</code> uses a certificate for signing or verification
+this file will be consulted to check whether the certificate under
+question has ultimately been issued by one of these CAs.  If this is the
+case the user will be informed that the verified signature represents a
+legally binding (&ldquo;qualified&rdquo;) signature.  When creating a signature
+using such a certificate an extra prompt will be issued to let the user
+confirm that such a legally binding signature shall really be created.
+</p>
+<p>Because this software has not yet been approved for use with such
+certificates, appropriate notices will be shown to indicate this fact.
+</p>
+</dd>
+<dt><a id="index-help_002etxt"></a><span><samp class="file">help.txt</samp><a class="copiable-link" href="#index-help_002etxt"> &para;</a></span></dt>
+<dd><p>This is plain text file with a few help entries used with
+<code class="command">pinentry</code> as well as a large list of help items for
+<code class="command">gpg</code> and <code class="command">gpgsm</code>.  The standard file has English help
+texts; to install localized versions use filenames like <samp class="file">help.LL.txt</samp>
+with LL denoting the locale.  GnuPG comes with a set of predefined help
+files in the data directory (e.g. <samp class="file">/usr/share/gnupg/gnupg/help.de.txt</samp>)
+and allows overriding of any help item by help files stored in the
+system configuration directory (e.g. <samp class="file">/etc/gnupg/help.de.txt</samp>).
+For a reference of the help file&rsquo;s syntax, please see the installed
+<samp class="file">help.txt</samp> file.
+</p>
+
+</dd>
+<dt><a id="index-com_002dcerts_002epem"></a><span><samp class="file">com-certs.pem</samp><a class="copiable-link" href="#index-com_002dcerts_002epem"> &para;</a></span></dt>
+<dd><p>This file is a collection of common certificates used to populated a
+newly created <samp class="file">pubring.kbx</samp>.  An administrator may replace this
+file with a custom one.  The format is a concatenation of PEM encoded
+X.509 certificates.  This global file is installed in the data directory
+(e.g. <samp class="file">/usr/share/gnupg/com-certs.pem</samp>).
+</p>
+</dd>
+</dl>
+
+<p>Note that on larger installations, it is useful to put predefined files
+into the directory <samp class="file">/etc/skel/.gnupg/</samp> so that newly created users
+start up with a working configuration.  For existing users a small
+helper script is provided to create these files (see <a class="pxref" href="addgnupghome.html">Create .gnupg home directories</a>).
+</p>
+<p>For internal purposes <code class="command">gpgsm</code> creates and maintains a few other files;
+they all live in the current home directory (see <a class="pxref" href="Agent-Options.html#option-_002d_002dhomedir">option --homedir</a>).  Only <code class="command">gpgsm</code> may modify these files.
+</p>
+
+<dl class="table">
+<dt><a id="index-pubring_002ekbx-1"></a><span><samp class="file">pubring.kbx</samp><a class="copiable-link" href="#index-pubring_002ekbx-1"> &para;</a></span></dt>
+<dd><p>This a database file storing the certificates as well as meta
+information.  For debugging purposes the tool <code class="command">kbxutil</code> may be
+used to show the internal structure of this file.  You should backup
+this file.
+</p>
+</dd>
+<dt><a id="index-random_005fseed-1"></a><span><samp class="file">random_seed</samp><a class="copiable-link" href="#index-random_005fseed-1"> &para;</a></span></dt>
+<dd><p>This content of this file is used to maintain the internal state of the
+random number generator across invocations.  The same file is used by
+other programs of this software too.
+</p>
+</dd>
+<dt><a id="index-S_002egpg_002dagent"></a><span><samp class="file">S.gpg-agent</samp><a class="copiable-link" href="#index-S_002egpg_002dagent"> &para;</a></span></dt>
+<dd><p>If this file exists
+<code class="command">gpgsm</code> will first try to connect to this socket for
+accessing <code class="command">gpg-agent</code> before starting a new <code class="command">gpg-agent</code>
+instance.  Under Windows this socket (which in reality be a plain file
+describing a regular TCP listening port) is the standard way of
+connecting the <code class="command">gpg-agent</code>.
+</p>
+</dd>
+</dl>
+
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="GPGSM-Examples.html">Examples</a>, Previous: <a href="GPGSM-Options.html">Option Summary</a>, Up: <a href="Invoking-GPGSM.html">Invoking GPGSM</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

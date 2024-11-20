@@ -1,0 +1,265 @@
+.\" Created from Texinfo source by yat2m 1.50
+.TH GPGTAR 1 2024-03-04 "GnuPG 2.4.5" "GNU Privacy Guard 2.4"
+.SH NAME
+.B gpgtar
+\- Encrypt or sign files into an archive
+.SH SYNOPSIS
+.B  gpgtar
+.RI [ options ]
+.I filename1
+.I [ filename2, ... ]
+.I directory1
+.I [ directory2, ... ]
+
+.SH DESCRIPTION
+\fBgpgtar\fP encrypts or signs files into an archive.  It is an
+gpg-ized tar using the same format as used by PGP's PGP Zip.
+
+.SH OPTIONS
+
+\fBgpgtar\fP understands these options:
+
+
+.TP
+.B  \-\-create
+Put given files and directories into a vanilla ``ustar'' archive.
+
+.TP
+.B  \-\-extract
+Extract all files from a vanilla ``ustar'' archive.
+If no file name is given (or it is "-") the archive is taken from
+stdin.
+
+.TP
+.B  \-\-encrypt
+.TQ
+.B  \-e
+Encrypt given files and directories into an archive.  This option may
+be combined with option \fB\-\-symmetric\fP for an archive that may
+be decrypted via a secret key or a passphrase.
+
+.TP
+.B  \-\-decrypt
+.TQ
+.B  \-d
+Extract all files from an encrypted archive.   If no file name is given
+(or it is "-") the archive is taken from stdin.
+
+.TP
+.B  \-\-sign
+.TQ
+.B  \-s
+Make a signed archive from the given files and directories.  This can
+be combined with option \fB\-\-encrypt\fP to create a signed and then
+encrypted archive.
+
+.TP
+.B  \-\-list\-archive
+.TQ
+.B  \-t
+List the contents of the specified archive.  If no file name is given
+(or it is "-") the archive is taken from stdin.
+
+.TP
+.B  \-\-symmetric
+.TQ
+.B  \-c
+Encrypt with a symmetric cipher using a passphrase.  The default
+symmetric cipher used is AES-128, but may be chosen with the
+\fB\-\-cipher\-algo\fP option to \fBgpg\fP.
+
+.TP
+.B  \-\-recipient \fIuser\fP
+.TQ
+.B  \-r \fIuser\fP
+Encrypt for user id \fIuser\fP. For details see \fBgpg\fP.
+
+.TP
+.B  \-\-local\-user \fIuser\fP
+.TQ
+.B  \-u \fIuser\fP
+Use \fIuser\fP as the key to sign with.  For details see \fBgpg\fP.
+
+.TP
+.B  \-\-output \fIfile\fP
+.TQ
+.B  \-o \fIfile\fP
+Write the archive to the specified file \fIfile\fP.
+
+.TP
+.B  \-\-verbose
+.TQ
+.B  \-v
+Enable extra informational output.
+
+.TP
+.B  \-\-quiet
+.TQ
+.B  \-q
+Try to be as quiet as possible.
+
+.TP
+.B  \-\-skip\-crypto
+Skip all crypto operations and create or extract vanilla ``ustar''
+archives.
+
+.TP
+.B  \-\-dry\-run
+Do not actually output the extracted files.
+
+.TP
+.B  \-\-directory \fIdir\fP
+.TQ
+.B  \-C \fIdir\fP
+Extract the files into the directory \fIdir\fP.  The default is to
+take the directory name from the input filename.  If no input filename
+is known a directory named \(oq\fIGPGARCH\fP\(cq is used.  For tarball
+creation, switch to directory \fIdir\fP before performing any
+operations.
+
+.TP
+.B  \-\-files\-from \fIfile\fP
+.TQ
+.B  \-T \fIfile\fP
+Take the file names to work from the file \fIfile\fP; one file per
+line.
+
+.TP
+.B  \-\-null
+Modify option \fB\-\-files\-from\fP to use a binary nul instead of a
+linefeed to separate file names.
+
+.TP
+.B  \-\-utf8\-strings
+Assume that the file names read by \fB\-\-files\-from\fP are UTF-8
+encoded.  This option has an effect only on Windows where the active
+code page is otherwise assumed.
+
+.TP
+.B  \-\-openpgp
+This option has no effect because OpenPGP encryption and signing is
+the default.
+
+.TP
+.B  \-\-cms
+This option is reserved and shall not be used.  It will eventually be
+used to encrypt or sign using the CMS protocol; but that is not yet
+implemented.
+
+.TP
+.B  \-\-batch
+Use batch mode.  Never ask but use the default action.  This option is
+passed directly to \fBgpg\fP.
+
+.TP
+.B  \-\-yes
+Assume "yes" on most questions.  Often used together with
+\fB\-\-batch\fP to overwrite existing files.  This option is passed
+directly to \fBgpg\fP.
+
+.TP
+.B  \-\-no
+Assume "no" on most questions.  This option is passed directly to
+\fBgpg\fP.
+
+.TP
+.B  \-\-require\-compliance
+This option is passed directly to \fBgpg\fP.
+
+.TP
+.B  \-\-status\-fd \fIn\fP
+Write special status strings to the file descriptor \fIn\fP.
+See the file DETAILS in the documentation for a listing of them.
+
+.TP
+.B  \-\-with\-log
+When extracting an encrypted tarball also write a log file with the
+gpg output to a file named after the extraction directory with the
+suffix ".log".
+
+.TP
+.B  \-\-set\-filename \fIfile\fP
+Use the last component of \fIfile\fP as the output directory.  The
+default is to take the directory name from the input filename.  If no
+input filename is known a directory named \(oq\fIGPGARCH\fP\(cq is used.
+This option is deprecated in favor of option \fB\-\-directory\fP.
+
+.TP
+.B  \-\-no\-compress
+This option tells gpg to disable compression (i.e. using option -z0).
+It is useful for archiving only large files which are are already
+compressed (e.g. a set of videos).
+
+.TP
+.B  \-\-gpg \fIgpgcmd\fP
+Use the specified command \fIgpgcmd\fP instead of \fBgpg\fP.
+
+.TP
+.B  \-\-gpg\-args \fIargs\fP
+Pass the specified extra options to \fBgpg\fP.
+
+.TP
+.B  \-\-tar\-args \fIargs\fP
+Assume \fIargs\fP are standard options of the command \fBtar\fP
+and parse them.  The only supported tar options are "--directory",
+"--files-from", and "--null" This is an obsolete options because those
+supported tar options can also be given directly.
+
+.TP
+.B  \-\-tar \fIcommand\fP
+This is a dummy option for backward compatibility.
+
+.TP
+.B  \-\-version
+Print version of the program and exit.
+
+.TP
+.B  \-\-help
+Display a brief help page and exit.
+
+.P
+
+.SH EXAMPLES
+
+Encrypt the contents of directory \(oq\fImydocs\fP\(cq for user Bob to file
+\(oq\fItest1\fP\(cq:
+
+.RS 2
+.nf
+gpgtar \-\-encrypt \-\-output test1 \-r Bob mydocs
+.fi
+.RE
+
+
+List the contents of archive \(oq\fItest1\fP\(cq:
+
+.RS 2
+.nf
+gpgtar \-\-list\-archive test1
+.fi
+.RE
+
+
+.SH DIAGNOSTICS
+
+The program returns 0 if everything was fine, 1 otherwise.
+
+
+.SH SEE ALSO
+\fBgpg\fP(1),
+\fBtar\fP(1),
+
+The full documentation for this tool is maintained as a Texinfo manual.
+If GnuPG and the info program are properly installed at your site, the
+command
+
+.RS 2
+.nf
+info gnupg
+.fi
+.RE
+
+should give you access to the complete manual including a menu structure
+and an index.
+
+

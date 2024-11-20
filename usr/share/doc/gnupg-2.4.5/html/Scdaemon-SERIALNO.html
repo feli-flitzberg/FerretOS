@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Scdaemon SERIALNO (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Scdaemon SERIALNO (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Scdaemon SERIALNO (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Scdaemon-Protocol.html" rel="up" title="Scdaemon Protocol">
+<link href="Scdaemon-LEARN.html" rel="next" title="Scdaemon LEARN">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Scdaemon-SERIALNO">
+<div class="nav-panel">
+<p>
+Next: <a href="Scdaemon-LEARN.html" accesskey="n" rel="next">Read all useful information from the card</a>, Up: <a href="Scdaemon-Protocol.html" accesskey="u" rel="up">Scdaemon&rsquo;s Assuan Protocol</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Return-the-serial-number"><span>6.6.1 Return the serial number<a class="copiable-link" href="#Return-the-serial-number"> &para;</a></span></h4>
+
+<p>This command should be used to check for the presence of a card.  It is
+special in that it can be used to reset the card.  Most other commands
+will return an error when a card change has been detected and the use of
+this function is therefore required.
+</p>
+<p>Background: We want to keep the client clear of handling card changes
+between operations; i.e. the client can assume that all operations are
+done on the same card unless he call this function.
+</p>
+<div class="example">
+<pre class="example-preformatted">  SERIALNO
+</pre></div>
+
+<p>Return the serial number of the card using a status response like:
+</p>
+<div class="example">
+<pre class="example-preformatted">  S SERIALNO D27600000000000000000000
+</pre></div>
+
+<p>The serial number is the hex encoded value identified by
+the <code class="code">0x5A</code> tag in the GDO file (FIX=0x2F02).
+</p>
+
+
+</div>
+
+
+
+</body>
+</html>

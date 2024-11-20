@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Glossary (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Glossary (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Glossary (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="index.html" rel="up" title="Top">
+<link href="Option-Index.html" rel="next" title="Option Index">
+<link href="Contributors.html" rel="prev" title="Contributors">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="unnumbered-level-extent" id="Glossary">
+<div class="nav-panel">
+<p>
+Next: <a href="Option-Index.html" accesskey="n" rel="next">Option Index</a>, Previous: <a href="Contributors.html" accesskey="p" rel="prev">Contributors to GnuPG</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h2 class="unnumbered" id="Glossary-1"><span>Glossary<a class="copiable-link" href="#Glossary-1"> &para;</a></span></h2>
+
+
+<dl class="table">
+<dt>&lsquo;<samp class="samp">ARL</samp>&rsquo;</dt>
+<dd><p>The <em class="emph">Authority Revocation List</em> is technical identical to a
+<abbr class="acronym">CRL</abbr> but used for <abbr class="acronym">CA</abbr>s and not for end user
+certificates.
+</p>
+</dd>
+<dt>&lsquo;<samp class="samp">Chain model</samp>&rsquo;</dt>
+<dd><p>Verification model for X.509 which uses the creation date of a
+signature as the date the validation starts and in turn checks that each
+certificate has been issued within the time frame, the issuing
+certificate was valid.  This allows the verification of signatures after
+the CA&rsquo;s certificate expired.  The validation test also required an
+online check of the certificate status.  The chain model is required by
+the German signature law.  See also <em class="emph">Shell model</em>.
+</p>
+</dd>
+<dt>&lsquo;<samp class="samp">CMS</samp>&rsquo;</dt>
+<dd><p>The <em class="emph">Cryptographic Message Standard</em> describes a message
+format for encryption and digital signing.  It is closely related to the
+X.509 certificate format.  <abbr class="acronym">CMS</abbr> was formerly known under the
+name <code class="code">PKCS#7</code> and is described by <code class="code">RFC3369</code>.
+</p>
+</dd>
+<dt>&lsquo;<samp class="samp">CRL</samp>&rsquo;</dt>
+<dd><p>The <em class="emph">Certificate Revocation List</em> is a list containing
+certificates revoked by the issuer.
+</p>
+</dd>
+<dt>&lsquo;<samp class="samp">CSR</samp>&rsquo;</dt>
+<dd><p>The <em class="emph">Certificate Signing Request</em> is a message send to a CA to
+ask them to issue a new certificate.  The data format of such a signing
+request is called PCKS#10.
+</p>
+</dd>
+<dt>&lsquo;<samp class="samp">OpenPGP</samp>&rsquo;</dt>
+<dd><p>A data format used to build a PKI and to exchange encrypted or
+signed messages.  In contrast to X.509, OpenPGP also includes the
+message format but does not explicitly demand a specific PKI.  However
+any kind of PKI may be build upon the OpenPGP protocol.
+</p>
+</dd>
+<dt>&lsquo;<samp class="samp">Keygrip</samp>&rsquo;</dt>
+<dd><p>This term is used by GnuPG to describe a 20 byte hash value used
+to identify a certain key without referencing to a concrete protocol.
+It is used internally to access a private key.  Usually it is shown and
+entered as a 40 character hexadecimal formatted string.
+</p>
+</dd>
+<dt>&lsquo;<samp class="samp">OCSP</samp>&rsquo;</dt>
+<dd><p>The <em class="emph">Online Certificate Status Protocol</em> is used as an
+alternative to a <abbr class="acronym">CRL</abbr>.  It is described in <code class="code">RFC 2560</code>.
+</p>
+</dd>
+<dt>&lsquo;<samp class="samp">PSE</samp>&rsquo;</dt>
+<dd><p>The <em class="emph">Personal Security Environment</em> describes a database to
+store private keys.  This is either a smartcard or a collection of files
+on a disk; the latter is often called a Soft-PSE.
+</p>
+
+</dd>
+<dt>&lsquo;<samp class="samp">Shell model</samp>&rsquo;</dt>
+<dd><p>The standard model for validation of certificates under X.509.  At the
+time of the verification all certificates must be valid and not expired.
+See also <em class="emph">Chain model</em>.
+</p>
+
+</dd>
+<dt>&lsquo;<samp class="samp">X.509</samp>&rsquo;</dt>
+<dd><p>Description of a PKI used with CMS.  It is for example
+defined by <code class="code">RFC3280</code>.
+</p>
+
+</dd>
+</dl>
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Option-Index.html">Option Index</a>, Previous: <a href="Contributors.html">Contributors to GnuPG</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

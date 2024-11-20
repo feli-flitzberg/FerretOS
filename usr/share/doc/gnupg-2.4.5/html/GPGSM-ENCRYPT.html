@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>GPGSM ENCRYPT (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="GPGSM ENCRYPT (Using the GNU Privacy Guard)">
+<meta name="keywords" content="GPGSM ENCRYPT (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="GPGSM-Protocol.html" rel="up" title="GPGSM Protocol">
+<link href="GPGSM-DECRYPT.html" rel="next" title="GPGSM DECRYPT">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="GPGSM-ENCRYPT">
+<div class="nav-panel">
+<p>
+Next: <a href="GPGSM-DECRYPT.html" accesskey="n" rel="next">Decrypting a message</a>, Up: <a href="GPGSM-Protocol.html" accesskey="u" rel="up">The Protocol the Server Mode Uses</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Encrypting-a-Message"><span>5.6.1 Encrypting a Message<a class="copiable-link" href="#Encrypting-a-Message"> &para;</a></span></h4>
+
+<p>Before encryption can be done the recipient must be set using the
+command:
+</p>
+<div class="example">
+<pre class="example-preformatted">  RECIPIENT <var class="var">userID</var>
+</pre></div>
+
+<p>Set the recipient for the encryption.  <var class="var">userID</var> should be the
+internal representation of the key; the server may accept any other way
+of specification.  If this is a valid and trusted recipient the server
+does respond with OK, otherwise the return is an ERR with the reason why
+the recipient cannot be used, the encryption will then not be done for
+this recipient.  If the policy is not to encrypt at all if not all
+recipients are valid, the client has to take care of this.  All
+<code class="code">RECIPIENT</code> commands are cumulative until a <code class="code">RESET</code> or an
+successful <code class="code">ENCRYPT</code> command.
+</p>
+<div class="example">
+<pre class="example-preformatted">  INPUT FD[=<var class="var">n</var>] [--armor|--base64|--binary]
+</pre></div>
+
+<p>Set the file descriptor for the message to be encrypted to <var class="var">n</var>.
+Obviously the pipe must be open at that point, the server establishes
+its own end.  If the server returns an error the client should consider
+this session failed.  If <var class="var">n</var> is not given, this commands uses the
+last file descriptor passed to the application.
+See <a data-manual="assuan" href="https://www.gnupg.org/documentation/manuals/assuan/fun_002dassuan_005fsendfd.html#fun_002dassuan_005fsendfd">the assuan_sendfd function</a> in <cite class="cite">the Libassuan
+manual</cite>, on how to do descriptor passing.
+</p>
+<p>The <code class="code">--armor</code> option may be used to advise the server that the
+input data is in <abbr class="acronym">PEM</abbr> format, <code class="code">--base64</code> advises that a
+raw base-64 encoding is used, <code class="code">--binary</code> advises of raw binary
+input (<abbr class="acronym">BER</abbr>).  If none of these options is used, the server
+tries to figure out the used encoding, but this may not always be
+correct.
+</p>
+<div class="example">
+<pre class="example-preformatted">  OUTPUT FD[=<var class="var">n</var>] [--armor|--base64]
+</pre></div>
+
+<p>Set the file descriptor to be used for the output (i.e. the encrypted
+message). Obviously the pipe must be open at that point, the server
+establishes its own end.  If the server returns an error the client
+should consider this session failed.
+</p>
+<p>The option <samp class="option">--armor</samp> encodes the output in <abbr class="acronym">PEM</abbr> format, the
+<samp class="option">--base64</samp> option applies just a base-64 encoding.  No option
+creates binary output (<abbr class="acronym">BER</abbr>).
+</p>
+<p>The actual encryption is done using the command
+</p>
+<div class="example">
+<pre class="example-preformatted">  ENCRYPT
+</pre></div>
+
+<p>It takes the plaintext from the <code class="code">INPUT</code> command, writes to the
+ciphertext to the file descriptor set with the <code class="code">OUTPUT</code> command,
+take the recipients from all the recipients set so far.  If this command
+fails the clients should try to delete all output currently done or
+otherwise mark it as invalid.  <code class="command">GPGSM</code> does ensure that there
+will not be any
+security problem with leftover data on the output in this case.
+</p>
+<p>This command should in general not fail, as all necessary checks have
+been done while setting the recipients.  The input and output pipes are
+closed.
+</p>
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="GPGSM-DECRYPT.html">Decrypting a message</a>, Up: <a href="GPGSM-Protocol.html">The Protocol the Server Mode Uses</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>GPGSM EXPORT (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="GPGSM EXPORT (Using the GNU Privacy Guard)">
+<meta name="keywords" content="GPGSM EXPORT (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="GPGSM-Protocol.html" rel="up" title="GPGSM Protocol">
+<link href="GPGSM-IMPORT.html" rel="next" title="GPGSM IMPORT">
+<link href="GPGSM-LISTKEYS.html" rel="prev" title="GPGSM LISTKEYS">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="GPGSM-EXPORT">
+<div class="nav-panel">
+<p>
+Next: <a href="GPGSM-IMPORT.html" accesskey="n" rel="next">Import certificates</a>, Previous: <a href="GPGSM-LISTKEYS.html" accesskey="p" rel="prev">List available keys</a>, Up: <a href="GPGSM-Protocol.html" accesskey="u" rel="up">The Protocol the Server Mode Uses</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Export-certificates"><span>5.6.7 Export certificates<a class="copiable-link" href="#Export-certificates"> &para;</a></span></h4>
+
+<p>To export certificate from the internal key database the command:
+</p>
+<div class="example">
+<pre class="example-preformatted">  EXPORT [--data [--armor] [--base64]] [--] <var class="var">pattern</var>
+</pre></div>
+
+<p>is used.  To allow multiple patterns (which are ORed) quoting is
+required: Spaces are to be translated into &quot;+&quot; or into &quot;%20&quot;; in turn
+this requires that the usual escape quoting rules are done.
+</p>
+<p>If the <samp class="option">--data</samp> option has not been given, the format of the
+output depends on what was set with the <code class="code">OUTPUT</code> command.  When using
+<abbr class="acronym">PEM</abbr> encoding a few informational lines are prepended.
+</p>
+<p>If the <samp class="option">--data</samp> has been given, a target set via <code class="code">OUTPUT</code> is
+ignored and the data is returned inline using standard
+<code class="code">D</code>-lines. This avoids the need for an extra file descriptor.  In
+this case the options <samp class="option">--armor</samp> and <samp class="option">--base64</samp> may be used
+in the same way as with the <code class="code">OUTPUT</code> command.
+</p>
+
+</div>
+
+
+
+</body>
+</html>

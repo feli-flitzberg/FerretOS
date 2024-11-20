@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Agent ISTRUSTED (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Agent ISTRUSTED (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Agent ISTRUSTED (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Agent-Protocol.html" rel="up" title="Agent Protocol">
+<link href="Agent-GET_005fPASSPHRASE.html" rel="next" title="Agent GET_PASSPHRASE">
+<link href="Agent-EXPORT.html" rel="prev" title="Agent EXPORT">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Agent-ISTRUSTED">
+<div class="nav-panel">
+<p>
+Next: <a href="Agent-GET_005fPASSPHRASE.html" accesskey="n" rel="next">Ask for a passphrase</a>, Previous: <a href="Agent-EXPORT.html" accesskey="p" rel="prev">Export a Secret Key</a>, Up: <a href="Agent-Protocol.html" accesskey="u" rel="up">Agent&rsquo;s Assuan Protocol</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Importing-a-Root-Certificate"><span>2.6.6 Importing a Root Certificate<a class="copiable-link" href="#Importing-a-Root-Certificate"> &para;</a></span></h4>
+
+<p>Actually we do not import a Root Cert but provide a way to validate
+any piece of data by storing its Hash along with a description and
+an identifier in the PSE.  Here is the interface description:
+</p>
+<div class="example">
+<pre class="example-preformatted">    ISTRUSTED &lt;fingerprint&gt;
+</pre></div>
+
+<p>Check whether the OpenPGP primary key or the X.509 certificate with the
+given fingerprint is an ultimately trusted key or a trusted Root CA
+certificate.  The fingerprint should be given as a hexstring (without
+any blanks or colons or whatever in between) and may be left padded with
+00 in case of an MD5 fingerprint.  GPGAgent will answer with:
+</p>
+<div class="example">
+<pre class="example-preformatted">    OK
+</pre></div>
+
+<p>The key is in the table of trusted keys.
+</p>
+<div class="example">
+<pre class="example-preformatted">    ERR 304 (Not Trusted)
+</pre></div>
+
+<p>The key is not in this table.
+</p>
+<p>Gpg needs the entire list of trusted keys to maintain the web of
+trust; the following command is therefore quite helpful:
+</p>
+<div class="example">
+<pre class="example-preformatted">    LISTTRUSTED
+</pre></div>
+
+<p>GpgAgent returns a list of trusted keys line by line:
+</p>
+<div class="example">
+<pre class="example-preformatted">    S: D 000000001234454556565656677878AF2F1ECCFF P
+    S: D 340387563485634856435645634856438576457A P
+    S: D FEDC6532453745367FD83474357495743757435D S
+    S: OK
+</pre></div>
+
+<p>The first item on a line is the hexified fingerprint where MD5
+fingerprints are <code class="code">00</code> padded to the left and the second item is a
+flag to indicate the type of key (so that gpg is able to only take care
+of PGP keys).  P = OpenPGP, S = S/MIME.  A client should ignore the rest
+of the line, so that we can extend the format in the future.
+</p>
+<p>Finally a client should be able to mark a key as trusted:
+</p>
+<div class="example">
+<pre class="example-preformatted">   MARKTRUSTED <var class="var">fingerprint</var> &quot;P&quot;|&quot;S&quot;
+</pre></div>
+
+<p>The server will then pop up a window to ask the user whether she
+really trusts this key. For this it will probably ask for a text to
+be displayed like this:
+</p>
+<div class="example">
+<pre class="example-preformatted">   S: INQUIRE TRUSTDESC
+   C: D Do you trust the key with the fingerprint @FPR@
+   C: D bla fasel blurb.
+   C: END
+   S: OK
+</pre></div>
+
+<p>Known sequences with the pattern @foo@ are replaced according to this
+table:
+</p>
+<dl class="table">
+<dt><code class="code">@FPR16@</code></dt>
+<dd><p>Format the fingerprint according to gpg rules for a v3 keys.
+</p></dd>
+<dt><code class="code">@FPR20@</code></dt>
+<dd><p>Format the fingerprint according to gpg rules for a v4 keys.
+</p></dd>
+<dt><code class="code">@FPR@</code></dt>
+<dd><p>Choose an appropriate format to format the fingerprint.
+</p></dd>
+<dt><code class="code">@@</code></dt>
+<dd><p>Replaced by a single <code class="code">@</code>.
+</p></dd>
+</dl>
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Agent-GET_005fPASSPHRASE.html">Ask for a passphrase</a>, Previous: <a href="Agent-EXPORT.html">Export a Secret Key</a>, Up: <a href="Agent-Protocol.html">Agent&rsquo;s Assuan Protocol</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

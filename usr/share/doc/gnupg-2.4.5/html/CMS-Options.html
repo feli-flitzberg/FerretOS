@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>CMS Options (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="CMS Options (Using the GNU Privacy Guard)">
+<meta name="keywords" content="CMS Options (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="GPGSM-Options.html" rel="up" title="GPGSM Options">
+<link href="Esoteric-Options.html" rel="next" title="Esoteric Options">
+<link href="Input-and-Output.html" rel="prev" title="Input and Output">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="CMS-Options">
+<div class="nav-panel">
+<p>
+Next: <a href="Esoteric-Options.html" accesskey="n" rel="next">Doing things one usually do not want to do</a>, Previous: <a href="Input-and-Output.html" accesskey="p" rel="prev">Input and Output</a>, Up: <a href="GPGSM-Options.html" accesskey="u" rel="up">Option Summary</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="How-to-change-how-the-CMS-is-created"><span>5.2.4 How to change how the CMS is created<a class="copiable-link" href="#How-to-change-how-the-CMS-is-created"> &para;</a></span></h4>
+
+<dl class="table">
+<dt><a id="index-include_002dcerts"></a><span><code class="code">--include-certs <var class="var">n</var></code><a class="copiable-link" href="#index-include_002dcerts"> &para;</a></span></dt>
+<dd><p>Using <var class="var">n</var> of -2 includes all certificate except for the root cert,
+-1 includes all certs, 0 does not include any certs, 1 includes only the
+signers cert and all other positive values include up to <var class="var">n</var>
+certificates starting with the signer cert.  The default is -2.
+</p>
+</dd>
+<dt><a id="index-cipher_002dalgo-1"></a><span><code class="code">--cipher-algo <var class="var">oid</var></code><a class="copiable-link" href="#index-cipher_002dalgo-1"> &para;</a></span></dt>
+<dd><p>Use the cipher algorithm with the ASN.1 object identifier <var class="var">oid</var> for
+encryption.  For convenience the strings <code class="code">3DES</code>, <code class="code">AES</code> and
+<code class="code">AES256</code> may be used instead of their OIDs.  The default is
+<code class="code">AES</code> (2.16.840.1.101.3.4.1.2).
+</p>
+</dd>
+<dt><code class="code">--digest-algo <code class="code">name</code></code></dt>
+<dd><p>Use <code class="code">name</code> as the message digest algorithm.  Usually this
+algorithm is deduced from the respective signing certificate.  This
+option forces the use of the given algorithm and may lead to severe
+interoperability problems.
+</p>
+</dd>
+</dl>
+
+
+
+</div>
+
+
+
+</body>
+</html>

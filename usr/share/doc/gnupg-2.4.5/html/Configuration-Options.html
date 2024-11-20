@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Configuration Options (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Configuration Options (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Configuration Options (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="GPGSM-Options.html" rel="up" title="GPGSM Options">
+<link href="Certificate-Options.html" rel="next" title="Certificate Options">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Configuration-Options">
+<div class="nav-panel">
+<p>
+Next: <a href="Certificate-Options.html" accesskey="n" rel="next">Certificate related options</a>, Up: <a href="GPGSM-Options.html" accesskey="u" rel="up">Option Summary</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="How-to-change-the-configuration-1"><span>5.2.1 How to change the configuration<a class="copiable-link" href="#How-to-change-the-configuration-1"> &para;</a></span></h4>
+
+<p>These options are used to change the configuration and are usually found
+in the option file.
+</p>
+<dl class="table">
+<dd>
+<a class="anchor" id="gpgsm_002doption-_002d_002doptions"></a></dd>
+<dt><a id="index-options-4"></a><span><code class="code">--options <var class="var">file</var></code><a class="copiable-link" href="#index-options-4"> &para;</a></span></dt>
+<dd><p>Reads configuration from <var class="var">file</var> instead of from the default
+per-user configuration file.  The default configuration file is named
+<samp class="file">gpgsm.conf</samp> and expected in the <samp class="file">.gnupg</samp> directory directly
+below the home directory of the user.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-GNUPGHOME-3"></a>
+<a class="index-entry-id" id="index-HKCU_005cSoftware_005cGNU_005cGnuPG_003aHomeDir-2"></a>
+<a id="index-homedir-2"></a><span><code class="code">--homedir <var class="var">dir</var></code><a class="copiable-link" href="#index-homedir-2"> &para;</a></span></dt>
+<dd><p>Set the name of the home directory to <var class="var">dir</var>. If this option is not
+used, the home directory defaults to <samp class="file">~/.gnupg</samp>.  It is only
+recognized when given on the command line.  It also overrides any home
+directory stated through the environment variable <code class="env">GNUPGHOME</code> or
+(on Windows systems) by means of the Registry entry
+<var class="var">HKCU\Software\GNU\GnuPG:HomeDir</var>.
+</p>
+<p>On Windows systems it is possible to install GnuPG as a portable
+application.  In this case only this command line option is
+considered, all other ways to set a home directory are ignored.
+</p>
+
+</dd>
+<dt><code class="code">-v</code></dt>
+<dt><a class="index-entry-id" id="index-verbose-3"></a>
+<a id="index-v-1"></a><span><code class="code">--verbose</code><a class="copiable-link" href="#index-v-1"> &para;</a></span></dt>
+<dd><p>Outputs additional information while running.
+You can increase the verbosity by giving several
+verbose commands to <code class="command">gpgsm</code>, such as &lsquo;<samp class="samp">-vv</samp>&rsquo;.
+</p>
+</dd>
+<dt><a id="index-keyserver-2"></a><span><code class="code">--keyserver <var class="var">string</var></code><a class="copiable-link" href="#index-keyserver-2"> &para;</a></span></dt>
+<dd><p>This is a deprecated option.  It was used to add an LDAP server to use
+for X.509 certificate and CRL lookup.  The alias <samp class="option">--ldapserver</samp>
+existed from version 2.2.28 to 2.2.33 and 2.3.2 to 2.3.4 but is now
+entirely ignored.
+</p>
+<p>LDAP servers must be given in the configuration for <code class="command">dirmngr</code>.
+</p>
+</dd>
+<dt><a id="index-policy_002dfile"></a><span><code class="code">--policy-file <var class="var">filename</var></code><a class="copiable-link" href="#index-policy_002dfile"> &para;</a></span></dt>
+<dd><p>Change the default name of the policy file to <var class="var">filename</var>.  The
+default name is <samp class="file">policies.txt</samp>.
+</p>
+</dd>
+<dt><a id="index-agent_002dprogram-1"></a><span><code class="code">--agent-program <var class="var">file</var></code><a class="copiable-link" href="#index-agent_002dprogram-1"> &para;</a></span></dt>
+<dd><p>Specify an agent program to be used for secret key operations.  The
+default value is determined by running the command <code class="command">gpgconf</code>.
+Note that the pipe symbol (<code class="code">|</code>) is used for a regression test
+suite hack and may thus not be used in the file name.
+</p>
+</dd>
+<dt><a id="index-dirmngr_002dprogram-1"></a><span><code class="code">--dirmngr-program <var class="var">file</var></code><a class="copiable-link" href="#index-dirmngr_002dprogram-1"> &para;</a></span></dt>
+<dd><p>Specify a dirmngr program to be used for <abbr class="acronym">CRL</abbr> checks.  The
+default value is <samp class="file">/usr/bin/dirmngr</samp>.
+</p>
+</dd>
+<dt><a id="index-prefer_002dsystem_002ddirmngr"></a><span><code class="code">--prefer-system-dirmngr</code><a class="copiable-link" href="#index-prefer_002dsystem_002ddirmngr"> &para;</a></span></dt>
+<dd><p>This option is obsolete and ignored.
+</p>
+</dd>
+<dt><code class="code">--disable-dirmngr</code></dt>
+<dd><p>Entirely disable the use of the Dirmngr.
+</p>
+</dd>
+<dt><a id="index-no_002dautostart-1"></a><span><code class="code">--no-autostart</code><a class="copiable-link" href="#index-no_002dautostart-1"> &para;</a></span></dt>
+<dd><p>Do not start the gpg-agent or the dirmngr if it has not yet been
+started and its service is required.  This option is mostly useful on
+machines where the connection to gpg-agent has been redirected to
+another machines.  If dirmngr is required on the remote machine, it
+may be started manually using <code class="command">gpgconf --launch dirmngr</code>.
+</p>
+</dd>
+<dt><a id="index-no_002dsecmem_002dwarning-1"></a><span><code class="code">--no-secmem-warning</code><a class="copiable-link" href="#index-no_002dsecmem_002dwarning-1"> &para;</a></span></dt>
+<dd><p>Do not print a warning when the so called &quot;secure memory&quot; cannot be used.
+</p>
+</dd>
+<dt><a id="index-log_002dfile-3"></a><span><code class="code">--log-file <var class="var">file</var></code><a class="copiable-link" href="#index-log_002dfile-3"> &para;</a></span></dt>
+<dd><p>When running in server mode, append all logging output to <var class="var">file</var>.
+Use <samp class="file">socket://</samp> to log to socket.
+</p>
+</dd>
+<dt><a id="index-log_002dtime-1"></a><span><code class="code">--log-time</code><a class="copiable-link" href="#index-log_002dtime-1"> &para;</a></span></dt>
+<dd><p>Prefix all log output with a timestamp even if no log file is used.
+</p>
+</dd>
+</dl>
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Certificate-Options.html">Certificate related options</a>, Up: <a href="GPGSM-Options.html">Option Summary</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

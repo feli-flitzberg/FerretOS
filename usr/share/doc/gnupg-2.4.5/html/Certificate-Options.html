@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Certificate Options (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Certificate Options (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Certificate Options (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="GPGSM-Options.html" rel="up" title="GPGSM Options">
+<link href="Input-and-Output.html" rel="next" title="Input and Output">
+<link href="Configuration-Options.html" rel="prev" title="Configuration Options">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Certificate-Options">
+<div class="nav-panel">
+<p>
+Next: <a href="Input-and-Output.html" accesskey="n" rel="next">Input and Output</a>, Previous: <a href="Configuration-Options.html" accesskey="p" rel="prev">How to change the configuration</a>, Up: <a href="GPGSM-Options.html" accesskey="u" rel="up">Option Summary</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Certificate-related-options"><span>5.2.2 Certificate related options<a class="copiable-link" href="#Certificate-related-options"> &para;</a></span></h4>
+
+<dl class="table">
+<dt><a class="index-entry-id" id="index-disable_002dpolicy_002dchecks"></a>
+<a id="index-enable_002dpolicy_002dchecks"></a><span><code class="code">--enable-policy-checks</code><a class="copiable-link" href="#index-enable_002dpolicy_002dchecks"> &para;</a></span></dt>
+<dt><code class="code">--disable-policy-checks</code></dt>
+<dd><p>By default policy checks are enabled.  These options may be used to
+change it.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-disable_002dcrl_002dchecks"></a>
+<a id="index-enable_002dcrl_002dchecks"></a><span><code class="code">--enable-crl-checks</code><a class="copiable-link" href="#index-enable_002dcrl_002dchecks"> &para;</a></span></dt>
+<dt><code class="code">--disable-crl-checks</code></dt>
+<dd><p>By default the <abbr class="acronym">CRL</abbr> checks are enabled and the DirMngr is
+used to check for revoked certificates.  The disable option is most
+useful with an off-line network connection to suppress this check and
+also to avoid that new certificates introduce a web bug by including a
+certificate specific CRL DP.  The disable option also disables an
+issuer certificate lookup via the authorityInfoAccess property of the
+certificate; the <samp class="option">--enable-issuer-key-retrieve</samp> can be used
+to make use of that property anyway.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-disable_002dtrusted_002dcert_002dcrl_002dcheck"></a>
+<a id="index-enable_002dtrusted_002dcert_002dcrl_002dcheck"></a><span><code class="code">--enable-trusted-cert-crl-check</code><a class="copiable-link" href="#index-enable_002dtrusted_002dcert_002dcrl_002dcheck"> &para;</a></span></dt>
+<dt><code class="code">--disable-trusted-cert-crl-check</code></dt>
+<dd><p>By default the <abbr class="acronym">CRL</abbr> for trusted root certificates are checked
+like for any other certificates.  This allows a CA to revoke its own
+certificates voluntary without the need of putting all ever issued
+certificates into a CRL.  The disable option may be used to switch this
+extra check off.  Due to the caching done by the Dirmngr, there will not be
+any noticeable performance gain.  Note, that this also disables possible
+OCSP checks for trusted root certificates.  A more specific way of
+disabling this check is by adding the &ldquo;relax&rdquo; keyword to the root CA
+line of the <samp class="file">trustlist.txt</samp>
+</p>
+
+</dd>
+<dt><a id="index-force_002dcrl_002drefresh"></a><span><code class="code">--force-crl-refresh</code><a class="copiable-link" href="#index-force_002dcrl_002drefresh"> &para;</a></span></dt>
+<dd><p>Tell the dirmngr to reload the CRL for each request.  For better
+performance, the dirmngr will actually optimize this by suppressing
+the loading for short time intervals (e.g. 30 minutes). This option
+is useful to make sure that a fresh CRL is available for certificates
+hold in the keybox.  The suggested way of doing this is by using it
+along with the option <samp class="option">--with-validation</samp> for a key listing
+command.  This option should not be used in a configuration file.
+</p>
+</dd>
+<dt><a id="index-enable_002dissuer_002dbased_002dcrl_002dcheck"></a><span><code class="code">--enable-issuer-based-crl-check</code><a class="copiable-link" href="#index-enable_002dissuer_002dbased_002dcrl_002dcheck"> &para;</a></span></dt>
+<dd><p>Run a CRL check even for certificates which do not have any CRL
+distribution point.  This requires that a suitable LDAP server has
+been configured in Dirmngr and that the CRL can be found using the
+issuer.  This option reverts to what GnuPG did up to version 2.2.20.
+This option is in general not useful.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-disable_002docsp"></a>
+<a id="index-enable_002docsp"></a><span><code class="code">--enable-ocsp</code><a class="copiable-link" href="#index-enable_002docsp"> &para;</a></span></dt>
+<dt><code class="code">--disable-ocsp</code></dt>
+<dd><p>By default <abbr class="acronym">OCSP</abbr> checks are disabled.  The enable option may
+be used to enable OCSP checks via Dirmngr.  If <abbr class="acronym">CRL</abbr> checks
+are also enabled, CRLs will be used as a fallback if for some reason an
+OCSP request will not succeed.  Note, that you have to allow OCSP
+requests in Dirmngr&rsquo;s configuration too (option
+<samp class="option">--allow-ocsp</samp>) and configure Dirmngr properly.  If you do not do
+so you will get the error code &lsquo;<samp class="samp">Not supported</samp>&rsquo;.
+</p>
+</dd>
+<dt><a id="index-auto_002dissuer_002dkey_002dretrieve"></a><span><code class="code">--auto-issuer-key-retrieve</code><a class="copiable-link" href="#index-auto_002dissuer_002dkey_002dretrieve"> &para;</a></span></dt>
+<dd><p>If a required certificate is missing while validating the chain of
+certificates, try to load that certificate from an external location.
+This usually means that Dirmngr is employed to search for the
+certificate.  Note that this option makes a &quot;web bug&quot; like behavior
+possible.  LDAP server operators can see which keys you request, so by
+sending you a message signed by a brand new key (which you naturally
+will not have on your local keybox), the operator can tell both your
+IP address and the time when you verified the signature.  Note that if
+CRL checking is not disabled issuer certificates are retrieved in any
+case using the caIssuers authorityInfoAccess method.
+</p>
+
+<a class="anchor" id="gpgsm_002doption-_002d_002dvalidation_002dmodel"></a></dd>
+<dt><a id="index-validation_002dmodel"></a><span><code class="code">--validation-model <var class="var">name</var></code><a class="copiable-link" href="#index-validation_002dmodel"> &para;</a></span></dt>
+<dd><p>This option changes the default validation model.  The only possible
+values are &quot;shell&quot; (which is the default), &quot;chain&quot; which forces the
+use of the chain model and &quot;steed&quot; for a new simplified model.  The
+chain model is also used if an option in the <samp class="file">trustlist.txt</samp> or
+an attribute of the certificate requests it.  However the standard
+model (shell) is in that case always tried first.
+</p>
+</dd>
+<dt><a id="index-ignore_002dcert_002dextension-1"></a><span><code class="code">--ignore-cert-extension <var class="var">oid</var></code><a class="copiable-link" href="#index-ignore_002dcert_002dextension-1"> &para;</a></span></dt>
+<dd><p>Add <var class="var">oid</var> to the list of ignored certificate extensions.  The
+<var class="var">oid</var> is expected to be in dotted decimal form, like
+<code class="code">2.5.29.3</code>.  This option may be used more than once.  Critical
+flagged certificate extensions matching one of the OIDs in the list
+are treated as if they are actually handled and thus the certificate
+will not be rejected due to an unknown critical extension.  Use this
+option with care because extensions are usually flagged as critical
+for a reason.
+</p>
+</dd>
+</dl>
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Input-and-Output.html">Input and Output</a>, Previous: <a href="Configuration-Options.html">How to change the configuration</a>, Up: <a href="GPGSM-Options.html">Option Summary</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

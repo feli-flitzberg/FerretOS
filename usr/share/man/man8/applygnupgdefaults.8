@@ -1,0 +1,32 @@
+.\" Created from Texinfo source by yat2m 1.50
+.TH APPLYGNUPGDEFAULTS 8 2024-03-04 "GnuPG 2.4.5" "GNU Privacy Guard 2.4"
+.SH NAME
+.B applygnupgdefaults
+\- Run gpgconf --apply-defaults for all users.
+.SH SYNOPSIS
+.B  applygnupgdefaults
+
+.SH DESCRIPTION
+This is a legacy script.  Modern application should use the per
+component global configuration files under \(oq\fI/etc/gnupg/\fP\(cq.
+
+This script is a wrapper around \fBgpgconf\fP to run it with the
+command \fB\-\-apply\-defaults\fP for all real users with an existing
+GnuPG home directory.  Admins might want to use this script to update he
+GnuPG configuration files for all users after
+\(oq\fI/etc/gnupg/gpgconf.conf\fP\(cq has been changed.  This allows enforcing
+certain policies for all users.  Note, that this is not a bulletproof way to
+force a user to use certain options.  A user may always directly edit
+the configuration files and bypass gpgconf.
+
+
+\fBapplygnupgdefaults\fP is invoked by root as:
+
+.RS 2
+.nf
+applygnupgdefaults
+.fi
+.RE
+
+
+

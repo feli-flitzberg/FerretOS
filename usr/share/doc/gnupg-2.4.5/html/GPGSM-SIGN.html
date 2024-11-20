@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>GPGSM SIGN (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="GPGSM SIGN (Using the GNU Privacy Guard)">
+<meta name="keywords" content="GPGSM SIGN (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="GPGSM-Protocol.html" rel="up" title="GPGSM Protocol">
+<link href="GPGSM-VERIFY.html" rel="next" title="GPGSM VERIFY">
+<link href="GPGSM-DECRYPT.html" rel="prev" title="GPGSM DECRYPT">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="GPGSM-SIGN">
+<div class="nav-panel">
+<p>
+Next: <a href="GPGSM-VERIFY.html" accesskey="n" rel="next">Verifying a Message</a>, Previous: <a href="GPGSM-DECRYPT.html" accesskey="p" rel="prev">Decrypting a message</a>, Up: <a href="GPGSM-Protocol.html" accesskey="u" rel="up">The Protocol the Server Mode Uses</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Signing-a-Message"><span>5.6.3 Signing a Message<a class="copiable-link" href="#Signing-a-Message"> &para;</a></span></h4>
+
+<p>Signing is usually done with these commands:
+</p>
+<div class="example">
+<pre class="example-preformatted">  INPUT FD[=<var class="var">n</var>] [--armor|--base64|--binary]
+</pre></div>
+
+<p>This tells <code class="command">GPGSM</code> to read the data to sign from file descriptor <var class="var">n</var>.
+</p>
+<div class="example">
+<pre class="example-preformatted">  OUTPUT FD[=<var class="var">m</var>] [--armor|--base64]
+</pre></div>
+
+<p>Write the output to file descriptor <var class="var">m</var>.  If a detached signature is
+requested, only the signature is written.
+</p>
+<div class="example">
+<pre class="example-preformatted">  SIGN [--detached]
+</pre></div>
+
+<p>Sign the data set with the <code class="code">INPUT</code> command and write it to the sink set by
+<code class="code">OUTPUT</code>.  With <code class="code">--detached</code>, a detached signature is created
+(surprise).
+</p>
+<p>The key used for signing is the default one or the one specified in
+the configuration file.  To get finer control over the keys, it is
+possible to use the command
+</p>
+<div class="example">
+<pre class="example-preformatted">  SIGNER <var class="var">userID</var>
+</pre></div>
+
+<p>to set the signer&rsquo;s key.  <var class="var">userID</var> should be the
+internal representation of the key; the server may accept any other way
+of specification.  If this is a valid and trusted recipient the server
+does respond with OK, otherwise the return is an ERR with the reason why
+the key cannot be used, the signature will then not be created using
+this key.  If the policy is not to sign at all if not all
+keys are valid, the client has to take care of this.  All
+<code class="code">SIGNER</code> commands are cumulative until a <code class="code">RESET</code> is done.
+Note that a <code class="code">SIGN</code> does not reset this list of signers which is in
+contrast to the <code class="code">RECIPIENT</code> command.
+</p>
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="GPGSM-VERIFY.html">Verifying a Message</a>, Previous: <a href="GPGSM-DECRYPT.html">Decrypting a message</a>, Up: <a href="GPGSM-Protocol.html">The Protocol the Server Mode Uses</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

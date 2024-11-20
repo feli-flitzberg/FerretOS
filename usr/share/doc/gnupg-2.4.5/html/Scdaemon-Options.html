@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Scdaemon Options (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Scdaemon Options (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Scdaemon Options (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Invoking-SCDAEMON.html" rel="up" title="Invoking SCDAEMON">
+<link href="Card-applications.html" rel="next" title="Card applications">
+<link href="Scdaemon-Commands.html" rel="prev" title="Scdaemon Commands">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="Scdaemon-Options">
+<div class="nav-panel">
+<p>
+Next: <a href="Card-applications.html" accesskey="n" rel="next">Description of card applications</a>, Previous: <a href="Scdaemon-Commands.html" accesskey="p" rel="prev">Commands</a>, Up: <a href="Invoking-SCDAEMON.html" accesskey="u" rel="up">Invoking the SCDAEMON</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="Option-Summary-4"><span>6.2 Option Summary<a class="copiable-link" href="#Option-Summary-4"> &para;</a></span></h3>
+
+<dl class="table">
+<dt><a id="index-options-5"></a><span><code class="code">--options <var class="var">file</var></code><a class="copiable-link" href="#index-options-5"> &para;</a></span></dt>
+<dd><p>Reads configuration from <var class="var">file</var> instead of from the default
+per-user configuration file.  The default configuration file is named
+<samp class="file">scdaemon.conf</samp> and expected in the <samp class="file">.gnupg</samp> directory directly
+below the home directory of the user.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-GNUPGHOME-4"></a>
+<a class="index-entry-id" id="index-HKCU_005cSoftware_005cGNU_005cGnuPG_003aHomeDir-3"></a>
+<a id="index-homedir-3"></a><span><code class="code">--homedir <var class="var">dir</var></code><a class="copiable-link" href="#index-homedir-3"> &para;</a></span></dt>
+<dd><p>Set the name of the home directory to <var class="var">dir</var>. If this option is not
+used, the home directory defaults to <samp class="file">~/.gnupg</samp>.  It is only
+recognized when given on the command line.  It also overrides any home
+directory stated through the environment variable <code class="env">GNUPGHOME</code> or
+(on Windows systems) by means of the Registry entry
+<var class="var">HKCU\Software\GNU\GnuPG:HomeDir</var>.
+</p>
+<p>On Windows systems it is possible to install GnuPG as a portable
+application.  In this case only this command line option is
+considered, all other ways to set a home directory are ignored.
+</p>
+
+</dd>
+<dt><code class="code">-v</code></dt>
+<dt><a class="index-entry-id" id="index-verbose-4"></a>
+<a id="index-v-2"></a><span><code class="code">--verbose</code><a class="copiable-link" href="#index-v-2"> &para;</a></span></dt>
+<dd><p>Outputs additional information while running.
+You can increase the verbosity by giving several
+verbose commands to <code class="command">gpgsm</code>, such as &lsquo;<samp class="samp">-vv</samp>&rsquo;.
+</p>
+</dd>
+<dt><a id="index-debug_002dlevel-4"></a><span><code class="code">--debug-level <var class="var">level</var></code><a class="copiable-link" href="#index-debug_002dlevel-4"> &para;</a></span></dt>
+<dd><p>Select the debug level for investigating problems.  <var class="var">level</var> may be
+a numeric value or a keyword:
+</p>
+<dl class="table">
+<dt><code class="code">none</code></dt>
+<dd><p>No debugging at all.  A value of less than 1 may be used instead of
+the keyword.
+</p></dd>
+<dt><code class="code">basic</code></dt>
+<dd><p>Some basic debug messages.  A value between 1 and 2 may be used
+instead of the keyword.
+</p></dd>
+<dt><code class="code">advanced</code></dt>
+<dd><p>More verbose debug messages.  A value between 3 and 5 may be used
+instead of the keyword.
+</p></dd>
+<dt><code class="code">expert</code></dt>
+<dd><p>Even more detailed messages.  A value between 6 and 8 may be used
+instead of the keyword.
+</p></dd>
+<dt><code class="code">guru</code></dt>
+<dd><p>All of the debug messages you can get. A value greater than 8 may be
+used instead of the keyword.  The creation of hash tracing files is
+only enabled if the keyword is used.
+</p></dd>
+</dl>
+
+<p>How these messages are mapped to the actual debugging flags is not
+specified and may change with newer releases of this program. They are
+however carefully selected to best aid in debugging.
+</p>
+<blockquote class="quotation">
+<p><b class="b">Note:</b> All debugging options are subject to change and thus should not be used
+by any application program.  As the name says, they are only used as
+helpers to debug problems.
+</p></blockquote>
+
+
+</dd>
+<dt><a id="index-debug-4"></a><span><code class="code">--debug <var class="var">flags</var></code><a class="copiable-link" href="#index-debug-4"> &para;</a></span></dt>
+<dd><p>Set debug flags.  All flags are or-ed and <var class="var">flags</var> may be given
+in C syntax (e.g. 0x0042) or as a comma separated list of flag names.
+To get a list of all supported flags the single word &quot;help&quot; can be
+used. This option is only useful for debugging and the behavior may
+change at any time without notice.
+</p>
+</dd>
+<dt><a id="index-debug_002dall-4"></a><span><code class="code">--debug-all</code><a class="copiable-link" href="#index-debug_002dall-4"> &para;</a></span></dt>
+<dd><p>Same as <code class="code">--debug=0xffffffff</code>
+</p>
+</dd>
+<dt><a id="index-debug_002dwait-2"></a><span><code class="code">--debug-wait <var class="var">n</var></code><a class="copiable-link" href="#index-debug_002dwait-2"> &para;</a></span></dt>
+<dd><p>When running in server mode, wait <var class="var">n</var> seconds before entering the
+actual processing loop and print the pid.  This gives time to attach a
+debugger.
+</p>
+</dd>
+<dt><a id="index-debug_002dwait-3"></a><span><code class="code">--debug-ccid-driver</code><a class="copiable-link" href="#index-debug_002dwait-3"> &para;</a></span></dt>
+<dd><p>Enable debug output from the included CCID driver for smartcards.
+Using this option twice will also enable some tracing of the T=1
+protocol.  Note that this option may reveal sensitive data.
+</p>
+</dd>
+<dt><a id="index-debug_002ddisable_002dticker"></a><span><code class="code">--debug-disable-ticker</code><a class="copiable-link" href="#index-debug_002ddisable_002dticker"> &para;</a></span></dt>
+<dd><p>This option disables all ticker functions like checking for card
+insertions.
+</p>
+</dd>
+<dt><a id="index-debug_002dallow_002dcore_002ddump-1"></a><span><code class="code">--debug-allow-core-dump</code><a class="copiable-link" href="#index-debug_002dallow_002dcore_002ddump-1"> &para;</a></span></dt>
+<dd><p>For security reasons we won&rsquo;t create a core dump when the process
+aborts.  For debugging purposes it is sometimes better to allow core
+dump.  This option enables it and also changes the working directory to
+<samp class="file">/tmp</samp> when running in <samp class="option">--server</samp> mode.
+</p>
+</dd>
+<dt><a id="index-debug_002dlog_002dtid"></a><span><code class="code">--debug-log-tid</code><a class="copiable-link" href="#index-debug_002dlog_002dtid"> &para;</a></span></dt>
+<dd><p>This option appends a thread ID to the PID in the log output.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-ASSUAN_005fDEBUG"></a>
+<a id="index-debug_002dassuan_002dlog_002dcats"></a><span><code class="code">--debug-assuan-log-cats <var class="var">cats</var></code><a class="copiable-link" href="#index-debug_002dassuan_002dlog_002dcats"> &para;</a></span></dt>
+<dd><p>Changes the active Libassuan logging categories to <var class="var">cats</var>.  The
+value for <var class="var">cats</var> is an unsigned integer given in usual C-Syntax.
+A value of 0 switches to a default category.  If this option is not
+used the categories are taken from the environment variable
+<code class="code">ASSUAN_DEBUG</code>.  Note that this option has only an effect if the
+Assuan debug flag has also been with the option <samp class="option">--debug</samp>.  For
+a list of categories see the Libassuan manual.
+</p>
+</dd>
+<dt><a id="index-no_002ddetach-1"></a><span><code class="code">--no-detach</code><a class="copiable-link" href="#index-no_002ddetach-1"> &para;</a></span></dt>
+<dd><p>Don&rsquo;t detach the process from the console.  This is mainly useful for
+debugging.
+</p>
+</dd>
+<dt><a id="index-listen_002dbacklog-2"></a><span><code class="code">--listen-backlog <var class="var">n</var></code><a class="copiable-link" href="#index-listen_002dbacklog-2"> &para;</a></span></dt>
+<dd><p>Set the size of the queue for pending connections.  The default is 64.
+This option has an effect only if <samp class="option">--multi-server</samp> is also
+used.
+</p>
+</dd>
+<dt><a id="index-log_002dfile-4"></a><span><code class="code">--log-file <var class="var">file</var></code><a class="copiable-link" href="#index-log_002dfile-4"> &para;</a></span></dt>
+<dd><p>Append all logging output to <var class="var">file</var>.  This is very helpful in
+seeing what the agent actually does.  Use <samp class="file">socket://</samp> to log to
+socket.
+</p>
+</dd>
+<dt><a id="index-pcsc_002dshared"></a><span><code class="code">--pcsc-shared</code><a class="copiable-link" href="#index-pcsc_002dshared"> &para;</a></span></dt>
+<dd><p>Use shared mode to access the card via PC/SC.  This is a somewhat
+dangerous option because Scdaemon assumes exclusive access to the
+card and for example caches certain information from the card.  Use
+this option only if you know what you are doing.
+</p>
+</dd>
+<dt><a id="index-pcsc_002ddriver"></a><span><code class="code">--pcsc-driver <var class="var">library</var></code><a class="copiable-link" href="#index-pcsc_002ddriver"> &para;</a></span></dt>
+<dd><p>Use <var class="var">library</var> to access the smartcard reader.  The current default
+on Unix is <samp class="file">libpcsclite.so</samp> and on Windows <samp class="file">winscard.dll</samp>.
+Instead of using this option you might also want to install a symbolic
+link to the default file name (e.g. from <samp class="file">libpcsclite.so.1</samp>).
+A Unicode file name may not be used on Windows.
+</p>
+</dd>
+<dt><a id="index-disable_002dccid"></a><span><code class="code">--disable-ccid</code><a class="copiable-link" href="#index-disable_002dccid"> &para;</a></span></dt>
+<dd><p>The integrated CCID driver for CCID compliant devices can be available
+when libusb was detected at build time, and it is used to access the
+smartcard reader.  If access via PC/SC driver is needed, please
+configure this option to disable CCID driver support (if any).  In
+GnuPG 2.2, there was a fallback mechanism from CCID driver to PC/SC
+driver.  The fallback mechanism worked, because scdaemon in GnuPG 2.2
+only supported a single token/reader.  To support of multiple
+tokens/readers at the same time, fallback mechanism was removed.
+</p>
+</dd>
+<dt><a id="index-reader_002dport"></a><span><code class="code">--reader-port <var class="var">number_or_string</var></code><a class="copiable-link" href="#index-reader_002dport"> &para;</a></span></dt>
+<dd><p>This option may be used to specify the port of the card terminal.  A
+value of 0 refers to the first serial device; add 32768 to access USB
+devices.  The default is 32768 (first USB device).  PC/SC or CCID
+readers might need a string here; run the program in verbose mode to get
+a list of available readers.  The default is then the first reader
+found.
+</p>
+<p>To get a list of available CCID readers you may use this command:
+</p><table class="cartouche" border="1"><tr><td>
+<div class="example smallexample">
+<pre class="example-preformatted">  echo scd getinfo reader_list \
+    | gpg-connect-agent --decode | awk '/^D/ {print $2}'
+</pre></div>
+</td></tr></table>
+
+</dd>
+<dt><a id="index-card_002dtimeout"></a><span><code class="code">--card-timeout <var class="var">n</var></code><a class="copiable-link" href="#index-card_002dtimeout"> &para;</a></span></dt>
+<dd><p>This option is deprecated.  In GnuPG 2.0, it used to be used for
+DISCONNECT command to control timing issue.  Since DISCONNECT command
+works synchronously, it has no effect.
+</p>
+</dd>
+<dt><a id="index-enable_002dpinpad_002dvarlen"></a><span><code class="code">--enable-pinpad-varlen</code><a class="copiable-link" href="#index-enable_002dpinpad_002dvarlen"> &para;</a></span></dt>
+<dd><p>Please specify this option when the card reader supports variable
+length input for pinpad (default is no).  For known readers (listed in
+ccid-driver.c and apdu.c), this option is not needed.  Note that if
+your card reader doesn&rsquo;t supports variable length input but you want
+to use it, you need to specify your pinpad request on your card.
+</p>
+
+</dd>
+<dt><a id="index-disable_002dpinpad"></a><span><code class="code">--disable-pinpad</code><a class="copiable-link" href="#index-disable_002dpinpad"> &para;</a></span></dt>
+<dd><p>Even if a card reader features a pinpad, do not try to use it.
+</p>
+
+</dd>
+<dt><a class="index-entry-id" id="index-allow_002dadmin"></a>
+<a id="index-deny_002dadmin"></a><span><code class="code">--deny-admin</code><a class="copiable-link" href="#index-deny_002dadmin"> &para;</a></span></dt>
+<dd><p>This option disables the use of admin class commands for card
+applications where this is supported.  Currently we support it for the
+OpenPGP card. This option is useful to inhibit accidental access to
+admin class command which could ultimately lock the card through wrong
+PIN numbers.  Note that GnuPG versions older than 2.0.11 featured an
+<samp class="option">--allow-admin</samp> option which was required to use such admin
+commands.  This option has no more effect today because the default is
+now to allow admin commands.
+</p>
+</dd>
+<dt><a id="index-disable_002dapplication"></a><span><code class="code">--disable-application <var class="var">name</var></code><a class="copiable-link" href="#index-disable_002dapplication"> &para;</a></span></dt>
+<dd><p>This option disables the use of the card application named
+<var class="var">name</var>.  This is mainly useful for debugging or if a application
+with lower priority should be used by default.
+</p>
+</dd>
+<dt><a id="index-application_002dpriority"></a><span><code class="code">--application-priority <var class="var">namelist</var></code><a class="copiable-link" href="#index-application_002dpriority"> &para;</a></span></dt>
+<dd><p>This option allows one to change the order in which applications of a card
+a tried if no specific application was requested.  <var class="var">namelist</var> is a
+space or comma delimited list of application names.  Unknown names are
+simply skipped.  Applications not mentioned in the list are put in the
+former order at the end of the new priority list.
+</p>
+<p>To get the list of current active applications, use
+</p><table class="cartouche" border="1"><tr><td>
+<div class="example smallexample">
+<pre class="example-preformatted">    gpg-connect-agent 'scd getinfo app_list' /bye
+</pre></div>
+</td></tr></table>
+
+</dd>
+</dl>
+
+<p>All the long options may also be given in the configuration file after
+stripping off the two leading dashes.
+</p>
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Card-applications.html">Description of card applications</a>, Previous: <a href="Scdaemon-Commands.html">Commands</a>, Up: <a href="Invoking-SCDAEMON.html">Invoking the SCDAEMON</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

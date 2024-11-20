@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Scdaemon Protocol (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Scdaemon Protocol (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Scdaemon Protocol (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Invoking-SCDAEMON.html" rel="up" title="Invoking SCDAEMON">
+<link href="Scdaemon-Examples.html" rel="prev" title="Scdaemon Examples">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="Scdaemon-Protocol">
+<div class="nav-panel">
+<p>
+Previous: <a href="Scdaemon-Examples.html" accesskey="p" rel="prev">Examples</a>, Up: <a href="Invoking-SCDAEMON.html" accesskey="u" rel="up">Invoking the SCDAEMON</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="Scdaemon_0027s-Assuan-Protocol"><span>6.6 Scdaemon&rsquo;s Assuan Protocol<a class="copiable-link" href="#Scdaemon_0027s-Assuan-Protocol"> &para;</a></span></h3>
+
+<p>The SC-Daemon should be started by the system to provide access to
+external tokens.  Using Smartcards on a multi-user system does not
+make much sense except for system services, but in this case no
+regular user accounts are hosted on the machine.
+</p>
+<p>A client connects to the SC-Daemon by connecting to the socket named
+<samp class="file">/var/run/gnupg/scdaemon/socket</samp>, configuration information
+is read from <var class="var">/etc/gnupg/scdaemon.conf</var>
+</p>
+<p>Each connection acts as one session, SC-Daemon takes care of
+synchronizing access to a token between sessions.
+</p>
+
+<ul class="mini-toc">
+<li><a href="Scdaemon-SERIALNO.html" accesskey="1">Return the serial number</a></li>
+<li><a href="Scdaemon-LEARN.html" accesskey="2">Read all useful information from the card</a></li>
+<li><a href="Scdaemon-READCERT.html" accesskey="3">Return a certificate</a></li>
+<li><a href="Scdaemon-READKEY.html" accesskey="4">Return a public key</a></li>
+<li><a href="Scdaemon-PKSIGN.html" accesskey="5">Signing data with a Smartcard</a></li>
+<li><a href="Scdaemon-PKDECRYPT.html" accesskey="6">Decrypting data with a Smartcard</a></li>
+<li><a href="Scdaemon-GETATTR.html" accesskey="7">Read an attribute&rsquo;s value</a></li>
+<li><a href="Scdaemon-SETATTR.html" accesskey="8">Update an attribute&rsquo;s value</a></li>
+<li><a href="Scdaemon-WRITEKEY.html" accesskey="9">Write a key to a card</a></li>
+<li><a href="Scdaemon-GENKEY.html">Generate a new key on-card</a></li>
+<li><a href="Scdaemon-RANDOM.html">Return random bytes generated on-card</a></li>
+<li><a href="Scdaemon-PASSWD.html">Change PINs</a></li>
+<li><a href="Scdaemon-CHECKPIN.html">Perform a VERIFY operation</a></li>
+<li><a href="Scdaemon-RESTART.html">Perform a RESTART operation</a></li>
+<li><a href="Scdaemon-APDU.html">Send a verbatim APDU to the card</a></li>
+</ul>
+</div>
+
+
+
+</body>
+</html>

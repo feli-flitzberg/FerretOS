@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>OpenPGP Key Management (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="OpenPGP Key Management (Using the GNU Privacy Guard)">
+<meta name="keywords" content="OpenPGP Key Management (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="GPG-Commands.html" rel="up" title="GPG Commands">
+<link href="Operational-GPG-Commands.html" rel="prev" title="Operational GPG Commands">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="OpenPGP-Key-Management">
+<div class="nav-panel">
+<p>
+Previous: <a href="Operational-GPG-Commands.html" accesskey="p" rel="prev">Commands to select the type of operation</a>, Up: <a href="GPG-Commands.html" accesskey="u" rel="up">Commands</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="How-to-manage-your-keys"><span>4.1.3 How to manage your keys<a class="copiable-link" href="#How-to-manage-your-keys"> &para;</a></span></h4>
+
+<p>This section explains the main commands for key management.
+</p>
+<dl class="table">
+<dt><a class="index-entry-id" id="index-quick_002dgen_002dkey"></a>
+<a id="index-quick_002dgenerate_002dkey"></a><span><code class="code">--quick-generate-key <var class="var">user-id</var> [<var class="var">algo</var> [<var class="var">usage</var> [<var class="var">expire</var>]]]</code><a class="copiable-link" href="#index-quick_002dgenerate_002dkey"> &para;</a></span></dt>
+<dt><code class="code">--quick-gen-key</code></dt>
+<dd><p>This is a simple command to generate a standard key with one user id.
+In contrast to <samp class="option">--generate-key</samp> the key is generated directly
+without the need to answer a bunch of prompts.  Unless the option
+<samp class="option">--yes</samp> is given, the key creation will be canceled if the
+given user id already exists in the keyring.
+</p>
+<p>If invoked directly on the console without any special options an
+answer to a &ldquo;Continue?&rdquo; style confirmation prompt is required.  In
+case the user id already exists in the keyring a second prompt to
+force the creation of the key will show up.
+</p>
+<p>If <var class="var">algo</var> or <var class="var">usage</var> are given, only the primary key is
+created and no prompts are shown.  To specify an expiration date but
+still create a primary and subkey use &ldquo;default&rdquo; or
+&ldquo;future-default&rdquo; for <var class="var">algo</var> and &ldquo;default&rdquo; for <var class="var">usage</var>.
+For a description of these optional arguments see the command
+<code class="code">--quick-add-key</code>.  The <var class="var">usage</var> accepts also the value
+&ldquo;cert&rdquo; which can be used to create a certification only primary key;
+the default is to a create certification and signing key.
+</p>
+<p>The <var class="var">expire</var> argument can be used to specify an expiration date
+for the key.  Several formats are supported; commonly the ISO formats
+&ldquo;YYYY-MM-DD&rdquo; or &ldquo;YYYYMMDDThhmmss&rdquo; are used.  To make the key
+expire in N seconds, N days, N weeks, N months, or N years use
+&ldquo;seconds=N&rdquo;, &ldquo;Nd&rdquo;, &ldquo;Nw&rdquo;, &ldquo;Nm&rdquo;, or &ldquo;Ny&rdquo; respectively.  Not
+specifying a value, or using &ldquo;-&rdquo; results in a key expiring in a
+reasonable default interval.  The values &ldquo;never&rdquo;, &ldquo;none&rdquo; can be
+used for no expiration date.
+</p>
+<p>If this command is used with <samp class="option">--batch</samp>,
+<samp class="option">--pinentry-mode</samp> has been set to <code class="code">loopback</code>, and one of
+the passphrase options (<samp class="option">--passphrase</samp>,
+<samp class="option">--passphrase-fd</samp>, or <samp class="option">--passphrase-file</samp>) is used, the
+supplied passphrase is used for the new key and the agent does not ask
+for it.  To create a key without any protection <code class="code">--passphrase ''</code>
+may be used.
+</p>
+<p>To create an OpenPGP key from the keys available on the currently
+inserted smartcard, the special string &ldquo;card&rdquo; can be used for
+<var class="var">algo</var>.  If the card features an encryption and a signing key, gpg
+will figure them out and creates an OpenPGP key consisting of the
+usual primary key and one subkey.  This works only with certain
+smartcards.  Note that the interactive <samp class="option">--full-gen-key</samp> command
+allows one to do the same but with greater flexibility in the selection of
+the smartcard keys.
+</p>
+<p>Note that it is possible to create a primary key and a subkey using
+non-default algorithms by using &ldquo;default&rdquo; and changing the default
+parameters using the option <samp class="option">--default-new-key-algo</samp>.
+</p>
+</dd>
+<dt><a id="index-quick_002dset_002dexpire"></a><span><code class="code">--quick-set-expire <var class="var">fpr</var> <var class="var">expire</var> [*|<var class="var">subfprs</var>]</code><a class="copiable-link" href="#index-quick_002dset_002dexpire"> &para;</a></span></dt>
+<dd><p>With two arguments given, directly set the expiration time of the
+primary key identified by <var class="var">fpr</var> to <var class="var">expire</var>.  To remove the
+expiration time <code class="code">0</code> can be used.  With three arguments and the
+third given as an asterisk, the expiration time of all non-revoked and
+not yet expired subkeys are set to <var class="var">expire</var>.  With more than two
+arguments and a list of fingerprints given for <var class="var">subfprs</var>, all
+non-revoked subkeys matching these fingerprints are set to
+<var class="var">expire</var>.
+</p>
+
+</dd>
+<dt><a id="index-quick_002dadd_002dkey"></a><span><code class="code">--quick-add-key <var class="var">fpr</var> [<var class="var">algo</var> [<var class="var">usage</var> [<var class="var">expire</var>]]]</code><a class="copiable-link" href="#index-quick_002dadd_002dkey"> &para;</a></span></dt>
+<dd><p>Directly add a subkey to the key identified by the fingerprint
+<var class="var">fpr</var>.  Without the optional arguments an encryption subkey is
+added.  If any of the arguments are given a more specific subkey is
+added.
+</p>
+<p><var class="var">algo</var> may be any of the supported algorithms or curve names
+given in the format as used by key listings.  To use the default
+algorithm the string &ldquo;default&rdquo; or &ldquo;-&rdquo; can be used.  Supported
+algorithms are &ldquo;rsa&rdquo;, &ldquo;dsa&rdquo;, &ldquo;elg&rdquo;, &ldquo;ed25519&rdquo;, &ldquo;cv25519&rdquo;,
+and other ECC curves.  For example the string &ldquo;rsa&rdquo; adds an RSA key
+with the default key length; a string &ldquo;rsa4096&rdquo; requests that the
+key length is 4096 bits.  The string &ldquo;future-default&rdquo; is an alias
+for the algorithm which will likely be used as default algorithm in
+future versions of gpg.  To list the supported ECC curves the command
+<code class="code">gpg --with-colons --list-config curve</code> can be used.
+</p>
+<p>Depending on the given <var class="var">algo</var> the subkey may either be an
+encryption subkey or a signing subkey.  If an algorithm is capable of
+signing and encryption and such a subkey is desired, a <var class="var">usage</var>
+string must be given.  This string is either &ldquo;default&rdquo; or &ldquo;-&rdquo; to
+keep the default or a comma delimited list (or space delimited list)
+of keywords: &ldquo;sign&rdquo; for a signing subkey, &ldquo;auth&rdquo; for an
+authentication subkey, and &ldquo;encr&rdquo; for an encryption subkey
+(&ldquo;encrypt&rdquo; can be used as alias for &ldquo;encr&rdquo;).  The valid
+combinations depend on the algorithm.
+</p>
+<p>The <var class="var">expire</var> argument can be used to specify an expiration date
+for the key.  Several formats are supported; commonly the ISO formats
+&ldquo;YYYY-MM-DD&rdquo; or &ldquo;YYYYMMDDThhmmss&rdquo; are used.  To make the key
+expire in N seconds, N days, N weeks, N months, or N years use
+&ldquo;seconds=N&rdquo;, &ldquo;Nd&rdquo;, &ldquo;Nw&rdquo;, &ldquo;Nm&rdquo;, or &ldquo;Ny&rdquo; respectively.  Not
+specifying a value, or using &ldquo;-&rdquo; results in a key expiring in a
+reasonable default interval.  The values &ldquo;never&rdquo;, &ldquo;none&rdquo; can be
+used for no expiration date.
+</p>
+</dd>
+<dt><a id="index-quick_002dadd_002dadsk"></a><span><code class="code">--quick-add-adsk <var class="var">fpr</var> <var class="var">adskfpr</var></code><a class="copiable-link" href="#index-quick_002dadd_002dadsk"> &para;</a></span></dt>
+<dd><p>Directly add an Additional Decryption Subkey to the key identified by
+the fingerprint <var class="var">fpr</var>.  <var class="var">adskfpr</var> is the fingerprint of
+another key&rsquo;s encryption subkey.  A subkey is commonly used here
+because by default a primary key has no encryption capability.  Use
+the option <samp class="option">--with-subkey-fingerprint</samp> with a list command to
+display the subkey fingerprints.
+</p>
+</dd>
+<dt><a id="index-gen_002dkey"></a><span><code class="code">--generate-key</code><a class="copiable-link" href="#index-gen_002dkey"> &para;</a></span></dt>
+<dd><a class="index-entry-id" id="index-generate_002dkey"></a>
+</dd>
+<dt><code class="code">--gen-key</code></dt>
+<dd><p>Generate a new key pair using the current default parameters.  This is
+the standard command to create a new key.  In addition to the key a
+revocation certificate is created and stored in the
+<samp class="file">openpgp-revocs.d</samp> directory below the GnuPG home directory.
+</p>
+</dd>
+<dt><a id="index-full_002dgen_002dkey"></a><span><code class="code">--full-generate-key</code><a class="copiable-link" href="#index-full_002dgen_002dkey"> &para;</a></span></dt>
+<dd><a class="index-entry-id" id="index-full_002dgenerate_002dkey"></a>
+</dd>
+<dt><code class="code">--full-gen-key</code></dt>
+<dd><p>Generate a new key pair with dialogs for all options.  This is an
+extended version of <samp class="option">--generate-key</samp>.
+</p>
+<p>There is also a feature which allows you to create keys in batch
+mode. See the manual section &ldquo;Unattended key generation&rdquo; on how
+to use this.
+</p>
+
+</dd>
+<dt><a id="index-gen_002drevoke"></a><span><code class="code">--generate-revocation <var class="var">name</var></code><a class="copiable-link" href="#index-gen_002drevoke"> &para;</a></span></dt>
+<dd><a class="index-entry-id" id="index-generate_002drevocation"></a>
+</dd>
+<dt><code class="code">--gen-revoke <var class="var">name</var></code></dt>
+<dd><p>Generate a revocation certificate for the complete key.  To only revoke
+a subkey or a key signature, use the <samp class="option">--edit</samp> command.
+</p>
+<p>This command merely creates the revocation certificate so that it can
+be used to revoke the key if that is ever needed.  To actually revoke
+a key the created revocation certificate needs to be merged with the
+key to revoke.  This is done by importing the revocation certificate
+using the <samp class="option">--import</samp> command.  Then the revoked key needs to be
+published, which is best done by sending the key to a keyserver
+(command <samp class="option">--send-key</samp>) and by exporting (<samp class="option">--export</samp>) it
+to a file which is then send to frequent communication partners.
+</p>
+
+</dd>
+<dt><a id="index-desig_002drevoke"></a><span><code class="code">--generate-designated-revocation <var class="var">name</var></code><a class="copiable-link" href="#index-desig_002drevoke"> &para;</a></span></dt>
+<dd><a class="index-entry-id" id="index-generate_002ddesignated_002drevocation"></a>
+</dd>
+<dt><code class="code">--desig-revoke <var class="var">name</var></code></dt>
+<dd><p>Generate a designated revocation certificate for a key. This allows a
+user (with the permission of the keyholder) to revoke someone else&rsquo;s
+key.
+</p>
+
+</dd>
+<dt><a id="index-edit_002dkey"></a><span><code class="code">--edit-key</code><a class="copiable-link" href="#index-edit_002dkey"> &para;</a></span></dt>
+<dd><p>Present a menu which enables you to do most of the key management
+related tasks.  It expects the specification of a key on the command
+line.
+</p>
+<dl class="table">
+<dt>uid <var class="var">n</var></dt>
+<dd><a class="index-entry-id" id="index-keyedit_003auid"></a>
+<p>Toggle selection of user ID or photographic user ID with index <var class="var">n</var>.
+  Use <code class="code">*</code> to select all and <code class="code">0</code> to deselect all.
+</p>
+</dd>
+<dt>key <var class="var">n</var></dt>
+<dd><a class="index-entry-id" id="index-keyedit_003akey"></a>
+<p>Toggle selection of subkey with index <var class="var">n</var> or key ID <var class="var">n</var>.
+  Use <code class="code">*</code> to select all and <code class="code">0</code> to deselect all.
+</p>
+</dd>
+<dt>sign</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003asign"></a>
+<p>Make a signature on key of user <code class="code">name</code>. If the key is not yet
+  signed by the default user (or the users given with <samp class="option">-u</samp>), the program
+  displays the information of the key again, together with its
+  fingerprint and asks whether it should be signed. This question is
+  repeated for all users specified with
+  <samp class="option">-u</samp>.
+</p>
+</dd>
+<dt>lsign</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003alsign"></a>
+<p>Same as &quot;sign&quot; but the signature is marked as non-exportable and will
+  therefore never be used by others. This may be used to make keys
+  valid only in the local environment.
+</p>
+</dd>
+<dt>nrsign</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003anrsign"></a>
+<p>Same as &quot;sign&quot; but the signature is marked as non-revocable and can
+  therefore never be revoked.
+</p>
+</dd>
+<dt>tsign</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003atsign"></a>
+<p>Make a trust signature. This is a signature that combines the notions
+  of certification (like a regular signature), and trust (like the
+  &quot;trust&quot; command). It is generally useful in distinct communities
+  or groups to implement the concept of a Trusted Introducer.  For
+  more information please read the sections &ldquo;Trust Signature&rdquo; and
+  &ldquo;Regular Expression&rdquo; in RFC-4880.
+</p></dd>
+</dl>
+
+<p>Note that &quot;l&quot; (for local / non-exportable), &quot;nr&quot; (for non-revocable,
+and &quot;t&quot; (for trust) may be freely mixed and prefixed to &quot;sign&quot; to
+create a signature of any type desired.
+</p>
+<p>If the option <samp class="option">--only-sign-text-ids</samp> is specified, then any
+non-text based user ids (e.g., photo IDs) will not be selected for
+signing.
+</p>
+<dl class="table">
+<dt>delsig</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003adelsig"></a>
+<p>Delete a signature. Note that it is not possible to retract a signature,
+  once it has been send to the public (i.e. to a keyserver).  In that case
+  you better use <code class="code">revsig</code>.
+</p>
+</dd>
+<dt>revsig</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003arevsig"></a>
+<p>Revoke a signature. For every signature which has been generated by
+  one of the secret keys, GnuPG asks whether a revocation certificate
+  should be generated.
+</p>
+</dd>
+<dt>check</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003acheck"></a>
+<p>Check the signatures on all selected user IDs.  With the extra
+  option <code class="code">selfsig</code> only self-signatures are shown.
+</p>
+</dd>
+<dt>adduid</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003aadduid"></a>
+<p>Create an additional user ID.
+</p>
+</dd>
+<dt>addphoto</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003aaddphoto"></a>
+<p>Create a photographic user ID. This will prompt for a JPEG file that
+  will be embedded into the user ID. Note that a very large JPEG will make
+  for a very large key. Also note that some programs will display your
+  JPEG unchanged (GnuPG), and some programs will scale it to fit in a
+  dialog box (PGP).
+</p>
+</dd>
+<dt>showphoto</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003ashowphoto"></a>
+<p>Display the selected photographic user ID.
+</p>
+</dd>
+<dt>deluid</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003adeluid"></a>
+<p>Delete a user ID or photographic user ID.  Note that it is not
+  possible to retract a user id, once it has been send to the public
+  (i.e. to a keyserver).  In that case you better use <code class="code">revuid</code>.
+</p>
+</dd>
+<dt>revuid</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003arevuid"></a>
+<p>Revoke a user ID or photographic user ID.
+</p>
+</dd>
+<dt>primary</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003aprimary"></a>
+<p>Flag the current user id as the primary one, removes the primary user
+  id flag from all other user ids and sets the timestamp of all affected
+  self-signatures one second ahead. Note that setting a photo user ID
+  as primary makes it primary over other photo user IDs, and setting a
+  regular user ID as primary makes it primary over other regular user
+  IDs.
+</p>
+</dd>
+<dt>keyserver</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003akeyserver"></a>
+<p>Set a preferred keyserver for the specified user ID(s). This allows
+  other users to know where you prefer they get your key from. See
+  <samp class="option">--keyserver-options honor-keyserver-url</samp> for more on how this
+  works.  Setting a value of &quot;none&quot; removes an existing preferred
+  keyserver.
+</p>
+</dd>
+<dt>notation</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003anotation"></a>
+<p>Set a name=value notation for the specified user ID(s). See
+  <samp class="option">--cert-notation</samp> for more on how this works. Setting a value of
+  &quot;none&quot; removes all notations, setting a notation prefixed with a minus
+  sign (-) removes that notation, and setting a notation name (without the
+  =value) prefixed with a minus sign removes all notations with that name.
+</p>
+</dd>
+<dt>pref</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003apref"></a>
+<p>List preferences from the selected user ID. This shows the actual
+  preferences, without including any implied preferences.
+</p>
+</dd>
+<dt>showpref</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003ashowpref"></a>
+<p>More verbose preferences listing for the selected user ID. This shows
+  the preferences in effect by including the implied preferences of 3DES
+  (cipher), SHA-1 (digest), and Uncompressed (compression) if they are
+  not already included in the preference list. In addition, the
+  preferred keyserver and signature notations (if any) are shown.
+</p>
+</dd>
+<dt>setpref <var class="var">string</var></dt>
+<dd><a class="index-entry-id" id="index-keyedit_003asetpref"></a>
+<p>Set the list of user ID preferences to <var class="var">string</var> for all (or just
+  the selected) user IDs. Calling setpref with no arguments sets the
+  preference list to the default (either built-in or set via
+  <samp class="option">--default-preference-list</samp>), and calling setpref with &quot;none&quot;
+  as the argument sets an empty preference list. Use <code class="command">gpg
+  --version</code> to get a list of available algorithms. Note that while you
+  can change the preferences on an attribute user ID (aka &quot;photo ID&quot;),
+  GnuPG does not select keys via attribute user IDs so these preferences
+  will not be used by GnuPG.  Note that an unattended version of this
+  command is available as <samp class="option">--quick-update-pref</samp>.
+</p>
+<p>When setting preferences, you should list the algorithms in the order
+  which you&rsquo;d like to see them used by someone else when encrypting a
+  message to your key.  If you don&rsquo;t include 3DES, it will be
+  automatically added at the end.  Note that there are many factors that
+  go into choosing an algorithm (for example, your key may not be the
+  only recipient), and so the remote OpenPGP application being used to
+  send to you may or may not follow your exact chosen order for a given
+  message.  It will, however, only choose an algorithm that is present
+  on the preference list of every recipient key.  See also the
+  INTEROPERABILITY WITH OTHER OPENPGP PROGRAMS section below.
+</p>
+</dd>
+<dt>addkey</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003aaddkey"></a>
+<p>Add a subkey to this key.
+</p>
+</dd>
+<dt>addcardkey</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003aaddcardkey"></a>
+<p>Generate a subkey on a card and add it to this key.
+</p>
+</dd>
+<dt>keytocard</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003akeytocard"></a>
+<p>Transfer the selected secret subkey (or the primary key if no subkey
+  has been selected) to a smartcard. The secret key in the keyring will
+  be replaced by a stub if the key could be stored successfully on the
+  card and you use the save command later. Only certain key types may be
+  transferred to the card. A sub menu allows you to select on what card
+  to store the key. Note that it is not possible to get that key back
+  from the card - if the card gets broken your secret key will be lost
+  unless you have a backup somewhere.
+</p>
+</dd>
+<dt>bkuptocard <var class="var">file</var></dt>
+<dd><a class="index-entry-id" id="index-keyedit_003abkuptocard"></a>
+<p>Restore the given <var class="var">file</var> to a card. This command may be used to restore a
+  backup key (as generated during card initialization) to a new card. In
+  almost all cases this will be the encryption key. You should use this
+  command only with the corresponding public key and make sure that the
+  file given as argument is indeed the backup to restore. You should then
+  select 2 to restore as encryption key.  You will first be asked to enter
+  the passphrase of the backup key and then for the Admin PIN of the card.
+</p>
+</dd>
+<dt>keytotpm</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003akeytotpm"></a>
+<p>Transfer the selected secret subkey (or the primary key if no subkey
+  has been selected) to TPM form.  The secret key in the keyring will
+  be replaced by the TPM representation of that key, which can only be
+  read by the particular TPM that created it (so the keyfile now
+  becomes locked to the laptop containing the TPM).  Only certain key
+  types may be transferred to the TPM (all TPM 2.0 systems are
+  mandated to have the rsa2048 and nistp256 algorithms but newer TPMs
+  may have more). Note that the key itself is not transferred into the
+  TPM, merely encrypted by the TPM in-place, so if the keyfile is
+  deleted, the key will be lost.  Once transferred to TPM
+  representation, the key file can never be converted back to non-TPM
+  form and the key will die when the TPM does, so you should first
+  have a backup on secure offline storage of the actual secret key
+  file before conversion.  It is essential to use the physical system
+  TPM that you have rw permission on the TPM resource manager device
+  (/dev/tpmrm0).  Usually this means you must be a member of the tss
+  group.
+</p>
+</dd>
+<dt>delkey</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003adelkey"></a>
+<p>Remove a subkey (secondary key). Note that it is not possible to retract
+  a subkey, once it has been send to the public (i.e. to a keyserver).  In
+  that case you better use <code class="code">revkey</code>.  Also note that this only
+  deletes the public part of a key.
+</p>
+</dd>
+<dt>revkey</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003arevkey"></a>
+<p>Revoke a subkey.
+</p>
+</dd>
+<dt>expire</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003aexpire"></a>
+<p>Change the key or subkey expiration time. If a subkey is selected, the
+  expiration time of this subkey will be changed. With no selection, the
+  key expiration of the primary key is changed.
+</p>
+</dd>
+<dt>trust</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003atrust"></a>
+<p>Change the owner trust value for the key. This updates the trust-db
+  immediately and no save is required.
+</p>
+</dd>
+<dt>disable</dt>
+<dt>enable</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003adisable"></a>
+<a class="index-entry-id" id="index-keyedit_003aenable"></a>
+<p>Disable or enable an entire key. A disabled key can not normally be
+  used for encryption.
+</p>
+</dd>
+<dt>addrevoker</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003aaddrevoker"></a>
+<p>Add a designated revoker to the key. This takes one optional argument:
+  &quot;sensitive&quot;. If a designated revoker is marked as sensitive, it will
+  not be exported by default (see export-options).
+</p>
+</dd>
+<dt>addadsk</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003aaddadsk"></a>
+<p>Add an Additional Decryption Subkey.  The user is asked to enter the
+  fingerprint of another encryption subkey.  Note that the exact
+  fingerprint of another key&rsquo;s encryption subkey needs to be entered.
+  This is because commonly the primary key has no encryption
+  capability.  Use the option <samp class="option">--with-subkey-fingerprint</samp> with
+  a list command to display the subkey fingerprints.
+</p>
+</dd>
+<dt>passwd</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003apasswd"></a>
+<p>Change the passphrase of the secret key.
+</p>
+</dd>
+<dt>toggle</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003atoggle"></a>
+<p>This is dummy command which exists only for backward compatibility.
+</p>
+</dd>
+<dt>clean</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003aclean"></a>
+<p>Compact (by removing all signatures except the selfsig) any user ID
+  that is no longer usable (e.g. revoked, or expired). Then, remove any
+  signatures that are not usable by the trust calculations.
+  Specifically, this removes any signature that does not validate, any
+  signature that is superseded by a later signature, revoked signatures,
+  and signatures issued by keys that are not present on the keyring.
+</p>
+</dd>
+<dt>minimize</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003aminimize"></a>
+<p>Make the key as small as possible. This removes all signatures from
+  each user ID except for the most recent self-signature.
+</p>
+</dd>
+<dt>change-usage</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003achange_002dusage"></a>
+<p>Change the usage flags (capabilities) of the primary key or of
+  subkeys.  These usage flags (e.g. Certify, Sign, Authenticate,
+  Encrypt) are set during key creation.  Sometimes it is useful to
+  have the opportunity to change them (for example to add
+  Authenticate) after they have been created.  Please take care when
+  doing this; the allowed usage flags depend on the key algorithm.
+</p>
+</dd>
+<dt>cross-certify</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003across_002dcertify"></a>
+<p>Add cross-certification signatures to signing subkeys that may not
+  currently have them. Cross-certification signatures protect against a
+  subtle attack against signing subkeys. See
+  <samp class="option">--require-cross-certification</samp>.  All new keys generated have
+  this signature by default, so this command is only useful to bring
+  older keys up to date.
+</p>
+</dd>
+<dt>save</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003asave"></a>
+<p>Save all changes to the keyring and quit.
+</p>
+</dd>
+<dt>quit</dt>
+<dd><a class="index-entry-id" id="index-keyedit_003aquit"></a>
+<p>Quit the program without updating the
+  keyring.
+</p></dd>
+</dl>
+
+<p>The listing shows you the key with its secondary keys and all user
+IDs.  The primary user ID is indicated by a dot, and selected keys or
+user IDs are indicated by an asterisk.  The trust
+value is displayed with the primary key: &quot;trust&quot; is the assigned owner
+trust and &quot;validity&quot; is the calculated validity of the key.  Validity
+values are also displayed for all user IDs.
+For possible values of trust, see <a class="pxref" href="Trust-Values.html#trust_002dvalues">trust-values</a>.
+</p>
+</dd>
+<dt><a id="index-sign_002dkey"></a><span><code class="code">--sign-key <var class="var">name</var></code><a class="copiable-link" href="#index-sign_002dkey"> &para;</a></span></dt>
+<dd><p>Signs a public key with your secret key. This is a shortcut version of
+the subcommand &quot;sign&quot; from <samp class="option">--edit-key</samp>.
+</p>
+</dd>
+<dt><a id="index-lsign_002dkey"></a><span><code class="code">--lsign-key <var class="var">name</var></code><a class="copiable-link" href="#index-lsign_002dkey"> &para;</a></span></dt>
+<dd><p>Signs a public key with your secret key but marks it as
+non-exportable. This is a shortcut version of the subcommand &quot;lsign&quot;
+from <samp class="option">--edit-key</samp>.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-quick_002dlsign_002dkey"></a>
+<a id="index-quick_002dsign_002dkey"></a><span><code class="code">--quick-sign-key <var class="var">fpr</var> [<var class="var">names</var>]</code><a class="copiable-link" href="#index-quick_002dsign_002dkey"> &para;</a></span></dt>
+<dt><code class="code">--quick-lsign-key <var class="var">fpr</var> [<var class="var">names</var>]</code></dt>
+<dd><p>Directly sign a key from the passphrase without any further user
+interaction.  The <var class="var">fpr</var> must be the verified primary fingerprint
+of a key in the local keyring. If no <var class="var">names</var> are given, all
+useful user ids are signed; with given [<var class="var">names</var>] only useful user
+ids matching one of these names are signed.  By default, or if a name
+is prefixed with a &rsquo;*&rsquo;, a case insensitive substring match is used.
+If a name is prefixed with a &rsquo;=&rsquo; a case sensitive exact match is done.
+</p>
+<p>The command <samp class="option">--quick-lsign-key</samp> marks the signatures as
+non-exportable.  If such a non-exportable signature already exists the
+<samp class="option">--quick-sign-key</samp> turns it into a exportable signature.  If
+you need to update an existing signature, for example to add or change
+notation data, you need to use the option <samp class="option">--force-sign-key</samp>.
+</p>
+<p>This command uses reasonable defaults and thus does not provide the
+full flexibility of the &quot;sign&quot; subcommand from <samp class="option">--edit-key</samp>.
+Its intended use is to help unattended key signing by utilizing a list
+of verified fingerprints.
+</p>
+</dd>
+<dt><a id="index-quick_002dadd_002duid"></a><span><code class="code">--quick-add-uid  <var class="var">user-id</var> <var class="var">new-user-id</var></code><a class="copiable-link" href="#index-quick_002dadd_002duid"> &para;</a></span></dt>
+<dd><p>This command adds a new user id to an existing key.  In contrast to
+the interactive sub-command <code class="code">adduid</code> of <samp class="option">--edit-key</samp> the
+<var class="var">new-user-id</var> is added verbatim with only leading and trailing
+white space removed, it is expected to be UTF-8 encoded, and no checks
+on its form are applied.
+</p>
+</dd>
+<dt><a id="index-quick_002drevoke_002duid"></a><span><code class="code">--quick-revoke-uid  <var class="var">user-id</var> <var class="var">user-id-to-revoke</var></code><a class="copiable-link" href="#index-quick_002drevoke_002duid"> &para;</a></span></dt>
+<dd><p>This command revokes a user ID on an existing key.  It cannot be used
+to revoke the last user ID on key (some non-revoked user ID must
+remain), with revocation reason &ldquo;User ID is no longer valid&rdquo;.  If
+you want to specify a different revocation reason, or to supply
+supplementary revocation text, you should use the interactive
+sub-command <code class="code">revuid</code> of <samp class="option">--edit-key</samp>.
+</p>
+</dd>
+<dt><a id="index-quick_002drevoke_002dsig"></a><span><code class="code">--quick-revoke-sig  <var class="var">fpr</var> <var class="var">signing-fpr</var> [<var class="var">names</var>]</code><a class="copiable-link" href="#index-quick_002drevoke_002dsig"> &para;</a></span></dt>
+<dd><p>This command revokes the key signatures made by <var class="var">signing-fpr</var> from
+the key specified by the fingerprint <var class="var">fpr</var>.  With <var class="var">names</var>
+given only the signatures on user ids of the key matching any of the
+given names are affected (see <samp class="option">--quick-sign-key</samp>).  If a
+revocation already exists a notice is printed instead of creating a
+new revocation; no error is returned in this case.  Note that key
+signature revocations may be superseded by a newer key signature and
+in turn again revoked.
+</p>
+</dd>
+<dt><a id="index-quick_002dset_002dprimary_002duid"></a><span><code class="code">--quick-set-primary-uid  <var class="var">user-id</var> <var class="var">primary-user-id</var></code><a class="copiable-link" href="#index-quick_002dset_002dprimary_002duid"> &para;</a></span></dt>
+<dd><p>This command sets or updates the primary user ID flag on an existing
+key.  <var class="var">user-id</var> specifies the key and <var class="var">primary-user-id</var> the
+user ID which shall be flagged as the primary user ID.  The primary
+user ID flag is removed from all other user ids and the timestamp of
+all affected self-signatures is set one second ahead.
+</p>
+</dd>
+<dt><a id="index-quick_002dupdate_002dpref"></a><span><code class="code">--quick-update-pref  <var class="var">user-id</var></code><a class="copiable-link" href="#index-quick_002dupdate_002dpref"> &para;</a></span></dt>
+<dd><p>This command updates the preference list of the key to the current
+default value (either built-in or set via
+<samp class="option">--default-preference-list</samp>).  This is the unattended version
+of of using &quot;setpref&quot; in the <samp class="option">--key-edit</samp> menu without giving a
+list.  Note that you can show the preferences in a key listing by
+using <samp class="option">--list-options show-pref</samp> or <samp class="option">--list-options
+show-pref-verbose</samp>.  You should also re-distribute updated keys to
+your peers.
+</p>
+</dd>
+<dt><a id="index-passwd"></a><span><code class="code">--change-passphrase <var class="var">user-id</var></code><a class="copiable-link" href="#index-passwd"> &para;</a></span></dt>
+<dd><a class="index-entry-id" id="index-change_002dpassphrase"></a>
+</dd>
+<dt><code class="code">--passwd <var class="var">user-id</var></code></dt>
+<dd><p>Change the passphrase of the secret key belonging to the certificate
+specified as <var class="var">user-id</var>.  This is a shortcut for the sub-command
+<code class="code">passwd</code> of the <samp class="option">--edit-key</samp> menu.  When using together with the
+option <samp class="option">--dry-run</samp> this will not actually change the passphrase
+but check that the current passphrase is correct.
+</p>
+</dd>
+</dl>
+
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Previous: <a href="Operational-GPG-Commands.html">Commands to select the type of operation</a>, Up: <a href="GPG-Commands.html">Commands</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

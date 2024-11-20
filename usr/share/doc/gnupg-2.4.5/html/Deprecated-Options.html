@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Deprecated Options (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Deprecated Options (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Deprecated Options (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="GPG-Options.html" rel="up" title="GPG Options">
+<link href="GPG-Esoteric-Options.html" rel="prev" title="GPG Esoteric Options">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Deprecated-Options">
+<div class="nav-panel">
+<p>
+Previous: <a href="GPG-Esoteric-Options.html" accesskey="p" rel="prev">Doing things one usually doesn&rsquo;t want to do</a>, Up: <a href="GPG-Options.html" accesskey="u" rel="up">Option Summary</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Deprecated-options"><span>4.2.7 Deprecated options<a class="copiable-link" href="#Deprecated-options"> &para;</a></span></h4>
+
+<dl class="table">
+<dt><a id="index-textmode"></a><span><code class="code">-t, --textmode</code><a class="copiable-link" href="#index-textmode"> &para;</a></span></dt>
+<dt><code class="code">--no-textmode</code></dt>
+<dd><p>Treat input files as text and store them in the OpenPGP canonical text
+form with standard &quot;CRLF&quot; line endings. This also sets the necessary
+flags to inform the recipient that the encrypted or signed data is text
+and may need its line endings converted back to whatever the local
+system uses. This option was useful when communicating between two
+platforms with different line ending conventions (UNIX-like to Mac,
+Mac to Windows, etc). <samp class="option">--no-textmode</samp> disables this option, and
+is the default.  Note that this is a legacy option which should not
+anymore be used by any modern software.
+</p>
+</dd>
+<dt><code class="code">--force-v3-sigs</code></dt>
+<dt><code class="code">--no-force-v3-sigs</code></dt>
+<dt><code class="code">--force-v4-certs</code></dt>
+<dt><code class="code">--no-force-v4-certs</code></dt>
+<dd><p>These options are obsolete and have no effect since GnuPG 2.1.
+</p>
+</dd>
+<dt><a id="index-show_002dphotos"></a><span><code class="code">--show-photos</code><a class="copiable-link" href="#index-show_002dphotos"> &para;</a></span></dt>
+<dt><code class="code">--no-show-photos</code></dt>
+<dd><p>Causes <samp class="option">--list-keys</samp>, <samp class="option">--list-signatures</samp>,
+<samp class="option">--list-public-keys</samp>, <samp class="option">--list-secret-keys</samp>, and verifying
+a signature to also display the photo ID attached to the key, if
+any. See also <samp class="option">--photo-viewer</samp>. These options are deprecated. Use
+<samp class="option">--list-options [no-]show-photos</samp> and/or <samp class="option">--verify-options
+[no-]show-photos</samp> instead.
+</p>
+</dd>
+<dt><a id="index-show_002dkeyring"></a><span><code class="code">--show-keyring</code><a class="copiable-link" href="#index-show_002dkeyring"> &para;</a></span></dt>
+<dd><p>Display the keyring name at the head of key listings to show which
+keyring a given key resides on. This option is deprecated: use
+<samp class="option">--list-options [no-]show-keyring</samp> instead.
+</p>
+</dd>
+<dt><a id="index-show_002dnotation"></a><span><code class="code">--show-notation</code><a class="copiable-link" href="#index-show_002dnotation"> &para;</a></span></dt>
+<dt><code class="code">--no-show-notation</code></dt>
+<dd><p>Show signature notations in the <samp class="option">--list-signatures</samp> or <samp class="option">--check-signatures</samp> listings
+as well as when verifying a signature with a notation in it. These
+options are deprecated. Use <samp class="option">--list-options [no-]show-notation</samp>
+and/or <samp class="option">--verify-options [no-]show-notation</samp> instead.
+</p>
+</dd>
+<dt><a id="index-show_002dpolicy_002durl"></a><span><code class="code">--show-policy-url</code><a class="copiable-link" href="#index-show_002dpolicy_002durl"> &para;</a></span></dt>
+<dt><code class="code">--no-show-policy-url</code></dt>
+<dd><p>Show policy URLs in the <samp class="option">--list-signatures</samp> or <samp class="option">--check-signatures</samp>
+listings as well as when verifying a signature with a policy URL in
+it. These options are deprecated. Use <samp class="option">--list-options
+[no-]show-policy-url</samp> and/or <samp class="option">--verify-options
+[no-]show-policy-url</samp> instead.
+</p>
+</dd>
+<dt><a id="index-personal_002daead_002dpreferences"></a><span><code class="code">--personal-aead-preferences <var class="var">string</var></code><a class="copiable-link" href="#index-personal_002daead_002dpreferences"> &para;</a></span></dt>
+<dd><p>This option is deprecated and has no more effect since version 2.3.9.
+</p>
+</dd>
+<dt><code class="code">--aead-algo <var class="var">name</var></code></dt>
+<dd><p>This option is deprecated and has no more effect since version 2.3.9.
+</p>
+
+</dd>
+</dl>
+
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Previous: <a href="GPG-Esoteric-Options.html">Doing things one usually doesn&rsquo;t want to do</a>, Up: <a href="GPG-Options.html">Option Summary</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

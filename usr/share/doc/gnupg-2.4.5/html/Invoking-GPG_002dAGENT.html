@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Invoking GPG-AGENT (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Invoking GPG-AGENT (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Invoking GPG-AGENT (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="index.html" rel="up" title="Top">
+<link href="Invoking-DIRMNGR.html" rel="next" title="Invoking DIRMNGR">
+<link href="Installation.html" rel="prev" title="Installation">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="chapter-level-extent" id="Invoking-GPG_002dAGENT">
+<div class="nav-panel">
+<p>
+Next: <a href="Invoking-DIRMNGR.html" accesskey="n" rel="next">Invoking DIRMNGR</a>, Previous: <a href="Installation.html" accesskey="p" rel="prev">A short installation guide</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h2 class="chapter" id="Invoking-GPG_002dAGENT-1"><span>2 Invoking GPG-AGENT<a class="copiable-link" href="#Invoking-GPG_002dAGENT-1"> &para;</a></span></h2>
+<a class="index-entry-id" id="index-GPG_002dAGENT-command-options"></a>
+<a class="index-entry-id" id="index-command-options"></a>
+<a class="index-entry-id" id="index-options_002c-GPG_002dAGENT-command"></a>
+
+
+
+
+
+
+<p><code class="command">gpg-agent</code> is a daemon to manage secret (private) keys
+independently from any protocol.  It is used as a backend for
+<code class="command">gpg</code> and <code class="command">gpgsm</code> as well as for a couple of other
+utilities.
+</p>
+<p>The agent is automatically started on demand by <code class="command">gpg</code>,
+<code class="command">gpgsm</code>, <code class="command">gpgconf</code>, or <code class="command">gpg-connect-agent</code>.
+Thus there is no reason to start it manually.  In case you want to use
+the included Secure Shell Agent you may start the agent using:
+</p>
+
+<div class="example">
+<pre class="example-preformatted">gpg-connect-agent /bye
+</pre></div>
+
+<p>If you want to manually terminate the currently-running agent, you can
+safely do so with:
+</p>
+<div class="example">
+<pre class="example-preformatted">gpgconf --kill gpg-agent
+</pre></div>
+
+<a class="index-entry-id" id="index-GPG_005fTTY"></a>
+<p>You should always add the following lines to your <code class="code">.bashrc</code> or
+whatever initialization file is used for all shell invocations:
+</p>
+<div class="example smallexample">
+<pre class="example-preformatted">GPG_TTY=$(tty)
+export GPG_TTY
+</pre></div>
+
+<p>It is important that this environment variable always reflects the
+output of the <code class="code">tty</code> command.  For W32 systems this option is not
+required.
+</p>
+<p>Please make sure that a proper pinentry program has been installed
+under the default filename (which is system dependent) or use the
+option <samp class="option">pinentry-program</samp> to specify the full name of that program.
+It is often useful to install a symbolic link from the actual used
+pinentry (e.g. <samp class="file">/usr/bin/pinentry-gtk</samp>) to the expected
+one (e.g. <samp class="file">/usr/bin/pinentry</samp>).
+</p>
+
+<p>See <a class="xref" href="Option-Index.html">Option Index</a>, for an index to <code class="command">GPG-AGENT</code>&rsquo;s commands and options.
+</p>
+
+
+
+<ul class="mini-toc">
+<li><a href="Agent-Commands.html" accesskey="1">Commands</a></li>
+<li><a href="Agent-Options.html" accesskey="2">Option Summary</a></li>
+<li><a href="Agent-Configuration.html" accesskey="3">Configuration</a></li>
+<li><a href="Agent-Signals.html" accesskey="4">Use of some signals</a></li>
+<li><a href="Agent-Examples.html" accesskey="5">Examples</a></li>
+<li><a href="Agent-Protocol.html" accesskey="6">Agent&rsquo;s Assuan Protocol</a></li>
+</ul>
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Invoking-DIRMNGR.html">Invoking DIRMNGR</a>, Previous: <a href="Installation.html">A short installation guide</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>GPG Commands (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="GPG Commands (Using the GNU Privacy Guard)">
+<meta name="keywords" content="GPG Commands (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Invoking-GPG.html" rel="up" title="Invoking GPG">
+<link href="GPG-Options.html" rel="next" title="GPG Options">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="GPG-Commands">
+<div class="nav-panel">
+<p>
+Next: <a href="GPG-Options.html" accesskey="n" rel="next">Option Summary</a>, Up: <a href="Invoking-GPG.html" accesskey="u" rel="up">Invoking GPG</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="Commands-2"><span>4.1 Commands<a class="copiable-link" href="#Commands-2"> &para;</a></span></h3>
+
+<p>Commands are not distinguished from options except for the fact that
+only one command is allowed.  Generally speaking, irrelevant options
+are silently ignored, and may not be checked for correctness.
+</p>
+<p><code class="command">gpg</code> may be run with no commands. In this case it will
+print a warning perform a reasonable action depending on the type of
+file it is given as input (an encrypted message is decrypted, a
+signature is verified, a file containing keys is listed, etc.).
+</p>
+<p>If you run into any problems, please add the option <samp class="option">--verbose</samp>
+to the invocation to see more diagnostics.
+</p>
+
+
+
+<ul class="mini-toc">
+<li><a href="General-GPG-Commands.html" accesskey="1">Commands not specific to the function</a></li>
+<li><a href="Operational-GPG-Commands.html" accesskey="2">Commands to select the type of operation</a></li>
+<li><a href="OpenPGP-Key-Management.html" accesskey="3">How to manage your keys</a></li>
+</ul>
+</div>
+
+
+
+</body>
+</html>

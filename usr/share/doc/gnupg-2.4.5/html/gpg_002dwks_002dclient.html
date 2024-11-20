@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>gpg-wks-client (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="gpg-wks-client (Using the GNU Privacy Guard)">
+<meta name="keywords" content="gpg-wks-client (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Web-Key-Service.html" rel="up" title="Web Key Service">
+<link href="gpg_002dwks_002dserver.html" rel="next" title="gpg-wks-server">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="gpg_002dwks_002dclient">
+<div class="nav-panel">
+<p>
+Next: <a href="gpg_002dwks_002dserver.html" accesskey="n" rel="next">Provide the Web Key Service</a>, Up: <a href="Web-Key-Service.html" accesskey="u" rel="up">Web Key Service</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="Send-requests-via-WKS"><span>11.1 Send requests via WKS<a class="copiable-link" href="#Send-requests-via-WKS"> &para;</a></span></h3>
+
+
+
+
+<p>The <code class="command">gpg-wks-client</code> is used to send requests to a Web Key
+Service provider.  This is usually done to upload a key into a Web
+Key Directory.
+</p>
+<p>With the <samp class="option">--supported</samp> command the caller can test whether a
+site supports the Web Key Service.  The argument is an arbitrary
+address in the to be tested domain. For example
+<samp class="file">foo@example.net</samp>.  The command returns success if the Web Key
+Service is supported.  The operation is silent; to get diagnostic
+output use the option <samp class="option">--verbose</samp>.  See option
+<samp class="option">--with-colons</samp> for a variant of this command.
+</p>
+<p>With the <samp class="option">--check</samp> command the caller can test whether a key
+exists for a supplied mail address.  The command returns success if a
+key is available.
+</p>
+<p>The <samp class="option">--create</samp> command is used to send a request for
+publication in the Web Key Directory.  The arguments are the
+fingerprint of the key and the user id to publish.  The output from
+the command is a properly formatted mail with all standard headers.
+This mail can be fed to <code class="command">sendmail(8)</code> or any other tool to
+actually send that mail.  If <code class="command">sendmail(8)</code> is installed the
+option <samp class="option">--send</samp> can be used to directly send the created
+request.  If the provider request a &rsquo;mailbox-only&rsquo; user id and no such
+user id is found, <code class="command">gpg-wks-client</code> will try an additional user
+id.
+</p>
+<p>The <samp class="option">--receive</samp> and <samp class="option">--read</samp> commands are used to
+process confirmation mails as send from the service provider.  The
+former expects an encrypted MIME messages, the latter an already
+decrypted MIME message.  The result of these commands are another mail
+which can be send in the same way as the mail created with
+<samp class="option">--create</samp>.
+</p>
+<p>The command <samp class="option">--install-key</samp> manually installs a key into a
+local directory (see option <samp class="option">-C</samp>) reflecting the structure of a
+WKD.  The arguments are a file with the keyblock and the user-id to
+install.  If the first argument resembles a fingerprint the key is
+taken from the current keyring; to force the use of a file, prefix the
+first argument with &quot;./&quot;.  If no arguments are given the parameters
+are read from stdin; the expected format are lines with the
+fingerprint and the mailbox separated by a space.  The command
+<samp class="option">--remove-key</samp> removes a key from that directory, its only
+argument is a user-id.
+</p>
+<p>The command <samp class="option">--mirror</samp> is similar to <samp class="option">--install-key</samp> but
+takes the keys from the the LDAP server configured for Dirmngr.  If no
+arguments are given all keys and user ids are installed.  If arguments
+are given they are taken as domain names to limit the to be installed
+keys.  The option <samp class="option">--blacklist</samp> may be used to further limit
+the to be installed keys.
+</p>
+<p>The command <samp class="option">--print-wkd-hash</samp> prints the WKD user-id identifiers
+and the corresponding mailboxes from the user-ids given on the command
+line or via stdin (one user-id per line).
+</p>
+<p>The command <samp class="option">--print-wkd-url</samp> prints the URLs used to fetch the
+key for the given user-ids from WKD.  The meanwhile preferred format
+with sub-domains is used here.
+</p>
+<p>All commands may also be given without the two leading dashes.
+</p>
+
+<p><code class="command">gpg-wks-client</code> understands these options:
+</p>
+<dl class="table">
+<dt><a id="index-send"></a><span><code class="code">--send</code><a class="copiable-link" href="#index-send"> &para;</a></span></dt>
+<dd><p>Directly send created mails using the <code class="command">sendmail</code> command.
+Requires installation of that command.
+</p>
+</dd>
+<dt><a id="index-with_002dcolons-2"></a><span><code class="code">--with-colons</code><a class="copiable-link" href="#index-with_002dcolons-2"> &para;</a></span></dt>
+<dd><p>This option has currently only an effect on the <samp class="option">--supported</samp>
+command.  If it is used all arguments on the command line are taken
+as domain names and tested for WKD support.  The output format is one
+line per domain with colon delimited fields.  The currently specified
+fields are (future versions may specify additional fields):
+</p>
+<dl class="table">
+<dt>1 - domain</dt>
+<dd><p>This is the domain name.  Although quoting is not required for valid
+  domain names this field is specified to be quoted in standard C
+  manner.
+</p>
+</dd>
+<dt>2 - WKD</dt>
+<dd><p>If the value is true the domain supports the Web Key Directory.
+</p>
+</dd>
+<dt>3 - WKS</dt>
+<dd><p>If the value is true the domain supports the Web Key Service
+  protocol to upload keys to the directory.
+</p>
+</dd>
+<dt>4 - error-code</dt>
+<dd><p>This may contain an gpg-error code to describe certain
+  failures.  Use &lsquo;<samp class="samp">gpg-error CODE</samp>&rsquo; to explain the code.
+</p>
+</dd>
+<dt>5 - protocol-version</dt>
+<dd><p>The minimum protocol version supported by the server.
+</p>
+</dd>
+<dt>6 - auth-submit</dt>
+<dd><p>The auth-submit flag from the policy file of the server.
+</p>
+</dd>
+<dt>7 - mailbox-only</dt>
+<dd><p>The mailbox-only flag from the policy file of the server.
+</p></dd>
+</dl>
+
+
+
+</dd>
+<dt><a id="index-output-4"></a><span><code class="code">--output <var class="var">file</var></code><a class="copiable-link" href="#index-output-4"> &para;</a></span></dt>
+<dt><code class="code">-o</code></dt>
+<dd><p>Write the created mail to <var class="var">file</var> instead of stdout.  Note that the
+value <code class="code">-</code> for <var class="var">file</var> is the same as writing to stdout.  If
+this option is used with the <samp class="option">--check</samp> command and a key was
+found it is written to the given file.
+</p>
+</dd>
+<dt><a id="index-status_002dfd-5"></a><span><code class="code">--status-fd <var class="var">n</var></code><a class="copiable-link" href="#index-status_002dfd-5"> &para;</a></span></dt>
+<dd><p>Write special status strings to the file descriptor <var class="var">n</var>.
+This program returns only the status messages SUCCESS or FAILURE which
+are helpful when the caller uses a double fork approach and can&rsquo;t
+easily get the return code of the process.
+</p>
+</dd>
+<dt><a id="index-directory-1"></a><span><code class="code">-C <var class="var">dir</var></code><a class="copiable-link" href="#index-directory-1"> &para;</a></span></dt>
+<dt><code class="code">--directory <var class="var">dir</var></code></dt>
+<dd><p>Use <var class="var">dir</var> as top level directory for the commands
+<samp class="option">--mirror</samp>, <samp class="option">--install-key</samp> and <samp class="option">--remove-key</samp>.
+The default is <samp class="file">openpgpkey</samp>.
+</p>
+
+</dd>
+<dt><a id="index-blacklist"></a><span><code class="code">--blacklist <var class="var">file</var></code><a class="copiable-link" href="#index-blacklist"> &para;</a></span></dt>
+<dd><p>This option is used to exclude certain mail addresses from a mirror
+operation.  The format of <var class="var">file</var> is one mail address (just the
+addrspec, e.g. &quot;postel@isi.edu&quot;) per line.  Empty lines and lines
+starting with a &rsquo;#&rsquo; are ignored.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-no_002dadd_002drevocs"></a>
+<a id="index-add_002drevocs"></a><span><code class="code">--add-revocs</code><a class="copiable-link" href="#index-add_002drevocs"> &para;</a></span></dt>
+<dt><code class="code">--no-add-revocs</code></dt>
+<dd><p>If enabled append revocation certificates for the same addrspec as
+used in the WKD to the key.  Modern gpg version are able to import and
+apply them for existing keys.  Note that when used with the
+<samp class="option">--mirror</samp> command the revocation are searched in the local
+keyring and not in an LDAP directory.  The default is <samp class="option">--add-revocs</samp>.
+</p>
+</dd>
+<dt><a id="index-verbose-13"></a><span><code class="code">--verbose</code><a class="copiable-link" href="#index-verbose-13"> &para;</a></span></dt>
+<dd><p>Enable extra informational output.
+</p>
+</dd>
+<dt><a id="index-quiet-8"></a><span><code class="code">--quiet</code><a class="copiable-link" href="#index-quiet-8"> &para;</a></span></dt>
+<dd><p>Disable almost all informational output.
+</p>
+</dd>
+<dt><a id="index-version-9"></a><span><code class="code">--version</code><a class="copiable-link" href="#index-version-9"> &para;</a></span></dt>
+<dd><p>Print version of the program and exit.
+</p>
+</dd>
+<dt><a id="index-help-9"></a><span><code class="code">--help</code><a class="copiable-link" href="#index-help-9"> &para;</a></span></dt>
+<dd><p>Display a brief help page and exit.
+</p>
+</dd>
+</dl>
+
+
+<h2 class="chapheading" id="Examples-7"><span>Examples<a class="copiable-link" href="#Examples-7"> &para;</a></span></h2>
+
+<p>To use the services with clients lacking integrated support, the
+mailcap mechanism can be used.  Simply put:
+</p><div class="example">
+<pre class="example-preformatted">application/vnd.gnupg.wks; \
+  /usr/bin/gpg-wks-client -v --read --send; \
+  needsterminal; \
+  description=WKS message
+</pre></div>
+<p>into the <samp class="file">/etc/mailcap</samp>.  This assumes that a /usr/lib/sendmail
+is installed.  With this configuration any real mail programs will run
+gpg-wks-client for messages received from a Web Key Service.
+</p>
+
+
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="gpg_002dwks_002dserver.html">Provide the Web Key Service</a>, Up: <a href="Web-Key-Service.html">Web Key Service</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

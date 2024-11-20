@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Format conventions (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Format conventions (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Format conventions (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="gpgconf.html" rel="up" title="gpgconf">
+<link href="Listing-components.html" rel="next" title="Listing components">
+<link href="Invoking-gpgconf.html" rel="prev" title="Invoking gpgconf">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+ul.mark-bullet {list-style-type: disc}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Format-conventions">
+<div class="nav-panel">
+<p>
+Next: <a href="Listing-components.html" accesskey="n" rel="next">Listing components</a>, Previous: <a href="Invoking-gpgconf.html" accesskey="p" rel="prev">Invoking gpgconf</a>, Up: <a href="gpgconf.html" accesskey="u" rel="up">Modify .gnupg home directories</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Format-conventions-1"><span>10.4.2 Format conventions<a class="copiable-link" href="#Format-conventions-1"> &para;</a></span></h4>
+
+<p>Some lines in the output of <code class="command">gpgconf</code> contain a list of
+colon-separated fields.  The following conventions apply:
+</p>
+<ul class="itemize mark-bullet">
+<li>The GUI program is required to strip off trailing newline and/or
+carriage return characters from the output.
+
+</li><li><code class="command">gpgconf</code> will never leave out fields.  If a certain version
+provides a certain field, this field will always be present in all
+<code class="command">gpgconf</code> versions from that time on.
+
+</li><li>Future versions of <code class="command">gpgconf</code> might append fields to the list.
+New fields will always be separated from the previously last field by
+a colon separator.  The GUI should be prepared to parse the last field
+it knows about up until a colon or end of line.
+
+</li><li>Not all fields are defined under all conditions.  You are required to
+ignore the content of undefined fields.
+</li></ul>
+
+<p>There are several standard types for the content of a field:
+</p>
+<dl class="table">
+<dt>verbatim</dt>
+<dd><p>Some fields contain strings that are not escaped in any way.  Such
+fields are described to be used <em class="emph">verbatim</em>.  These fields will
+never contain a colon character (for obvious reasons).  No de-escaping
+or other formatting is required to use the field content.  This is for
+easy parsing of the output, when it is known that the content can
+never contain any special characters.
+</p>
+</dd>
+<dt>percent-escaped</dt>
+<dd><p>Some fields contain strings that are described to be
+<em class="emph">percent-escaped</em>.  Such strings need to be de-escaped before
+their content can be presented to the user.  A percent-escaped string
+is de-escaped by replacing all occurrences of <code class="code">%XY</code> by the byte
+that has the hexadecimal value <code class="code">XY</code>.  <code class="code">X</code> and <code class="code">Y</code> are
+from the set <code class="code">0-9a-f</code>.
+</p>
+</dd>
+<dt>localized</dt>
+<dd><p>Some fields contain strings that are described to be <em class="emph">localized</em>.
+Such strings are translated to the active language and formatted in
+the active character set.
+</p>
+</dd>
+<dt>unsigned&nbsp;number<!-- /@w --></dt>
+<dd><p>Some fields contain an <em class="emph">unsigned number</em>.  This number will
+always fit into a 32-bit unsigned integer variable.  The number may be
+followed by a space, followed by a human readable description of that
+value (if the verbose option is used).  You should ignore everything
+in the field that follows the number.
+</p>
+</dd>
+<dt>signed&nbsp;number<!-- /@w --></dt>
+<dd><p>Some fields contain a <em class="emph">signed number</em>.  This number will always
+fit into a 32-bit signed integer variable.  The number may be followed
+by a space, followed by a human readable description of that value (if
+the verbose option is used).  You should ignore everything in the
+field that follows the number.
+</p>
+</dd>
+<dt>boolean&nbsp;value<!-- /@w --></dt>
+<dd><p>Some fields contain a <em class="emph">boolean value</em>.  This is a number with
+either the value 0 or 1.  The number may be followed by a space,
+followed by a human readable description of that value (if the verbose
+option is used).  You should ignore everything in the field that follows
+the number; checking just the first character is sufficient in this
+case.
+</p>
+</dd>
+<dt>option</dt>
+<dd><p>Some fields contain an <em class="emph">option</em> argument.  The format of an
+option argument depends on the type of the option and on some flags:
+</p>
+<dl class="table">
+<dt>no argument</dt>
+<dd><p>The simplest case is that the option does not take an argument at all
+(<var class="var">type</var> <code class="code">0</code>).  Then the option argument is an unsigned number
+that specifies how often the option occurs.  If the <code class="code">list</code> flag
+is not set, then the only valid number is <code class="code">1</code>.  Options that do
+not take an argument never have the <code class="code">default</code> or <code class="code">optional
+arg</code> flag set.
+</p>
+</dd>
+<dt>number</dt>
+<dd><p>If the option takes a number argument (<var class="var">alt-type</var> is <code class="code">2</code> or
+<code class="code">3</code>), and it can only occur once (<code class="code">list</code> flag is not set),
+then the option argument is either empty (only allowed if the argument
+is optional), or it is a number.  A number is a string that begins
+with an optional minus character, followed by one or more digits.  The
+number must fit into an integer variable (unsigned or signed,
+depending on <var class="var">alt-type</var>).
+</p>
+</dd>
+<dt>number list</dt>
+<dd><p>If the option takes a number argument and it can occur more than once,
+then the option argument is either empty, or it is a comma-separated
+list of numbers as described above.
+</p>
+</dd>
+<dt>string</dt>
+<dd><p>If the option takes a string argument (<var class="var">alt-type</var> is 1), and it
+can only occur once (<code class="code">list</code> flag is not set) then the option
+argument is either empty (only allowed if the argument is optional),
+or it starts with a double quote character (<code class="code">&quot;</code>) followed by a
+percent-escaped string that is the argument value.  Note that there is
+only a leading double quote character, no trailing one.  The double
+quote character is only needed to be able to differentiate between no
+value and the empty string as value.
+</p>
+</dd>
+<dt>string list</dt>
+<dd><p>If the option takes a string argument and it can occur more than once,
+then the option argument is either empty, or it is a comma-separated
+list of string arguments as described above.
+</p></dd>
+</dl>
+</dd>
+</dl>
+
+<p>The active language and character set are currently determined from
+the locale environment of the <code class="command">gpgconf</code> program.
+</p>
+
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Listing-components.html">Listing components</a>, Previous: <a href="Invoking-gpgconf.html">Invoking gpgconf</a>, Up: <a href="gpgconf.html">Modify .gnupg home directories</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

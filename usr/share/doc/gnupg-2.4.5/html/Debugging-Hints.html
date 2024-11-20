@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Debugging Hints (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Debugging Hints (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Debugging Hints (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Debugging.html" rel="up" title="Debugging">
+<link href="Common-Problems.html" rel="next" title="Common Problems">
+<link href="Debugging-Tools.html" rel="prev" title="Debugging Tools">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+ul.mark-bullet {list-style-type: disc}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="Debugging-Hints">
+<div class="nav-panel">
+<p>
+Next: <a href="Common-Problems.html" accesskey="n" rel="next">Commonly Seen Problems</a>, Previous: <a href="Debugging-Tools.html" accesskey="p" rel="prev">Debugging Tools</a>, Up: <a href="Debugging.html" accesskey="u" rel="up">How to solve problems</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="Various-hints-on-debugging"><span>14.2 Various hints on debugging<a class="copiable-link" href="#Various-hints-on-debugging"> &para;</a></span></h3>
+
+<ul class="itemize mark-bullet">
+<li>How to find the IP address of a keyserver
+
+<p>If a round robin URL of is used for a keyserver
+(e.g. subkeys.gnupg.org); it is not easy to see what server is actually
+used.  Using the keyserver debug option as in
+</p>
+<div class="example smallexample">
+<pre class="example-preformatted"> gpg --keyserver-options debug=1 -v --refresh-key 1E42B367
+</pre></div>
+
+<p>is thus often helpful.  Note that the actual output depends on the
+backend and may change from release to release.
+</p>
+</li><li>Logging on WindowsCE
+
+<p>For development, the best logging method on WindowsCE is the use of
+remote debugging using a log file name of <samp class="file">tcp://&lt;ip-addr&gt;:&lt;port&gt;</samp>.
+The command <code class="command">watchgnupg</code> may be used on the remote host to listen
+on the given port (see <a class="pxref" href="watchgnupg.html#option-watchgnupg-_002d_002dtcp">option watchgnupg --tcp</a>).  For in the field
+tests it is better to make use of the logging facility provided by the
+<code class="command">gpgcedev</code> driver (part of libassuan); this is enabled by using
+a log file name of <samp class="file">GPG2:</samp> (see <a class="pxref" href="Agent-Options.html#option-_002d_002dlog_002dfile">option --log-file</a>).
+</p>
+</li></ul>
+
+
+</div>
+
+
+
+</body>
+</html>

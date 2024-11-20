@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Invoking gpg-connect-agent (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Invoking gpg-connect-agent (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Invoking gpg-connect-agent (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="gpg_002dconnect_002dagent.html" rel="up" title="gpg-connect-agent">
+<link href="Controlling-gpg_002dconnect_002dagent.html" rel="next" title="Controlling gpg-connect-agent">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Invoking-gpg_002dconnect_002dagent">
+<div class="nav-panel">
+<p>
+Next: <a href="Controlling-gpg_002dconnect_002dagent.html" accesskey="n" rel="next">Control commands</a>, Up: <a href="gpg_002dconnect_002dagent.html" accesskey="u" rel="up">Communicate with a running agent</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="List-of-all-options"><span>10.7.1 List of all options<a class="copiable-link" href="#List-of-all-options"> &para;</a></span></h4>
+
+<p><code class="command">gpg-connect-agent</code> is invoked this way:
+</p>
+<div class="example">
+<pre class="example-preformatted">gpg-connect-agent [options] [commands]
+</pre></div>
+
+
+<p>The following options may be used:
+</p>
+<dl class="table">
+<dt><a id="index-dirmngr"></a><span><code class="code">--dirmngr</code><a class="copiable-link" href="#index-dirmngr"> &para;</a></span></dt>
+<dd><p>Connect to a running directory manager (keyserver client) instead of
+to the gpg-agent.  If a dirmngr is not running, start it.
+</p>
+</dd>
+<dt><a id="index-keyboxd"></a><span><code class="code">--keyboxd</code><a class="copiable-link" href="#index-keyboxd"> &para;</a></span></dt>
+<dd><p>Connect to a running keybox daemon instead of
+to the gpg-agent.  If a keyboxd is not running, start it.
+</p>
+</dd>
+<dt><a id="index-raw_002dsocket"></a><span><code class="code">-S</code><a class="copiable-link" href="#index-raw_002dsocket"> &para;</a></span></dt>
+<dt><code class="code">--raw-socket <var class="var">name</var></code></dt>
+<dd><p>Connect to socket <var class="var">name</var> assuming this is an Assuan style server.
+Do not run any special initializations or environment checks.  This may
+be used to directly connect to any Assuan style socket server.
+</p>
+</dd>
+<dt><a id="index-exec"></a><span><code class="code">-E</code><a class="copiable-link" href="#index-exec"> &para;</a></span></dt>
+<dt><code class="code">--exec</code></dt>
+<dd><p>Take the rest of the command line as a program and it&rsquo;s arguments and
+execute it as an Assuan server. Here is how you would run <code class="command">gpgsm</code>:
+</p><div class="example smallexample">
+<pre class="example-preformatted"> gpg-connect-agent --exec gpgsm --server
+</pre></div>
+<p>Note that you may not use options on the command line in this case.
+</p>
+</dd>
+<dt><a id="index-verbose-9"></a><span><code class="code">-v</code><a class="copiable-link" href="#index-verbose-9"> &para;</a></span></dt>
+<dt><code class="code">--verbose</code></dt>
+<dd><p>Output additional information while running.
+</p>
+</dd>
+<dt><code class="code">-q</code></dt>
+<dt><a class="index-entry-id" id="index-quiet-5"></a>
+<a id="index-q-1"></a><span><code class="code">--quiet</code><a class="copiable-link" href="#index-q-1"> &para;</a></span></dt>
+<dd><p>Try to be as quiet as possible.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-GNUPGHOME-7"></a>
+<a class="index-entry-id" id="index-HKCU_005cSoftware_005cGNU_005cGnuPG_003aHomeDir-6"></a>
+<a id="index-homedir-6"></a><span><code class="code">--homedir <var class="var">dir</var></code><a class="copiable-link" href="#index-homedir-6"> &para;</a></span></dt>
+<dd><p>Set the name of the home directory to <var class="var">dir</var>. If this option is not
+used, the home directory defaults to <samp class="file">~/.gnupg</samp>.  It is only
+recognized when given on the command line.  It also overrides any home
+directory stated through the environment variable <code class="env">GNUPGHOME</code> or
+(on Windows systems) by means of the Registry entry
+<var class="var">HKCU\Software\GNU\GnuPG:HomeDir</var>.
+</p>
+<p>On Windows systems it is possible to install GnuPG as a portable
+application.  In this case only this command line option is
+considered, all other ways to set a home directory are ignored.
+</p>
+</dd>
+<dt><a id="index-chuid-4"></a><span><code class="code">--chuid <var class="var">uid</var></code><a class="copiable-link" href="#index-chuid-4"> &para;</a></span></dt>
+<dd><p>Change the current user to <var class="var">uid</var> which may either be a number or a
+name.  This can be used from the root account to run gpg-connect-agent
+for another user.  If <var class="var">uid</var> is not the current UID a standard PATH
+is set and the envvar GNUPGHOME is unset.  To override the latter the
+option <samp class="option">--homedir</samp> can be used.  This option has only an effect
+when used on the command line.  This option has currently no effect at
+all on Windows.
+</p>
+</dd>
+<dt><a id="index-no_002dext_002dconnect"></a><span><code class="code">--no-ext-connect</code><a class="copiable-link" href="#index-no_002dext_002dconnect"> &para;</a></span></dt>
+<dd><p>When using <samp class="option">-S</samp> or <samp class="option">--exec</samp>, <code class="command">gpg-connect-agent</code>
+connects to the Assuan server in extended mode to allow descriptor
+passing.  This option makes it use the old mode.
+</p>
+</dd>
+<dt><a id="index-no_002dautostart-3"></a><span><code class="code">--no-autostart</code><a class="copiable-link" href="#index-no_002dautostart-3"> &para;</a></span></dt>
+<dd><p>Do not start the gpg-agent or the dirmngr if it has not yet been
+started.
+</p>
+</dd>
+<dt><a id="index-_002d_002dno_002dhistory-1"></a><span><code class="code">--no-history</code><a class="copiable-link" href="#index-_002d_002dno_002dhistory-1"> &para;</a></span></dt>
+<dd><p>In interactive mode the command line history is usually saved and
+restored to and from a file below the GnuPG home directory.  This
+option inhibits the use of that file.
+</p>
+</dd>
+<dt><a id="index-agent_002dprogram-3"></a><span><code class="code">--agent-program <var class="var">file</var></code><a class="copiable-link" href="#index-agent_002dprogram-3"> &para;</a></span></dt>
+<dd><p>Specify the agent program to be started if none is running.  The
+default value is determined by running <code class="command">gpgconf</code> with the
+option <samp class="option">--list-dirs</samp>.  Note that the pipe symbol (<code class="code">|</code>) is
+used for a regression test suite hack and may thus not be used in the
+file name.
+</p>
+</dd>
+<dt><a id="index-dirmngr_002dprogram-2"></a><span><code class="code">--dirmngr-program <var class="var">file</var></code><a class="copiable-link" href="#index-dirmngr_002dprogram-2"> &para;</a></span></dt>
+<dd><p>Specify the directory manager (keyserver client) program to be started
+if none is running.  This has only an effect if used together with the
+option <samp class="option">--dirmngr</samp>.
+</p>
+</dd>
+<dt><a id="index-keyboxd_002dprogram"></a><span><code class="code">--keyboxd-program <var class="var">file</var></code><a class="copiable-link" href="#index-keyboxd_002dprogram"> &para;</a></span></dt>
+<dd><p>Specify the keybox daemon program to be started if none is running.
+This has only an effect if used together with the option
+<samp class="option">--keyboxd</samp>.
+</p>
+</dd>
+<dt><a id="index-run"></a><span><code class="code">-r <var class="var">file</var></code><a class="copiable-link" href="#index-run"> &para;</a></span></dt>
+<dt><code class="code">--run <var class="var">file</var></code></dt>
+<dd><p>Run the commands from <var class="var">file</var> at startup and then continue with the
+regular input method.  Note, that commands given on the command line are
+executed after this file.
+</p>
+</dd>
+<dt><a id="index-subst"></a><span><code class="code">-s</code><a class="copiable-link" href="#index-subst"> &para;</a></span></dt>
+<dt><code class="code">--subst</code></dt>
+<dd><p>Run the command <code class="code">/subst</code> at startup.
+</p>
+</dd>
+<dt><a id="index-hex"></a><span><code class="code">--hex</code><a class="copiable-link" href="#index-hex"> &para;</a></span></dt>
+<dd><p>Print data lines in a hex format and the ASCII representation of
+non-control characters.
+</p>
+</dd>
+<dt><a id="index-decode"></a><span><code class="code">--decode</code><a class="copiable-link" href="#index-decode"> &para;</a></span></dt>
+<dd><p>Decode data lines.  That is to remove percent escapes but make sure that
+a new line always starts with a D and a space.
+</p>
+</dd>
+<dt><a id="index-unbuffered"></a><span><code class="code">-u</code><a class="copiable-link" href="#index-unbuffered"> &para;</a></span></dt>
+<dt><code class="code">--unbuffered</code></dt>
+<dd><p>Set stdin and stdout into unbuffered I/O mode.  This this sometimes
+useful for scripting.
+</p>
+
+</dd>
+</dl>
+
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Controlling-gpg_002dconnect_002dagent.html">Control commands</a>, Up: <a href="gpg_002dconnect_002dagent.html">Communicate with a running agent</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

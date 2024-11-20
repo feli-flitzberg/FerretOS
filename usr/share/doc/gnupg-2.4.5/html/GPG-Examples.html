@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>GPG Examples (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="GPG Examples (Using the GNU Privacy Guard)">
+<meta name="keywords" content="GPG Examples (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Invoking-GPG.html" rel="up" title="Invoking GPG">
+<link href="Unattended-Usage-of-GPG.html" rel="next" title="Unattended Usage of GPG">
+<link href="GPG-Configuration.html" rel="prev" title="GPG Configuration">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="GPG-Examples">
+<div class="nav-panel">
+<p>
+Next: <a href="Unattended-Usage-of-GPG.html" accesskey="n" rel="next">Unattended Usage</a>, Previous: <a href="GPG-Configuration.html" accesskey="p" rel="prev">Configuration files</a>, Up: <a href="Invoking-GPG.html" accesskey="u" rel="up">Invoking GPG</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="Examples-2"><span>4.4 Examples<a class="copiable-link" href="#Examples-2"> &para;</a></span></h3>
+
+<dl class="table">
+<dt>gpg -se -r <code class="code">Bob</code> <code class="code">file</code></dt>
+<dd><p>sign and encrypt for user Bob
+</p>
+</dd>
+<dt>gpg &ndash;clear-sign <code class="code">file</code></dt>
+<dd><p>make a cleartext signature
+</p>
+</dd>
+<dt>gpg -sb <code class="code">file</code></dt>
+<dd><p>make a detached signature
+</p>
+</dd>
+<dt>gpg -u 0x12345678 -sb <code class="code">file</code></dt>
+<dd><p>make a detached signature with the key 0x12345678
+</p>
+</dd>
+<dt>gpg &ndash;list-keys <code class="code">user_ID</code></dt>
+<dd><p>show keys
+</p>
+</dd>
+<dt>gpg &ndash;fingerprint <code class="code">user_ID</code></dt>
+<dd><p>show fingerprint
+</p>
+</dd>
+<dt>gpg &ndash;verify <code class="code">pgpfile</code></dt>
+<dt>gpg &ndash;verify <code class="code">sigfile</code> [<code class="code">datafile</code>]</dt>
+<dd><p>Verify the signature of the file but do not output the data unless
+requested.  The second form is used for detached signatures, where
+<code class="code">sigfile</code> is the detached signature (either ASCII armored or
+binary) and <code class="code">datafile</code> are the signed data; if this is not given, the name of the
+file holding the signed data is constructed by cutting off the
+extension (&quot;.asc&quot; or &quot;.sig&quot;) of <code class="code">sigfile</code> or by asking the user
+for the filename.  If the option <samp class="option">--output</samp> is also used the
+signed data is written to the file specified by that option; use
+<code class="code">-</code> to write the signed data to stdout.
+</p></dd>
+</dl>
+
+
+
+
+
+<h2 class="chapheading" id="FILTER-EXPRESSIONS"><span>FILTER EXPRESSIONS<a class="copiable-link" href="#FILTER-EXPRESSIONS"> &para;</a></span></h2>
+
+<p>The options <samp class="option">--import-filter</samp> and <samp class="option">--export-filter</samp> use
+expressions with this syntax (square brackets indicate an optional
+part and curly braces a repetition, white space between the elements
+are allowed):
+</p>
+<div class="example">
+<pre class="example-preformatted">  [lc] {[{flag}] PROPNAME op VALUE [lc]}
+</pre></div>
+
+<p>The name of a property (<var class="var">PROPNAME</var>) may only consist of letters,
+digits and underscores.  The description for the filter type
+describes which properties are defined.  If an undefined property is
+used it evaluates to the empty string.  Unless otherwise noted, the
+<var class="var">VALUE</var> must always be given and may not be the empty string.  No
+quoting is defined for the value, thus the value may not contain the
+strings <code class="code">&amp;&amp;</code> or <code class="code">||</code>, which are used as logical connection
+operators.  The flag <code class="code">--</code> can be used to remove this restriction.
+</p>
+<p>Numerical values are computed as long int; standard C notation
+applies.  <var class="var">lc</var> is the logical connection operator; either
+<code class="code">&amp;&amp;</code> for a conjunction or <code class="code">||</code> for a disjunction.  A
+conjunction is assumed at the begin of an expression.  Conjunctions
+have higher precedence than disjunctions.  If <var class="var">VALUE</var> starts with
+one of the characters used in any <var class="var">op</var> a space after the
+<var class="var">op</var> is required.
+</p>
+<p>The supported operators (<var class="var">op</var>) are:
+</p>
+<dl class="table">
+<dt>=~</dt>
+<dd><p>Substring must match.
+</p>
+</dd>
+<dt>!~</dt>
+<dd><p>Substring must not match.
+</p>
+</dd>
+<dt>=</dt>
+<dd><p>The full string must match.
+</p>
+</dd>
+<dt>&lt;&gt;</dt>
+<dd><p>The full string must not match.
+</p>
+</dd>
+<dt>==</dt>
+<dd><p>The numerical value must match.
+</p>
+</dd>
+<dt>!=</dt>
+<dd><p>The numerical value must not match.
+</p>
+</dd>
+<dt>&lt;=</dt>
+<dd><p>The numerical value of the field must be LE than the value.
+</p>
+</dd>
+<dt>&lt;</dt>
+<dd><p>The numerical value of the field must be LT than the value.
+</p>
+</dd>
+<dt>&gt;</dt>
+<dd><p>The numerical value of the field must be GT than the value.
+</p>
+</dd>
+<dt>&gt;=</dt>
+<dd><p>The numerical value of the field must be GE than the value.
+</p>
+</dd>
+<dt>-le</dt>
+<dd><p>The string value of the field must be less or equal than the value.
+</p>
+</dd>
+<dt>-lt</dt>
+<dd><p>The string value of the field must be less than the value.
+</p>
+</dd>
+<dt>-gt</dt>
+<dd><p>The string value of the field must be greater than the value.
+</p>
+</dd>
+<dt>-ge</dt>
+<dd><p>The string value of the field must be greater or equal than the value.
+</p>
+</dd>
+<dt>-n</dt>
+<dd><p>True if value is not empty (no value allowed).
+</p>
+</dd>
+<dt>-z</dt>
+<dd><p>True if value is empty (no value allowed).
+</p>
+</dd>
+<dt>-t</dt>
+<dd><p>Alias for &quot;PROPNAME != 0&quot; (no value allowed).
+</p>
+</dd>
+<dt>-f</dt>
+<dd><p>Alias for &quot;PROPNAME == 0&quot; (no value allowed).
+</p>
+</dd>
+</dl>
+
+<p>Values for <var class="var">flag</var> must be space separated.  The supported flags
+are:
+</p>
+<dl class="table">
+<dt>&ndash;</dt>
+<dd><p><var class="var">VALUE</var> spans to the end of the expression.
+  </p></dd>
+<dt>-c</dt>
+<dd><p>The string match in this part is done case-sensitive.
+  </p></dd>
+<dt>-t</dt>
+<dd><p>Leading and trailing spaces are not removed from <var class="var">VALUE</var>.
+  The optional single space after <var class="var">op</var> is here required.
+</p></dd>
+</dl>
+
+<p>The filter options concatenate several specifications for a filter of
+the same type.  For example the four options in this example:
+</p>
+<div class="example">
+<pre class="example-preformatted"> --import-filter keep-uid=&quot;uid =~ Alfa&quot;
+ --import-filter keep-uid=&quot;&amp;&amp; uid !~ Test&quot;
+ --import-filter keep-uid=&quot;|| uid =~ Alpha&quot;
+ --import-filter keep-uid=&quot;uid !~ Test&quot;
+</pre></div>
+
+<p>which is equivalent to
+</p>
+<div class="example">
+<pre class="example-preformatted"> --import-filter \
+  keep-uid=&quot;uid =~ Alfa&quot; &amp;&amp; uid !~ Test&quot; || uid =~ Alpha&quot; &amp;&amp; &quot;uid !~ Test&quot;
+</pre></div>
+
+<p>imports only the user ids of a key containing the strings &quot;Alfa&quot;
+or &quot;Alpha&quot; but not the string &quot;test&quot;.
+</p>
+
+
+
+<h2 class="chapheading" id="RETURN-VALUE"><span>RETURN VALUE<a class="copiable-link" href="#RETURN-VALUE"> &para;</a></span></h2>
+
+<p>The program returns 0 if there are no severe errors, 1 if at least a
+signature was bad, and other error codes for fatal errors.
+</p>
+<p>Note that signature verification requires exact knowledge of what has
+been signed and by whom it has been signed.  Using only the return code
+is thus not an appropriate way to verify a signature by a script.
+Either make proper use or the status codes or use the <code class="command">gpgv</code>
+tool which has been designed to make signature verification easy for
+scripts.
+</p>
+
+<h2 class="chapheading" id="WARNINGS"><span>WARNINGS<a class="copiable-link" href="#WARNINGS"> &para;</a></span></h2>
+
+<p>Use a good password for your user account and make sure that all
+security issues are always fixed on your machine.  Also employ
+diligent physical protection to your machine.  Consider to use a good
+passphrase as a last resort protection to your secret key in the case
+your machine gets stolen.  It is important that your secret key is
+never leaked.  Using an easy to carry around token or smartcard with
+the secret key is often a advisable.
+</p>
+<p>If you are going to verify detached signatures, make sure that the
+program knows about it; either give both filenames on the command line
+or use &lsquo;<samp class="samp">-</samp>&rsquo; to specify STDIN.
+</p>
+<p>For scripted or other unattended use of <code class="command">gpg</code> make sure to use
+the machine-parseable interface and not the default interface which is
+intended for direct use by humans.  The machine-parseable interface
+provides a stable and well documented API independent of the locale or
+future changes of <code class="command">gpg</code>.  To enable this interface use the
+options <samp class="option">--with-colons</samp> and <samp class="option">--status-fd</samp>.  For certain
+operations the option <samp class="option">--command-fd</samp> may come handy too.  See
+this man page and the file <samp class="file">DETAILS</samp> for the specification of the
+interface.  Note that the GnuPG &ldquo;info&rdquo; pages as well as the PDF
+version of the GnuPG manual features a chapter on unattended use of
+GnuPG.  As an alternative the library <code class="command">GPGME</code> can be used as a
+high-level abstraction on top of that interface.
+</p>
+
+<h2 class="chapheading" id="INTEROPERABILITY-WITH-OTHER-OPENPGP-PROGRAMS"><span>INTEROPERABILITY WITH OTHER OPENPGP PROGRAMS<a class="copiable-link" href="#INTEROPERABILITY-WITH-OTHER-OPENPGP-PROGRAMS"> &para;</a></span></h2>
+
+<p>GnuPG tries to be a very flexible implementation of the OpenPGP
+standard. In particular, GnuPG implements many of the optional parts
+of the standard, such as the SHA-512 hash, and the ZLIB and BZIP2
+compression algorithms. It is important to be aware that not all
+OpenPGP programs implement these optional algorithms and that by
+forcing their use via the <samp class="option">--cipher-algo</samp>,
+<samp class="option">--digest-algo</samp>, <samp class="option">--cert-digest-algo</samp>, or
+<samp class="option">--compress-algo</samp> options in GnuPG, it is possible to create a
+perfectly valid OpenPGP message, but one that cannot be read by the
+intended recipient.
+</p>
+<p>There are dozens of variations of OpenPGP programs available, and each
+supports a slightly different subset of these optional algorithms.
+For example, until recently, no (unhacked) version of PGP supported
+the BLOWFISH cipher algorithm. A message using BLOWFISH simply could
+not be read by a PGP user. By default, GnuPG uses the standard
+OpenPGP preferences system that will always do the right thing and
+create messages that are usable by all recipients, regardless of which
+OpenPGP program they use. Only override this safe default if you
+really know what you are doing.
+</p>
+<p>If you absolutely must override the safe default, or if the preferences
+on a given key are invalid for some reason, you are far better off using
+the <samp class="option">--pgp6</samp>, <samp class="option">--pgp7</samp>, or <samp class="option">--pgp8</samp> options. These
+options are safe as they do not force any particular algorithms in
+violation of OpenPGP, but rather reduce the available algorithms to a
+&quot;PGP-safe&quot; list.
+</p>
+
+<h2 class="chapheading" id="BUGS"><span>BUGS<a class="copiable-link" href="#BUGS"> &para;</a></span></h2>
+
+<p>On older systems this program should be installed as setuid(root). This
+is necessary to lock memory pages. Locking memory pages prevents the
+operating system from writing memory pages (which may contain
+passphrases or other sensitive material) to disk. If you get no
+warning message about insecure memory your operating system supports
+locking without being root. The program drops root privileges as soon
+as locked memory is allocated.
+</p>
+<p>Note also that some systems (especially laptops) have the ability to
+&ldquo;suspend to disk&rdquo; (also known as &ldquo;safe sleep&rdquo; or &ldquo;hibernate&rdquo;).
+This writes all memory to disk before going into a low power or even
+powered off mode.  Unless measures are taken in the operating system
+to protect the saved memory, passphrases or other sensitive material
+may be recoverable from it later.
+</p>
+<p>Before you report a bug you should first search the mailing list
+archives for similar problems and second check whether such a bug has
+already been reported to our bug tracker at <a class="url" href="https://bugs.gnupg.org">https://bugs.gnupg.org</a>.
+</p>
+
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Unattended-Usage-of-GPG.html">Unattended Usage</a>, Previous: <a href="GPG-Configuration.html">Configuration files</a>, Up: <a href="Invoking-GPG.html">Invoking GPG</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

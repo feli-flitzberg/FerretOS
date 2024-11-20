@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the The GNU Privacy Guard Manual (version
+2.4.5, March 2024).
+
+
+© 2002, 2004, 2005, 2006, 2007, 2010 Free Software Foundation, Inc.
+
+© 2013, 2014, 2015 Werner Koch.
+
+© 2015, 2016, 2017 g10 Code GmbH.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled "Copying". -->
+<title>Agent Signals (Using the GNU Privacy Guard)</title>
+
+<meta name="description" content="Agent Signals (Using the GNU Privacy Guard)">
+<meta name="keywords" content="Agent Signals (Using the GNU Privacy Guard)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Option-Index.html" rel="index" title="Option Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Invoking-GPG_002dAGENT.html" rel="up" title="Invoking GPG-AGENT">
+<link href="Agent-Examples.html" rel="next" title="Agent Examples">
+<link href="Agent-Configuration.html" rel="prev" title="Agent Configuration">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="/share/site.css">
+
+
+</head>
+
+<body lang="en">
+<div class="section-level-extent" id="Agent-Signals">
+<div class="nav-panel">
+<p>
+Next: <a href="Agent-Examples.html" accesskey="n" rel="next">Examples</a>, Previous: <a href="Agent-Configuration.html" accesskey="p" rel="prev">Configuration</a>, Up: <a href="Invoking-GPG_002dAGENT.html" accesskey="u" rel="up">Invoking GPG-AGENT</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Option-Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h3 class="section" id="Use-of-some-signals"><span>2.4 Use of some signals<a class="copiable-link" href="#Use-of-some-signals"> &para;</a></span></h3>
+<p>A running <code class="command">gpg-agent</code> may be controlled by signals, i.e. using
+the <code class="command">kill</code> command to send a signal to the process.
+</p>
+<p>Here is a list of supported signals:
+</p>
+<dl class="table">
+<dt><a id="index-SIGHUP"></a><span><code class="code">SIGHUP</code><a class="copiable-link" href="#index-SIGHUP"> &para;</a></span></dt>
+<dd><p>This signal flushes all cached passphrases and if the program has been
+started with a configuration file, the configuration file is read
+again.  Only certain options are honored: <code class="code">quiet</code>,
+<code class="code">verbose</code>, <code class="code">debug</code>, <code class="code">debug-all</code>, <code class="code">debug-level</code>,
+<code class="code">debug-pinentry</code>,
+<code class="code">no-grab</code>,
+<code class="code">pinentry-program</code>,
+<code class="code">pinentry-invisible-char</code>,
+<code class="code">default-cache-ttl</code>,
+<code class="code">max-cache-ttl</code>, <code class="code">ignore-cache-for-signing</code>,
+<code class="code">s2k-count</code>,
+<code class="code">no-allow-external-cache</code>, <code class="code">allow-emacs-pinentry</code>,
+<code class="code">no-allow-mark-trusted</code>, <code class="code">disable-scdaemon</code>, and
+<code class="code">disable-check-own-socket</code>.  <code class="code">scdaemon-program</code> is also
+supported but due to the current implementation, which calls the
+scdaemon only once, it is not of much use unless you manually kill the
+scdaemon.
+</p>
+
+</dd>
+<dt><a id="index-SIGTERM"></a><span><code class="code">SIGTERM</code><a class="copiable-link" href="#index-SIGTERM"> &para;</a></span></dt>
+<dd><p>Shuts down the process but waits until all current requests are
+fulfilled.  If the process has received 3 of these signals and requests
+are still pending, a shutdown is forced.
+</p>
+</dd>
+<dt><a id="index-SIGINT"></a><span><code class="code">SIGINT</code><a class="copiable-link" href="#index-SIGINT"> &para;</a></span></dt>
+<dd><p>Shuts down the process immediately.
+</p>
+</dd>
+<dt><a id="index-SIGUSR1"></a><span><code class="code">SIGUSR1</code><a class="copiable-link" href="#index-SIGUSR1"> &para;</a></span></dt>
+<dd><p>Dump internal information to the log file.
+</p>
+</dd>
+<dt><a id="index-SIGUSR2"></a><span><code class="code">SIGUSR2</code><a class="copiable-link" href="#index-SIGUSR2"> &para;</a></span></dt>
+<dd><p>This signal is used for internal purposes.
+</p>
+</dd>
+</dl>
+
+
+</div>
+
+
+
+</body>
+</html>
