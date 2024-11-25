@@ -6,12 +6,12 @@ Welcome to FerretOS! This operating system project is currently a proof-of-conce
 build/release of [Linux From Scratch](https://www.linuxfromscratch.org) with some key
 differences:
 
-- GRUB has been replaced with systemd-boot
+- GRUB is replaced with systemd-boot
 - System configuration and some package build configurations are modified to allow
 as much hardware compatibility as possible
 - The bootloader is configured to not pass any partition to the kernel during boot
 
-The resulting image (should) be fully capable of booting from a DVD or USB, with no
+The resulting image (should) be fully capable of booting from a Blu-Ray or USB, with no
 notion of what hardware it has available or where it's booting from, and still mount
 the root partition and the remaining system with no issue. Once fully booted, FerretOS
 has all the tools and packages needed to build a fresh copy of Linux From Scratch (LFS)
