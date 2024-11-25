@@ -25,6 +25,43 @@ update of its homepage can be found here: <https://www.linuxfromscratch.org/live
 Part of the proof-of-concept stage is simply to show that LFS can still produce a
 LiveCD variant, provided there are people able to maintain it.
 
+In regards to the name, I'm in a particular Discord server for these adorable wigglers:
+<https://ferrets.live/>! Too cute to not name something after them.
+
+<!---
+## Installation
+
+### .img File
+
+Use a tool like `dd` or BalenaEtcher to directly copy the file byte for byte to a valid
+USB drive. You might be able to boot directly using a tool like Ventoy, but this hasn't
+been tested.
+
+### .iso File
+
+If you have something like Ventoy, the `.iso` file can be dropped directly into the USB
+drive with no changes. Otherwise, you have some options:
+- Use any (multi)boot USB creator to add the file to your USB drove.
+- Follow the procedure for `.img` files above.
+- If you have a Blu-Ray writer, you can burn the file to disk.
+
+### Github Reop
+
+You will have to install the system, bootloader, and kernel into your USB drive manually.
+The drive must be formatted with an EFI partition and a Linux root partition following
+the [Discoverable Partitions Specification](https://uapi-group.org/specifications/specs/discoverable_partitions_specification/).
+Any other partitions must be configured following the specification.
+- Copy the entire repo to the root partition of the drive.
+- Mount the drive's EFI partition to `/boot` on the drive.
+- Modify root's chroot script to have LFS point to the root partition of the drive.
+- Run the chroot script.
+- TODO: add the full command to install the bootloader to the drive without erroring out - they won't have guaranteed access to the host's EFI variables, so make sure it doesn't have to read them to install
+- TODO: add the full command to install the kernel version without needing a machine id - it will likely default to using the kernel version unless we specify the entry token
+  - TODO: if they want to use kernel-install's normal defaults we need to tell them how to initialize the machine id
+- TODO: direct them to check the command line passed to the kernel. it has to have rootwait (if we don't build it into the kernel directly), and they should remove the root line to prove our entire design.
+- TODO: maybe we should make all of this a script? could be a lot of work though, especially to verify that the root node exists, has the correct partitions available, AND isn't just /dev/null or something else being passed maliciously. (you just know they'll try to blame us if they're bad actors or just dumb.)
+--->
+
 ## Changes
 
 #### Packages
@@ -174,6 +211,7 @@ root until a text editor is available).***
 - Add `/etc/dircolors`
 - Add `/etc/issue`
 - wpa-supplicant not configured
+
 #### Build/Configure process
 
 - `$LFS` is any directory accessible to both root and a regular user
@@ -214,3 +252,11 @@ invalid user account/ID. If working in a chroot prior to creating an image or US
 installation, re-initialize the machine id. It is also advised to only reinstall dbus in
 the chroot if you are sure you won't need the chroot environment after exiting that
 instance.***
+
+## PRIVACY POLICY
+
+This repository is hosted by Github.
+While FerretOS does not collect or send us anything, we have enabled the Issues and Discussions features, which could collect information beyond what is submitted directly.
+Github also collects information for statistics panels in the repository.
+We don't control these.
+Github's privacy policy is available here: <https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement>
