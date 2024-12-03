@@ -28,7 +28,6 @@ LiveCD variant, provided there are people able to maintain it.
 In regards to the name, I'm in a particular Discord server for these adorable wigglers:
 <https://ferrets.live/>! Too cute to not name something after them.
 
-<!---
 ## Installation
 
 ### .img File
@@ -44,20 +43,30 @@ drive with no changes. Otherwise, you have some options:
 - Use any (multi)boot USB creator to add the file to your USB drove.
 - Follow the procedure for `.img` files above.
 - If you have a Blu-Ray writer, you can burn the file to disk.
-
-### Github Reop
+<!---
+### Github Repo
 
 You will have to install the system, bootloader, and kernel into your USB drive manually.
 The drive must be formatted with an EFI partition and a Linux root partition following
 the [Discoverable Partitions Specification](https://uapi-group.org/specifications/specs/discoverable_partitions_specification/).
-Any other partitions must be configured following the specification.
+Any other partitions to be mounted at boot must be configured following the
+specification.
 - Copy the entire repo to the root partition of the drive.
 - Mount the drive's EFI partition to `/boot` on the drive.
 - Modify root's chroot script to have LFS point to the root partition of the drive.
-- Run the chroot script.
-- TODO: add the full command to install the bootloader to the drive without erroring out - they won't have guaranteed access to the host's EFI variables, so make sure it doesn't have to read them to install
-- TODO: add the full command to install the kernel version without needing a machine id - it will likely default to using the kernel version unless we specify the entry token
-  - TODO: if they want to use kernel-install's normal defaults we need to tell them how to initialize the machine id
+- AS ROOT, run the chroot script.
+- Install the bootloader with the following command:
+
+`bootctl --esp-path=/boot --no-variables --make-machine-id-directory=no install && rm -fv /boot/loader/random-seed`
+
+- Install the kernel into the bootloader with the following command:
+
+`kernel-install --esp-path=/boot --entry-token=os-id add 6.11.7 /usr/lib/modules/6.11.7/vmlinuz`
+
+  - If you want to use a machine ID for the entry token (the name used to name the kernel
+installation directory and configuration file), run `systemd-machine-id-setup` first,
+then remove the `entry-token` option from the command line.
+
 - TODO: direct them to check the command line passed to the kernel. it has to have rootwait (if we don't build it into the kernel directly), and they should remove the root line to prove our entire design.
 - TODO: maybe we should make all of this a script? could be a lot of work though, especially to verify that the root node exists, has the correct partitions available, AND isn't just /dev/null or something else being passed maliciously. (you just know they'll try to blame us if they're bad actors or just dumb.)
 --->
@@ -101,6 +110,7 @@ pip3 install --no-index --no-user --find-links dist pyelftools
   - To enable all insults: `--with insults --with-all-insults`
 - Add (external) dracut (last commit 2024-03-21)
   - Requires asciidoc for documentation, use `--disable-documentation` to avoid
+  - Add (blfs) cpip-2.15 as dependency
 - Add (blfs) btrfs-progs 6.10.1
   - Add (blfs) lzo 2.10 as dependency
 - Add (blfs) dosfstools 4.2
@@ -223,6 +233,11 @@ root until a text editor is available).***
 source directory
 - User `ferretos` added
   - Name and password match for access
+- Clean build tree for first boot and agnostic image requirements
+  - `/etc/hostname` not reset
+  - Root account not reset
+- Copy of boot folder saved to `/boot-backup` for repo
+- Dracut initrd modified to remove microcode to maintain booting requirements
 
 #### Build/Configure process
 
