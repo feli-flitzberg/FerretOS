@@ -30,3 +30,4 @@ systemd-oom:x::
 wheel:x::
 users:x::
 nogroup:x::
+sshd:!::

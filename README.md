@@ -203,14 +203,26 @@ root until a text editor is available).***
   - Add `pythoncerts.sh`
 - Add `/etc/skel` with configuration files and FerretOS needs
   - Files copied to `/root` when finishing image
+    - Add root-specific files to `/root`: `chroot.sh`, `net-chroot.sh`
   - Add `.bash_profile`
   - Add `.bashrc`
   - Add `.bash_logout`
+  - Add `Apache-2.license`
+  - Add `BY-NC-SA-2.0.license`
+  - Add `MIT.license`
+  - Add `version-check.sh`
+  - Add zipped LFS systemd book
+  - Add zipped BLFS systemd book
 - Add `/etc/profile` from BLFS
 - Add `/etc/bashrc` from BLFS
 - Add `/etc/dircolors`
 - Add `/etc/issue`
 - wpa-supplicant not configured
+- `rootwait` command-line parameter built into kernel
+- Kernel image copied to `/usr/lib/modules/6.11.7/vmlinuz` to avoid adding the linux
+source directory
+- User `ferretos` added
+  - Name and password match for access
 
 #### Build/Configure process
 
@@ -241,6 +253,7 @@ manually pruned
 - `/etc/adjtime` is not used to accomodate multiple hardware setups
 - System locale is not set to accomodate systemd-firstboot
 - Additional packages are added before building the kernel and finalizing the image
+- Kernel is built with an option to force waiting for all devices
 - `/etc/fstab` is not created
   - As part of the [Bootloader Specification](https://uapi-group.org/specifications/specs/boot_loader_specification/)
 this file isn't needed by a spec-compliant bootloader to find the root partition or data
