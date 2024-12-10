@@ -7,4 +7,4 @@ lto-dump filter=lfs diff=lfs merge=lfs -text
 cc1plus filter=lfs diff=lfs merge=lfs -text
 lto1 filter=lfs diff=lfs merge=lfs -text
 cc1plus filter=lfs diff=lfs merge=lfs -text
-
+*.img filter=lfs diff=lfs merge=lfs -text

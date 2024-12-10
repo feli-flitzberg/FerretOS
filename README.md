@@ -7,12 +7,18 @@ build/release of [Linux From Scratch](https://www.linuxfromscratch.org) with som
 differences:
 
 - GRUB is replaced with systemd-boot
+  - (2024-12-06) As most online tutorials for building ISOs rely on GRUB, this is
+proving more difficult than anticipated. We're almost done getting everything to
+work though!
 - System configuration and some package build configurations are modified to allow
 as much hardware compatibility as possible
-- The bootloader is configured to not pass any partition to the kernel during boot
+- The bootloader is configured to only pass a root partition if running from USB or disk image
+  - Passing no root partition fails for any USB or ISO image due to standards and requirements
+far beyond our control. We don't need the traditional filesystem table if we pass all
+mount options at boot time.
 
-The resulting image (should) be fully capable of booting from a Blu-Ray or USB, with no
-notion of what hardware it has available or where it's booting from, and still mount
+The resulting image (should) be fully capable of booting from a Blu-Ray or USB, with little
+to no notion of what hardware it has available or where it's booting from, and still mount
 the root partition and the remaining system with no issue. Once fully booted, FerretOS
 has all the tools and packages needed to build a fresh copy of Linux From Scratch (LFS)
 on the machine or VM. It can also be used as a basic rescue disk for a nonresponsive
@@ -30,23 +36,23 @@ In regards to the name, I'm in a particular Discord server for these adorable wi
 
 ## Installation
 
-### .img File
-
-Use a tool like `dd` or BalenaEtcher to directly copy the file byte for byte to a valid
-USB drive. You might be able to boot directly using a tool like Ventoy, but this hasn't
-been tested.
-
 ### .iso File
 
 If you have something like Ventoy, the `.iso` file can be dropped directly into the USB
 drive with no changes. Otherwise, you have some options:
-- Use any (multi)boot USB creator to add the file to your USB drove.
-- Follow the procedure for `.img` files above.
+- Use any (multi)boot USB creator to add the file to your USB drive.
 - If you have a Blu-Ray writer, you can burn the file to disk.
+<!---
+### Generating your own .iso
+
+We use xorriso to make the ISO, but if you prefer something else and can translate the
+command to that other thing go for it. Everything else should be readily available in
+a base Linux/GNULinux/GNUHurd/*BSD environment.
+
 <!---
 ### Github Repo
 
-You will have to install the system, bootloader, and kernel into your USB drive manually.
+You will have to install the system, bootloader, and kernel into your destination drive manually.
 The drive must be formatted with an EFI partition and a Linux root partition following
 the [Discoverable Partitions Specification](https://uapi-group.org/specifications/specs/discoverable_partitions_specification/).
 Any other partitions to be mounted at boot must be configured following the
@@ -57,7 +63,7 @@ specification.
 - AS ROOT, run the chroot script.
 - Install the bootloader with the following command:
 
-`bootctl --esp-path=/boot --no-variables --make-machine-id-directory=no install && rm -fv /boot/loader/random-seed`
+`bootctl --esp-path=/boot --entry-token=os-id --no-variables --make-machine-id-directory=no install && rm -fv /boot/loader/random-seed`
 
 - Install the kernel into the bootloader with the following command:
 
@@ -183,6 +189,11 @@ pip3 install --no-index --no-user --find-links dist pyelftools
 - Add (external) [linux-firmware](https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/)
   - Add (external) rdfind 1.6.0 as recommended dependency
   - Package is made by packaging the git repo after checking for updates
+- Add (external) squashfs-tools 4.6.1 as ISO build dependency
+  - (2024-12-05) TIL you have to turn the entire filesystem into a single file
+for making bootable ISOs. Dracut can handle using squashfs files if the related tools
+are installed.
+- Add (external) memtest86+ 7.20
 
 #### Configuration
 
@@ -229,6 +240,8 @@ root until a text editor is available).***
 - Add `/etc/issue`
 - wpa-supplicant not configured
 - `rootwait` command-line parameter built into kernel
+  - this might be contributing to problems finding the root partition of a USB drive.
+  gotta also check the rest of the config to see if we can find it.
 - Kernel image copied to `/usr/lib/modules/6.11.7/vmlinuz` to avoid adding the linux
 source directory
 - User `ferretos` added
@@ -236,8 +249,8 @@ source directory
 - Clean build tree for first boot and agnostic image requirements
   - `/etc/hostname` not reset
   - Root account not reset
-- Copy of boot folder saved to `/boot-backup` for repo
-- Dracut initrd modified to remove microcode to maintain booting requirements
+- Dracut configuration added at `/etc/dracut.conf.d/dracut.conf`
+- Boot partition backed up to `/boot-backup`
 
 #### Build/Configure process
 
@@ -268,11 +281,16 @@ manually pruned
 - `/etc/adjtime` is not used to accomodate multiple hardware setups
 - System locale is not set to accomodate systemd-firstboot
 - Additional packages are added before building the kernel and finalizing the image
-- Kernel is built with an option to force waiting for all devices
+{::comment}- Kernel is built with an option to force waiting for all devices{:/comment}
 - `/etc/fstab` is not created
   - As part of the [Bootloader Specification](https://uapi-group.org/specifications/specs/boot_loader_specification/)
 this file isn't needed by a spec-compliant bootloader to find the root partition or data
 partitions
+  - If expecting to boot from USB or ISO the file is still required unless ALL mount
+options for root are passed to the kernel at boot time
+- Boot partition is faked with mounting `boot.img` to enable ISO building with xorriso
+- Contents of ISO boot partition are available at `boot-backup` and can be modified for USB
+booting
 
 ***If you work in a chroot and reinstall dbus via BLFS instructions, `$LFS/dev` will no
 longer unmount, and the host system will require a reboot. dbus will also warn about an
