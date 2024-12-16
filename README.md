@@ -2,52 +2,84 @@
 
 ## LFS-Based LiveCD Image
 
-Welcome to FerretOS! This operating system project is currently a proof-of-concept
-build/release of [Linux From Scratch](https://www.linuxfromscratch.org) with some key
-differences:
+Welcome to FerretOS! This operating system project is currently a proof-of-concept build/release of [Linux From Scratch](https://www.linuxfromscratch.org) with some key differences:
 
 - GRUB is replaced with systemd-boot
-  - (2024-12-06) As most online tutorials for building ISOs rely on GRUB, this is
-proving more difficult than anticipated. We're almost done getting everything to
-work though!
+  - (2024-12-06) As most online tutorials for building ISOs rely on GRUB, this is proving more difficult than anticipated. We're almost done getting everything to work though!
 - System configuration and some package build configurations are modified to allow
 as much hardware compatibility as possible
 - The bootloader is configured to only pass a root partition if running from USB or disk image
-  - Passing no root partition fails for any USB or ISO image due to standards and requirements
-far beyond our control. We don't need the traditional filesystem table if we pass all
-mount options at boot time.
+  - Passing no root partition fails for any USB or ISO image due to standards and requirements far beyond our control. We don't need the traditional filesystem table if we pass all mount options at boot time.
 
-The resulting image (should) be fully capable of booting from a Blu-Ray or USB, with little
-to no notion of what hardware it has available or where it's booting from, and still mount
-the root partition and the remaining system with no issue. Once fully booted, FerretOS
+The resulting image (should) be fully capable of booting from a Blu-Ray or USB, with little to no notion of what hardware it has available or where it's booting from, and still mount the root partition and the remaining system with no issue. Once fully booted, FerretOS
 has all the tools and packages needed to build a fresh copy of Linux From Scratch (LFS)
 on the machine or VM. It can also be used as a basic rescue disk for a nonresponsive
 system.
 
 ### History
 
-FerretOS was ultimately inspired by the now-defunct LFS LiveCD project! The last
-update of its homepage can be found here: <https://www.linuxfromscratch.org/livecd/>.
-Part of the proof-of-concept stage is simply to show that LFS can still produce a
-LiveCD variant, provided there are people able to maintain it.
+FerretOS was ultimately inspired by the now-defunct LFS LiveCD project!
+The last update of its homepage can be found here: <https://www.linuxfromscratch.org/livecd/>.
+Part of the proof-of-concept stage is simply to show that LFS can still produce a LiveCD variant, provided there are people able to maintain it.
 
-In regards to the name, I'm in a particular Discord server for these adorable wigglers:
-<https://ferrets.live/>! Too cute to not name something after them.
+In regards to the name, I'm in a particular Discord server for these adorable wigglers: <https://ferrets.live/>! Too cute to not name something after them.
 
+### We would love some help!
+
+(2024-12-16) It is becoming increasingly clear to us: we don't know how to make this project into either a bootable ISO or a bootable USB right now.
+We're still plugging away at the troubleshooting, but if anyone wants to volunteer their time, knowledge, or both into making this work that'd be great!
+(Even just telling us the basics of what we're supposed to do would help.
+So many things use GRUB when we're trying to avoid it...)
+<!---
 ## Installation
 
 ### .iso File
 
-If you have something like Ventoy, the `.iso` file can be dropped directly into the USB
-drive with no changes. Otherwise, you have some options:
-- Use any (multi)boot USB creator to add the file to your USB drive.
+If you have something like Ventoy, the `.iso` file can be dropped directly into the USB drive with no changes. Otherwise, you have some options:
+- Use any (multi)boot USB creator to burn/add the file to your USB drive.
 - If you have a Blu-Ray writer, you can burn the file to disk.
+- If you have a VM program, you can make a new VM and load the file as the boot media.
 <!---
 ### Generating your own .iso
 
-We use xorriso to make the ISO, but if you prefer something else and can translate the
-command to that other thing go for it. Everything else should be readily available in
-a base Linux/GNULinux/GNUHurd/*BSD environment.
+We use xorriso to make the ISO, but if you prefer something else and can translate the command to that other thing go for it.
+Everything else should be readily available in a base Linux/GNULinux/GNUHurd/*BSD environment.
+Please bear in mind this is a long-winded process, 
+
+1. Chroot into the system using one of the chroot scripts available in root's home directory.
+2. Make a new image to use as the boot partition: `truncate -s 64M boot.img`
+3. Mount the image as a loop device: `losetup -f -L --show boot.img`
+4. Open parted (will correctly report the changes once we're done): `parted <device shown in previous command>`
+5. Make a new gpt label: `mklabel gpt`
+6. Make a new partition: `mkpart efi 2048s 64M`
+7. Exit parted.
+8. Format the new partition: `mkfs.vfat -v -F 32 <loop device>p1`
+9. Mount the partition as the ESP: `mount -v <loop device>p1 /boot`
+10. Install the bootloader: `bootctl --esp-path=/boot --entry-token=os-id --no-variables --make-machine-id-directory=no install && rm -fv /boot/loader/random-seed`
+11. Install the kernel and initrd: `kernel-install --esp-path=/boot --entry-token=os-id add 6.11.7 /usr/lib/modules/6.11.7/vmlinuz`
+12. Edit `/boot/loader/entries/ferretos-6.11.7.conf` and correct the options as follows:
+  - Remove any machine ID added from the running kernel
+  - Remove any root added from the running kernel
+  - Add `iso-scan/filename="ferretos-1.iso"`
+  - Add `rd.writable.fsimg=1`
+  - Add `root=live:LABEL="ferretos-1"`
+  - Add `rd.live.image`
+  - Add `rd.skipfsck`
+13. Unmount `/boot` and `boot.img`: `umount -v /boot && losetup -D` (does not unmount anything in use by the system)
+14. Exit the chroot.
+15. Follow steps 2 - 7 again, with some changes:
+  - Make the image 5G, with the name `rootfs.img`
+  - Replace `efi` with `ext2`
+16. Format the new partition on `rootfs.img`: `mkfs.ext4 -v <loop device>p1`
+17. Mount the new partition into any folder that doesn't exist in the repo.
+18. Copy the entire repo (minus the .git folder) into the partition: `cp -vfR {bin,boot,boot-backup,dev,etc,home,lib,lib64,LICENSE.md,media,mnt,opt,proc,README.md,root,run,sbin,sources,srv,sys,tmp,usr,var} <mount point>`
+19. Unmount the partition and the loop device: `umount -v <mount point> && losetup -D`
+20. Run `rootfs.img` through tar: `tar -vczf rootfs.tgz root.img`
+21. Move `boot.img` and `rootfs.tgz` to an empty folder.
+22. Change to the same folder you moved the files into.
+23. Run the following xorriso command:
+`xorriso -as mkisofs -o ~/ferretos-1.iso -iso-level 3 -r -D --for_backup -J -joliet-long -V "FERRETOS" -P "CONFIDOWORKS" -p "<your name here>" -append_partition 2 0xef $PWD/boot.img -appended_part_as_gpt -e --interval:appended_partition_2:all:: -no-emul-boot $PWD`
+24. Tada!
 
 <!---
 ### Github Repo
@@ -96,8 +128,7 @@ then remove the `entry-token` option from the command line.
 - Skip installing GRUB (source package is available in image)
 - Personal preference: skip installing vim (source package is available in image)
 - Personal preference: install (blfs) nano 8.1 as editor
-  - `/etc/nanorc` is made from editing and saving `doc/sample.nanorc` with the new
-installation
+  - `/etc/nanorc` is made from editing and saving `doc/sample.nanorc` with the new installation
 - Install (external) pyelftools 0.31 to enable systemd-boot during configuration
   - Build instructions:
 ```
@@ -190,15 +221,12 @@ pip3 install --no-index --no-user --find-links dist pyelftools
   - Add (external) rdfind 1.6.0 as recommended dependency
   - Package is made by packaging the git repo after checking for updates
 - Add (external) squashfs-tools 4.6.1 as ISO build dependency
-  - (2024-12-05) TIL you have to turn the entire filesystem into a single file
-for making bootable ISOs. Dracut can handle using squashfs files if the related tools
-are installed.
+  - (2024-12-05) TIL you have to turn the entire filesystem into a single file for making bootable ISOs. Dracut can handle using squashfs files if the related tools are installed.
 - Add (external) memtest86+ 7.20
 
 #### Configuration
 
-***Configuration files are made in a text editor (potentially outside chroot by
-root until a text editor is available).***
+***Configuration files are made in a text editor (potentially outside chroot by root until a text editor is available).***
 
 - Source packages installed in LFS are in `/sources/base`
 - Source packages installed in BLFS or beyond are in `/sources/extra`
@@ -240,10 +268,8 @@ root until a text editor is available).***
 - Add `/etc/issue`
 - wpa-supplicant not configured
 - `rootwait` command-line parameter built into kernel
-  - this might be contributing to problems finding the root partition of a USB drive.
-  gotta also check the rest of the config to see if we can find it.
-- Kernel image copied to `/usr/lib/modules/6.11.7/vmlinuz` to avoid adding the linux
-source directory
+  - This really only helps when booting from USB, as it forces all devices to mount first
+- Kernel image copied to `/usr/lib/modules/6.11.7/vmlinuz` to avoid adding the linux source directory
 - User `ferretos` added
   - Name and password match for access
 - Clean build tree for first boot and agnostic image requirements
@@ -259,8 +285,7 @@ source directory
   - No drives or partitions were mounted during the build stages
 - git repo was set up during first build chapters
   - This has the advantage of reducing the final upload size to Github
-  - This has the disadvantage of creating multiple files in Github LFS that have to be
-manually pruned
+  - This has the disadvantage of creating multiple files in Github LFS that have to be manually pruned
 - When changing ownership between users:
   - To user lfs: `chown -vR lfs:lfs $LFS`
   - To user root: `chown -vR root:root $LFS`
@@ -281,23 +306,16 @@ manually pruned
 - `/etc/adjtime` is not used to accomodate multiple hardware setups
 - System locale is not set to accomodate systemd-firstboot
 - Additional packages are added before building the kernel and finalizing the image
-{::comment}- Kernel is built with an option to force waiting for all devices{:/comment}
 - `/etc/fstab` is not created
-  - As part of the [Bootloader Specification](https://uapi-group.org/specifications/specs/boot_loader_specification/)
-this file isn't needed by a spec-compliant bootloader to find the root partition or data
-partitions
-  - If expecting to boot from USB or ISO the file is still required unless ALL mount
-options for root are passed to the kernel at boot time
+  - As part of the [Bootloader Specification](https://uapi-group.org/specifications/specs/boot_loader_specification/) this file isn't needed by a spec-compliant bootloader to find the root partition or data partitions
+  - Unfortunately if expecting to boot from USB or ISO the file is still required unless ALL mount options for root are passed to the kernel at boot time
 - Boot partition is faked with mounting `boot.img` to enable ISO building with xorriso
-- Contents of ISO boot partition are available at `boot-backup` and can be modified for USB
-booting
+- Contents of ISO boot partition are available at `boot-backup` and can be modified for USB booting
 
-***If you work in a chroot and reinstall dbus via BLFS instructions, `$LFS/dev` will no
-longer unmount, and the host system will require a reboot. dbus will also warn about an
-invalid user account/ID. If working in a chroot prior to creating an image or USB
-installation, re-initialize the machine id. It is also advised to only reinstall dbus in
-the chroot if you are sure you won't need the chroot environment after exiting that
-instance.***
+***If you work in a chroot and reinstall dbus via BLFS instructions, `$LFS/dev` will no longer unmount, and the host system will require a reboot.
+dbus will also warn about an invalid user account/ID.
+If working in a chroot prior to creating an image or USB installation, re-initialize the machine id.
+It is also advised to only reinstall dbus in the chroot if you are sure you won't need the chroot environment after exiting that instance.***
 
 ## PRIVACY POLICY
 
