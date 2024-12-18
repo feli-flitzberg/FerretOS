@@ -31,3 +31,4 @@ wheel:x:97:
 users:x:999:
 nogroup:x:65534:
 sshd:x:50:
+ferretos:x:1000:
