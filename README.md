@@ -67,9 +67,10 @@ kernel-install --esp-path=/boot --entry-token=os-id --make-entry-directory=yes a
 15. Either copy ferretos-6.11.7.conf file from `/USB-boot/loader/entries/` to `/boot/loader/entries/` or edit the file in /boot yourself:
   - dracut inserts options from the running kernel, which won't match the project's intent or needs. The only option needed is rw. You can add irqprobe if it helps your machines work.
 16. Correct sudo's permissions: `chmod -v +s /usr/bin/sudo` (otherwise you won't be able to do anything once booted).
-17. At this point, the FerretOS installation is complete. Memtest86+ and a conf file for it is available in USB-boot if you'd like to add it to /boot.
+17. Ensure that the non-root user's directory and contents have the correct ownership: `chmod -vR 1000:1000 /home/ferretos`
+18. At this point, the FerretOS installation is complete. Memtest86+ and a conf file for it is available in USB-boot if you'd like to add it to /boot.
   - `cp -Rfv /USB-boot/memtest/ /boot/ && cp -v /USB-boot/loader/entries/memtest.conf /boot/loader/entries/`
-18. Exit the chroot environment.
+19. Exit the chroot environment.
 
 You can now reboot in place, or unmount ALL partitions on the target drive to boot on some other machine.
 <!---
@@ -80,9 +81,6 @@ If you have something like Ventoy, the `.iso` file can be dropped directly into 
 10. Install the bootloader: `bootctl --esp-path=/boot --entry-token=os-id --no-variables --make-machine-id-directory=no install && rm -fv /boot/loader/random-seed`
 11. Install the kernel and initrd: `kernel-install --esp-path=/boot --entry-token=os-id add 6.11.7 /usr/lib/modules/6.11.7/vmlinuz`
 23. Run the following xorriso command: `xorriso -as mkisofs -o ~/ferretos-1.iso -iso-level 3 -r -D --for_backup -J -joliet-long -V "FERRETOS" -P "CONFIDOWORKS" -p "<your name here>" -append_partition 2 0xef $PWD/boot.img -appended_part_as_gpt -e --interval:appended_partition_2:all:: -no-emul-boot $PWD`
-
-O: direct them to check the command line passed to the kernel. it has to have rootwait (if we don't build it into the kernel directly), and they should remove the root line to prove our entire design.
-- TODO: maybe we should make all of this a script? could be a lot of work though, especially to verify that the root node exists, has the correct partitions available, AND isn't just /dev/null or something else being passed maliciously. (you just know they'll try to blame us if they're bad actors or just dumb.)
 --->
 
 ## Changes
