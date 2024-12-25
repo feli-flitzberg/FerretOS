@@ -213,6 +213,7 @@ pip3 install --no-index --no-user --find-links dist pyelftools
 - `/usr/lib/os-release` points to `/etc/os-release`
 - Make single systemd network file to match any found network devices
   - Not sure it will enable more than one device, but it will at least enable the first
+    - This has to be fixed, after a winter break. We'll swap to using type matching, and a file each for ethernet and wifi access.
 - Add `noclear.conf` from 9.10 Systemd Usage & Configuration
 - Add (blfs) `/usr/sbin/strip-all.sh`
 - Add (blfs) `/usr/sbin/remove-la-files.sh`
